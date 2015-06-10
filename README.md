@@ -18,6 +18,6 @@ UpdateKey - 0x4E20 (20000)
 
 LoginSuccess - 0x4E88 (20104)
 
-KeepAliveRequest - 0x4E8C (20108)
+KeepAliveResponse - 0x4E8C (20108)
 
 ChatMessageServer - 0x608B (24715)
