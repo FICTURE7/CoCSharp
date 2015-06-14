@@ -58,6 +58,8 @@ namespace CoCSharp.Logger
                     var fieldName = field.Name;
                     var fieldValue = field.GetValue(packet);
 
+                    if (field.IsPrivate) continue;
+
                     builder.Indent();
                     builder.AppendFormat("{0}: ", fieldName);
 

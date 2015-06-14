@@ -6,6 +6,6 @@
 
         void ReadPacket(PacketReader reader);
 
-        void WritePacket(CoCStream stream); //TODO: replace CoCStream by PacketWriter instead
+        void WritePacket(PacketWriter writer);
     }
 }

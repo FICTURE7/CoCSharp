@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CoCSharp.Logic;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -21,7 +23,7 @@ namespace CoCSharp.Networking
             set { BaseStream.Position = value; }
         }
 
-        private Stream BaseStream { get; set; }
+        public Stream BaseStream { get; set; }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -47,8 +49,7 @@ namespace CoCSharp.Networking
 
         public int ReadPacketLength()
         {
-            var packetLengthBuffer = new byte[3];
-            BaseStream.Read(packetLengthBuffer, 0, 3);
+            var packetLengthBuffer = ReadBytes(3, false);
             return ((packetLengthBuffer[0] << 16) | (packetLengthBuffer[1] << 8)) | packetLengthBuffer[2];
         }
 
@@ -78,6 +79,12 @@ namespace CoCSharp.Networking
         {
             var length = ReadInt();
             var buffer = ReadBytes(length, false);
+            return buffer;
+        }
+
+        public byte[] ReadByteArray(int count)
+        {
+            var buffer = ReadBytes(count, false);
             return buffer;
         }
 
@@ -112,7 +119,7 @@ namespace CoCSharp.Networking
         private byte[] ReadBytes(int count, bool endian = true)
         {
             var buffer = new byte[count];
-            BaseStream.Read(buffer, 0, count); // read from read buffer
+            BaseStream.Read(buffer, 0, count);
             if (BitConverter.IsLittleEndian && endian) Array.Reverse(buffer); // CoC uses big-endian
             return buffer;
         }

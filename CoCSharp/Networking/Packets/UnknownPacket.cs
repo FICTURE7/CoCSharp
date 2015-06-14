@@ -13,18 +13,13 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            //EncryptedData = new byte[Length];
-            //reader.Read(EncryptedData, 0, Length);
-
-            //reader.Seek(-Length, SeekOrigin.Current);
-
             DecryptedData = new byte[Length];
             reader.Read(DecryptedData, 0, Length);
         }
 
-        public void WritePacket(CoCStream stream)
+        public void WritePacket(PacketWriter writer)
         {
-            stream.Write(EncryptedData, 0, Length);
+            // writer.Write(EncryptedData, 0, Length);
         }
     }
 }

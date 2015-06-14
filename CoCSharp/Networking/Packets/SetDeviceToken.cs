@@ -1,14 +1,14 @@
 ﻿namespace CoCSharp.Networking.Packets
 {
-    public class ChatMessageClientPacket : IPacket
+    public class SetDeviceToken : IPacket
     {
-        public ushort ID { get { return 0x397B; } }
+        public ushort ID { get { return 0x2781; } }
 
-        public string Message;
+        public string Token;
 
         public void ReadPacket(PacketReader reader)
         {
-            Message = reader.ReadString();
+            Token = reader.ReadString();
         }
 
         public void WritePacket(PacketWriter writer)

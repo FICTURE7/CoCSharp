@@ -6,6 +6,10 @@ namespace CoCSharp.Networking
 {
     public class CoCCrypto
     {
+        /* Ported from Clash of Clans Documentation Project(https://github.com/clanner/cocdp/blob/master/cocutils.py)
+         * to C#. Massive thank you. :]
+         */
+
         public const string InitialKey = "fhsd6f86f67rt8fw78fw789we78r9789wer6re";
         public const string InitialNonce = "nonce";
 

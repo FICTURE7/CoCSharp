@@ -22,12 +22,12 @@ namespace CoCSharp.Networking
 
         public bool DataAvailable { get { return Client.Available > 0; } }
         public CoCStream CoCStream { get; set; }
-        public CoCCrypto CoCCrypto { get; set; }
 
         private TcpClient Client { get; set; }
+        private CoCCrypto CoCCrypto { get; set; }
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
 
-        public IPacket ReadPacket(out byte[] rawPacket)
+        public IPacket ReadPacket(out byte[] rawPacket, out byte[] decryptedPacket)
         {
             /* Receive data from the socket, saves it a buffer,
              * then reads packet from the buffer. 
@@ -46,7 +46,7 @@ namespace CoCSharp.Networking
                 var packetVersion = enPacketReader.ReadUShort();
 
                 // read body
-                if (packetLength > enPacketReader.Length) // check if data is enough data is avaliable
+                if (packetLength > enPacketReader.Length) // check if data is enough data is avaliable in the buffer
                     continue;
 
                 var encryptedData = GetPacketBody(packetLength);
@@ -68,11 +68,12 @@ namespace CoCSharp.Networking
                     ((UnknownPacket)packet).EncryptedData = encryptedData;
                 }
 
+                decryptedPacket = decryptedData;
                 rawPacket = ExtractRawPacket(packetLength); // raw encrypted packet
                 packet.ReadPacket(dePacketReader);
-
                 return packet;
             }
+            decryptedPacket = null;
             rawPacket = null;
             return null;
         }
@@ -86,6 +87,12 @@ namespace CoCSharp.Networking
             throw new NotImplementedException();
         }
 
+        public void UpdateChipers(ulong seed, byte[] key)
+        {
+            CoCCrypto.UpdateChipers(seed, key);
+        }
+
+        //TODO: Implement this in CoCStream
         private byte[] ExtractRawPacket(int packetLength)
         {
             /* Extract packet body + header from CoCStream.ReadBuffer and 
@@ -101,6 +108,7 @@ namespace CoCSharp.Networking
             return packetData;
         }
 
+        //TODO: Implement this in CoCStream
         private byte[] GetPacketBody(int packetLength)
         {
             /* Get packet body bytes from CoCStream.ReadBuffer without 
@@ -127,15 +135,20 @@ namespace CoCSharp.Networking
             PacketDictionary = new Dictionary<ushort, Type>();
 
             // Serverbound
-            PacketDictionary.Add(new LoginRequestPacket().ID, typeof(LoginRequestPacket));
-            PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket));
-            PacketDictionary.Add(new LoginSuccessPacket().ID, typeof(LoginSuccessPacket));
-            PacketDictionary.Add(new KeepAliveRequestPacket().ID, typeof(KeepAliveRequestPacket));
-            PacketDictionary.Add(new ChatMessageClientPacket().ID, typeof(ChatMessageClientPacket));
+            PacketDictionary.Add(new LoginRequestPacket().ID, typeof(LoginRequestPacket)); // 10101
+            PacketDictionary.Add(new KeepAliveRequestPacket().ID, typeof(KeepAliveRequestPacket)); // 10108
+            PacketDictionary.Add(new SetDeviceToken().ID, typeof(SetDeviceToken)); // 10113
+            PacketDictionary.Add(new ChangeAvatarName().ID, typeof(ChangeAvatarName)); // 10212
+            PacketDictionary.Add(new BindFacebookAccount().ID, typeof(BindFacebookAccount)); // 14201
+            PacketDictionary.Add(new AvatarProfileRequest().ID, typeof(AvatarProfileRequest)); // 14325
+            PacketDictionary.Add(new ChatMessageClientPacket().ID, typeof(ChatMessageClientPacket)); // 14715
 
             // Clientbound
-            PacketDictionary.Add(new KeepAliveResponsePacket().ID, typeof(KeepAliveResponsePacket));
-            PacketDictionary.Add(new ChatMessageServerPacket().ID, typeof(ChatMessageServerPacket));
+            PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
+            PacketDictionary.Add(new KeepAliveResponsePacket().ID, typeof(KeepAliveResponsePacket)); // 20108
+            PacketDictionary.Add(new ChatMessageServerPacket().ID, typeof(ChatMessageServerPacket)); // 24715
+            PacketDictionary.Add(new LoginSuccessPacket().ID, typeof(LoginSuccessPacket)); // 20104
+            PacketDictionary.Add(new OwnHomeData().ID, typeof(OwnHomeData)); // 24101
         }
     }
 }

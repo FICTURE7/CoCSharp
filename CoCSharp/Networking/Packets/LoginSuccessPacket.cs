@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 namespace CoCSharp.Networking.Packets
 {
     public class LoginSuccessPacket : IPacket
@@ -14,12 +15,16 @@ namespace CoCSharp.Networking.Packets
         public int RevisionVersion;
         public string ServerEnvironment;
         public int LoginCount;
-        public int PlayTimeSecounds;
-        public int Unknown1;
+        public TimeSpan PlayTime;
+
+        //public int Unknown1;
+
         public string FacebookAppID;
         public string DateLastPlayed;
         public string DateJoined;
-        public int Unknown2;
+
+        //public int Unknown2;
+
         public string GooglePlusID;
         public string CountryCode;
 
@@ -37,21 +42,23 @@ namespace CoCSharp.Networking.Packets
             RevisionVersion = reader.ReadInt();
             ServerEnvironment = reader.ReadString();
             LoginCount = reader.ReadInt();
-            PlayTimeSecounds = reader.ReadInt();
+            PlayTime = TimeSpan.FromSeconds(reader.ReadInt());
             
-            Unknown1 = reader.ReadInt();
+            //Unknown1 = reader.ReadInt();
+            reader.Seek(4, SeekOrigin.Current);
 
             FacebookAppID = reader.ReadString();
             DateLastPlayed = reader.ReadString();
             DateJoined = reader.ReadString();
 
-            Unknown2 = reader.ReadInt();
+            //Unknown2 = reader.ReadInt();
+            reader.Seek(4, SeekOrigin.Current);
 
             GooglePlusID = reader.ReadString();
             CountryCode = reader.ReadString();
         }
 
-        public void WritePacket(CoCStream writer)
+        public void WritePacket(PacketWriter writer)
         {
 
         }

@@ -17,10 +17,12 @@ namespace CoCSharp
         public CoCProxy()
         {
             this.PacketLogger = new PacketLogger();
+            this.RawPacketLogger = new RawPacketLogger();
             this.Clients = new List<CoCProxyClient>();
         }
 
         public PacketLogger PacketLogger { get; set; }
+        public RawPacketLogger RawPacketLogger { get; set; }
         public List<CoCProxyClient> Clients { get; set; }
         public TcpListener Listener { get; set; }
 
@@ -56,6 +58,7 @@ namespace CoCSharp
             Clients.Add(cocClientProxy);
             Listener.BeginAcceptTcpClient(new AsyncCallback(AcceptClientAysnc), Listener);
 
+            //TODO: Add event here.
             Console.WriteLine("Client connected {0}", client.Client.RemoteEndPoint);
             Console.WriteLine("Created new connection to {0}:{1}", DefaultServer, DefaultPort);
         }
@@ -64,7 +67,7 @@ namespace CoCSharp
         {
             while (true)
             {
-                if (ShuttingDown) return; // try to avoid ThreadAbortExceptions
+                if (ShuttingDown) return;
 
                 for (int i = 0; i < Clients.Count; i++)
                 {
@@ -82,14 +85,24 @@ namespace CoCSharp
                                  */
 
                                 var rawPacket = (byte[])null; // raw encrypted packet
-                                var packet = client.NetworkManager.ReadPacket(out rawPacket); // receive data from client
+                                var decryptedPacket = (byte[])null;
+                                var packet = client.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from client
 
-                                if (packet != null) PacketLogger.LogPacket(packet, PacketDirection.Server);
-                                if (rawPacket != null) server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
-
-                                if (packet is LoginRequestPacket) client.Seed = ((LoginRequestPacket)packet).ClientSeed;
+                                if (rawPacket != null && packet != null)
+                                {
+                                    server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
+                                    PacketLogger.LogPacket(packet, PacketDirection.Server);
+                                    RawPacketLogger.LogPacket(packet, PacketDirection.Server, decryptedPacket);
+                                }
 
                                 //TODO: Better handling of packets
+                                if (packet is LoginRequestPacket)
+                                {
+                                    var lrPacket = packet as LoginRequestPacket;
+                                    client.Seed = lrPacket.Seed;
+                                    client.UserID = lrPacket.UserID;
+                                    client.UserToken = lrPacket.UserToken;
+                                }
                             }
                             catch (SocketException ex)
                             {
@@ -114,23 +127,38 @@ namespace CoCSharp
                                  */
 
                                 var rawPacket = (byte[])null;
-                                var packet = server.NetworkManager.ReadPacket(out rawPacket); // receive data from server
+                                var decryptedPacket = (byte[])null;
+                                var packet = server.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from server
 
-                                if (packet != null) PacketLogger.LogPacket(packet, PacketDirection.Client);
-                                if (rawPacket != null) client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
-
-                                if (packet is UpdateKeyPacket)
+                                if (rawPacket != null && packet != null)
                                 {
-                                    //client.NetworkManager.UpdateKey(client.Seed, ((UpdateKeyPacket)packet).Key);
-                                    client.NetworkManager.CoCCrypto.UpdateChipers(client.Seed, ((UpdateKeyPacket)packet).Key);
-
-                                    // cant set server key properly copying client's key, i no liky :{
-                                    server.NetworkManager.CoCCrypto.UpdateChipers(client.Seed, ((UpdateKeyPacket)packet).Key);
-                                    //server.NetworkManager.DecryptKey = (byte[])client.NetworkManager.DecryptKey.Clone();
-                                    //server.NetworkManager.EncryptKey = (byte[])client.NetworkManager.EncryptKey.Clone();
+                                    // could log packets in a sperate thread
+                                    client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
+                                    PacketLogger.LogPacket(packet, PacketDirection.Client);
+                                    RawPacketLogger.LogPacket(packet, PacketDirection.Client, decryptedPacket);
                                 }
 
                                 //TODO: Better handling of packets
+                                if (packet is UpdateKeyPacket)
+                                {
+                                    client.NetworkManager.UpdateChipers((ulong)client.Seed, ((UpdateKeyPacket)packet).Key);
+                                    server.NetworkManager.UpdateChipers((ulong)client.Seed, ((UpdateKeyPacket)packet).Key);
+                                }
+
+                                if (packet is LoginSuccessPacket)
+                                {
+                                    var lsPacket = packet as LoginSuccessPacket;
+                                    client.UserID = lsPacket.UserID;
+                                    client.UserToken = lsPacket.UserToken;
+                                }
+
+                                if (packet is OwnHomeData)
+                                {
+                                    var ohPacket = packet as OwnHomeData;
+                                    client.Username = ohPacket.Username;
+                                    client.UserID = ohPacket.UserID;
+                                    client.Home = ohPacket.Home;
+                                }
                             }
                             catch (SocketException ex)
                             {
@@ -148,7 +176,6 @@ namespace CoCSharp
                     }
                     catch (Exception ex) { Console.WriteLine("[Exception]: {0}", ex.Message); break; }
                 }
-
                 Thread.Sleep(1);
             }
         }

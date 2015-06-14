@@ -5,15 +5,15 @@
         public ushort ID { get { return 0x4E20;} }
 
         public byte[] Key;
-        public int Unknown1;
+        //public int Unknown1; = 1
 
         public void ReadPacket(PacketReader reader)
         {
             Key = reader.ReadByteArray();
-            Unknown1 = reader.ReadInt();
+            //Unknown1 = reader.ReadInt();
         }
 
-        public void WritePacket(CoCStream writer)
+        public void WritePacket(PacketWriter writer)
         {
 
         }

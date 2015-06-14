@@ -15,8 +15,8 @@ namespace CoCSharp.Networking
         }
 
         #region Properties
-        public MemoryStream ReadBuffer { get; set; }
-        public MemoryStream WriteBuffer { get; set; }
+        public MemoryStream ReadBuffer { get; set; } // incoming packet buffer
+        public MemoryStream WriteBuffer { get; set; } // outgoing packet buffer
 
         public override bool CanTimeout { get { return false; } }
         public override bool CanWrite { get { return true; } }
