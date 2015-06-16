@@ -5,17 +5,17 @@ using System.IO;
 
 namespace CoCSharp.Logger
 {
-    public class RawPacketLogger
+    public class PacketDumper
     {
-        public RawPacketLogger()
+        public PacketDumper()
         {
-            this.LoggingDirectory = "rawPackets";
+            this.LoggingDirectory = "packet_dumps";
             if (!Directory.Exists(LoggingDirectory)) Directory.CreateDirectory(LoggingDirectory);
 
             //TODO: Compress old logs into a zip file.
         }
 
-        public RawPacketLogger(string loggingDirectory)
+        public PacketDumper(string loggingDirectory)
         {
             this.LoggingDirectory = loggingDirectory;
             if (!Directory.Exists(loggingDirectory)) Directory.CreateDirectory(loggingDirectory);

@@ -7,38 +7,31 @@ namespace CoCSharp.Networking.Packets
 
         public string Message;
         public string Username;
-
-        //public int Unknown1;
-        //public int Unknown2;
-
+        private int Unknown1;
+        private int Unknown2;
         public long UserID;
-        //public long UserID2;
+        private long UserID2;
         public bool HasClan;
         public long ClanID;
         public string ClanName;
-
-        //public int Unknown3;
+        private int Unknown3;
 
         public void ReadPacket(PacketReader reader)
         {
             Message = reader.ReadString();
             Username = reader.ReadString();
 
-            //Unknown1 = reader.ReadInt();
-            //Unknown2 = reader.ReadInt();
+            Unknown1 = reader.ReadInt();
+            Unknown2 = reader.ReadInt();
 
-            reader.Seek(8, SeekOrigin.Current);
             UserID = reader.ReadLong();
-
-            //UserID2 = reader.ReadLong();
-            reader.Seek(8, SeekOrigin.Current);
-
+            UserID2 = reader.ReadLong();
             HasClan = reader.ReadBool();
             if (HasClan)
             {
                 ClanID = reader.ReadLong();
                 ClanName = reader.ReadString();
-                //Unknown3 = reader.ReadInt();
+                Unknown3 = reader.ReadInt();
             }
         }
 

@@ -13,7 +13,7 @@ namespace CoCSharp.Networking.Packets
         public int ClientMinorVersion;
         public string FingerprintHash;
 
-        //public string Unknown1;
+        private string Unknown1;
 
         public string OpenUDID;
         public string MacAddress;
@@ -23,8 +23,8 @@ namespace CoCSharp.Networking.Packets
         public string AdvertisingGUID;
         public string OsVersion;
 
-        //public byte Unknown2;
-        //public string Unknown3;
+        private byte Unknown2;
+        private string Unknown3;
 
         public string AndroidDeviceID;
         public string FacebookDistributionID;
@@ -41,7 +41,7 @@ namespace CoCSharp.Networking.Packets
             ClientMinorVersion = reader.ReadInt();
             FingerprintHash = reader.ReadString();
 
-            /*Unknown1 = */ reader.ReadString();
+            Unknown1 = reader.ReadString();
 
             OpenUDID = reader.ReadString();
             MacAddress = reader.ReadString();
@@ -52,9 +52,8 @@ namespace CoCSharp.Networking.Packets
             AdvertisingGUID = reader.ReadString();
             OsVersion = reader.ReadString();
 
-            reader.Seek(1, SeekOrigin.Current);
-            //Unknown2 = (byte)reader.ReadByte();
-            /*Unknown3 = */ reader.ReadString();
+            Unknown2 = (byte)reader.ReadByte();
+            Unknown3 = reader.ReadString();
 
             AndroidDeviceID = reader.ReadString();
             FacebookDistributionID = reader.ReadString();

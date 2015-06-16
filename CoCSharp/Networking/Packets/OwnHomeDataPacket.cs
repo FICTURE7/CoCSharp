@@ -5,7 +5,7 @@ using System.IO;
 
 namespace CoCSharp.Networking.Packets
 {
-    public class OwnHomeData : IPacket
+    public class OwnHomeDataPacket : IPacket
     {
         public ushort ID { get { return 0x5E25; } }
 
@@ -18,14 +18,10 @@ namespace CoCSharp.Networking.Packets
         public TimeSpan ShieldDuration;
 
         //public long Unknown2;
-        public byte Compressed;
-
-        //public int CompressedDataLength;
-        //public int DecompressedDataLength;
-        //public byte[] HomeData;
-        //public string HomeJson;
+        public bool Compressed;
         public Village Home;
-
+        public bool HasClan; // could check if clan is null instead
+        public Clan Clan;
         //public int Unknown4;
 
         //public long UserID2;
@@ -36,6 +32,9 @@ namespace CoCSharp.Networking.Packets
         //public long Unknown7; // ffffffff 00000000
         //public long Unknown8; // 00000000 00000000
 
+        public int AllianceCastleLevel;
+        public int AllianceCastleCapacity;
+        public int AllianceCastleUsed;
         public int TownHallLevel;
         public string Username;
         public int FacebookID;
@@ -68,9 +67,7 @@ namespace CoCSharp.Networking.Packets
             //Unknown2 = reader.ReadLong();
             //Unknown3 = (byte)reader.ReadByte();
             reader.Seek(8, SeekOrigin.Current);
-            Compressed = (byte)reader.ReadByte();
-
-            //TODO: Make this moar fancy
+            Compressed = reader.ReadBool();
             Home = new Village();
             Home.FromPacketReader(reader);
 
@@ -80,13 +77,33 @@ namespace CoCSharp.Networking.Packets
             //UserID2 = reader.ReadLong();
             //UserID3 = reader.ReadLong();
             reader.Seek(16, SeekOrigin.Current);
+            
+            if ((HasClan = reader.ReadBool()))
+            {
+                Clan = new Clan()
+                {
+                    ID = reader.ReadLong(),
+                    Name = reader.ReadString(),
+                    Badge = reader.ReadInt(),
+                };
+                Level = reader.ReadInt(); // member status?
+                Level = reader.ReadInt();
+            }
+            
+            if (reader.ReadBool()) 
+                reader.Seek(8, SeekOrigin.Current);
+            if (reader.ReadBool())
+                reader.Seek(8, SeekOrigin.Current);
 
             //Unknown5 = (byte)reader.ReadByte();
             //Unknown6 = reader.ReadInt();
             //Unknown7 = reader.ReadLong();
             //Unknown8 = reader.ReadLong();
-            reader.Seek(17, SeekOrigin.Current);
+            reader.Seek(4, SeekOrigin.Current);
 
+            AllianceCastleLevel = reader.ReadInt();
+            AllianceCastleCapacity = reader.ReadInt();
+            AllianceCastleUsed = reader.ReadInt();
             TownHallLevel = reader.ReadInt();
             Username = reader.ReadString();
             FacebookID = reader.ReadInt();

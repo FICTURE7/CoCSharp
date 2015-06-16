@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace CoCSharp.Networking.Packets
 {
-    public class AvatarProfileRequest : IPacket
+    public class AvatarProfileRequestPacket : IPacket
     {
         public ushort ID { get { return 0x37F5; } }
 
         public ulong UserID;
         public ulong UserID2;
-        public byte Unknown1;
+        private byte Unknown1;
 
         public void ReadPacket(PacketReader reader)
         {

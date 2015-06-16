@@ -30,6 +30,11 @@ namespace CoCSharp.Networking
             return BaseStream.Read(buffer, 0, count);
         }
 
+        public override int ReadByte()
+        {
+            return BaseStream.ReadByte();
+        }
+
         public bool ReadBool()
         {
             var value = ReadByte();
@@ -79,12 +84,6 @@ namespace CoCSharp.Networking
         {
             var length = ReadInt();
             var buffer = ReadBytes(length, false);
-            return buffer;
-        }
-
-        public byte[] ReadByteArray(int count)
-        {
-            var buffer = ReadBytes(count, false);
             return buffer;
         }
 

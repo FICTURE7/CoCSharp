@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace CoCSharp.Networking.Packets
 {
-    public class BindFacebookAccount : IPacket
+    public class BindFacebookAccountPacket : IPacket
     {
         public ushort ID { get { return 0x3779; } }
 
-        public bool Unknown1;
+        private bool Unknown1;
         public string NumericFacebookID;
         public string Base64FacebookToken;
 

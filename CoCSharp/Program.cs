@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CoCSharp.Networking;
+using CoCSharp.Networking.Packets;
+using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -22,5 +25,13 @@ namespace CoCSharp
 
             Thread.Sleep(-1);
         }
+
+        //private static void Main()
+        //{
+        //    var packetBytes = File.ReadAllBytes("lel");
+        //    var reader = new PacketReader(new MemoryStream(packetBytes));
+        //    var packet = new OwnHomeDataPacket();
+        //    packet.ReadPacket(reader);
+        //}
     }
 }

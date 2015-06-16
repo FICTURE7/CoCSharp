@@ -7,33 +7,28 @@ namespace CoCSharp.Networking.Packets
         public ushort ID { get { return 0x4E88; } }
 
         public long UserID;
+        private long UserID2;
         public string UserToken;
         public string FacebookID;
         public string GameCenterID;
         public int MajorVersion;
         public int MinorVersion;
         public int RevisionVersion;
-        public string ServerEnvironment;
+        public string ServerEnvironment; // could implment Enum here
         public int LoginCount;
         public TimeSpan PlayTime;
-
-        //public int Unknown1;
-
+        private int Unknown1;
         public string FacebookAppID;
         public string DateLastPlayed;
         public string DateJoined;
-
-        //public int Unknown2;
-
+        private int Unknown2;
         public string GooglePlusID;
         public string CountryCode;
 
         public void ReadPacket(PacketReader reader)
         {
             UserID = reader.ReadLong();
-
-            reader.Seek(8, SeekOrigin.Current);
-
+            UserID2 = reader.ReadLong();
             UserToken = reader.ReadString();
             FacebookID = reader.ReadString();
             GameCenterID = reader.ReadString();
@@ -44,15 +39,13 @@ namespace CoCSharp.Networking.Packets
             LoginCount = reader.ReadInt();
             PlayTime = TimeSpan.FromSeconds(reader.ReadInt());
             
-            //Unknown1 = reader.ReadInt();
-            reader.Seek(4, SeekOrigin.Current);
+            Unknown1 = reader.ReadInt();
 
             FacebookAppID = reader.ReadString();
             DateLastPlayed = reader.ReadString();
             DateJoined = reader.ReadString();
 
-            //Unknown2 = reader.ReadInt();
-            reader.Seek(4, SeekOrigin.Current);
+            Unknown2 = reader.ReadInt();
 
             GooglePlusID = reader.ReadString();
             CountryCode = reader.ReadString();

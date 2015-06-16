@@ -17,12 +17,12 @@ namespace CoCSharp
         public CoCProxy()
         {
             this.PacketLogger = new PacketLogger();
-            this.RawPacketLogger = new RawPacketLogger();
+            this.PacketDumper = new PacketDumper();
             this.Clients = new List<CoCProxyClient>();
         }
 
         public PacketLogger PacketLogger { get; set; }
-        public RawPacketLogger RawPacketLogger { get; set; }
+        public PacketDumper PacketDumper { get; set; }
         public List<CoCProxyClient> Clients { get; set; }
         public TcpListener Listener { get; set; }
 
@@ -92,7 +92,7 @@ namespace CoCSharp
                                 {
                                     server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
                                     PacketLogger.LogPacket(packet, PacketDirection.Server);
-                                    RawPacketLogger.LogPacket(packet, PacketDirection.Server, decryptedPacket);
+                                    PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
                                 }
 
                                 //TODO: Better handling of packets
@@ -135,7 +135,7 @@ namespace CoCSharp
                                     // could log packets in a sperate thread
                                     client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
                                     PacketLogger.LogPacket(packet, PacketDirection.Client);
-                                    RawPacketLogger.LogPacket(packet, PacketDirection.Client, decryptedPacket);
+                                    PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
                                 }
 
                                 //TODO: Better handling of packets
@@ -152,9 +152,9 @@ namespace CoCSharp
                                     client.UserToken = lsPacket.UserToken;
                                 }
 
-                                if (packet is OwnHomeData)
+                                if (packet is OwnHomeDataPacket)
                                 {
-                                    var ohPacket = packet as OwnHomeData;
+                                    var ohPacket = packet as OwnHomeDataPacket;
                                     client.Username = ohPacket.Username;
                                     client.UserID = ohPacket.UserID;
                                     client.Home = ohPacket.Home;
@@ -174,7 +174,12 @@ namespace CoCSharp
                             }
                         }
                     }
-                    catch (Exception ex) { Console.WriteLine("[Exception]: {0}", ex.Message); break; }
+                    catch (Exception ex) 
+                    {
+                        GC.Collect(); // incase reading packets causes an overflow
+                        Console.WriteLine("[Exception]: {0}", ex.Message); 
+                        break; 
+                    }
                 }
                 Thread.Sleep(1);
             }

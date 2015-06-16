@@ -22,6 +22,7 @@ namespace CoCSharp.Logger
             LogWriter.AutoFlush = true;
         }
 
+        public bool LogPrivateFields { get; set; }
         public bool LogConsole { get; set; }
 
         private StreamWriter LogWriter { get; set; }
@@ -58,7 +59,7 @@ namespace CoCSharp.Logger
                     var fieldName = field.Name;
                     var fieldValue = field.GetValue(packet);
 
-                    if (field.IsPrivate) continue;
+                    if (field.IsPrivate && !LogPrivateFields) continue;
 
                     builder.Indent();
                     builder.AppendFormat("{0}: ", fieldName);

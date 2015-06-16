@@ -1,6 +1,6 @@
 ﻿namespace CoCSharp.Networking.Packets
 {
-    public class SetDeviceToken : IPacket
+    public class SetDeviceTokenPacket : IPacket
     {
         public ushort ID { get { return 0x2781; } }
 

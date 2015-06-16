@@ -52,15 +52,29 @@ namespace CoCSharp.Logic
         public void FromPacketReader(PacketReader reader)
         {
             var homeData = reader.ReadByteArray();
-            var jsonData = new byte[homeData.Length - 4]; // skipping Decompressed data length
-            Buffer.BlockCopy(homeData, 4, jsonData, 0, homeData.Length - 4);
-            var homeJson = ZlibStream.UncompressString(jsonData);
-            FromJson(homeJson);
+            var binaryReader = new BinaryReader(new MemoryStream(homeData));
+            
+            var decompressedLength = binaryReader.ReadInt32();
+            var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
+            var json = ZlibStream.UncompressString(compressedJson);
+            
+            if (decompressedLength != json.Length) throw new InvalidDataException("Json length is not valid.");
+            
+            FromJson(json);
         }
 
         public void ToPacketWriter(PacketWriter writer)
         {
-            throw new NotImplementedException();
+            var json = ToJson();
+            var decompressedLength = json.Length;
+            var compressedJson = ZlibStream.CompressString(json);
+            var binaryWriter = new BinaryWriter(new MemoryStream());
+            
+            binaryWriter.Write(decompressedLength);
+            binaryWriter.Write(compressedJson);
+
+            var homeData = ((MemoryStream)binaryWriter.BaseStream).ToArray();
+            writer.Write(homeData);
         }
     }
 }
