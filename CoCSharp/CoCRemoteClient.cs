@@ -16,6 +16,7 @@ namespace CoCSharp
         public string UserToken { get; set; }
         public long UserID { get; set; }
         public int Seed { get; set; }
+        public bool LoggedIn { get; set; }
         public Village Home { get; set; }
         public TcpClient Client { get; set; }
         public NetworkManager NetworkManager { get; set; }

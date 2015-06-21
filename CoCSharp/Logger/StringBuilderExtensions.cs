@@ -2,7 +2,7 @@
 
 namespace CoCSharp.Logger
 {
-    // could make stuff moar fancy here?
+    //TODO: Increase swag
     public static class StringBuilderExtensions
     {
         private const string IndentString = "    ";

@@ -7,6 +7,7 @@ using System.IO;
 
 namespace CoCSharp.Logic
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class Village
     {
         public Village()
@@ -18,18 +19,14 @@ namespace CoCSharp.Logic
         }
 
         [JsonProperty("buildings")]
-        public List<Building> Buildings { get; set; } // should be lists buts its ok for now
-
+        public List<Building> Buildings { get; set; }
         [JsonProperty("obstacles")]
         public List<Obstacle> Obstacles { get; set; }
-
         [JsonProperty("traps")]
         public List<Trap> Traps { get; set; }
-
         [JsonProperty("decos")]
         public List<Decoration> Decorations { get; set; }
 
-        [JsonIgnore()]
         public string RawJson { get; set; }
 
         public void FromJson(string json)

@@ -1,7 +1,6 @@
-﻿using CoCSharp.Networking;
-using CoCSharp.Networking.Packets;
+﻿using CoCSharp.Database;
+using CoCSharp.Logic;
 using System;
-using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -26,12 +25,65 @@ namespace CoCSharp
             Thread.Sleep(-1);
         }
 
-        //private static void Main()
-        //{
-        //    var packetBytes = File.ReadAllBytes("lel");
-        //    var reader = new PacketReader(new MemoryStream(packetBytes));
-        //    var packet = new OwnHomeDataPacket();
-        //    packet.ReadPacket(reader);
-        //}
+        private static void TestObstacleMain(string[] args)
+        {
+            // TestObstacle
+            var obstacle = (Obstacle)null;
+            var obstacleDb = new ObstacleDatabase(@"database\obstacles.csv");
+
+            obstacleDb.LoadDatabase();
+
+            LogVillageObject(obstacle);
+            Console.ReadLine();
+        }
+
+        private static void TestDecorationMain(string[] args)
+        {
+            var decoration = (Decoration)null;
+            var decorationDb = new DecorationDatabase(@"database\decos.csv");
+
+            decorationDb.LoadDatabase();
+            decorationDb.TryGetDecoration(18000007, out decoration);
+
+            LogVillageObject(decoration);
+            Console.ReadLine();
+        }
+
+        private static void TestBuildingMain(string[] args)
+        {
+            var building = (Building)null;
+            var buildingDb = new BuildingDatabase(@"database\buildings.csv");
+
+            buildingDb.LoadDatabase();
+            buildingDb.TryGetBuilding(1000000, 1, out building);
+
+            LogVillageObject(building);
+            Console.ReadLine();
+        }
+
+        private static void TestTrapMain(string[] args)
+        {
+            var trap = (Trap)null;
+            var trapDb = new TrapDatabase(@"database\traps.csv");
+
+            trapDb.LoadDatabase();
+            trapDb.TryGetTrap(12000000, 1, out trap);
+
+            LogVillageObject(trap);
+            Console.ReadLine();
+        }
+
+        private static void LogVillageObject(VillageObject villageObj)
+        {
+            if (villageObj == null) return;
+            var type = villageObj.GetType();
+            var properties = type.GetProperties();
+            foreach (var info in properties)
+            {
+                var name = info.Name;
+                var value = info.GetMethod.Invoke(villageObj, null);
+                Console.WriteLine("{0}: {1}", name, value);
+            }
+        }
     }
 }

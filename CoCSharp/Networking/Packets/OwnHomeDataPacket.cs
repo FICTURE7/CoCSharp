@@ -65,7 +65,6 @@ namespace CoCSharp.Networking.Packets
             ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt());
 
             //Unknown2 = reader.ReadLong();
-            //Unknown3 = (byte)reader.ReadByte();
             reader.Seek(8, SeekOrigin.Current);
             Compressed = reader.ReadBool();
             Home = new Village();
