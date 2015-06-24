@@ -1,7 +1,7 @@
 ﻿using CoCSharp.Logic;
 using System.IO;
 
-namespace CoCSharp.Database.Csv
+namespace CoCSharp.Databases.Csv
 {
     public class CsvRow
     {

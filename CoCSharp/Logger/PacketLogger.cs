@@ -11,7 +11,7 @@ namespace CoCSharp.Logger
         public PacketLogger()
         {
             LogConsole = true;
-            LogWriter = new StreamWriter("packets.log");
+            LogWriter = new StreamWriter("packets.log", true);
             LogWriter.AutoFlush = true;
         }
 
@@ -29,7 +29,6 @@ namespace CoCSharp.Logger
 
         public void LogPacket(IPacket packet, PacketDirection direction)
         {
-            //TODO: Log raw packet data
             var builder = new StringBuilder();
             var prefix = direction == PacketDirection.Server ? "[CLIENT > SERVER] " : "[CLIENT < SERVER] ";
 

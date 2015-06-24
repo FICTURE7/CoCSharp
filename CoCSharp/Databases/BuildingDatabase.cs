@@ -1,10 +1,10 @@
-﻿using CoCSharp.Database.Csv;
+﻿using CoCSharp.Databases.Csv;
 using CoCSharp.Logic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoCSharp.Database
+namespace CoCSharp.Databases
 {
     public class BuildingDatabase : BaseDatabase
     {
@@ -89,11 +89,6 @@ namespace CoCSharp.Database
         public static bool IsBuilding(int id)
         {
             return ID < id && id < 2000000; // locales
-        }
-
-        private static int ToInt32(string str)
-        {
-            return str == "" ? 0 : Convert.ToInt32(str);
         }
     }
 }

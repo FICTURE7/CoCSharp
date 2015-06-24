@@ -122,12 +122,9 @@ namespace CoCSharp.Networking
         private static IPacket GetPacket(ushort id)
         {
             var packetType = (Type)null;
-            var packet = (IPacket)null;
 
-            if (PacketDictionary.TryGetValue(id, out packetType)) packet = (IPacket)Activator.CreateInstance(packetType);
-            else packet = new UnknownPacket();
-
-            return packet;
+            if (!PacketDictionary.TryGetValue(id, out packetType)) return new UnknownPacket();
+            return (IPacket)Activator.CreateInstance(packetType);
         }
 
         private static void InitializePacketDictionary()

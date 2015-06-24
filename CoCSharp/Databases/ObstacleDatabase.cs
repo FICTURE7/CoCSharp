@@ -1,9 +1,9 @@
-﻿using CoCSharp.Database.Csv;
+﻿using CoCSharp.Databases.Csv;
 using CoCSharp.Logic;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoCSharp.Database
+namespace CoCSharp.Databases
 {
     public class ObstacleDatabase : BaseDatabase
     {
@@ -40,7 +40,7 @@ namespace CoCSharp.Database
 
         public override void LoadDatabase()
         {
-            var id = ID;     
+            var id = ID;
             while (!CsvTable.EndOfFile)
             {
                 var row = CsvTable.ReadNextRow();

@@ -1,76 +1,46 @@
-﻿using CoCSharp.Database;
+﻿using CoCSharp.Handlers;
 using CoCSharp.Logic;
 using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 
 namespace CoCSharp
 {
-    class Program
+    public class Program
     {
-        private static void Main(string[] args)
+        public static ProxyConfiguration ProxyConfiguration { get; set; }
+        public static CoCProxyServer Proxy { get; set; }
+
+        public static void Main(string[] args)
         {
-            //TODO: Implement args.
             Console.WindowWidth += 20;
             Console.Title = "CoC# Proxy";
 
-            var endPoint = new IPEndPoint(IPAddress.Any, CoCProxy.DefaultPort);
-
-            Console.WriteLine("Initializing new instance of proxy...");
-            var proxy = new CoCProxy();
             Console.WriteLine("Starting proxy...");
-            proxy.Start(endPoint);
-            Console.WriteLine("Proxy listening on *:{0}", endPoint.Port);
 
+            ProxyConfiguration = ProxyConfiguration.LoadConfiguration("proxyConfig.xml");
+
+            if (ProxyConfiguration.DeleteLogOnStartup) File.Delete("packets.log");
+
+            Proxy = new CoCProxyServer();
+            Proxy.PacketLogger.LogPrivateFields = ProxyConfiguration.LogPrivatePacketFields;
+            Proxy.PacketDumper.Active = ProxyConfiguration.LogRawPacket;
+            Proxy.ServerAddress = ProxyConfiguration.ServerAddress;
+            Proxy.ServerPort = ProxyConfiguration.ServerPort;
+
+            var proxyEndPoint = new IPEndPoint(IPAddress.Any, ProxyConfiguration.ProxyPort);
+            Proxy.Start(proxyEndPoint);
+            PacketHandlers.RegisterHanlders(Proxy);
+
+            Console.WriteLine("CoC# is running on *:{0}", proxyEndPoint.Port);
             Thread.Sleep(-1);
         }
 
-        private static void TestObstacleMain(string[] args)
+        private static IPEndPoint ResolveAddress(string address, int port)
         {
-            // TestObstacle
-            var obstacle = (Obstacle)null;
-            var obstacleDb = new ObstacleDatabase(@"database\obstacles.csv");
-
-            obstacleDb.LoadDatabase();
-
-            LogVillageObject(obstacle);
-            Console.ReadLine();
-        }
-
-        private static void TestDecorationMain(string[] args)
-        {
-            var decoration = (Decoration)null;
-            var decorationDb = new DecorationDatabase(@"database\decos.csv");
-
-            decorationDb.LoadDatabase();
-            decorationDb.TryGetDecoration(18000007, out decoration);
-
-            LogVillageObject(decoration);
-            Console.ReadLine();
-        }
-
-        private static void TestBuildingMain(string[] args)
-        {
-            var building = (Building)null;
-            var buildingDb = new BuildingDatabase(@"database\buildings.csv");
-
-            buildingDb.LoadDatabase();
-            buildingDb.TryGetBuilding(1000000, 1, out building);
-
-            LogVillageObject(building);
-            Console.ReadLine();
-        }
-
-        private static void TestTrapMain(string[] args)
-        {
-            var trap = (Trap)null;
-            var trapDb = new TrapDatabase(@"database\traps.csv");
-
-            trapDb.LoadDatabase();
-            trapDb.TryGetTrap(12000000, 1, out trap);
-
-            LogVillageObject(trap);
-            Console.ReadLine();
+            var entry = Dns.GetHostEntry(address);
+            return new IPEndPoint(entry.AddressList[0], port);
         }
 
         private static void LogVillageObject(VillageObject villageObj)

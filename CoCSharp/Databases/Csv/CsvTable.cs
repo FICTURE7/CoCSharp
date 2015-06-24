@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-namespace CoCSharp.Database.Csv
+namespace CoCSharp.Databases.Csv
 {
-    public class CsvTable
+    public class CsvTable : IDisposable
     {
         public CsvTable(string path)
         {
@@ -21,6 +22,12 @@ namespace CoCSharp.Database.Csv
         {
             var row = Reader.ReadLine().Split(',');
             return new CsvRow(row);
+        }
+
+        public void Dispose()
+        {
+            CsvFile.Dispose();
+            Reader.Dispose();
         }
     }
 }

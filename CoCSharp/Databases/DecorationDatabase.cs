@@ -1,9 +1,9 @@
-﻿using CoCSharp.Database.Csv;
+﻿using CoCSharp.Databases.Csv;
 using CoCSharp.Logic;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoCSharp.Database
+namespace CoCSharp.Databases
 {
     public class DecorationDatabase : BaseDatabase
     {

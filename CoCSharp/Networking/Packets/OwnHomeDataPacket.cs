@@ -7,6 +7,7 @@ namespace CoCSharp.Networking.Packets
 {
     public class OwnHomeDataPacket : IPacket
     {
+        //Not very consistant, it changes when in League
         public ushort ID { get { return 0x5E25; } }
 
         public TimeSpan LastLogged;

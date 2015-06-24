@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace CoCSharp.Database
+namespace CoCSharp.Databases
 {
     public static class StreamReaderExtension
     {

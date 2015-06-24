@@ -9,7 +9,7 @@ namespace CoCSharp.Networking
         public CoCStream(TcpClient client)
         {
             //TODO: Do some renaming
-            this.Socket = client.Client;
+            this.Connection = client.Client;
             this.ReadBuffer = new MemoryStream(4096);
             this.WriteBuffer = new MemoryStream(4096);
         }
@@ -31,7 +31,7 @@ namespace CoCSharp.Networking
             set { throw new NotSupportedException(); }
         }
 
-        private Socket Socket { get; set; }
+        private Socket Connection { get; set; }
         #endregion
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -51,7 +51,7 @@ namespace CoCSharp.Networking
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            var bytesRead = Socket.Receive(buffer, offset, count, SocketFlags.None);
+            var bytesRead = Connection.Receive(buffer, offset, count, SocketFlags.None);
             ReadBuffer.Write(buffer, 0, bytesRead); // saves it to a buffer incase of fragmentation
 
             ReadBuffer.Seek(0, SeekOrigin.End); // continue stream
@@ -64,7 +64,7 @@ namespace CoCSharp.Networking
         public int ReadToBuffer() // receive data from socket and saves it to read buffer
         {
             var buffer = new byte[1024];
-            var bytesRead = Socket.Receive(buffer, 0, 1024, SocketFlags.None);
+            var bytesRead = Connection.Receive(buffer, 0, 1024, SocketFlags.None);
 
             ReadBuffer.Seek(0, SeekOrigin.End); // continue stream
             ReadBuffer.Write(buffer, 0, bytesRead);
@@ -75,7 +75,7 @@ namespace CoCSharp.Networking
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            Socket.Send(buffer, 0, count, SocketFlags.None);
+            Connection.Send(buffer, 0, count, SocketFlags.None);
         }
     }
 }

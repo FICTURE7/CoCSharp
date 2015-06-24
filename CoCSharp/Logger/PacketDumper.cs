@@ -23,10 +23,12 @@ namespace CoCSharp.Logger
             //TODO: Compress old logs into a zip file.
         }
 
+        public bool Active { get; set; }
         public string LoggingDirectory { get; set; }
 
         public void LogPacket(IPacket packet, PacketDirection direction, byte[] decryptedPacket)
         {
+            if (!Active) return;
             var packetType = packet.GetType();
             var fileTime = DateTime.Now.ToString("[~HH.mm.ss.fff] ");
             var filePrefix = direction == PacketDirection.Server ? "[CLIENT 2 SERVER] " : "[SERVER 2 CLIENT] ";
