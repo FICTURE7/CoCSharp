@@ -2,30 +2,33 @@
 using CoCSharp.Networking.Packets;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
-namespace CoCSharp.Logger
+namespace CoCSharp.Proxy.Logging
 {
     public class PacketLogger
     {
         public PacketLogger()
         {
-            LogConsole = true;
-            LogWriter = new StreamWriter("packets.log", true);
-            LogWriter.AutoFlush = true;
+            this.LogConsole = true;
+            this.LogWriter = new StreamWriter("packets.log", true);
+            this.LogWriter.AutoFlush = true;
+            this.BindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField;
         }
 
         public PacketLogger(string logName)
         {
-            LogConsole = true;
-            LogWriter = new StreamWriter(logName);
-            LogWriter.AutoFlush = true;
+            this.LogConsole = true;
+            this.LogWriter = new StreamWriter(logName);
+            this.LogWriter.AutoFlush = true;
         }
 
         public bool LogPrivateFields { get; set; }
         public bool LogConsole { get; set; }
 
         private StreamWriter LogWriter { get; set; }
+        private BindingFlags BindingFlags { get; set; }
 
         public void LogPacket(IPacket packet, PacketDirection direction)
         {
@@ -34,7 +37,7 @@ namespace CoCSharp.Logger
 
             var packetType = packet.GetType();
             var packetName = packetType.Name;
-            var packetFields = packetType.GetFields();
+            var packetFields = packetType.GetFields(BindingFlags);
 
             builder.Append(DateTime.Now.ToString("[~HH:mm:ss.fff] "));
             builder.Append(prefix);

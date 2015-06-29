@@ -10,20 +10,22 @@ namespace CoCSharp.Networking.Packets
     {
         public ushort ID { get { return 0x37F5; } }
 
-        public ulong UserID;
-        public ulong UserID2;
+        public long UserID;
+        private long UserID2;
         private byte Unknown1;
 
         public void ReadPacket(PacketReader reader)
         {
-            UserID = reader.ReadULong();
-            UserID2 = reader.ReadULong();
+            UserID = reader.ReadLong();
+            UserID2 = reader.ReadLong();
             Unknown1 = (byte)reader.ReadByte();
         }
 
         public void WritePacket(PacketWriter writer)
         {
-
+            writer.WriteLong(UserID);
+            writer.WriteLong(UserID2);
+            writer.WriteByte(Unknown1);
         }
     }
 }

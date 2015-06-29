@@ -18,15 +18,15 @@ namespace CoCSharp.Databases.Csv
        
         private string[] Records { get; set; }
 
-        public string GetRecord(int column)
+        public string ReadRecordAsString(int column)
         {
             var str = Records[column].Replace("\"", "");
             return str;
         }
 
-        public bool GetRecordAsBool(int column)
+        public bool ReadRecordAsBool(int column)
         {
-            var value = GetRecord(column);
+            var value = ReadRecordAsString(column);
             switch (value)
             {
                 case "TRUE":
@@ -38,15 +38,15 @@ namespace CoCSharp.Databases.Csv
             }
         }
 
-        public int GetRecordAsInt(int column)
+        public int ReadRecordAsInt(int column)
         {
-            var value = GetRecord(column);
+            var value = ReadRecordAsString(column);
             return value == string.Empty ? 0 : int.Parse(value);
         }
 
-        public Resource GetRecordAsResource(int column)
+        public Resource ReadRecordAsResource(int column)
         {
-            var value = GetRecord(column);
+            var value = ReadRecordAsString(column);
             switch (value)
             {
                 case "":

@@ -37,7 +37,21 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
+            writer.WriteString(Message);
+            writer.WriteString(Username);
 
+            writer.WriteInt(Unknown1);
+            writer.WriteInt(Unknown2);
+
+            writer.WriteLong(UserID);
+            writer.WriteLong(UserID2);
+            writer.WriteBool(HasClan);
+            if (HasClan)
+            {
+                writer.WriteLong(ClanID);
+                writer.WriteString(ClanName);
+                writer.WriteInt(Unknown3);
+            }
         }
     }
 }

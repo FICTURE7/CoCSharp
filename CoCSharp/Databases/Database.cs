@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Databases.Csv;
-using CoCSharp.Logic;
 
 namespace CoCSharp.Databases
 {

@@ -15,7 +15,8 @@
 
         public void WritePacket(PacketWriter writer)
         {
-
+            writer.WriteString(NewName);
+            writer.WriteBool(Unknown1);
         }
     }
 }

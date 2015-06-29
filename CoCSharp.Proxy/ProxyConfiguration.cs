@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Xml;
 
-namespace CoCSharp
+namespace CoCSharp.Proxy
 {
     public class ProxyConfiguration
     {

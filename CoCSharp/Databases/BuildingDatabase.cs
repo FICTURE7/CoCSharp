@@ -51,16 +51,16 @@ namespace CoCSharp.Databases
             {
                 var row = CsvTable.ReadNextRow();
 
-                var name = row.GetRecord(NameColumn);
+                var name = row.ReadRecordAsString(NameColumn);
 
-                var days = row.GetRecordAsInt(BuildTimeDayColumn);
-                var hours = row.GetRecordAsInt(BuildTimeHourColumn);
-                var seconds = row.GetRecordAsInt(BuildTimeSecondColumn);
+                var days = row.ReadRecordAsInt(BuildTimeDayColumn);
+                var hours = row.ReadRecordAsInt(BuildTimeHourColumn);
+                var seconds = row.ReadRecordAsInt(BuildTimeSecondColumn);
 
-                var buildResource = row.GetRecordAsResource(BuildResourceColumn);
-                var buildCost = row.GetRecordAsInt(BuildCostColumn);
-                var townHallLevel = row.GetRecordAsInt(TownHallLevelColumn);
-                var hitpoints = row.GetRecordAsInt(HitpointColumn);
+                var buildResource = row.ReadRecordAsResource(BuildResourceColumn);
+                var buildCost = row.ReadRecordAsInt(BuildCostColumn);
+                var townHallLevel = row.ReadRecordAsInt(TownHallLevelColumn);
+                var hitpoints = row.ReadRecordAsInt(HitpointColumn);
 
                 if (!string.IsNullOrEmpty(name)) // must be a lvl 1 building
                 {
@@ -70,15 +70,15 @@ namespace CoCSharp.Databases
                 }
                 else // building lvl must be > 1
                 {
-                    name = parentRow.GetRecord(NameColumn);
+                    name = parentRow.ReadRecordAsString(NameColumn);
                     level++;
                 }
 
                 var building = new Building(id, level);
-                building.Name = parentRow.GetRecord(NameColumn);
+                building.Name = parentRow.ReadRecordAsString(NameColumn);
                 building.BuildTime = new TimeSpan(days, hours, 0, seconds);
                 building.BuildCost = buildCost;
-                building.BuildResource = parentRow.GetRecordAsResource(BuildResourceColumn);
+                building.BuildResource = parentRow.ReadRecordAsResource(BuildResourceColumn);
                 building.TownHallLevel = townHallLevel;
                 building.Hitpoints = hitpoints;
 

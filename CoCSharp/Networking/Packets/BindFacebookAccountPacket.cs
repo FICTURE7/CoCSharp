@@ -23,7 +23,9 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
-
+            writer.WriteBool(Unknown1);
+            writer.WriteString(NumericFacebookID);
+            writer.WriteString(Base64FacebookToken);
         }
     }
 }

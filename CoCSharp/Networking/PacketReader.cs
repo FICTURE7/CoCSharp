@@ -1,6 +1,4 @@
-﻿using CoCSharp.Logic;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Text;
 
@@ -37,8 +35,7 @@ namespace CoCSharp.Networking
 
         public bool ReadBool()
         {
-            var value = ReadByte();
-            return value == 1 ? true : false;
+            return ReadByte() == 1 ? true : false;
         }
 
         public short ReadShort()
@@ -115,11 +112,11 @@ namespace CoCSharp.Networking
             throw new InvalidOperationException("PacketReader is not suppose to write stuff.");
         }
 
-        private byte[] ReadBytes(int count, bool endian = true)
+        private byte[] ReadBytes(int count, bool switchEndian = true)
         {
             var buffer = new byte[count];
             BaseStream.Read(buffer, 0, count);
-            if (BitConverter.IsLittleEndian && endian) Array.Reverse(buffer); // CoC uses big-endian
+            if (BitConverter.IsLittleEndian && switchEndian) Array.Reverse(buffer); // CoC uses big-endian
             return buffer;
         }
     }

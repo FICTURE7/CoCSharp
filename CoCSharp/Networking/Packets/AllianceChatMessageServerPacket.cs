@@ -49,7 +49,30 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
+            writer.WriteInt(MessageType);
+            writer.WriteInt(Unknown1);
+            writer.WriteUInt(ServerTick);
+            writer.WriteByte(Unknown2);
 
+            switch (MessageType)
+            {
+                case 1:
+                    break;
+
+                case 2:
+                    writer.WriteLong(UserID);
+                    writer.WriteLong(UserID2);
+                    writer.WriteString(Username);
+                    writer.WriteInt(Unknown3);
+                    writer.WriteInt(Unknown4);
+                    writer.WriteInt(MemberStatus);
+                    writer.WriteInt((int)MessageTime.TotalSeconds);
+                    writer.WriteString(Message);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

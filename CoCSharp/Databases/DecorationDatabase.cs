@@ -43,11 +43,11 @@ namespace CoCSharp.Databases
             {
                 var row = CsvTable.ReadNextRow();
 
-                var name = row.GetRecord(NameColumn);
-                var buildResource = row.GetRecordAsResource(BuildResourceColumn);
-                var buildCost = row.GetRecordAsInt(BuildCostColumn);
-                var requiredLevel = row.GetRecordAsInt(RequiredLevelColumn);
-                var maxCount = row.GetRecordAsInt(MaxCount);
+                var name = row.ReadRecordAsString(NameColumn);
+                var buildResource = row.ReadRecordAsResource(BuildResourceColumn);
+                var buildCost = row.ReadRecordAsInt(BuildCostColumn);
+                var requiredLevel = row.ReadRecordAsInt(RequiredLevelColumn);
+                var maxCount = row.ReadRecordAsInt(MaxCount);
 
                 var decoration = new Decoration(id);
                 decoration.Name = name;

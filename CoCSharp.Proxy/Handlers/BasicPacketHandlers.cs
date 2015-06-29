@@ -3,11 +3,11 @@ using CoCSharp.Networking.Packets;
 using System;
 using System.Net.Sockets;
 
-namespace CoCSharp.Handlers
+namespace CoCSharp.Proxy.Handlers
 {
-    public static class PacketHandlers
+    public static class BasicPacketHandlers
     {
-        public static void HandleLoginSuccessPacket(CoCProxyServer proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleLoginSuccessPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var lsPacket = packet as LoginSuccessPacket;
 
@@ -16,7 +16,7 @@ namespace CoCSharp.Handlers
             client.Client.LoggedIn = true;
         }
 
-        public static void HandleUpdateKeyPacket(CoCProxyServer proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleUpdateKeyPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var ukPacket = packet as UpdateKeyPacket;
 
@@ -24,7 +24,7 @@ namespace CoCSharp.Handlers
             client.Server.NetworkManager.UpdateChipers((ulong)client.Client.Seed, ukPacket.Key);
         }
 
-        public static void HandleLoginRequestPacket(CoCProxyServer proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleLoginRequestPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var lrPacket = packet as LoginRequestPacket;
 
@@ -34,7 +34,7 @@ namespace CoCSharp.Handlers
             client.Client.UserToken = lrPacket.UserToken;
         }
 
-        public static void HandleOwnHomeDataPacket(CoCProxyServer proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var ohPacket = packet as OwnHomeDataPacket;
             client.Client.Username = ohPacket.Username;
@@ -55,7 +55,7 @@ namespace CoCSharp.Handlers
                 client.Client.Home.Obstacles[x].FromDatabase(proxyServer.ObstacleDatabase);
         }
 
-        public static void RegisterHanlders(CoCProxyServer proxyServer)
+        public static void RegisterHanlders(CoCProxy proxyServer)
         {
             proxyServer.RegisterPacketHandler(new UpdateKeyPacket(), HandleUpdateKeyPacket);
             proxyServer.RegisterPacketHandler(new LoginRequestPacket(), HandleLoginRequestPacket);

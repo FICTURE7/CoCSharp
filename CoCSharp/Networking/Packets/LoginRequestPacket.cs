@@ -26,9 +26,9 @@ namespace CoCSharp.Networking.Packets
         private byte Unknown2;
         private string Unknown3;
 
+        public bool IsAdvertisingTrackingEnabled;
         public string AndroidDeviceID;
         public string FacebookDistributionID;
-        //public bool AdvertisingTrackerEnabled; // causes buffer overflow cause of invalid VendorGUID string length
         public string VendorGUID;
         public int Seed;
 
@@ -47,7 +47,6 @@ namespace CoCSharp.Networking.Packets
             MacAddress = reader.ReadString();
             DeviceModel = reader.ReadString();
             LocaleKey = reader.ReadInt();
-
             Language = reader.ReadString();
             AdvertisingGUID = reader.ReadString();
             OsVersion = reader.ReadString();
@@ -57,17 +56,38 @@ namespace CoCSharp.Networking.Packets
 
             AndroidDeviceID = reader.ReadString();
             FacebookDistributionID = reader.ReadString();
-
-            reader.Seek(1, SeekOrigin.Current);
-
-            //AdvertisingTrackerEnabled = reader.ReadBool();
+            IsAdvertisingTrackingEnabled = reader.ReadBool();
             VendorGUID = reader.ReadString();
             Seed = reader.ReadInt();
         }
 
         public void WritePacket(PacketWriter writer)
         {
+            writer.WriteLong(UserID);
+            writer.WriteString(UserToken);
+            writer.WriteInt(ClientMajorVersion);
+            writer.WriteInt(ClientContentVersion);
+            writer.WriteInt(ClientMinorVersion);
+            writer.WriteString(FingerprintHash);
 
+            writer.WriteString(Unknown1);
+
+            writer.WriteString(OpenUDID);
+            writer.WriteString(MacAddress);
+            writer.WriteString(DeviceModel);
+            writer.WriteInt(LocaleKey);
+            writer.WriteString(Language);
+            writer.WriteString(AdvertisingGUID);
+            writer.WriteString(OsVersion);
+
+            writer.WriteByte(Unknown2);
+            writer.WriteString(Unknown3);
+
+            writer.WriteString(AndroidDeviceID);
+            writer.WriteString(FacebookDistributionID);
+            writer.WriteBool(IsAdvertisingTrackingEnabled);
+            writer.WriteString(VendorGUID);
+            writer.WriteInt(Seed);
         }
     }
 }

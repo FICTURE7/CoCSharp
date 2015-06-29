@@ -71,7 +71,7 @@ namespace CoCSharp.Logic
             binaryWriter.Write(compressedJson);
 
             var homeData = ((MemoryStream)binaryWriter.BaseStream).ToArray();
-            writer.Write(homeData);
+            writer.Write(homeData, 0, homeData.Length);
         }
     }
 }

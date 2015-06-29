@@ -49,16 +49,16 @@ namespace CoCSharp.Databases
             {
                 var row = CsvTable.ReadNextRow();
 
-                var name = row.GetRecord(NameColumn);
-                var buildResource = row.GetRecordAsResource(BuildResourceColumn);
+                var name = row.ReadRecordAsString(NameColumn);
+                var buildResource = row.ReadRecordAsResource(BuildResourceColumn);
 
-                var days = row.GetRecordAsInt(BuildTimeDayColumn);
-                var hours = row.GetRecordAsInt(BuildTimeHourColumn);
-                var minutes = row.GetRecordAsInt(BuildTimeMinuteColumn);
+                var days = row.ReadRecordAsInt(BuildTimeDayColumn);
+                var hours = row.ReadRecordAsInt(BuildTimeHourColumn);
+                var minutes = row.ReadRecordAsInt(BuildTimeMinuteColumn);
 
-                var buildCost = row.GetRecordAsInt(BuildCostColumn);
-                var rearmCost = row.GetRecordAsInt(RearmCostColumn);
-                var townHallLevel = row.GetRecordAsInt(TownHallLevelColumn);
+                var buildCost = row.ReadRecordAsInt(BuildCostColumn);
+                var rearmCost = row.ReadRecordAsInt(RearmCostColumn);
+                var townHallLevel = row.ReadRecordAsInt(TownHallLevelColumn);
 
                 if (!string.IsNullOrEmpty(name))
                 {
@@ -68,13 +68,13 @@ namespace CoCSharp.Databases
                 }
                 else
                 {
-                    name = parentRow.GetRecord(NameColumn);
+                    name = parentRow.ReadRecordAsString(NameColumn);
                     level++;
                 }
 
                 var trap = new Trap(id, level);
-                trap.Name = parentRow.GetRecord(NameColumn);
-                trap.BuildResource = parentRow.GetRecordAsResource(BuildResourceColumn);
+                trap.Name = parentRow.ReadRecordAsString(NameColumn);
+                trap.BuildResource = parentRow.ReadRecordAsResource(BuildResourceColumn);
                 trap.BuildTime = new TimeSpan(days, hours, minutes, 0);
                 trap.BuildCost = buildCost;
                 trap.RearmCost = rearmCost;

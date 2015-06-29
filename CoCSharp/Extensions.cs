@@ -1,8 +1,7 @@
 ﻿using System.Text;
 
-namespace CoCSharp.Logger
+namespace CoCSharp
 {
-    //TODO: Increase swag
     public static class StringBuilderExtensions
     {
         private const string IndentString = "    ";

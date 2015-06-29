@@ -2,7 +2,7 @@
 using CoCSharp.Networking;
 using System.Net.Sockets;
 
-namespace CoCSharp
+namespace CoCSharp.Proxy
 {
     public class CoCRemoteClient
     {

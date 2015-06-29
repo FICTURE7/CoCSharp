@@ -53,7 +53,28 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
+            writer.WriteLong(UserID);
+            writer.WriteLong(UserID2);
+            writer.WriteString(UserToken);
+            writer.WriteString(FacebookID);
+            writer.WriteString(GameCenterID);
+            writer.WriteInt(MajorVersion);
+            writer.WriteInt(MinorVersion);
+            writer.WriteInt(RevisionVersion);
+            writer.WriteString(ServerEnvironment);
+            writer.WriteInt(LoginCount);
+            writer.WriteInt((int)PlayTime.TotalSeconds);
 
+            writer.WriteInt(Unknown1);
+
+            writer.WriteString(FacebookAppID);
+            writer.WriteString(DateLastPlayed);
+            writer.WriteString(DateJoined);
+
+            writer.WriteInt(Unknown2);
+
+            writer.WriteString(GooglePlusID);
+            writer.WriteString(CountryCode);
         }
     }
 }

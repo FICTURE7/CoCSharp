@@ -1,14 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace CoCSharp
+namespace CoCSharp.Proxy
 {
     public class CoCProxyClient
     {
         public CoCProxyClient(TcpClient client)
         {
             this.Client = new CoCRemoteClient(client);
-            //this.Server = new CoCRemoteClient(server);
         }
 
         public CoCRemoteClient Client { get; set; }

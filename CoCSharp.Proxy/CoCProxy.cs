@@ -1,23 +1,24 @@
 ﻿using CoCSharp.Databases;
-using CoCSharp.Logger;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
+using CoCSharp.Proxy.Handlers;
+using CoCSharp.Proxy.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace CoCSharp
+namespace CoCSharp.Proxy
 {
-    public class CoCProxyServer
+    public class CoCProxy
     {
         public const int DefaultPort = 9339;
         public const string DefaultServer = "gamea.clashofclans.com";
 
-        public delegate void PacketHandler(CoCProxyServer proxyServer, CoCProxyClient client, IPacket packet);
+        public delegate void PacketHandler(CoCProxy proxyServer, CoCProxyClient client, IPacket packet);
 
-        public CoCProxyServer()
+        public CoCProxy()
         {
             this.PacketLogger = new PacketLogger();
             this.PacketDumper = new PacketDumper();
@@ -32,6 +33,7 @@ namespace CoCSharp
             TrapDatabase.LoadDatabase();
             DecorationDatabase.LoadDatabase();
             ObstacleDatabase.LoadDatabase();
+            BasicPacketHandlers.RegisterHanlders(this);
         }
 
         public PacketLogger PacketLogger { get; set; }
@@ -45,6 +47,7 @@ namespace CoCSharp
         public TcpListener Listener { get; set; }
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
+        public IPEndPoint EndPoint { get; set; }
 
         private bool ShuttingDown { get; set; }
         private Thread NetworkThread { get; set; }
@@ -52,6 +55,7 @@ namespace CoCSharp
         public void Start(IPEndPoint endPoint)
         {
             ShuttingDown = false;
+            EndPoint = endPoint;
             NetworkThread = new Thread(HandleNetwork);
             Listener = new TcpListener(endPoint);
             
@@ -80,7 +84,7 @@ namespace CoCSharp
         private void AcceptClientAysnc(IAsyncResult result)
         {
             var client = Listener.EndAcceptTcpClient(result);
-            var cocClientProxy = new CoCProxyClient(client);
+            var cocClientProxy = new Proxy.CoCProxyClient(client);
 
             Clients.Add(cocClientProxy);
             Listener.BeginAcceptTcpClient(new AsyncCallback(AcceptClientAysnc), Listener);

@@ -3,7 +3,7 @@ using CoCSharp.Networking.Packets;
 using System;
 using System.IO;
 
-namespace CoCSharp.Logger
+namespace CoCSharp.Proxy.Logging
 {
     public class PacketDumper
     {

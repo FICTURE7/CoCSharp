@@ -45,12 +45,12 @@ namespace CoCSharp.Databases
             {
                 var row = CsvTable.ReadNextRow();
 
-                var name = row.GetRecord(NameColumn);
-                var clearResource = row.GetRecordAsResource(ClearResource);
-                var clearCost = row.GetRecordAsInt(ClearCost);
-                var lootResource = row.GetRecordAsResource(LootResource);
-                var lootCount = row.GetRecordAsInt(LootCount);
-                var respawnWeight = row.GetRecordAsInt(RespawnWeight);
+                var name = row.ReadRecordAsString(NameColumn);
+                var clearResource = row.ReadRecordAsResource(ClearResource);
+                var clearCost = row.ReadRecordAsInt(ClearCost);
+                var lootResource = row.ReadRecordAsResource(LootResource);
+                var lootCount = row.ReadRecordAsInt(LootCount);
+                var respawnWeight = row.ReadRecordAsInt(RespawnWeight);
 
                 var obstacle = new Obstacle(id);
                 obstacle.Name = name;
