@@ -1,5 +1,5 @@
 # CoCSharp
-Clash of Clans library written in C# to log packets, log raw packets and monitor traffic between clients and servers. It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
+Clash of Clans proxy(turning into a library) written in C# to log packets, log raw packets and monitor traffic between clients and servers. It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
 
 ### Implemented Packets
 All packets that CoCSharp currently can read and parse, if a packet is not supported it will be returned as an UnknownPacket which contains the encrypted and decrypted payload of the packet.
