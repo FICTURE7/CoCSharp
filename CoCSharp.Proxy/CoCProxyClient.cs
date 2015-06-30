@@ -5,17 +5,17 @@ namespace CoCSharp.Proxy
 {
     public class CoCProxyClient
     {
-        public CoCProxyClient(TcpClient client)
+        public CoCProxyClient(Socket clientConnection)
         {
-            this.Client = new CoCRemoteClient(client);
+            this.Client = new CoCRemoteClient(clientConnection);
         }
 
         public CoCRemoteClient Client { get; set; }
         public CoCRemoteClient Server { get; set; }
 
-        public void Start(TcpClient server)
+        public void Start(Socket serverConnection)
         {
-            Server = new CoCRemoteClient(server);
+            Server = new CoCRemoteClient(serverConnection);
         }
     }
 }
