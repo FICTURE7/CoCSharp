@@ -30,7 +30,6 @@ namespace CoCSharp.Proxy
 
             this.Clients = new List<CoCProxyClient>();
             this.PacketHandlers = new Dictionary<ushort, PacketHandler>();
-            this.ReceiveAsyncEventPool = new Stack<SocketAsyncEventArgs>();
             this.AcceptAsyncEventPool = new Stack<SocketAsyncEventArgs>();
             for (int i = 0; i < 10; i++)
             {
@@ -54,7 +53,6 @@ namespace CoCSharp.Proxy
         public ObstacleDatabase ObstacleDatabase { get; set; }
         public List<CoCProxyClient> Clients { get; set; }
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
-        //public TcpListener Listener { get; set; }
         public Socket Listener { get; set; }
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
@@ -63,20 +61,16 @@ namespace CoCSharp.Proxy
         private bool ShuttingDown { get; set; }
         private Thread NetworkThread { get; set; }
         private Stack<SocketAsyncEventArgs> AcceptAsyncEventPool { get; set; }
-        private Stack<SocketAsyncEventArgs> ReceiveAsyncEventPool { get; set; }
 
         public void Start(IPEndPoint endPoint)
         {
             ShuttingDown = false;
             EndPoint = endPoint;
             NetworkThread = new Thread(HandleNetwork);
-            //Listener = new TcpListener(endPoint);
+
             Listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             Listener.Bind(endPoint);
             Listener.Listen(100);
-
-            //Listener.Start(100);
-            //Listener.BeginAcceptTcpClient(new AsyncCallback(AcceptClientAysnc), Listener);
 
             NetworkThread.Name = "NetworkThread";
             NetworkThread.Start();
@@ -119,15 +113,6 @@ namespace CoCSharp.Proxy
 
                     if (!willRaiseEvent)
                         HandleAcceptOperation(acceptEvent);
-                }
-
-                while (ReceiveAsyncEventPool.Count > 1)
-                {
-                    var receiveEvent = ReceiveAsyncEventPool.Pop();
-                    var willRaiseEvent = receiveEvent.AcceptSocket.ReceiveAsync(receiveEvent);
-
-                    if (!willRaiseEvent)
-                        HandleReceiveOperation(receiveEvent);
                 }
 
                 for (int i = 0; i < Clients.Count; i++)
@@ -212,14 +197,10 @@ namespace CoCSharp.Proxy
 
         private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs e)
         {
-            switch (e.LastOperation) //TODO: Check for errors
+            switch (e.LastOperation)
             {
                 case SocketAsyncOperation.Accept:
                     HandleAcceptOperation(e);
-                    break;
-
-                case SocketAsyncOperation.Receive:
-                    HandleReceiveOperation(e);
                     break;
             }
         }
@@ -229,18 +210,8 @@ namespace CoCSharp.Proxy
             var remoteClient = new CoCProxyClient(acceptEvent.AcceptSocket);
             Clients.Add(remoteClient);
 
-            var receiveEvent = new SocketAsyncEventArgs(); // create new receiveSocketAsyncEventArgs on every new connection 
-            receiveEvent.Completed += AsyncOperationCompleted;
-            receiveEvent.AcceptSocket = acceptEvent.AcceptSocket;
-            ReceiveAsyncEventPool.Push(receiveEvent);
-
             acceptEvent.AcceptSocket = null;
             AcceptAsyncEventPool.Push(acceptEvent); // reuse the obj
-        }
-
-        private void HandleReceiveOperation(SocketAsyncEventArgs receiveEvent)
-        {
-            ReceiveAsyncEventPool.Push(receiveEvent); // reuse the obj
         }
     }
 }
