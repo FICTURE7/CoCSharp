@@ -11,19 +11,19 @@ namespace CoCSharp.Networking
     {
         public const int HeaderSize = 7;
 
-        public NetworkManager(TcpClient client)
+        public NetworkManager(Socket connection)
         {
-            this.Client = client;
-            this.CoCStream = new CoCStream(client);
+            this.Connection = connection;
+            this.CoCStream = new CoCStream(connection);
             this.CoCCrypto = new CoCCrypto();
 
             if (PacketDictionary == null) InitializePacketDictionary(); // intialize dictionary
         }
 
-        public bool DataAvailable { get { return Client.Available > 0; } }
+        public bool DataAvailable { get { return Connection.Available > 0; } }
         public CoCStream CoCStream { get; set; }
 
-        private TcpClient Client { get; set; }
+        private Socket Connection { get; set; }
         private CoCCrypto CoCCrypto { get; set; }
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
 

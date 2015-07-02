@@ -6,10 +6,10 @@ namespace CoCSharp.Networking
 {
     public class CoCStream : Stream
     {
-        public CoCStream(TcpClient client)
+        public CoCStream(Socket connection)
         {
             //TODO: Do some renaming
-            this.Connection = client.Client;
+            this.Connection = connection;
             this.ReadBuffer = new MemoryStream(4096);
             this.WriteBuffer = new MemoryStream(4096);
         }

@@ -6,10 +6,10 @@ namespace CoCSharp.Proxy
 {
     public class CoCRemoteClient
     {
-        public CoCRemoteClient(TcpClient client)
+        public CoCRemoteClient(Socket connection)
         {
-            this.Client = client;
-            this.NetworkManager = new NetworkManager(client);
+            this.Connection = connection;
+            this.NetworkManager = new NetworkManager(connection);
         }
 
         public string Username { get; set; }
@@ -18,7 +18,7 @@ namespace CoCSharp.Proxy
         public int Seed { get; set; }
         public bool LoggedIn { get; set; }
         public Village Home { get; set; }
-        public TcpClient Client { get; set; }
+        public Socket Connection { get; set; }
         public NetworkManager NetworkManager { get; set; }
     }
 }
