@@ -14,6 +14,7 @@ namespace CoCSharp.Proxy
 
         public string Username { get; set; }
         public string UserToken { get; set; }
+        public string FingerprintHash { get; set; }
         public long UserID { get; set; }
         public int Seed { get; set; }
         public bool LoggedIn { get; set; }

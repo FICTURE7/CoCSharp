@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CoCSharp.Databases
 {
-    public class ObstacleDatabase : BaseDatabase
+    public class ObstacleDatabase : Database
     {
         #region Columns
         private const int NameColumn = 0;

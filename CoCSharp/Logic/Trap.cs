@@ -24,7 +24,7 @@ namespace CoCSharp.Logic
         public Resource BuildResource { get; set; }
         public int RearmCost { get; set; }
 
-        public override void FromDatabase(BaseDatabase database)
+        public override void FromDatabase(Database database)
         {
             var trapDb = (TrapDatabase)database;
             var trapOut = (Trap)null;

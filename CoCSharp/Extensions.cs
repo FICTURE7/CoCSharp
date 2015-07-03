@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 
 namespace CoCSharp
 {
@@ -37,6 +38,16 @@ namespace CoCSharp
         {
             Indent(builder, value, indentLevel);
             builder.AppendLine();
+        }
+    }
+
+    public static class StreamReaderExtension
+    {
+        public static void GotoLine(this StreamReader reader, int line)
+        {
+            reader.BaseStream.Seek(0, SeekOrigin.Begin);
+            for (int i = 0; i < line; i++) 
+                reader.ReadLine();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace CoCSharp.Logic
         public int LootCount { get; set; }
         public int RespawnWeight { get; set; }
 
-        public override void FromDatabase(BaseDatabase database)
+        public override void FromDatabase(Database database)
         {
             var obstacleDb = (ObstacleDatabase)database;
             var obstacle = (Obstacle)null;

@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace CoCSharp.Proxy
 {
-    public class CoCProxy
+    public class CoCProxy : CoCServer
     {
         public const int DefaultPort = 9339;
         public const string DefaultServer = "gamea.clashofclans.com";
@@ -42,7 +42,7 @@ namespace CoCSharp.Proxy
             TrapDatabase.LoadDatabase();
             DecorationDatabase.LoadDatabase();
             ObstacleDatabase.LoadDatabase();
-            BasicPacketHandlers.RegisterHanlders(this);
+            ProxyPacketHandlers.RegisterHanlders(this);
         }
 
         public PacketLogger PacketLogger { get; set; }
@@ -197,7 +197,7 @@ namespace CoCSharp.Proxy
 
         private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs e)
         {
-            switch (e.LastOperation)
+            switch (e.LastOperation) // TODO: Check for errors
             {
                 case SocketAsyncOperation.Accept:
                     HandleAcceptOperation(e);

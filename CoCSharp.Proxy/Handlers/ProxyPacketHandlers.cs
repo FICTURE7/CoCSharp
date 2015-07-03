@@ -1,11 +1,12 @@
-﻿using CoCSharp.Networking;
+﻿using CoCSharp.Databases;
+using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using System;
 using System.Net.Sockets;
 
 namespace CoCSharp.Proxy.Handlers
 {
-    public static class BasicPacketHandlers
+    public static class ProxyPacketHandlers
     {
         public static void HandleLoginSuccessPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
@@ -32,6 +33,9 @@ namespace CoCSharp.Proxy.Handlers
             client.Client.Seed = lrPacket.Seed;
             client.Client.UserID = lrPacket.UserID;
             client.Client.UserToken = lrPacket.UserToken;
+            client.Client.FingerprintHash = lrPacket.FingerprintHash;
+
+            //Database.DownloadDatabasesAysnc("databases", lrPacket.FingerprintHash);
         }
 
         public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)

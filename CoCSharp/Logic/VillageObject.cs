@@ -27,6 +27,6 @@ namespace CoCSharp.Logic
         [JsonProperty("y")]
         public virtual int Y { get; set; }
 
-        public virtual void FromDatabase(BaseDatabase database) { }
+        public virtual void FromDatabase(Database database) { }
     }
 }

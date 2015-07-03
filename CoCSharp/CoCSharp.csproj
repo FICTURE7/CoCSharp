@@ -74,7 +74,6 @@
     <Compile Include="Databases\Database.cs" />
     <Compile Include="Databases\DecorationDatabase.cs" />
     <Compile Include="Databases\ObstacleDatabase.cs" />
-    <Compile Include="Databases\StreamReaderExtension.cs" />
     <Compile Include="Databases\TrapDatabase.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Logic\Building.cs" />

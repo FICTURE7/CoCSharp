@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CoCSharp.Databases
 {
-    public class DecorationDatabase : BaseDatabase
+    public class DecorationDatabase : Database
     {
         public const int ID = 18000000;
 

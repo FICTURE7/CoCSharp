@@ -23,7 +23,7 @@ namespace CoCSharp.Logic
         public int BuildCost { get; set; }
         public Resource BuildResource { get; set; }
 
-        public override void FromDatabase(BaseDatabase database)
+        public override void FromDatabase(Database database)
         {
             var buildingDb = (BuildingDatabase)database;
             var buildingOut = (Building)null;
