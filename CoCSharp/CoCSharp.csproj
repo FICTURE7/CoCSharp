@@ -69,9 +69,26 @@
   <ItemGroup>
     <Compile Include="CoCServer.cs" />
     <Compile Include="Databases\BuildingDatabase.cs" />
+    <Compile Include="Databases\Compression\Common\CommandLineParser.cs" />
+    <Compile Include="Databases\Compression\Common\CRC.cs" />
+    <Compile Include="Databases\Compression\Common\InBuffer.cs" />
+    <Compile Include="Databases\Compression\Common\OutBuffer.cs" />
+    <Compile Include="Databases\Compression\Compress\LZMA\LzmaBase.cs" />
+    <Compile Include="Databases\Compression\Compress\LZMA\LzmaDecoder.cs" />
+    <Compile Include="Databases\Compression\Compress\LZMA\LzmaEncoder.cs" />
+    <Compile Include="Databases\Compression\Compress\LZ\IMatchFinder.cs" />
+    <Compile Include="Databases\Compression\Compress\LZ\LzBinTree.cs" />
+    <Compile Include="Databases\Compression\Compress\LZ\LzInWindow.cs" />
+    <Compile Include="Databases\Compression\Compress\LZ\LzOutWindow.cs" />
+    <Compile Include="Databases\Compression\Compress\RangeCoder\RangeCoder.cs" />
+    <Compile Include="Databases\Compression\Compress\RangeCoder\RangeCoderBit.cs" />
+    <Compile Include="Databases\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
+    <Compile Include="Databases\Compression\ICoder.cs" />
+    <Compile Include="Databases\Compression\LzmaUtils.cs" />
     <Compile Include="Databases\Csv\CsvRow.cs" />
     <Compile Include="Databases\Csv\CsvTable.cs" />
     <Compile Include="Databases\Database.cs" />
+    <Compile Include="Databases\DatabaseManager.cs" />
     <Compile Include="Databases\DecorationDatabase.cs" />
     <Compile Include="Databases\ObstacleDatabase.cs" />
     <Compile Include="Databases\TrapDatabase.cs" />

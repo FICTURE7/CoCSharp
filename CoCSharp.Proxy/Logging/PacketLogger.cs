@@ -1,6 +1,8 @@
-﻿using CoCSharp.Networking;
+﻿using CoCSharp.Logic;
+using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -81,7 +83,7 @@ namespace CoCSharp.Proxy.Logging
                 builder.AppendLine("}");
             }
             else builder.AppendLine(" { }"); // no fields
-            
+
             var builderString = builder.ToString();
 
             LogWriter.WriteLine(builderString);

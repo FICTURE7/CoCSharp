@@ -5,6 +5,7 @@ using CoCSharp.Proxy.Handlers;
 using CoCSharp.Proxy.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -22,14 +23,9 @@ namespace CoCSharp.Proxy
         {
             this.PacketLogger = new PacketLogger();
             this.PacketDumper = new PacketDumper();
-
-            this.BuildingDatabase = new BuildingDatabase(@"database\buildings.csv");
-            this.TrapDatabase = new TrapDatabase(@"database\traps.csv");
-            this.DecorationDatabase = new DecorationDatabase(@"database\decos.csv");
-            this.ObstacleDatabase = new ObstacleDatabase(@"database\obstacles.csv");
-
             this.Clients = new List<CoCProxyClient>();
             this.PacketHandlers = new Dictionary<ushort, PacketHandler>();
+            this.DatabaseManagers = new Dictionary<string, DatabaseManager>();
             this.AcceptAsyncEventPool = new Stack<SocketAsyncEventArgs>();
             for (int i = 0; i < 10; i++)
             {
@@ -38,24 +34,18 @@ namespace CoCSharp.Proxy
                 AcceptAsyncEventPool.Push(acceptEvent);
             }
 
-            BuildingDatabase.LoadDatabase();
-            TrapDatabase.LoadDatabase();
-            DecorationDatabase.LoadDatabase();
-            ObstacleDatabase.LoadDatabase();
+            RegisterDownloadedDatabases();
             ProxyPacketHandlers.RegisterHanlders(this);
         }
 
-        public PacketLogger PacketLogger { get; set; }
-        public PacketDumper PacketDumper { get; set; }
-        public BuildingDatabase BuildingDatabase { get; set; }
-        public TrapDatabase TrapDatabase { get; set; }
-        public DecorationDatabase DecorationDatabase { get; set; }
-        public ObstacleDatabase ObstacleDatabase { get; set; }
-        public List<CoCProxyClient> Clients { get; set; }
-        public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
-        public Socket Listener { get; set; }
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
+        public PacketLogger PacketLogger { get; set; }
+        public PacketDumper PacketDumper { get; set; }
+        public List<CoCProxyClient> Clients { get; set; }
+        public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
+        public Dictionary<string, DatabaseManager> DatabaseManagers { get; set; }
+        public Socket Listener { get; set; }
         public IPEndPoint EndPoint { get; set; }
 
         private bool ShuttingDown { get; set; }
@@ -91,6 +81,11 @@ namespace CoCSharp.Proxy
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
             PacketHandlers.Add(packet.ID, handler);
+        }
+
+        public void RegisterDatabaseManager(DatabaseManager manager, string hash)
+        {
+            DatabaseManagers.Add(hash, manager);
         }
 
         private void HandlePacket(CoCProxyClient client, IPacket packet)
@@ -212,6 +207,21 @@ namespace CoCSharp.Proxy
 
             acceptEvent.AcceptSocket = null;
             AcceptAsyncEventPool.Push(acceptEvent); // reuse the obj
+        }
+
+        private void RegisterDownloadedDatabases()
+        {
+            if (!Directory.Exists("databases")) 
+                Directory.CreateDirectory("databases");
+
+            var dbFiles = Directory.GetDirectories("databases");
+            for (int i = 0; i < dbFiles.Length; i++)
+            {
+                var hash = Path.GetFileName(dbFiles[i]);
+                var dbManager = new DatabaseManager(hash);
+                DatabaseManagers.Add(dbManager.FingerprintHash, dbManager);
+                dbManager.LoadDatabases();
+            }
         }
     }
 }

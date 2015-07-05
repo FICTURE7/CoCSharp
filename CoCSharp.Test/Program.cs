@@ -54,10 +54,12 @@ namespace CoCSharp.Test
 
         public static void Main()
         {
-            Database.DownloadDatabasesAysnc("databases", "2b63d564d20bfa2c86d988b1e72848f1c2fa3095");
-            //var webClient = new WebClient();
-            //var str = webClient.DownloadString("http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/asdga");
-            Console.ReadLine();
+            var dbManager = new DatabaseManager("2b63d564d20bfa2c86d988b1e72848f1c2fa3095");
+            while (true)
+            {
+                Console.WriteLine(dbManager.IsDownloading);
+                Thread.Sleep(1);
+            }
         }
 
         public static void InitializeAcceptAysnc()

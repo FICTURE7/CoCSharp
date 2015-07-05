@@ -35,7 +35,11 @@ namespace CoCSharp.Proxy.Handlers
             client.Client.UserToken = lrPacket.UserToken;
             client.Client.FingerprintHash = lrPacket.FingerprintHash;
 
-            //Database.DownloadDatabasesAysnc("databases", lrPacket.FingerprintHash);
+            if (!proxyServer.DatabaseManagers.ContainsKey(lrPacket.FingerprintHash))
+            {
+                var dbManager = new DatabaseManager(lrPacket.FingerprintHash);
+                proxyServer.RegisterDatabaseManager(dbManager, lrPacket.FingerprintHash);
+            }
         }
 
         public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
@@ -46,17 +50,13 @@ namespace CoCSharp.Proxy.Handlers
             client.Client.Home = ohPacket.Home;
 
             // load buildings, traps, decorations, obstacles from db
-            for (int x = 0; x < client.Client.Home.Buildings.Count; x++)
-                client.Client.Home.Buildings[x].FromDatabase(proxyServer.BuildingDatabase);
+            var dbManager = (DatabaseManager)null;
+            if (proxyServer.DatabaseManagers.TryGetValue(client.Client.FingerprintHash, out dbManager))
+            {
+                if (dbManager.IsDownloading) return;
 
-            for (int x = 0; x < client.Client.Home.Traps.Count; x++)
-                client.Client.Home.Traps[x].FromDatabase(proxyServer.TrapDatabase);
-
-            for (int x = 0; x < client.Client.Home.Decorations.Count; x++)
-                client.Client.Home.Decorations[x].FromDatabase(proxyServer.DecorationDatabase);
-
-            for (int x = 0; x < client.Client.Home.Obstacles.Count; x++)
-                client.Client.Home.Obstacles[x].FromDatabase(proxyServer.ObstacleDatabase);
+                client.Client.Home.FromDatabase(dbManager);
+            }
         }
 
         public static void RegisterHanlders(CoCProxy proxyServer)
