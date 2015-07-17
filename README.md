@@ -1,9 +1,7 @@
 # CoCSharp
----
 Clash of Clans library written in C# to handle networking and csv files(more to come?). It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
 
 ## What it can do
----
 * CoCSharp.Networking: Networking and protocol support.
   * Defines some packets of the CoC networking protocol.
   * Includes classes to read and write CoC packets.
@@ -15,7 +13,6 @@ Clash of Clans library written in C# to handle networking and csv files(more to 
   * Includes class for village objects: Village, Trap, Obstacle, Building etc...
   
 ## Projects using CoCSharp
----
 * CoCSharp.Server: *(Planned)*
 * CoCSharp.Proxy:
   * Proxy that logs parsed and raw decrypted packets
