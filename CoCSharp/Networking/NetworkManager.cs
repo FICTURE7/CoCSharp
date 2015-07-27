@@ -87,6 +87,7 @@ namespace CoCSharp.Networking
             packet.WritePacket(new PacketWriter(tempStream));
             byte[] buffer = new byte[tempStream.Length];
             tempStream.Read(buffer, 0, buffer.Length);
+            buffer = (buffer.Skip(HeaderSize).ToArray());
             CoCCrypto.Encrypt(buffer);
             CoCStream.Write(buffer, 0, buffer.Length);
         }
