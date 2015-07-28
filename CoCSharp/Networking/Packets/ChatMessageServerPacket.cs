@@ -21,17 +21,17 @@ namespace CoCSharp.Networking.Packets
             Message = reader.ReadString();
             Username = reader.ReadString();
 
-            Unknown1 = reader.ReadInt();
-            Unknown2 = reader.ReadInt();
+            Unknown1 = reader.ReadInt32();
+            Unknown2 = reader.ReadInt32();
 
-            UserID = reader.ReadLong();
-            UserID2 = reader.ReadLong();
-            HasClan = reader.ReadBool();
+            UserID = reader.ReadInt64();
+            UserID2 = reader.ReadInt64();
+            HasClan = reader.ReadBoolean();
             if (HasClan)
             {
-                ClanID = reader.ReadLong();
+                ClanID = reader.ReadInt64();
                 ClanName = reader.ReadString();
-                Unknown3 = reader.ReadInt();
+                Unknown3 = reader.ReadInt32();
             }
         }
 
@@ -40,17 +40,17 @@ namespace CoCSharp.Networking.Packets
             writer.WriteString(Message);
             writer.WriteString(Username);
 
-            writer.WriteInt(Unknown1);
-            writer.WriteInt(Unknown2);
+            writer.WriteInt32(Unknown1);
+            writer.WriteInt32(Unknown2);
 
-            writer.WriteLong(UserID);
-            writer.WriteLong(UserID2);
-            writer.WriteBool(HasClan);
+            writer.WriteInt64(UserID);
+            writer.WriteInt64(UserID2);
+            writer.WriteBoolean(HasClan);
             if (HasClan)
             {
-                writer.WriteLong(ClanID);
+                writer.WriteInt64(ClanID);
                 writer.WriteString(ClanName);
-                writer.WriteInt(Unknown3);
+                writer.WriteInt32(Unknown3);
             }
         }
     }

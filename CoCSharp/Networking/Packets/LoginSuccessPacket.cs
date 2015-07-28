@@ -27,25 +27,25 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            UserID = reader.ReadLong();
-            UserID2 = reader.ReadLong();
+            UserID = reader.ReadInt64();
+            UserID2 = reader.ReadInt64();
             UserToken = reader.ReadString();
             FacebookID = reader.ReadString();
             GameCenterID = reader.ReadString();
-            MajorVersion = reader.ReadInt();
-            MinorVersion = reader.ReadInt();
-            RevisionVersion = reader.ReadInt();
+            MajorVersion = reader.ReadInt32();
+            MinorVersion = reader.ReadInt32();
+            RevisionVersion = reader.ReadInt32();
             ServerEnvironment = reader.ReadString();
-            LoginCount = reader.ReadInt();
-            PlayTime = TimeSpan.FromSeconds(reader.ReadInt());
+            LoginCount = reader.ReadInt32();
+            PlayTime = TimeSpan.FromSeconds(reader.ReadInt32());
             
-            Unknown1 = reader.ReadInt();
+            Unknown1 = reader.ReadInt32();
 
             FacebookAppID = reader.ReadString();
             DateLastPlayed = reader.ReadString();
             DateJoined = reader.ReadString();
 
-            Unknown2 = reader.ReadInt();
+            Unknown2 = reader.ReadInt32();
 
             GooglePlusID = reader.ReadString();
             CountryCode = reader.ReadString();
@@ -53,25 +53,25 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
-            writer.WriteLong(UserID);
-            writer.WriteLong(UserID2);
+            writer.WriteInt64(UserID);
+            writer.WriteInt64(UserID2);
             writer.WriteString(UserToken);
             writer.WriteString(FacebookID);
             writer.WriteString(GameCenterID);
-            writer.WriteInt(MajorVersion);
-            writer.WriteInt(MinorVersion);
-            writer.WriteInt(RevisionVersion);
+            writer.WriteInt32(MajorVersion);
+            writer.WriteInt32(MinorVersion);
+            writer.WriteInt32(RevisionVersion);
             writer.WriteString(ServerEnvironment);
-            writer.WriteInt(LoginCount);
-            writer.WriteInt((int)PlayTime.TotalSeconds);
+            writer.WriteInt32(LoginCount);
+            writer.WriteInt32((int)PlayTime.TotalSeconds);
 
-            writer.WriteInt(Unknown1);
+            writer.WriteInt32(Unknown1);
 
             writer.WriteString(FacebookAppID);
             writer.WriteString(DateLastPlayed);
             writer.WriteString(DateJoined);
 
-            writer.WriteInt(Unknown2);
+            writer.WriteInt32(Unknown2);
 
             writer.WriteString(GooglePlusID);
             writer.WriteString(CountryCode);

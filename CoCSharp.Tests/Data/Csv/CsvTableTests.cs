@@ -28,7 +28,7 @@ namespace CoCSharp.Tests.Data.Csv
         public void TestCsvSerializer()
         {
             var table = new CsvTable("buildings.csv");
-            var data = (BuildingData)CsvSerializer.Deserialize(table, typeof(BuildingData));
+            var data = CsvSerializer.Deserialize(table, typeof(BuildingData));
         }
     }
 }

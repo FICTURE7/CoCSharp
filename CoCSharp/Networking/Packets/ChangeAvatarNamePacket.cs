@@ -10,13 +10,13 @@
         public void ReadPacket(PacketReader reader)
         {
             NewName = reader.ReadString();
-            Unknown1 = reader.ReadBool();
+            Unknown1 = reader.ReadBoolean();
         }
 
         public void WritePacket(PacketWriter writer)
         {
             writer.WriteString(NewName);
-            writer.WriteBool(Unknown1);
+            writer.WriteBoolean(Unknown1);
         }
     }
 }

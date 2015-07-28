@@ -21,9 +21,9 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            MessageType = reader.ReadInt();
-            Unknown1 = reader.ReadInt();
-            ServerTick = reader.ReadUInt();
+            MessageType = reader.ReadInt32();
+            Unknown1 = reader.ReadInt32();
+            ServerTick = reader.ReadUInt32();
             Unknown2 = (byte)reader.ReadByte();
 
             switch (MessageType) // not sure about this
@@ -32,13 +32,13 @@ namespace CoCSharp.Networking.Packets
                     break;
 
                 case 2:
-                    UserID = reader.ReadLong();
-                    UserID2 = reader.ReadLong();
+                    UserID = reader.ReadInt64();
+                    UserID2 = reader.ReadInt64();
                     Username = reader.ReadString();
-                    Unknown3 = reader.ReadInt();
-                    Unknown4 = reader.ReadInt();
-                    MemberStatus = reader.ReadInt();
-                    MessageTime = TimeSpan.FromSeconds(reader.ReadInt());
+                    Unknown3 = reader.ReadInt32();
+                    Unknown4 = reader.ReadInt32();
+                    MemberStatus = reader.ReadInt32();
+                    MessageTime = TimeSpan.FromSeconds(reader.ReadInt32());
                     Message = reader.ReadString();
                     break;
 
@@ -49,9 +49,9 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
-            writer.WriteInt(MessageType);
-            writer.WriteInt(Unknown1);
-            writer.WriteUInt(ServerTick);
+            writer.WriteInt32(MessageType);
+            writer.WriteInt32(Unknown1);
+            writer.WriteUInt32(ServerTick);
             writer.WriteByte(Unknown2);
 
             switch (MessageType)
@@ -60,13 +60,13 @@ namespace CoCSharp.Networking.Packets
                     break;
 
                 case 2:
-                    writer.WriteLong(UserID);
-                    writer.WriteLong(UserID2);
+                    writer.WriteInt64(UserID);
+                    writer.WriteInt64(UserID2);
                     writer.WriteString(Username);
-                    writer.WriteInt(Unknown3);
-                    writer.WriteInt(Unknown4);
-                    writer.WriteInt(MemberStatus);
-                    writer.WriteInt((int)MessageTime.TotalSeconds);
+                    writer.WriteInt32(Unknown3);
+                    writer.WriteInt32(Unknown4);
+                    writer.WriteInt32(MemberStatus);
+                    writer.WriteInt32((int)MessageTime.TotalSeconds);
                     writer.WriteString(Message);
                     break;
 

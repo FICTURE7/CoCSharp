@@ -16,14 +16,14 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            Unknown1 = reader.ReadBool();
+            Unknown1 = reader.ReadBoolean();
             NumericFacebookID = reader.ReadString();
             Base64FacebookToken = reader.ReadString();
         }
 
         public void WritePacket(PacketWriter writer)
         {
-            writer.WriteBool(Unknown1);
+            writer.WriteBoolean(Unknown1);
             writer.WriteString(NumericFacebookID);
             writer.WriteString(Base64FacebookToken);
         }

@@ -10,7 +10,7 @@ namespace CoCSharp.Networking
 {
     public class NetworkManager
     {
-        // use this handler to handle network shit
+        // use this handler to handle network
         public delegate void NetworkHandler(SocketAsyncEventArgs args, IPacket packet);
         public const int HeaderSize = 7;
 
@@ -62,9 +62,9 @@ namespace CoCSharp.Networking
                     continue;
 
                 // read header
-                var packetID = enPacketReader.ReadUShort();
+                var packetID = enPacketReader.ReadUInt16();
                 var packetLength = enPacketReader.ReadPacketLength();
-                var packetVersion = enPacketReader.ReadUShort();
+                var packetVersion = enPacketReader.ReadUInt16();
 
                 // read body
                 if (packetLength > args.BytesTransferred) // check if data is enough data is avaliable in the buffer

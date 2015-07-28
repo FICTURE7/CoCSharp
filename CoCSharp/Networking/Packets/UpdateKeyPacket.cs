@@ -10,7 +10,7 @@
         public void ReadPacket(PacketReader reader)
         {
             Key = reader.ReadByteArray();
-            Unknown1 = reader.ReadInt();
+            Unknown1 = reader.ReadInt32();
         }
 
         public void WritePacket(PacketWriter writer)

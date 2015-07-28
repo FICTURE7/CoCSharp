@@ -56,18 +56,18 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            LastVisit = TimeSpan.FromSeconds(reader.ReadInt());
+            LastVisit = TimeSpan.FromSeconds(reader.ReadInt32());
 
             //Unknown1 = reader.ReadInt();
             reader.Seek(4, SeekOrigin.Current);
 
-            TimeStamp = reader.ReadLong();
-            UserID = reader.ReadLong();
-            ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt());
+            TimeStamp = reader.ReadInt64();
+            UserID = reader.ReadInt64();
+            ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt32());
 
             //Unknown2 = reader.ReadLong();
             reader.Seek(8, SeekOrigin.Current);
-            Compressed = reader.ReadBool();
+            Compressed = reader.ReadBoolean();
             Home = new Village();
             Home.FromPacketReader(reader);
 
@@ -78,21 +78,21 @@ namespace CoCSharp.Networking.Packets
             //UserID3 = reader.ReadLong();
             reader.Seek(16, SeekOrigin.Current);
             
-            if ((HasClan = reader.ReadBool()))
+            if ((HasClan = reader.ReadBoolean()))
             {
                 Clan = new Clan()
                 {
-                    ID = reader.ReadLong(),
+                    ID = reader.ReadInt64(),
                     Name = reader.ReadString(),
-                    Badge = reader.ReadInt(),
+                    Badge = reader.ReadInt32(),
                 };
-                Level = reader.ReadInt(); // member status?
-                Level = reader.ReadInt();
+                Level = reader.ReadInt32(); // member status?
+                Level = reader.ReadInt32();
             }
             
-            if (reader.ReadBool()) 
+            if (reader.ReadBoolean()) 
                 reader.Seek(8, SeekOrigin.Current);
-            if (reader.ReadBool())
+            if (reader.ReadBoolean())
                 reader.Seek(8, SeekOrigin.Current);
 
             //Unknown5 = (byte)reader.ReadByte();
@@ -101,29 +101,29 @@ namespace CoCSharp.Networking.Packets
             //Unknown8 = reader.ReadLong();
             reader.Seek(4, SeekOrigin.Current);
 
-            AllianceCastleLevel = reader.ReadInt();
-            AllianceCastleCapacity = reader.ReadInt();
-            AllianceCastleUsed = reader.ReadInt();
-            TownHallLevel = reader.ReadInt();
+            AllianceCastleLevel = reader.ReadInt32();
+            AllianceCastleCapacity = reader.ReadInt32();
+            AllianceCastleUsed = reader.ReadInt32();
+            TownHallLevel = reader.ReadInt32();
             Username = reader.ReadString();
-            FacebookID = reader.ReadInt();
-            Level = reader.ReadInt();
-            Experience = reader.ReadInt();
-            Gems = reader.ReadInt();
+            FacebookID = reader.ReadInt32();
+            Level = reader.ReadInt32();
+            Experience = reader.ReadInt32();
+            Gems = reader.ReadInt32();
             //Gems1 = reader.ReadInt();
 
             //Unknown9 = reader.ReadLong();
             reader.Seek(12, SeekOrigin.Current);
 
-            TrophiesCount = reader.ReadInt();
-            AttackWon = reader.ReadInt();
-            AttackLost = reader.ReadInt();
-            DefenceWon = reader.ReadInt();
-            DefenceLost = reader.ReadInt();
+            TrophiesCount = reader.ReadInt32();
+            AttackWon = reader.ReadInt32();
+            AttackLost = reader.ReadInt32();
+            DefenceWon = reader.ReadInt32();
+            DefenceLost = reader.ReadInt32();
 
             reader.Seek(21, SeekOrigin.Current);
 
-            HasName = reader.ReadBool();
+            HasName = reader.ReadBoolean();
 
             reader.Seek(16, SeekOrigin.Current);
         }

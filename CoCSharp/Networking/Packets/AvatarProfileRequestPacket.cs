@@ -16,15 +16,15 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            UserID = reader.ReadLong();
-            UserID2 = reader.ReadLong();
+            UserID = reader.ReadInt64();
+            UserID2 = reader.ReadInt64();
             Unknown1 = (byte)reader.ReadByte();
         }
 
         public void WritePacket(PacketWriter writer)
         {
-            writer.WriteLong(UserID);
-            writer.WriteLong(UserID2);
+            writer.WriteInt64(UserID);
+            writer.WriteInt64(UserID2);
             writer.WriteByte(Unknown1);
         }
     }
