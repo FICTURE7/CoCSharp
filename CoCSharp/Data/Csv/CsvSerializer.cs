@@ -12,8 +12,8 @@ namespace CoCSharp.Data.Csv
         /// <summary>
         /// Deserializes the specified <see cref="CsvTable"/> with the specified <see cref="Type"/>.
         /// </summary>
-        /// <param name="table"><see cref="CsvTable"/> from which the data</param>
-        /// <param name="objectType"></param>
+        /// <param name="table"><see cref="CsvTable"/> from which the data is deserialize.</param>
+        /// <param name="objectType">Type of object to deserialize</param>
         /// <returns>Returns the deserializes objects.</returns>
         public static object[] Deserialize(CsvTable table, Type objectType)
         {
@@ -24,27 +24,28 @@ namespace CoCSharp.Data.Csv
 
             for (int x = 0; x < rows.Count; x++)
             {
+                var isParent = false;
                 var childObj = Activator.CreateInstance(objectType);
                 for (int i = 0; i < properties.Length; i++) // set property value loop
                 {
                     var property = properties[i];
                     var ignoreAttribute = property.GetCustomAttributes(typeof(CsvIgnoreAttribute), false);
                     if (ignoreAttribute.Length > 0)
-                        continue; // 0 f***s given to properties with CsvIgnoreAttribute lal
+                        continue; // ignore CsvIgnoreAttribute
                     var propertyAttribute = (CsvPropertyAttribute)property.GetCustomAttributes(typeof(CsvPropertyAttribute), false)
                                                                           .FirstOrDefault();
                     var propertyName = propertyAttribute == null ? property.Name : propertyAttribute.PropertyName;
                     var value = rows[i][propertyName];
                     var parameters = new object[] { value };
-                    if (value == DBNull.Value) // still processing parentObj
+                    if (parentObj != null && value == DBNull.Value)
+                        parameters = new object[] { property.GetMethod.Invoke(childObj, null) };
+                    else if (value == DBNull.Value)
                         continue;
-                    else // use parentObj's value instead
-                    {
-                        parameters = new object[] { property.GetMethod.Invoke(parentObj, null) };
-                        property.SetMethod.Invoke(childObj, parameters);
-                    }
+                    isParent = property.Name == "Name" && value != DBNull.Value;
                     property.SetMethod.Invoke(childObj, parameters);
                 }
+                if (isParent)
+                    parentObj = childObj;
                 objList.Add(childObj);
             }
             return objList.ToArray();

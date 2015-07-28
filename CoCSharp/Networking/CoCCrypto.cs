@@ -4,21 +4,29 @@ using System.Text;
 
 namespace CoCSharp.Networking
 {
+    /// <summary>
+    /// Implements methods to encrypt and decrypt network traffic of the Clash of Clans protocol.
+    /// Ported from Clash of Clans Documentation Project(https://github.com/clanner/cocdp/blob/master/cocutils.py)
+    /// to C#.
+    /// </summary>
     public class CoCCrypto
     {
-        /* Ported from Clash of Clans Documentation Project(https://github.com/clanner/cocdp/blob/master/cocutils.py)
-         * to C#. Massive thank you. :]
-         */
+        private const string InitialKey = "fhsd6f86f67rt8fw78fw789we78r9789wer6re";
+        private const string InitialNonce = "nonce";
 
-        public const string InitialKey = "fhsd6f86f67rt8fw78fw789we78r9789wer6re";
-        public const string InitialNonce = "nonce";
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoCCrypto"/> class.
+        /// </summary>
         public CoCCrypto()
         {
-            var key = InitialKey + InitialNonce;
-            InitializeChipers(key);
+            InitializeChipers(InitialKey + InitialNonce);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoCCrypto"/> class with
+        /// the specified key.
+        /// </summary>
+        /// <param name="key"></param>
         public CoCCrypto(string key)
         {
             InitializeChipers(key);
@@ -27,6 +35,10 @@ namespace CoCSharp.Networking
         private RC4 Encryptor { get; set; }
         private RC4 Decryptor { get; set; }
 
+        /// <summary>
+        /// Encrypts the provided bytes.
+        /// </summary>
+        /// <param name="data">Bytes to encrypt.</param>
         public void Encrypt(byte[] data)
         {
             for (int k = 0; k < data.Length; k++)
@@ -36,6 +48,10 @@ namespace CoCSharp.Networking
             }
         }
 
+        /// <summary>
+        /// Decrypts the provided bytes.
+        /// </summary>
+        /// <param name="data">Bytes to decrypt.</param>
         public void Decrypt(byte[] data)
         {
             for (int k = 0; k < data.Length; k++)
@@ -45,6 +61,11 @@ namespace CoCSharp.Networking
             }
         }
 
+        /// <summary>
+        /// Update the key with the specified client seed and server nonce.
+        /// </summary>
+        /// <param name="clientSeed">Client seed.</param>
+        /// <param name="serverNonce">Server random nonce.</param>
         public void UpdateChipers(ulong clientSeed, byte[] serverNonce)
         {
             var newNonce = ScrambleNonce(clientSeed, serverNonce);
@@ -53,19 +74,10 @@ namespace CoCSharp.Networking
             InitializeChipers(key);
         }
 
-        private static string ScrambleNonce(ulong clientSeed, byte[] serverNonce)
-        {
-            var scrambler = new Scrambler(clientSeed);
-            var byte100 = 0;
-
-            for (int i = 0; i < 100; i++) byte100 = scrambler.GetByte();
-
-            var scrambled = string.Empty;
-            for (int i = 0; i < serverNonce.Length; i++)
-                scrambled += (char)(serverNonce[i] ^ (scrambler.GetByte() & byte100));
-            return scrambled;
-        }
-
+        /// <summary>
+        /// Initializes the chipers with the specified key.
+        /// </summary>
+        /// <param name="key">The key used to update the chipers.</param>
         public void InitializeChipers(string key)
         {
             Encryptor = new RC4(key);
@@ -76,6 +88,18 @@ namespace CoCSharp.Networking
                 Encryptor.PRGA(); // skip bytes
                 Decryptor.PRGA();
             }
+        }
+
+        private static string ScrambleNonce(ulong clientSeed, byte[] serverNonce)
+        {
+            var scrambler = new Scrambler(clientSeed);
+            var byte100 = 0;
+            for (int i = 0; i < 100; i++) 
+                byte100 = scrambler.GetByte();
+            var scrambled = string.Empty;
+            for (int i = 0; i < serverNonce.Length; i++)
+                scrambled += (char)(serverNonce[i] ^ (scrambler.GetByte() & byte100));
+            return scrambled;
         }
 
         private class RC4

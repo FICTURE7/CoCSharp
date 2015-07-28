@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Networking
 {
-    public class CoCStream : Stream
+    public class CoCStream : Stream // will stop using this stuff.
     {
         public CoCStream(Socket connection)
         {

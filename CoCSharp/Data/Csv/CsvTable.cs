@@ -7,7 +7,7 @@ namespace CoCSharp.Data.Csv
 {
     /// <summary>
     /// Represents a Comma Seperated Values(CSV) file as datatable. 
-    /// Mainly made for Clash of Clans.
+    /// Mainly designed for Clash of Clans.
     /// </summary>
     public class CsvTable
     {
@@ -16,7 +16,7 @@ namespace CoCSharp.Data.Csv
         /// <summary>
         /// Reads the specified .csv file and parses it.
         /// </summary>
-        /// <param name="path">Path to .csv file.</param>
+        /// <param name="path">Path to the .csv file.</param>
         public CsvTable(string path)
         {
             Table = new DataTable();

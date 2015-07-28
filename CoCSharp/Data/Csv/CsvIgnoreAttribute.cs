@@ -13,7 +13,7 @@ namespace CoCSharp.Data.Csv
         /// </summary>
         public CsvIgnoreAttribute()
         {
-            // Spaces
+            // Space
         }
     }
 }

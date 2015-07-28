@@ -25,7 +25,7 @@ namespace CoCSharp.Proxy
             this.DatabaseManagers = new Dictionary<string, DatabaseManager>();
             this.AcceptEventPool = new SocketAsyncEventArgsPool(100);
 
-            RegisterDownloadedDatabases();
+            RegisterLocalDatabases();
             ProxyPacketHandlers.RegisterHanlders(this);
         }
 
@@ -107,7 +107,7 @@ namespace CoCSharp.Proxy
             }
         }
 
-        private void RegisterDownloadedDatabases()
+        private void RegisterLocalDatabases()
         {
             if (!Directory.Exists("databases"))
                 Directory.CreateDirectory("databases");

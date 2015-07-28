@@ -8,11 +8,11 @@
         /// <summary>
         /// To client.
         /// </summary>
-        Client = 0x00,
+        Client,
 
         /// <summary>
         /// To server.
         /// </summary>
-        Server = 0x01
+        Server
     };
 }

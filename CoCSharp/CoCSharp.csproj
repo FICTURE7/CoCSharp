@@ -71,6 +71,7 @@
     <Compile Include="Common\Vector2.cs" />
     <Compile Include="Data\BuildingData.cs" />
     <Compile Include="Data\BuildingDatabase.cs" />
+    <Compile Include="Data\CharacterData.cs" />
     <Compile Include="Data\Compression\Common\CommandLineParser.cs" />
     <Compile Include="Data\Compression\Common\CRC.cs" />
     <Compile Include="Data\Compression\Common\InBuffer.cs" />
@@ -88,7 +89,6 @@
     <Compile Include="Data\Compression\ICoder.cs" />
     <Compile Include="Data\Compression\LzmaUtils.cs" />
     <Compile Include="Data\Csv\CsvSerializerSettings.cs" />
-    <Compile Include="Data\Csv\CsvTimeSpanAttribute.cs" />
     <Compile Include="Data\Csv\CsvIgnoreAttribute.cs" />
     <Compile Include="Data\Csv\CsvPropertyAttribute.cs" />
     <Compile Include="Data\Csv\CsvRow.cs" />

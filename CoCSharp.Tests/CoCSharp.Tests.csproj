@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Data\Csv\CsvTableTests.cs" />
     <Compile Include="Data\DatabaseTests.cs" />
+    <Compile Include="Data\FingerprintTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

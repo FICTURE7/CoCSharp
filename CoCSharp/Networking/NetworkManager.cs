@@ -12,7 +12,6 @@ namespace CoCSharp.Networking
     {
         // use this handler to handle network
         public delegate void NetworkHandler(SocketAsyncEventArgs args, IPacket packet);
-        public const int HeaderSize = 7;
 
         public NetworkManager(ICoCServer server, Socket connection, NetworkHandler networkHandler, PacketDirection direction)
         {
@@ -58,7 +57,7 @@ namespace CoCSharp.Networking
                 var packetBuffer = (PacketBuffer)args.UserToken;
                 var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer));
 
-                if (HeaderSize > args.BytesTransferred) // check if there is a header
+                if (PacketBuffer.HeaderSize > args.BytesTransferred) // check if there is a header
                     continue;
 
                 // read header
