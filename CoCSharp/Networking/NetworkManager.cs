@@ -83,8 +83,13 @@ namespace CoCSharp.Networking
             /* Writes packet to a buffer,
              * then sends the buffer to the socket
              */
-
-            throw new NotImplementedException();
+            MemoryStream tempStream = new MemoryStream();
+            packet.WritePacket(new PacketWriter(tempStream));
+            byte[] buffer = new byte[tempStream.Length];
+            tempStream.Read(buffer, 0, buffer.Length);
+            buffer = (buffer.Skip(HeaderSize).ToArray());
+            CoCCrypto.Encrypt(buffer);
+            CoCStream.Write(buffer, 0, buffer.Length);
         }
 
         public void UpdateChipers(ulong seed, byte[] key)
