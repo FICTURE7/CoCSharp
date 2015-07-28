@@ -4,7 +4,7 @@ using System.IO;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// 
+    /// Provides methods to extract packets from byte array.
     /// </summary>
     public class PacketBuffer
     {
@@ -25,14 +25,14 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Gets the packet buffer bytes.
         /// </summary>
         public byte[] Buffer { get; private set; }
 
         private int OriginalBufferSize { get; set; }
 
         /// <summary>
-        /// 
+        /// Clears the buffer.
         /// </summary>
         public void Clear()
         {
@@ -40,7 +40,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Resets the buffer.
         /// </summary>
         public void Reset()
         {
@@ -48,7 +48,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Resize to the buffer to its original size.
         /// </summary>
         public void ResizeToOriginalSize()
         {
@@ -58,11 +58,11 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Extracts the packets with the specified bitmask of <see cref="PacketExtractionFlags"/> enum.
         /// </summary>
-        /// <param name="flags"></param>
-        /// <param name="packetLength"></param>
-        /// <returns></returns>
+        /// <param name="flags">Bitmask of <see cref="PacketExtractionFlags"/>.</param>
+        /// <param name="packetLength">Length of the packet in bytes.</param>
+        /// <returns>Packet bytes.</returns>
         public byte[] ExtractPacket(PacketExtractionFlags flags, int packetLength)
         {
             var packetStream = new MemoryStream(packetLength + HeaderSize);

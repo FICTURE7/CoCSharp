@@ -15,17 +15,17 @@ namespace CoCSharp.Networking
 
         public NetworkManager(ICoCServer server, Socket connection, NetworkHandler networkHandler, PacketDirection direction)
         {
-            if (PacketDictionary == null) InitializePacketDictionary(); // intialize dictionary
+            if (PacketDictionary == null)  // could a use a static constructor?
+                InitializePacketDictionary();
 
-            this.Connection = connection;
-            this.Handler = networkHandler;
-            this.Direction = direction;
-            this.CoCServer = server;
-            this.CoCStream = new CoCStream(connection);
-            this.CoCCrypto = new CoCCrypto();
-            this.ReceiveEventPool = new SocketAsyncEventArgsPool(25);
-            this.SendEventPool = new SocketAsyncEventArgsPool(25);
-
+            Connection = connection;
+            Handler = networkHandler;
+            Direction = direction;
+            CoCServer = server;
+            CoCStream = new CoCStream(connection);
+            CoCCrypto = new CoCCrypto();
+            ReceiveEventPool = new SocketAsyncEventArgsPool(25);
+            SendEventPool = new SocketAsyncEventArgsPool(25);
             StartReceive();
         }
 

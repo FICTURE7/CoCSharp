@@ -50,48 +50,49 @@ namespace CoCSharp.Networking
         public Stream BaseStream { get; set; }
 
         /// <summary>
-        /// 
+        /// Reads a sequence of bytes from the underlying stream and advances the 
+        /// position within the stream by the number of bytes read.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        /// <returns></returns>
+        /// <param name="buffer">The byte array which contains the read bytes from the underlying stream.</param>
+        /// <param name="offset">The zero-based index at which to begin reading data.</param>
+        /// <param name="count">The number of bytes to read.</param>
+        /// <returns>The number of byte read.</returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
             return BaseStream.Read(buffer, 0, count);
         }
 
         /// <summary>
-        /// 
+        /// Reads a <see cref="Byte"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="Byte"/> read.</returns>
         public override int ReadByte()
         {
             return BaseStream.ReadByte();
         }
 
         /// <summary>
-        /// 
+        /// Reads a <see cref="Boolean"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="Boolean"/> read.</returns>
         public bool ReadBoolean()
         {
             return ReadByte() == 1 ? true : false;
         }
 
         /// <summary>
-        /// 
+        /// Reads an <see cref="Int16"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="Int16"/> read.</returns>
         public short ReadInt16()
         {
             return (short)ReadUInt16();
         }
 
         /// <summary>
-        /// 
+        /// Reads an <see cref="UInt16"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="UInt16"/> read.</returns>
         public ushort ReadUInt16()
         {
             var buffer = ReadBytes(2);
@@ -99,9 +100,9 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Reads a 3 bytes long int.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>3 bytes int.</returns>
         public int ReadPacketLength()
         {
             var packetLengthBuffer = ReadBytes(3, false);
@@ -109,18 +110,18 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Reads an <see cref="Int32"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="Int32"/> read.</returns>
         public int ReadInt32()
         {
             return (int)ReadUInt32();
         }
 
         /// <summary>
-        /// 
+        /// Reads an <see cref="UInt32"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="UInt32"/> read.</returns>
         public uint ReadUInt32()
         {
             var buffer = ReadBytes(4);
@@ -128,74 +129,50 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Reads an <see cref="Int64"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="Int64"/> read.</returns>
         public long ReadInt64()
         {
             return (long)ReadUInt64();
         }
 
         /// <summary>
-        /// 
+        /// Reads a <see cref="UInt64"/> from the underlying stream.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><see cref="UInt64"/> read.</returns>
         public ulong ReadUInt64()
         {
             var buffer = ReadBytes(8);
             return BitConverter.ToUInt64(buffer, 0);
         }
 
+        /// <summary>
+        /// Reads an array of <see cref="Byte"/> from the underlying stream.
+        /// </summary>
+        /// <returns>The array of <see cref="Byte"/> read.</returns>
         public byte[] ReadByteArray()
         {
             var length = ReadInt32();
             var buffer = ReadBytes(length, false);
             return buffer;
         }
-        
+
         /// <summary>
-        /// 
+        /// Reads a <see cref="String"/> from the underlying stream.
         /// </summary>
         /// <returns></returns>
         public string ReadString()
         {
             var length = ReadInt32();
-            if (length < 0) 
+            if (length < 0)
                 return null;
             var buffer = ReadBytes(length, false);
             return Encoding.UTF8.GetString(buffer);
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="offset"></param>
-        /// <param name="origin"></param>
-        /// <returns></returns>
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            return BaseStream.Seek(offset, origin);
-        }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="value"></param>
-        public override void SetLength(long value)
-        {
-            BaseStream.SetLength(value);
-        }
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void Flush()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// 
+        /// Not supposed to use this.
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -206,11 +183,35 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Sets the position of the underlying stream.
         /// </summary>
-        /// <param name="count"></param>
-        /// <param name="switchEndian"></param>
-        /// <returns></returns>
+        /// <param name="offset">A byte offset relative to the origin parameter.</param>
+        /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point
+        ///                      used to obtain the new position.</param>
+        /// <returns>The new position of the underlying stream.</returns>
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            return BaseStream.Seek(offset, origin);
+        }
+
+        /// <summary>
+        /// Sets the length of the underlying stream.
+        /// </summary>
+        /// <param name="value">The desired length of the current stream in bytes.</param>
+        public override void SetLength(long value)
+        {
+            BaseStream.SetLength(value);
+        }
+
+        /// <summary>
+        /// Not implemented.
+        /// </summary>
+        public override void Flush()
+        {
+            throw new NotImplementedException();
+        }
+
+
         private byte[] ReadBytes(int count, bool switchEndian = true)
         {
             var buffer = new byte[count];
