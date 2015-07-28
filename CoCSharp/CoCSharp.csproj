@@ -67,44 +67,59 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CoCServer.cs" />
-    <Compile Include="Databases\BuildingDatabase.cs" />
-    <Compile Include="Databases\Compression\Common\CommandLineParser.cs" />
-    <Compile Include="Databases\Compression\Common\CRC.cs" />
-    <Compile Include="Databases\Compression\Common\InBuffer.cs" />
-    <Compile Include="Databases\Compression\Common\OutBuffer.cs" />
-    <Compile Include="Databases\Compression\Compress\LZMA\LzmaBase.cs" />
-    <Compile Include="Databases\Compression\Compress\LZMA\LzmaDecoder.cs" />
-    <Compile Include="Databases\Compression\Compress\LZMA\LzmaEncoder.cs" />
-    <Compile Include="Databases\Compression\Compress\LZ\IMatchFinder.cs" />
-    <Compile Include="Databases\Compression\Compress\LZ\LzBinTree.cs" />
-    <Compile Include="Databases\Compression\Compress\LZ\LzInWindow.cs" />
-    <Compile Include="Databases\Compression\Compress\LZ\LzOutWindow.cs" />
-    <Compile Include="Databases\Compression\Compress\RangeCoder\RangeCoder.cs" />
-    <Compile Include="Databases\Compression\Compress\RangeCoder\RangeCoderBit.cs" />
-    <Compile Include="Databases\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
-    <Compile Include="Databases\Compression\ICoder.cs" />
-    <Compile Include="Databases\Compression\LzmaUtils.cs" />
-    <Compile Include="Databases\Csv\CsvRow.cs" />
-    <Compile Include="Databases\Csv\CsvTable.cs" />
-    <Compile Include="Databases\Database.cs" />
-    <Compile Include="Databases\DatabaseManager.cs" />
-    <Compile Include="Databases\DecorationDatabase.cs" />
-    <Compile Include="Databases\ObstacleDatabase.cs" />
-    <Compile Include="Databases\TrapDatabase.cs" />
+    <Compile Include="Common\BuildingClass.cs" />
+    <Compile Include="Common\Vector2.cs" />
+    <Compile Include="Data\BuildingData.cs" />
+    <Compile Include="Data\BuildingDatabase.cs" />
+    <Compile Include="Data\Compression\Common\CommandLineParser.cs" />
+    <Compile Include="Data\Compression\Common\CRC.cs" />
+    <Compile Include="Data\Compression\Common\InBuffer.cs" />
+    <Compile Include="Data\Compression\Common\OutBuffer.cs" />
+    <Compile Include="Data\Compression\Compress\LZMA\LzmaBase.cs" />
+    <Compile Include="Data\Compression\Compress\LZMA\LzmaDecoder.cs" />
+    <Compile Include="Data\Compression\Compress\LZMA\LzmaEncoder.cs" />
+    <Compile Include="Data\Compression\Compress\LZ\IMatchFinder.cs" />
+    <Compile Include="Data\Compression\Compress\LZ\LzBinTree.cs" />
+    <Compile Include="Data\Compression\Compress\LZ\LzInWindow.cs" />
+    <Compile Include="Data\Compression\Compress\LZ\LzOutWindow.cs" />
+    <Compile Include="Data\Compression\Compress\RangeCoder\RangeCoder.cs" />
+    <Compile Include="Data\Compression\Compress\RangeCoder\RangeCoderBit.cs" />
+    <Compile Include="Data\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
+    <Compile Include="Data\Compression\ICoder.cs" />
+    <Compile Include="Data\Compression\LzmaUtils.cs" />
+    <Compile Include="Data\Csv\CsvSerializerSettings.cs" />
+    <Compile Include="Data\Csv\CsvTimeSpanAttribute.cs" />
+    <Compile Include="Data\Csv\CsvIgnoreAttribute.cs" />
+    <Compile Include="Data\Csv\CsvPropertyAttribute.cs" />
+    <Compile Include="Data\Csv\CsvRow.cs" />
+    <Compile Include="Data\Csv\CsvSerializer.cs" />
+    <Compile Include="Data\Csv\CsvTable.cs" />
+    <Compile Include="Data\Database.cs" />
+    <Compile Include="Data\DatabaseManager.cs" />
+    <Compile Include="Data\DecorationDatabase.cs" />
+    <Compile Include="Data\Fingerprint.cs" />
+    <Compile Include="Data\VillageObjectData.cs" />
+    <Compile Include="Data\ObstacleDatabase.cs" />
+    <Compile Include="Data\TrapDatabase.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="ICoCServer.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\PacketDumper.cs" />
+    <Compile Include="Logging\PacketLogger.cs" />
     <Compile Include="Logic\Building.cs" />
     <Compile Include="Logic\Clan.cs" />
     <Compile Include="Logic\Decoration.cs" />
     <Compile Include="Logic\Obstacle.cs" />
-    <Compile Include="Logic\Resource.cs" />
+    <Compile Include="Common\Resource.cs" />
     <Compile Include="Logic\Trap.cs" />
     <Compile Include="Logic\Village.cs" />
     <Compile Include="Logic\VillageObject.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\CoCStream.cs" />
     <Compile Include="Networking\NetworkManager.cs" />
+    <Compile Include="Networking\PacketBuffer.cs" />
     <Compile Include="Networking\PacketDirection.cs" />
+    <Compile Include="Networking\PacketExtractionFlags.cs" />
     <Compile Include="Networking\Packets\AllianceChatMessageClientPacket.cs" />
     <Compile Include="Networking\Packets\AllianceChatMessageServerPacket.cs" />
     <Compile Include="Networking\Packets\AvatarProfileRequestPacket.cs" />
@@ -125,6 +140,7 @@
     <Compile Include="Networking\PacketWriter.cs" />
     <Compile Include="Networking\Packets\UnknownPacket.cs" />
     <Compile Include="Networking\Packets\UpdateKeyPacket.cs" />
+    <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +163,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

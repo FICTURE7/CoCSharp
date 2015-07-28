@@ -1,38 +1,29 @@
-﻿using CoCSharp.Databases;
+﻿using CoCSharp.Data;
+using CoCSharp.Logging;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using CoCSharp.Proxy.Handlers;
-using CoCSharp.Proxy.Logging;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace CoCSharp.Proxy
 {
-    public class CoCProxy : CoCServer
+    public class CoCProxy : ICoCServer
     {
         public const int DefaultPort = 9339;
         public const string DefaultServer = "gamea.clashofclans.com";
 
-        public delegate void PacketHandler(CoCProxy proxyServer, CoCProxyClient client, IPacket packet);
+        public delegate void PacketHandler(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet);
 
         public CoCProxy()
         {
-            this.PacketLogger = new PacketLogger();
-            this.PacketDumper = new PacketDumper();
-            this.Clients = new List<CoCProxyClient>();
+            this.Loggers = new List<ILogger>();
+            this.ProxyConnections = new List<CoCProxyConnection>();
             this.PacketHandlers = new Dictionary<ushort, PacketHandler>();
             this.DatabaseManagers = new Dictionary<string, DatabaseManager>();
-            this.AcceptAsyncEventPool = new Stack<SocketAsyncEventArgs>();
-            for (int i = 0; i < 10; i++)
-            {
-                var acceptEvent = new SocketAsyncEventArgs();
-                acceptEvent.Completed += AsyncOperationCompleted;
-                AcceptAsyncEventPool.Push(acceptEvent);
-            }
+            this.AcceptEventPool = new SocketAsyncEventArgsPool(100);
 
             RegisterDownloadedDatabases();
             ProxyPacketHandlers.RegisterHanlders(this);
@@ -40,40 +31,30 @@ namespace CoCSharp.Proxy
 
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
-        public PacketLogger PacketLogger { get; set; }
-        public PacketDumper PacketDumper { get; set; }
-        public List<CoCProxyClient> Clients { get; set; }
+        public List<ILogger> Loggers { get; set; }
+        public List<CoCProxyConnection> ProxyConnections { get; set; }
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
         public Dictionary<string, DatabaseManager> DatabaseManagers { get; set; }
         public Socket Listener { get; set; }
         public IPEndPoint EndPoint { get; set; }
 
         private bool ShuttingDown { get; set; }
-        private Thread NetworkThread { get; set; }
-        private Stack<SocketAsyncEventArgs> AcceptAsyncEventPool { get; set; }
+        private SocketAsyncEventArgsPool AcceptEventPool { get; set; }
 
         public void Start(IPEndPoint endPoint)
         {
             ShuttingDown = false;
             EndPoint = endPoint;
-            NetworkThread = new Thread(HandleNetwork);
 
             Listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             Listener.Bind(endPoint);
-            Listener.Listen(100);
-
-            NetworkThread.Name = "NetworkThread";
-            NetworkThread.Start();
+            Listener.Listen(200);
+            StartListen();
         }
 
         public void Stop()
         {
-            if (NetworkThread != null)
-            {
-                ShuttingDown = true;
-                NetworkThread.Abort();
-            }
-
+            ShuttingDown = true;
             if (Listener != null)
                 Listener.Close();
         }
@@ -88,130 +69,47 @@ namespace CoCSharp.Proxy
             DatabaseManagers.Add(hash, manager);
         }
 
-        private void HandlePacket(CoCProxyClient client, IPacket packet)
+        private void HandlePacket(CoCProxyConnection client, IPacket packet)
         {
             var handler = (PacketHandler)null;
-            if (!PacketHandlers.TryGetValue(packet.ID, out handler)) return;
+            if (!PacketHandlers.TryGetValue(packet.ID, out handler))
+                return;
             handler(this, client, packet);
         }
 
-        private void HandleNetwork()
+        private void StartListen()
         {
-            while (true)
+            while (AcceptEventPool.Count > 1)
             {
-                if (ShuttingDown) return;
+                var acceptEvent = AcceptEventPool.Pop();
+                acceptEvent.Completed += AcceptAsyncCompleted;
 
-                while (AcceptAsyncEventPool.Count > 1) // make use of 9 of the aysnc objs
-                {
-                    var acceptEvent = AcceptAsyncEventPool.Pop();
-                    var willRaiseEvent = Listener.AcceptAsync(acceptEvent);
-
-                    if (!willRaiseEvent)
-                        HandleAcceptOperation(acceptEvent);
-                }
-
-                for (int i = 0; i < Clients.Count; i++)
-                {
-                    //TODO: Kick client due to keep alive timeouts.
-                    while (Clients[i].Client.NetworkManager.DataAvailable)
-                    {
-                        try
-                        {
-                            /* S <- P <- C
-                             * Proxying data from client to server.
-                             */
-
-                            var rawPacket = (byte[])null; // raw encrypted packet
-                            var decryptedPacket = (byte[])null;
-                            var packet = Clients[i].Client.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from client
-
-                            if (packet != null) HandlePacket(Clients[i], packet);
-
-                            if (rawPacket != null && packet != null)
-                            {
-                                Clients[i].Server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
-                                PacketLogger.LogPacket(packet, PacketDirection.Server);
-                                PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
-                            }
-                        }
-                        catch (SocketException ex)
-                        {
-                            Console.WriteLine("[SocketException]: Client => {0}", ex.Message);
-                            Clients.RemoveAt(i);
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("[Exception]: Client => {0}", ex.Message);
-                            Clients.RemoveAt(i);
-                            break;
-                        }
-                    }
-
-                    if (Clients[i].Server == null) continue;
-
-                    while (Clients[i].Server.NetworkManager.DataAvailable)
-                    {
-                        try
-                        {
-                            /* S -> P -> C
-                             * Proxying data from server to client.
-                             */
-
-                            var rawPacket = (byte[])null;
-                            var decryptedPacket = (byte[])null;
-                            var packet = Clients[i].Server.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from server
-
-                            if (packet != null) HandlePacket(Clients[i], packet);
-
-                            if (rawPacket != null && packet != null)
-                            {
-                                // could log packets in a sperate thread
-                                Clients[i].Client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
-                                PacketLogger.LogPacket(packet, PacketDirection.Client);
-                                PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
-                            }
-                        }
-                        catch (SocketException ex)
-                        {
-                            Console.WriteLine("[SocketException]: ProxyClient => {0}", ex.Message);
-                            Clients.RemoveAt(i);
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("[Exception]: ProxyClient => {0}", ex.Message);
-                            Clients.RemoveAt(i);
-                            break;
-                        }
-                    }
-                }
-                Thread.Sleep(1);
+                if (!Listener.AcceptAsync(acceptEvent))
+                    AcceptAsyncCompleted(Listener, acceptEvent);
             }
         }
 
-        private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs e)
+        private void AcceptAsyncCompleted(object sender, SocketAsyncEventArgs args)
         {
-            switch (e.LastOperation) // TODO: Check for errors
+            args.Completed -= AcceptAsyncCompleted;
+
+            switch (args.LastOperation) // TODO: Check for errors
             {
                 case SocketAsyncOperation.Accept:
-                    HandleAcceptOperation(e);
+                    var connection = args.AcceptSocket;
+                    var remoteClient = new CoCProxyConnection(this, connection);
+                    
+                    ProxyConnections.Add(remoteClient);               
+                    args.AcceptSocket = null;
+                    AcceptEventPool.Push(args);
+                    StartListen();
                     break;
             }
         }
 
-        private void HandleAcceptOperation(SocketAsyncEventArgs acceptEvent)
-        {
-            var remoteClient = new CoCProxyClient(acceptEvent.AcceptSocket);
-            Clients.Add(remoteClient);
-
-            acceptEvent.AcceptSocket = null;
-            AcceptAsyncEventPool.Push(acceptEvent); // reuse the obj
-        }
-
         private void RegisterDownloadedDatabases()
         {
-            if (!Directory.Exists("databases")) 
+            if (!Directory.Exists("databases"))
                 Directory.CreateDirectory("databases");
 
             var dbFiles = Directory.GetDirectories("databases");

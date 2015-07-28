@@ -1,4 +1,5 @@
-﻿using CoCSharp.Networking.Packets;
+﻿using CoCSharp.Logging;
+using CoCSharp.Networking.Packets;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,36 +10,56 @@ namespace CoCSharp.Networking
 {
     public class NetworkManager
     {
+        // use this handler to handle network shit
+        public delegate void NetworkHandler(SocketAsyncEventArgs args, IPacket packet);
         public const int HeaderSize = 7;
 
-        public NetworkManager(Socket connection)
+        public NetworkManager(ICoCServer server, Socket connection, NetworkHandler networkHandler, PacketDirection direction)
         {
+            if (PacketDictionary == null) InitializePacketDictionary(); // intialize dictionary
+
             this.Connection = connection;
+            this.Handler = networkHandler;
+            this.Direction = direction;
+            this.CoCServer = server;
             this.CoCStream = new CoCStream(connection);
             this.CoCCrypto = new CoCCrypto();
+            this.ReceiveEventPool = new SocketAsyncEventArgsPool(25);
+            this.SendEventPool = new SocketAsyncEventArgsPool(25);
 
-            if (PacketDictionary == null) InitializePacketDictionary(); // intialize dictionary
+            StartReceive();
         }
 
         public bool DataAvailable { get { return Connection.Available > 0; } }
+        public bool Disconnected { get; private set; }
         public CoCStream CoCStream { get; set; }
 
         private Socket Connection { get; set; }
         private CoCCrypto CoCCrypto { get; set; }
+        private ICoCServer CoCServer { get; set; }
+        private PacketDirection Direction { get; set; }
+        private NetworkHandler Handler { get; set; }
+        private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
+        private SocketAsyncEventArgsPool SendEventPool { get; set; }
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
 
-        public IPacket ReadPacket(out byte[] rawPacket, out byte[] decryptedPacket)
+        public IPacket ReadPacket(SocketAsyncEventArgs args)
         {
             /* Receive data from the socket, saves it a buffer,
              * then reads packet from the buffer. 
              */
 
-            var timeout = DateTime.Now.AddMilliseconds(500); // 500ms
-            while (DataAvailable && DateTime.Now < timeout)
-            {
-                CoCStream.ReadToBuffer(); // reads data saves it a buffer
+            if (args.BytesTransferred == 0)
+                return null; //TODO: Handle disconnection
 
-                var enPacketReader = new PacketReader(CoCStream.ReadBuffer);
+            var timeout = DateTime.Now.AddMilliseconds(500);
+            while (DateTime.Now < timeout)
+            {
+                var packetBuffer = (PacketBuffer)args.UserToken;
+                var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer));
+
+                if (HeaderSize > args.BytesTransferred) // check if there is a header
+                    continue;
 
                 // read header
                 var packetID = enPacketReader.ReadUShort();
@@ -46,17 +67,18 @@ namespace CoCSharp.Networking
                 var packetVersion = enPacketReader.ReadUShort();
 
                 // read body
-                if (packetLength > enPacketReader.Length) // check if data is enough data is avaliable in the buffer
+                if (packetLength > args.BytesTransferred) // check if data is enough data is avaliable in the buffer
                     continue;
 
-                var encryptedData = GetPacketBody(packetLength);
+                var encryptedData = packetBuffer.ExtractPacket(PacketExtractionFlags.Body |
+                                                               PacketExtractionFlags.Remove, 
+                                                               packetLength);
                 var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
 
                 CoCCrypto.Decrypt(decryptedData);
 
                 var dePacketReader = new PacketReader(new MemoryStream(decryptedData));
-
-                var packet = GetPacket(packetID);
+                var packet = GetPacketInstance(packetID);
                 if (packet is UnknownPacket)
                 {
                     packet = new UnknownPacket
@@ -68,23 +90,12 @@ namespace CoCSharp.Networking
                     ((UnknownPacket)packet).EncryptedData = encryptedData;
                 }
 
-                decryptedPacket = decryptedData;
-                rawPacket = ExtractRawPacket(packetLength); // raw encrypted packet
                 packet.ReadPacket(dePacketReader);
+                // CoCServer.PacketLogger.LogPacket(packet, PacketDirection.Server);
+                // CoCServer.PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedData);
                 return packet;
             }
-            decryptedPacket = null;
-            rawPacket = null;
             return null;
-        }
-
-        public void WritePacket(IPacket packet)
-        {
-            /* Writes packet to a buffer,
-             * then sends the buffer to the socket
-             */
-
-            throw new NotImplementedException();
         }
 
         public void UpdateChipers(ulong seed, byte[] key)
@@ -92,38 +103,48 @@ namespace CoCSharp.Networking
             CoCCrypto.UpdateChipers(seed, key);
         }
 
-        //TODO: Implement this in CoCStream
-        private byte[] ExtractRawPacket(int packetLength)
+        public void Disconnect()
         {
-            /* Extract packet body + header from CoCStream.ReadBuffer and 
-             * removes it from the stream.
-             */
-
-            var packetData = CoCStream.ReadBuffer.ToArray().Take(packetLength + HeaderSize).ToArray(); // extract packet
-            var otherData = CoCStream.ReadBuffer.ToArray().Skip(packetData.Length).ToArray(); // remove packet from buffer
-
-            CoCStream.ReadBuffer = new MemoryStream(4096); // clear buffer
-            CoCStream.ReadBuffer.Write(otherData, 0, otherData.Length);
-
-            return packetData;
+            Disconnected = true;
+            Connection.Close();
         }
 
-        //TODO: Implement this in CoCStream
-        private byte[] GetPacketBody(int packetLength)
+        private void StartReceive()
         {
-            /* Get packet body bytes from CoCStream.ReadBuffer without 
-             * removing it from the stream.
-             */
+            while (ReceiveEventPool.Count > 1)
+            {
+                var receiveArgs = ReceiveEventPool.Pop();
+                receiveArgs.Completed += OperationCompleted;
 
-            var packetData = CoCStream.ReadBuffer.ToArray().Skip(HeaderSize).ToArray().Take(packetLength).ToArray(); // extract packet
-            return packetData;
+                if (!Connection.ReceiveAsync(receiveArgs))
+                    OperationCompleted(Connection, receiveArgs);
+            }
         }
 
-        private static IPacket GetPacket(ushort id)
+        private void OperationCompleted(object sender, SocketAsyncEventArgs args)
+        {
+            args.Completed -= OperationCompleted;
+
+            if (args.SocketError != SocketError.Success) // handle stuff better here
+                return;
+
+            switch (args.LastOperation)
+            {
+                case SocketAsyncOperation.Receive:
+                    var packet = ReadPacket(args);
+
+                    Handler(args, packet);
+                    ReceiveEventPool.Push(args);
+                    StartReceive();
+                    break;
+            }
+        }
+
+        private static IPacket GetPacketInstance(ushort id)
         {
             var packetType = (Type)null;
-
-            if (!PacketDictionary.TryGetValue(id, out packetType)) return new UnknownPacket();
+            if (!PacketDictionary.TryGetValue(id, out packetType)) 
+                return new UnknownPacket();
             return (IPacket)Activator.CreateInstance(packetType);
         }
 

@@ -1,4 +1,4 @@
-﻿using CoCSharp.Databases;
+﻿using CoCSharp.Data;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using System;
@@ -8,7 +8,7 @@ namespace CoCSharp.Proxy.Handlers
 {
     public static class ProxyPacketHandlers
     {
-        public static void HandleLoginSuccessPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleLoginSuccessPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
         {
             var lsPacket = packet as LoginSuccessPacket;
 
@@ -17,19 +17,19 @@ namespace CoCSharp.Proxy.Handlers
             client.Client.LoggedIn = true;
         }
 
-        public static void HandleUpdateKeyPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleUpdateKeyPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
         {
             var ukPacket = packet as UpdateKeyPacket;
 
-            client.Client.NetworkManager.UpdateChipers((ulong)client.Client.Seed, ukPacket.Key);
-            client.Server.NetworkManager.UpdateChipers((ulong)client.Client.Seed, ukPacket.Key);
+            client.Client.ClientNetworkManager.UpdateChipers((ulong)client.Client.Seed, ukPacket.Key);
+            client.Server.ClientNetworkManager.UpdateChipers((ulong)client.Client.Seed, ukPacket.Key);
         }
 
-        public static void HandleLoginRequestPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleLoginRequestPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
         {
             var lrPacket = packet as LoginRequestPacket;
 
-            client.Start(new TcpClient(proxyServer.ServerAddress, proxyServer.ServerPort).Client);
+            client.Start((ICoCServer)proxyServer, new TcpClient(proxyServer.ServerAddress, proxyServer.ServerPort).Client);
             client.Client.Seed = lrPacket.Seed;
             client.Client.UserID = lrPacket.UserID;
             client.Client.UserToken = lrPacket.UserToken;
@@ -42,7 +42,7 @@ namespace CoCSharp.Proxy.Handlers
             }
         }
 
-        public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
+        public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
         {
             var ohPacket = packet as OwnHomeDataPacket;
             client.Client.Username = ohPacket.Username;

@@ -1,4 +1,5 @@
-﻿using CoCSharp.Databases;
+﻿using CoCSharp.Common;
+using CoCSharp.Data;
 using Newtonsoft.Json;
 
 namespace CoCSharp.Logic

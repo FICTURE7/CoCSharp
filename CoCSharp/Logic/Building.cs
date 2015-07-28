@@ -1,4 +1,5 @@
-﻿using CoCSharp.Databases;
+﻿using CoCSharp.Common;
+using CoCSharp.Data;
 using Newtonsoft.Json;
 using System;
 
@@ -9,11 +10,11 @@ namespace CoCSharp.Logic
     {
         public Building(int id, int level)
         {
-            this.ID = id;
-            this.Level = level;
+            ID = id;
+            Level = level;
         }
 
-        [JsonProperty("hp")] // not sure about this
+        [JsonProperty("hp")] // hitpoints
         public int Hitpoints { get; set; }
         [JsonProperty("lvl")]
         public int Level { get; set; }

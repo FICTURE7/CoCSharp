@@ -1,4 +1,4 @@
-﻿using CoCSharp.Databases;
+﻿using CoCSharp.Data;
 using Newtonsoft.Json;
 
 namespace CoCSharp.Logic
@@ -7,12 +7,12 @@ namespace CoCSharp.Logic
     {
         public VillageObject()
         {
-            this.ID = -1;
+            ID = -1;
         }
 
         public VillageObject(int id)
         {
-            this.ID = id;
+            ID = id;
         }
 
         [JsonProperty("data")]

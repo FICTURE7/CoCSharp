@@ -1,4 +1,4 @@
-﻿using CoCSharp.Databases;
+﻿using CoCSharp.Data;
 using CoCSharp.Networking;
 using Ionic.Zlib;
 using Newtonsoft.Json;
@@ -33,7 +33,8 @@ namespace CoCSharp.Logic
         public void FromJson(string json)
         {
             var village = JsonConvert.DeserializeObject<Village>(json);
-            if (village == null) throw new InvalidOperationException("Invalid village Json string.");
+            if (village == null) 
+                throw new InvalidOperationException("Invalid village Json string.");
 
             Buildings = village.Buildings;
             Obstacles = village.Obstacles;

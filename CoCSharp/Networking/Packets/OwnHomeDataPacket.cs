@@ -10,7 +10,7 @@ namespace CoCSharp.Networking.Packets
         //Not very consistant, it changes when in League, shizz changed since last update
         public ushort ID { get { return 0x5E25; } }
 
-        public TimeSpan LastLogged;
+        public TimeSpan LastVisit;
 
         //public int Unknown1;
 
@@ -56,7 +56,7 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            LastLogged = TimeSpan.FromSeconds(reader.ReadInt());
+            LastVisit = TimeSpan.FromSeconds(reader.ReadInt());
 
             //Unknown1 = reader.ReadInt();
             reader.Seek(4, SeekOrigin.Current);

@@ -3,6 +3,7 @@ Thumbs.db
 ehthumbs.db
 bin/
 obj/
+TestResults/
 
 # Folder config file
 Desktop.ini
