@@ -14,6 +14,7 @@
         /// <summary>
         /// Logs data to file log.
         /// </summary>
-        void Log();
+        /// <param name="parameters"></param>
+        void Log(params object[] parameters);
     }
 }

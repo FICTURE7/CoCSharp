@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace CoCSharp.Data.Csv
 {
@@ -14,7 +15,7 @@ namespace CoCSharp.Data.Csv
         /// </summary>
         /// <param name="table"><see cref="CsvTable"/> from which the data is deserialize.</param>
         /// <param name="objectType">Type of object to deserialize</param>
-        /// <returns>Returns the deserializes objects.</returns>
+        /// <returns>Returns the deserialized objects.</returns>
         public static object[] Deserialize(CsvTable table, Type objectType)
         {
             var rows = table.Rows;
@@ -29,18 +30,20 @@ namespace CoCSharp.Data.Csv
                 for (int i = 0; i < properties.Length; i++) // set property value loop
                 {
                     var property = properties[i];
-                    var ignoreAttribute = property.GetCustomAttributes(typeof(CsvIgnoreAttribute), false);
-                    if (ignoreAttribute.Length > 0)
+                    if (HasIgnoreAttribute(property))
                         continue; // ignore CsvIgnoreAttribute
-                    var propertyAttribute = (CsvPropertyAttribute)property.GetCustomAttributes(typeof(CsvPropertyAttribute), false)
-                                                                          .FirstOrDefault();
-                    var propertyName = propertyAttribute == null ? property.Name : propertyAttribute.PropertyName;
+                    var propertyName = GetPropertyAttributeName(property);
                     var value = rows[i][propertyName];
                     var parameters = new object[] { value };
+
                     if (parentObj != null && value == DBNull.Value)
-                        parameters = new object[] { property.GetMethod.Invoke(childObj, null) };
+                        parameters = new object[] 
+                        { 
+                            property.GetMethod.Invoke(childObj, null)
+                        };
                     else if (value == DBNull.Value)
                         continue;
+
                     isParent = property.Name == "Name" && value != DBNull.Value;
                     property.SetMethod.Invoke(childObj, parameters);
                 }
@@ -49,6 +52,21 @@ namespace CoCSharp.Data.Csv
                 objList.Add(childObj);
             }
             return objList.ToArray();
+        }
+
+        private static string GetPropertyAttributeName(PropertyInfo property)
+        {
+            var propertyAttribute = (CsvPropertyAttribute)property.GetCustomAttributes(typeof(CsvPropertyAttribute), false)
+                                                                          .FirstOrDefault();
+            return propertyAttribute == null ? property.Name : propertyAttribute.PropertyName;
+        }
+
+        private static bool HasIgnoreAttribute(PropertyInfo property)
+        {
+            var ignoreAttribute = property.GetCustomAttributes(typeof(CsvIgnoreAttribute), false);
+            if (ignoreAttribute.Length > 0)
+                return true;
+            return false;
         }
     }
 }

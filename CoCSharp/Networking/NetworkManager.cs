@@ -32,8 +32,8 @@ namespace CoCSharp.Networking
         public bool DataAvailable { get { return Connection.Available > 0; } }
         public bool Disconnected { get; private set; }
         public CoCStream CoCStream { get; set; }
+        public Socket Connection { get; set; }
 
-        private Socket Connection { get; set; }
         private CoCCrypto CoCCrypto { get; set; }
         private ICoCServer CoCServer { get; set; }
         private PacketDirection Direction { get; set; }
@@ -131,7 +131,6 @@ namespace CoCSharp.Networking
             {
                 case SocketAsyncOperation.Receive:
                     var packet = ReadPacket(args);
-
                     Handler(args, packet);
                     ReceiveEventPool.Push(args);
                     StartReceive();

@@ -9,9 +9,10 @@ namespace CoCSharp.Proxy
     {
         public CoCProxyClient(ICoCServer server, Socket connection, PacketDirection direction)
         {
-            this.Proxy = server;
-            this.Connection = connection;
-            this.ClientNetworkManager = new NetworkManager(server, connection, HandleNetwork, direction);
+            Proxy = server;
+            Connection = connection;
+            ClientNetworkManager = new NetworkManager(server, connection, HandleNetworkClient, direction);
+            ServerNetworkManager = new NetworkManager(server, connection, HandleNetworkServer, direction);
         }
 
         public string Username { get; set; }
@@ -27,9 +28,14 @@ namespace CoCSharp.Proxy
 
         private ICoCServer Proxy { get; set; }
 
-        private void HandleNetwork(SocketAsyncEventArgs args, IPacket packet)
+        private void HandleNetworkClient(SocketAsyncEventArgs args, IPacket packet)
         {
-            
+            ServerNetworkManager.Connection.Send(args.Buffer);
+        }
+
+        private void HandleNetworkServer(SocketAsyncEventArgs args, IPacket packet)
+        {
+            ClientNetworkManager.Connection.Send(args.Buffer);
         }
     }
 }
