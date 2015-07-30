@@ -66,6 +66,14 @@ namespace CoCSharp.Data
             return JsonConvert.SerializeObject(this);
         }
 
+        public static Fingerprint Create(string path)
+        {
+            /* Should calculate hashes and find the files
+             * to make a fingerprint.json.
+             */
+            throw new NotImplementedException();
+        }
+
         public class FingerprintFile
         {
             [JsonProperty("sha")]

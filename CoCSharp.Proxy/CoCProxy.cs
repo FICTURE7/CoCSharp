@@ -3,6 +3,7 @@ using CoCSharp.Logging;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using CoCSharp.Proxy.Handlers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -19,13 +20,13 @@ namespace CoCSharp.Proxy
 
         public CoCProxy()
         {
-            this.Loggers = new List<ILogger>();
-            this.ProxyConnections = new List<CoCProxyConnection>();
-            this.PacketHandlers = new Dictionary<ushort, PacketHandler>();
-            this.DatabaseManagers = new Dictionary<string, DatabaseManager>();
-            this.AcceptEventPool = new SocketAsyncEventArgsPool(100);
-
+            Loggers = new List<ILogger>();
+            ProxyConnections = new List<CoCProxyConnection>();
+            PacketHandlers = new Dictionary<ushort, PacketHandler>();
+            DatabaseManagers = new Dictionary<string, DatabaseManager>();
+            AcceptEventPool = new SocketAsyncEventArgsPool(100);
             RegisterLocalDatabases();
+
             ProxyPacketHandlers.RegisterHanlders(this);
         }
 
@@ -36,12 +37,12 @@ namespace CoCSharp.Proxy
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
         public Dictionary<string, DatabaseManager> DatabaseManagers { get; set; }
         public Socket Listener { get; set; }
-        public IPEndPoint EndPoint { get; set; }
+        public EndPoint EndPoint { get; set; }
 
         private bool ShuttingDown { get; set; }
         private SocketAsyncEventArgsPool AcceptEventPool { get; set; }
 
-        public void Start(IPEndPoint endPoint)
+        public void Start(EndPoint endPoint)
         {
             ShuttingDown = false;
             EndPoint = endPoint;
@@ -67,6 +68,12 @@ namespace CoCSharp.Proxy
         public void RegisterDatabaseManager(DatabaseManager manager, string hash)
         {
             DatabaseManagers.Add(hash, manager);
+        }
+
+        public void Log(params object[] parameters)
+        {
+            //TODO: Implement =]
+            throw new NotImplementedException();
         }
 
         private void HandlePacket(CoCProxyConnection client, IPacket packet)

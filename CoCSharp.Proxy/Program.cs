@@ -1,5 +1,4 @@
-﻿using CoCSharp.Proxy.Handlers;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -28,7 +27,7 @@ namespace CoCSharp.Proxy
 
             Proxy.Start(new IPEndPoint(IPAddress.Any, Configuration.ProxyPort));
 
-            Console.WriteLine("CoC# is running on *:{0}", Proxy.EndPoint.Port);
+            Console.WriteLine("CoC# is running on *:{0}", Configuration.ProxyPort);
             Thread.Sleep(-1);
         }
     }

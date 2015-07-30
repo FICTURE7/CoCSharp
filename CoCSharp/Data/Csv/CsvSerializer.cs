@@ -14,10 +14,11 @@ namespace CoCSharp.Data.Csv
         /// Deserializes the specified <see cref="CsvTable"/> with the specified <see cref="Type"/>.
         /// </summary>
         /// <param name="table"><see cref="CsvTable"/> from which the data is deserialize.</param>
-        /// <param name="objectType">Type of object to deserialize</param>
+        /// <param name="objectType">Type of object to deserialize.</param>
         /// <returns>Returns the deserialized objects.</returns>
         public static object[] Deserialize(CsvTable table, Type objectType)
         {
+            // currently not working :[
             var rows = table.Rows;
             var properties = objectType.GetProperties();
             var parentObj = (object)null;
@@ -37,10 +38,7 @@ namespace CoCSharp.Data.Csv
                     var parameters = new object[] { value };
 
                     if (parentObj != null && value == DBNull.Value)
-                        parameters = new object[] 
-                        { 
-                            property.GetMethod.Invoke(childObj, null)
-                        };
+                        parameters = new object[] { property.GetMethod.Invoke(childObj, null) };
                     else if (value == DBNull.Value)
                         continue;
 

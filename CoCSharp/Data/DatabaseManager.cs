@@ -11,8 +11,11 @@ namespace CoCSharp.Data
     {
         public const string AssetServer = "http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/";
 
-        public DatabaseManager(string fingerprintHash) : this("databases", fingerprintHash)
-        { }
+        public DatabaseManager(string fingerprintHash)
+            : this("databases", fingerprintHash)
+        {
+            // Space
+        }
 
         public DatabaseManager(string directory, string fingerprintHash)
         {

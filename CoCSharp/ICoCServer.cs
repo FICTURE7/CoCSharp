@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Logging;
 using System.Collections.Generic;
+using System.Net;
 
 namespace CoCSharp
 {
@@ -8,6 +9,16 @@ namespace CoCSharp
     /// </summary>
     public interface ICoCServer
     {
+        /// <summary>
+        /// Start the server.
+        /// </summary>
+        void Start(EndPoint endPoint);
+
+        /// <summary>
+        /// Stops the server.
+        /// </summary>
+        void Stop();
+
         /// <summary>
         /// Logs data with the given parameters.
         /// </summary>

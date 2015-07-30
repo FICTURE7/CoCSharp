@@ -1,65 +1,55 @@
-﻿using System;
+﻿using SevenZip;
+using System;
 using System.Data;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CoCSharp.Data.Csv
 {
     /// <summary>
-    /// Represents a Comma Seperated Values(CSV) file as datatable. 
-    /// Mainly designed for Clash of Clans.
+    /// Represents a Comma Seperated Values(CSV) file as a datatable. 
+    /// Mainly designed for the Clash of Clans CSV file format.
     /// </summary>
     public class CsvTable
     {
         //TODO: Implement save to CSV methods.
+        
+        /// <summary>
+        /// Initalizes a new instance of the <see cref="CsvTable"/> class.
+        /// </summary>
+        public CsvTable()
+        {
+            Table = new DataTable();
+        }
 
         /// <summary>
-        /// Reads the specified .csv file and parses it.
+        /// Initializes a new instance of the <see cref="CsvTable"/> class and 
+        /// reads the specified .csv file and parses it.
         /// </summary>
         /// <param name="path">Path to the .csv file.</param>
         public CsvTable(string path)
         {
             Table = new DataTable();
-            var rows = Regex.Split(File.ReadAllText(path).Replace("\"", string.Empty), "\r\n");
-            var columnNames = Regex.Split(rows[0], ",");
-            var typeRow = Regex.Split(rows[1], ",");
-            for (int i = 0; i < columnNames.Length; i++)
-            {
-                var type = (Type)null; // associate a data type with the columns
-                switch (typeRow[i])
-                {
-                    case "String":
-                        type = typeof(string);
-                        break;
-                    case "int":
-                        type = typeof(int);
-                        break;
-                    case "Boolean":
-                    case "boolean":
-                        type = typeof(bool);
-                        break;
-                    default:
-                        throw new InvalidDataException(string.Format("Unhandled data type '{0}'.", typeRow[i]));
-                }
-                Table.Columns.Add(columnNames[i], type);
-            }
-
-            for (int i = 2; i < rows.Length; i++) // turn empty("") fields to DBNull.Value loop
-            {
-                var columnValues = (object[])Regex.Split(rows[i], ","); 
-                var newColumnValues = new object[columnValues.Length];
-                for (int x = 0; x < columnValues.Length; x++)
-                {
-                    newColumnValues[x] = columnValues[x] == string.Empty ?
-                                                         DBNull.Value :
-                                                         columnValues[x];
-                }
-                Table.Rows.Add(newColumnValues);
-            }
+            FromFile(path);
         }
 
         /// <summary>
-        /// Gets the DataTable of the CSV file.
+        /// Initializes a new instance of the <see cref="CsvTable"/> class and decompresses
+        /// the specified .csv file if compressed, then reads file and parses it.
+        /// </summary>
+        /// <param name="path">Path to the .csv file.</param>
+        public CsvTable(string path, bool compressed)
+        {
+            Table = new DataTable();
+            if (compressed)
+                FromCompressedFile(path);
+            else
+                FromFile(path);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DataTable"/> of the CSV file.
         /// </summary>
         public DataTable Table { get; private set; }
         /// <summary>
@@ -78,10 +68,113 @@ namespace CoCSharp.Data.Csv
 
         private StreamReader Reader { get; set; }
 
+        [Obsolete("Will be removed soon. Use CsvTable.Rows instead.")]
         public CsvRow ReadNextRow()
         {
             var row = Reader.ReadLine().Split(',');
             return new CsvRow(row);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        public void FromCompressedFile(string path)
+        {
+            var compressedBytes = File.ReadAllBytes(path);
+            FromCompressedBytes(compressedBytes);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        public void FromFile(string path)
+        {
+            var bytes = File.ReadAllBytes(path);
+            FromBytes(bytes);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="compressedBytes"></param>
+        public void FromCompressedBytes(byte[] compressedBytes)
+        {
+            using (var mem = new MemoryStream())
+            {
+                mem.Write(compressedBytes, 0, 9);
+                mem.Write(new byte[4], 0, 4);
+                mem.Write(compressedBytes, 9, compressedBytes.Length - 9);
+                FromBytes(LzmaUtils.Decompress(mem.ToArray()));
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bytes"></param>
+        public void FromBytes(byte[] bytes)
+        {
+            var rawCsv = Encoding.UTF8.GetString(bytes);
+            var rows = Regex.Split(rawCsv.Replace("\"", string.Empty), "\r\n");
+            var columnNames = Regex.Split(rows[0], ",");
+            var typeRow = Regex.Split(rows[1], ",");
+
+            for (int i = 0; i < columnNames.Length; i++)  // associate a data type with the columns loop
+            {
+                var type = (Type)null;
+                switch (typeRow[i])
+                {
+                    case "String":
+                    case "string":
+                        type = typeof(string);
+                        break;
+
+                    case "int":
+                        type = typeof(int);
+                        break;
+
+                    case "Boolean":
+                    case "boolean":
+                        type = typeof(bool);
+                        break;
+
+                    default:
+                        throw new InvalidDataException(string.Format("Unhandled data type '{0}'.", typeRow[i]));
+                }
+                Table.Columns.Add(columnNames[i], type);
+            }
+
+            for (int i = 2; i < rows.Length; i++) // turn empty("") fields to DBNull.Value loop
+            {
+                var columnValues = (object[])Regex.Split(rows[i], ",");
+                var newColumnValues = new object[columnValues.Length];
+                for (int x = 0; x < columnValues.Length; x++)
+                    newColumnValues[x] = (string)columnValues[x] == string.Empty ? DBNull.Value : columnValues[x];
+                Table.Rows.Add(newColumnValues);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        public void Save(string path)
+        {
+            //TODO: Implement.
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="compressed"></param>
+        public void Save(string path, bool compressed)
+        {
+            //TODO: Implement.
+            throw new NotImplementedException();
         }
     }
 }

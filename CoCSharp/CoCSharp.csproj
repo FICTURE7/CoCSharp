@@ -104,6 +104,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="ICoCServer.cs" />
     <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\LogCategory.cs" />
     <Compile Include="Logging\PacketDumper.cs" />
     <Compile Include="Logging\PacketLogger.cs" />
     <Compile Include="Logic\Building.cs" />
