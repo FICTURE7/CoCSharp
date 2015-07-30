@@ -21,7 +21,7 @@ Clash of Clans library written in C# to handle networking, csv files and more to
 CoCSharp is trying to implement most the Clash of Clans features and also trying be easy as possible to use.
 
 ### Networking
-CoCSharp current networking system is not very flexible and should be rethinked.
+CoCSharp current networking system was designed mainly for a proxy and is not very flexible at the moment.
 
 ### CSV Tables
 Example to read a compressed .csv table and print all its fields. 
