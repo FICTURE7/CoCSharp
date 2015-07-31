@@ -42,10 +42,7 @@ namespace CoCSharp.Data.Csv
         public CsvTable(string path, bool compressed)
         {
             Table = new DataTable();
-            if (compressed)
-                FromCompressedFile(path);
-            else
-                FromFile(path);
+            FromFile(path, compressed);
         }
 
         /// <summary>
@@ -75,17 +72,6 @@ namespace CoCSharp.Data.Csv
             var row = Reader.ReadLine().Split(',');
             return new CsvRow(row);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="path"></param>
-        public void FromCompressedFile(string path)
-        {
-            var compressedBytes = File.ReadAllBytes(path);
-            FromCompressedBytes(compressedBytes);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -99,16 +85,12 @@ namespace CoCSharp.Data.Csv
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="compressedBytes"></param>
-        public void FromCompressedBytes(byte[] compressedBytes)
+        /// <param name="path"></param>
+        /// <param name="compressed"></param>
+        public void FromFile(string path, bool compressed)
         {
-            using (var mem = new MemoryStream())
-            {
-                mem.Write(compressedBytes, 0, 9); // fix the header
-                mem.Write(new byte[4], 0, 4);
-                mem.Write(compressedBytes, 9, compressedBytes.Length - 9);
-                FromBytes(LzmaUtils.Decompress(mem.ToArray()));
-            }
+            var bytes = File.ReadAllBytes(path);
+            FromBytes(bytes, compressed);
         }
 
         /// <summary>
@@ -155,6 +137,26 @@ namespace CoCSharp.Data.Csv
                     newColumnValues[x] = (string)columnValues[x] == string.Empty ? DBNull.Value : columnValues[x];
                 Table.Rows.Add(newColumnValues);
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="compressed"></param>
+        public void FromBytes(byte[] bytes, bool compressed)
+        {
+            if (compressed)
+            {
+                using (var mem = new MemoryStream())
+                {
+                    mem.Write(bytes, 0, 9); // fix the header
+                    mem.Write(new byte[4], 0, 4);
+                    mem.Write(bytes, 9, bytes.Length - 9);
+                    FromBytes(LzmaUtils.Decompress(mem.ToArray()));
+                }
+            }
+            else FromBytes(bytes);
         }
 
         /// <summary>

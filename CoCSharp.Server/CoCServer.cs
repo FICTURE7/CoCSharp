@@ -10,8 +10,8 @@ namespace CoCSharp.Server
     {
         public CoCServer()
         {
-            this.Clients = new List<CoCRemoteClient>();
-            this.AcceptAsyncEventPool = new SocketAsyncEventArgsPool(100);
+            Clients = new List<CoCRemoteClient>();
+            AcceptAsyncEventPool = new SocketAsyncEventArgsPool(100);
         }
 
         public Socket Listener { get; set; }

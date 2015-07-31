@@ -21,7 +21,6 @@ namespace CoCSharp.Tests.Data.Csv
         {
             var table = new CsvTable("com_globals.csv", true);
             PrintTable(table);
-
             table.Save("saved_com_globals.csv", true);
         }
 

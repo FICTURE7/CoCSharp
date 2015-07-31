@@ -9,7 +9,7 @@ namespace CoCSharp.Server
     {
         public static CoCServer Server { get; set; }
 
-        public static void m(string[] args)
+        public static void Main(string[] args)
         {
             Console.Title = "CoC# Server";
 
