@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SevenZip;
 using System;
 using System.IO;
@@ -50,23 +51,23 @@ namespace CoCSharp.Data
             {
                 IsDownloading = true;
                 var fingerprintJson = await webClient.DownloadStringTaskAsync(fingerprintUrl);
-                dynamic fingerprint = JObject.Parse(fingerprintJson); //TODO: Make Fingerprint.cs
-                var files = fingerprint.files;
-                
+                var fingerprint = JsonConvert.DeserializeObject<Fingerprint>(fingerprintJson);
+                var files = fingerprint.Files;
+
                 File.WriteAllText(Path.Combine(dbPath, "fingerprint.json"), fingerprintJson);
 
-                for (int i = 0; i < files.Count; i++) // iterate through fingerprint
+                for (int i = 0; i < files.Length; i++) // iterate through fingerprint
                 {
-                    var file = files[i].file;
-                    if (Path.GetExtension(file.Value) == ".csv") // could download whole asset stuff but nah
+                    var path = files[i].Path;
+                    if (Path.GetExtension(path) == ".csv") // could download whole asset stuff but nah
                     {
-                        var csvUrl = new Uri(rootUrl + file.Value);
+                        var csvUrl = new Uri(rootUrl + path);
                         var comBytes = await webClient.DownloadDataTaskAsync(csvUrl);
                         var comBytesList = comBytes.ToList();
                         comBytesList.InsertRange(9, new byte[4]); // fix lzma header
 
                         var csvFile = LzmaUtils.Decompress(comBytesList.ToArray());
-                        File.WriteAllBytes(Path.Combine(dbPath, Path.GetFileName(file.Value)), csvFile);
+                        File.WriteAllBytes(Path.Combine(dbPath, Path.GetFileName(path)), csvFile);
                     }
                 }
                 IsDownloading = false;

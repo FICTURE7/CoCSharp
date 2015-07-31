@@ -9,7 +9,7 @@ namespace CoCSharp.Networking
     public class PacketBuffer
     {
         /// <summary>
-        /// Header size in bytes of the Clash of Clans protocol.
+        /// Header size in bytes of the Clash of Clans packet structure.
         /// </summary>
         public const int HeaderSize = 7;
 

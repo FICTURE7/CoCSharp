@@ -13,14 +13,16 @@ namespace CoCSharp.Tests.Data.Csv
         {
             var table = new CsvTable("characters.csv");
             PrintTable(table);
+            table.Save("saved_characters.csv");
         }
 
         [TestMethod]
         public void TestCompressedCsvTable()
         {
-            var table = new CsvTable();
-            table.FromCompressedFile("com_globals.csv");
+            var table = new CsvTable("com_globals.csv", true);
             PrintTable(table);
+
+            table.Save("saved_com_globals.csv", true);
         }
 
         [TestMethod]

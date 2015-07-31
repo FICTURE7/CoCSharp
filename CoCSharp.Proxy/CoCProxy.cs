@@ -72,7 +72,7 @@ namespace CoCSharp.Proxy
 
         public void Log(params object[] parameters)
         {
-            //TODO: Implement =]
+            //TODO: Implement.
             throw new NotImplementedException();
         }
 

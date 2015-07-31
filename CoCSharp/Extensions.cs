@@ -3,7 +3,7 @@ using System.Text;
 
 namespace CoCSharp
 {
-    public static class StringBuilderExtensions
+    internal static class StringBuilderExtensions
     {
         private const string IndentString = "    ";
 

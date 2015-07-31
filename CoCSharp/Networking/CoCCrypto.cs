@@ -104,16 +104,16 @@ namespace CoCSharp.Networking
 
         private class RC4
         {
-            //TODO: Increase swag :]
+            //TODO: Increase swag
 
             public RC4(byte[] key)
             {
-                this.Key = KSA(key);
+                Key = KSA(key);
             }
 
             public RC4(string key)
             {
-                this.Key = KSA(StringToByteArray(key));
+                Key = KSA(StringToByteArray(key));
             }
 
             public byte[] Key { get; set; } // "S"

@@ -14,7 +14,7 @@ namespace CoCSharp.Data.Csv
     public class CsvTable
     {
         //TODO: Implement save to CSV methods.
-        
+
         /// <summary>
         /// Initalizes a new instance of the <see cref="CsvTable"/> class.
         /// </summary>
@@ -64,6 +64,7 @@ namespace CoCSharp.Data.Csv
         /// Gets the row of the CSV file which defines the value types of the columns.
         /// </summary>
         public DataRow TypesRow { get { return Table.Rows[0]; } }
+
         public bool EndOfFile { get { return Reader.EndOfStream; } }
 
         private StreamReader Reader { get; set; }
@@ -103,7 +104,7 @@ namespace CoCSharp.Data.Csv
         {
             using (var mem = new MemoryStream())
             {
-                mem.Write(compressedBytes, 0, 9);
+                mem.Write(compressedBytes, 0, 9); // fix the header
                 mem.Write(new byte[4], 0, 4);
                 mem.Write(compressedBytes, 9, compressedBytes.Length - 9);
                 FromBytes(LzmaUtils.Decompress(mem.ToArray()));
@@ -162,8 +163,7 @@ namespace CoCSharp.Data.Csv
         /// <param name="path"></param>
         public void Save(string path)
         {
-            //TODO: Implement.
-            throw new NotImplementedException();
+            Save(path, false);
         }
 
         /// <summary>
@@ -173,8 +173,37 @@ namespace CoCSharp.Data.Csv
         /// <param name="compressed"></param>
         public void Save(string path, bool compressed)
         {
-            //TODO: Implement.
-            throw new NotImplementedException();
+            var csvBuilder = new StringBuilder();
+            for (int i = 0; i < Table.Columns.Count - 1; i++) // write column names.
+                csvBuilder.Append(Columns[i].ColumnName + ",");
+            csvBuilder.AppendLine(Columns[Columns.Count - 1].ColumnName);
+
+            for (int i = 0; i < Table.Columns.Count; i++) // write TypesRow
+            {
+                var format = i == Table.Columns.Count - 1 ? "{0}\r\n" : "{0},"; // check if last in array
+                var dataType = Table.Columns[i].DataType;
+                if (dataType == typeof(int))
+                {
+                    csvBuilder.AppendFormat(format, "int");
+                    continue;
+                }
+                csvBuilder.AppendFormat(format, dataType.Name);
+            }
+
+            for (int i = 0; i < Table.Rows.Count; i++) // writes all rows
+                csvBuilder.AppendLine(string.Join(",", Table.Rows[i].ItemArray));
+
+            if (compressed)
+            {
+                var bytes = LzmaUtils.Compress(Encoding.UTF8.GetBytes(csvBuilder.ToString()));
+                using (var mem = new MemoryStream(bytes))
+                {
+                    mem.Write(bytes, 0, 9);
+                    mem.Write(bytes, 12, bytes.Length - 13);
+                    File.WriteAllBytes(path, mem.ToArray());
+                }
+            }
+            else File.WriteAllText(path, csvBuilder.ToString());
         }
     }
 }

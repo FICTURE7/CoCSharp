@@ -18,7 +18,6 @@ namespace CoCSharp.Data.Csv
         /// <returns>Returns the deserialized objects.</returns>
         public static object[] Deserialize(CsvTable table, Type objectType)
         {
-            // currently not working :[
             var rows = table.Rows;
             var properties = objectType.GetProperties();
             var parentObj = (object)null;
@@ -33,6 +32,7 @@ namespace CoCSharp.Data.Csv
                     var property = properties[i];
                     if (HasIgnoreAttribute(property))
                         continue; // ignore CsvIgnoreAttribute
+
                     var propertyName = GetPropertyAttributeName(property);
                     var value = rows[i][propertyName];
                     var parameters = new object[] { value };
