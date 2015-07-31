@@ -1,7 +1,7 @@
 ﻿namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Direction of the packet.
+    /// Direction of a packet.
     /// </summary>
     public enum PacketDirection
     {

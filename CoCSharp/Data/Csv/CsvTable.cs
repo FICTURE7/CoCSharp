@@ -73,9 +73,9 @@ namespace CoCSharp.Data.Csv
             return new CsvRow(row);
         }
         /// <summary>
-        /// 
+        /// Reads the specified .csv file from disk without compression.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">Path to the .csv file.</param>
         public void FromFile(string path)
         {
             var bytes = File.ReadAllBytes(path);
@@ -83,10 +83,10 @@ namespace CoCSharp.Data.Csv
         }
 
         /// <summary>
-        /// 
+        /// Reads the specified .csv file from disk and decompresses it if specifed.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="compressed"></param>
+        /// <param name="path">Path to the .csv file.</param>
+        /// <param name="compressed">Whether the .csv file is compressed or not.</param>
         public void FromFile(string path, bool compressed)
         {
             var bytes = File.ReadAllBytes(path);
@@ -94,9 +94,9 @@ namespace CoCSharp.Data.Csv
         }
 
         /// <summary>
-        /// 
+        /// Reads the specified .csv file from a <see cref="Byte"/> array without compression.
         /// </summary>
-        /// <param name="bytes"></param>
+        /// <param name="bytes"><see cref="Byte"/> array of the .csv file.</param>
         public void FromBytes(byte[] bytes)
         {
             var rawCsv = Encoding.UTF8.GetString(bytes);
@@ -140,10 +140,10 @@ namespace CoCSharp.Data.Csv
         }
 
         /// <summary>
-        /// 
+        /// Reads the specified .csv file from a <see cref="Byte"/> array and decompresses it if specifed.
         /// </summary>
-        /// <param name="bytes"></param>
-        /// <param name="compressed"></param>
+        /// <param name="bytes"><see cref="Byte"/> array of the .csv file.</param>
+        /// <param name="compressed">>Whether the .csv file is compressed or not.</param>
         public void FromBytes(byte[] bytes, bool compressed)
         {
             if (compressed)
@@ -160,19 +160,20 @@ namespace CoCSharp.Data.Csv
         }
 
         /// <summary>
-        /// 
+        /// Saves this <see cref="CsvTable"/> on disk with the specified path and without compression.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">Path of the .csv to save to.</param>
         public void Save(string path)
         {
             Save(path, false);
         }
 
         /// <summary>
-        /// 
+        /// Saves this <see cref="CsvTable"/> on disk with the specified path and with compression
+        /// if specified.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="compressed"></param>
+        /// <param name="path">Path of the .csv to save to.</param>
+        /// <param name="compressed">Whether to compress the file or not.</param>
         public void Save(string path, bool compressed)
         {
             var csvBuilder = new StringBuilder();
@@ -195,7 +196,7 @@ namespace CoCSharp.Data.Csv
             for (int i = 0; i < Table.Rows.Count; i++) // writes all rows
                 csvBuilder.AppendLine(string.Join(",", Table.Rows[i].ItemArray));
 
-            if (compressed)
+            if (compressed) // checks compression
             {
                 var bytes = LzmaUtils.Compress(Encoding.UTF8.GetBytes(csvBuilder.ToString()));
                 using (var mem = new MemoryStream(bytes))

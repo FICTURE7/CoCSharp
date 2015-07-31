@@ -2,6 +2,7 @@
 using CoCSharp.Data.Csv;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace CoCSharp.Tests.Data.Csv
 {
@@ -29,6 +30,18 @@ namespace CoCSharp.Tests.Data.Csv
         {
             var table = new CsvTable("buildings.csv");
             var data = CsvSerializer.Deserialize(table, typeof(BuildingData));
+            for (int i = 0; i < data.Length; i++)
+            {
+                var type = data[i].GetType();
+                var properties = type.GetProperties();
+                for (int x = 0; x < properties.Length; x++)
+                {
+                    Console.Write(properties[x].Name.PadRight(100));
+                    Console.Write(properties[x].GetMethod.Invoke(data[i], null));
+                    Console.WriteLine();
+                }
+                Console.WriteLine();
+            }
         }
 
         private void PrintTable(CsvTable table)

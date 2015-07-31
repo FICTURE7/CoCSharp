@@ -14,7 +14,7 @@ namespace CoCSharp.Data.Csv
         /// Deserializes the specified <see cref="CsvTable"/> with the specified <see cref="Type"/>.
         /// </summary>
         /// <param name="table"><see cref="CsvTable"/> from which the data is deserialize.</param>
-        /// <param name="objectType">Type of object to deserialize.</param>
+        /// <param name="objectType"><see cref="Type"/> of object to deserialize.</param>
         /// <returns>Returns the deserialized objects.</returns>
         public static object[] Deserialize(CsvTable table, Type objectType)
         {
@@ -25,7 +25,6 @@ namespace CoCSharp.Data.Csv
 
             for (int x = 0; x < rows.Count; x++)
             {
-                var isParent = false;
                 var childObj = Activator.CreateInstance(objectType);
                 for (int i = 0; i < properties.Length; i++) // set property value loop
                 {
@@ -34,19 +33,20 @@ namespace CoCSharp.Data.Csv
                         continue; // ignore CsvIgnoreAttribute
 
                     var propertyName = GetPropertyAttributeName(property);
-                    var value = rows[i][propertyName];
+                    var value = rows[x][propertyName];
                     var parameters = new object[] { value };
 
-                    if (parentObj != null && value == DBNull.Value)
-                        parameters = new object[] { property.GetMethod.Invoke(childObj, null) };
+                    if (parentObj != null && value == DBNull.Value) // get data from parent
+                        parameters = new object[] { property.GetMethod.Invoke(parentObj, null) };
                     else if (value == DBNull.Value)
                         continue;
 
-                    isParent = property.Name == "Name" && value != DBNull.Value;
+                    var isParent = property.Name == "Name" && value != DBNull.Value;
                     property.SetMethod.Invoke(childObj, parameters);
+
+                    if (isParent)
+                        parentObj = childObj;
                 }
-                if (isParent)
-                    parentObj = childObj;
                 objList.Add(childObj);
             }
             return objList.ToArray();

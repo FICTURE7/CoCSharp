@@ -4,14 +4,15 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Networking
 {
+    [Obsolete("Will be removed soon.")]
     public class CoCStream : Stream // will stop using this stuff.
     {
         public CoCStream(Socket connection)
         {
             //TODO: Do some renaming
-            this.Connection = connection;
-            this.ReadBuffer = new MemoryStream(4096);
-            this.WriteBuffer = new MemoryStream(4096);
+            Connection = connection;
+            ReadBuffer = new MemoryStream(4096);
+            WriteBuffer = new MemoryStream(4096);
         }
 
         #region Properties
