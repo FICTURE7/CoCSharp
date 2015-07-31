@@ -24,25 +24,12 @@ CoCSharp is trying to implement most the Clash of Clans features and also trying
 CoCSharp current networking system was designed mainly for a proxy and is not very flexible at the moment.
 
 ### CSV Tables
-Example to read a compressed .csv table and print all its fields. 
+Example to read a compressed "buildings.csv" file.
 ```c#
 // loads the .csv file
 var table = new CsvTable("buildings.csv", true);
-
-// prints all column name
-for (int i = 0; i < table.Columns.Count; i++)
-{
-    Console.Write(table.Columns[i].ColumnName.PadRight(30));
-}
-Console.WriteLine();
-
-// print all row items
-for (int i = 0; i < table.Rows.Count; i++)
-{
-  for (int k = 0; k < table.Rows[i].ItemArray.Length; k++)
-    Console.Write(table.Rows[i].ItemArray[k].ToString().PadRight(50));
-  Console.WriteLine();
-}
+// deserializes the CsvTable into an object array of the specified type.
+var buildingsData = CsvSerializer.Deserialize(table, typeof(BuildingData));
 ```
 
 ## Projects using CoCSharp
