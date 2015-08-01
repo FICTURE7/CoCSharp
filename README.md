@@ -7,7 +7,7 @@ Clash of Clans library written in C# to handle networking, csv files and more to
 * CoCSharp.Data:
   * Includes classes for reading CSV files.
   * Includes classes for managing CSV files and downloading them.
-  * Includes classes for all CSV file data.
+  * Includes classes for all CSV file data. Such as: BuildingData, TrapData, ObstacleData
 * CoCSharp.Logging:
   * Includes classes to log and dump packet.
 * CoCSharp.Logic: Village object strutures. *(Needs to be refactored)*
