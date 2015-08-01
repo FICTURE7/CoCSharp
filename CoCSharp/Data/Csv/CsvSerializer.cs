@@ -15,7 +15,7 @@ namespace CoCSharp.Data.Csv
         /// </summary>
         /// <param name="table"><see cref="CsvTable"/> from which the data is deserialize.</param>
         /// <param name="objectType"><see cref="Type"/> of object to deserialize.</param>
-        /// <returns>Returns the deserialized objects.</returns>
+        /// <returns>Returns the deserialized object array.</returns>
         public static object[] Deserialize(CsvTable table, Type objectType)
         {
             var rows = table.Rows;
@@ -50,6 +50,16 @@ namespace CoCSharp.Data.Csv
                 objList.Add(childObj);
             }
             return objList.ToArray();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objType"></param>
+        /// <returns></returns>
+        public static CsvTable Serialize(Type objType)
+        {
+            throw new NotImplementedException();
         }
 
         private static string GetPropertyAttributeName(PropertyInfo property)

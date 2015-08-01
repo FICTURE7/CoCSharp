@@ -1,8 +1,8 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Csv;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
+using System.IO;
+using System.Text;
 
 namespace CoCSharp.Tests.Data.Csv
 {
@@ -13,7 +13,7 @@ namespace CoCSharp.Tests.Data.Csv
         public void TestUncompressedCsvTable()
         {
             var table = new CsvTable("characters.csv");
-            PrintTable(table);
+            WriteTableToTxt(table, "characters_parsed.txt");
             table.Save("saved_characters.csv");
         }
 
@@ -21,41 +21,66 @@ namespace CoCSharp.Tests.Data.Csv
         public void TestCompressedCsvTable()
         {
             var table = new CsvTable("com_globals.csv", true);
-            PrintTable(table);
+            WriteTableToTxt(table, "com_globals_parsed.txt");
             table.Save("saved_com_globals.csv", true);
         }
 
         [TestMethod]
-        public void TestCsvSerializer()
+        public void TestCsvSerializerBuildings()
         {
             var table = new CsvTable("buildings.csv");
             var data = CsvSerializer.Deserialize(table, typeof(BuildingData));
+            var strBuilder = new StringBuilder();
             for (int i = 0; i < data.Length; i++)
             {
+                strBuilder.AppendLine((i + 1) + ". ---------------------");
                 var type = data[i].GetType();
                 var properties = type.GetProperties();
                 for (int x = 0; x < properties.Length; x++)
                 {
-                    Console.Write(properties[x].Name.PadRight(100));
-                    Console.Write(properties[x].GetMethod.Invoke(data[i], null));
-                    Console.WriteLine();
+                    strBuilder.Append(properties[x].Name.PadRight(100));
+                    strBuilder.Append(properties[x].GetMethod.Invoke(data[i], null));
+                    strBuilder.AppendLine();
                 }
-                Console.WriteLine();
             }
+            File.WriteAllText("buildings_parsed.txt", strBuilder.ToString());
         }
 
-        private void PrintTable(CsvTable table)
+        [TestMethod]
+        public void TestCsvSerializerCharacters()
         {
+            var table = new CsvTable("characters.csv");
+            var data = CsvSerializer.Deserialize(table, typeof(CharacterData));
+            var strBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                strBuilder.AppendLine((i + 1) + ". ---------------------");
+                var type = data[i].GetType();
+                var properties = type.GetProperties();
+                for (int x = 0; x < properties.Length; x++)
+                {
+                    strBuilder.Append(properties[x].Name.PadRight(100));
+                    strBuilder.Append(properties[x].GetMethod.Invoke(data[i], null));
+                    strBuilder.AppendLine();
+                }
+            }
+            File.WriteAllText("characters_parsed.txt", strBuilder.ToString());
+        }
+
+        private void WriteTableToTxt(CsvTable table, string path)
+        {
+            var strBuilder = new StringBuilder();
             for (int i = 0; i < table.Columns.Count; i++)
-                Console.Write(table.Columns[i].ColumnName.PadRight(30));
-            Console.WriteLine();
+                strBuilder.Append(table.Columns[i].ColumnName.PadRight(100));
+            strBuilder.AppendLine();
 
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 for (int k = 0; k < table.Rows[i].ItemArray.Length; k++)
-                    Console.Write(table.Rows[i].ItemArray[k].ToString().PadRight(30));
-                Console.WriteLine();
+                    strBuilder.Append(table.Rows[i].ItemArray[k].ToString().PadRight(100));
+                strBuilder.AppendLine();
             }
+            File.WriteAllText(path, strBuilder.ToString());
         }
     }
 }

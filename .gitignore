@@ -4,6 +4,8 @@ ehthumbs.db
 bin/
 obj/
 TestResults/
+Scripts/*.txt
+Scripts/*.py~
 
 # Folder config file
 Desktop.ini

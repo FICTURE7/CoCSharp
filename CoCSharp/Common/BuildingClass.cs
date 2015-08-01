@@ -1,5 +1,8 @@
-﻿namespace CoCSharp.Common
+﻿using System;
+
+namespace CoCSharp.Common
 {
+    [Obsolete("Will be removed. Use BuildingClassData instead.")]
     public enum BuildingClass
     {
         Army,
