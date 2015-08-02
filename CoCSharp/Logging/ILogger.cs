@@ -3,11 +3,11 @@
     public interface ILogger
     {
         /// <summary>
-        /// If the logger is logging data.
+        /// Gets or sets if the logger is logging data.
         /// </summary>
         bool Active { get; set; }
         /// <summary>
-        /// Name of the file(including path) the logger is writing to.
+        /// Gets or sets the name of the file(including path) the logger is writing to.
         /// </summary>
         string FileLog { get; set; }
 

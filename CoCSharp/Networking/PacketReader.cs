@@ -90,7 +90,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Reads an <see cref="UInt16"/> from the underlying stream.
+        /// Reads a <see cref="UInt16"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="UInt16"/> read.</returns>
         public ushort ReadUInt16()
@@ -119,7 +119,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Reads an <see cref="UInt32"/> from the underlying stream.
+        /// Reads a <see cref="UInt32"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="UInt32"/> read.</returns>
         public uint ReadUInt32()

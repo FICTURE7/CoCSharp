@@ -7,7 +7,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// 
+    /// Implements methods to read and write <see cref="IPacket"/>s to a <see cref="Socket"/>.
     /// </summary>
     public class NetworkManager
     {
@@ -162,7 +162,7 @@ namespace CoCSharp.Networking
             {
                 case SocketAsyncOperation.Receive:
                     var packet = ReadPacket(args);
-                    Handler(args, packet);
+                    Handler(args, packet); // pass the packet and args to the code user nethandler
                     ReceiveEventPool.Push(args);
                     StartReceive();
                     break;

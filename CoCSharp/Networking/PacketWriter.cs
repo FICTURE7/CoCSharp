@@ -80,7 +80,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Writes a <see cref="Int16"/> to the underlying stream.
+        /// Writes an <see cref="Int16"/> to the underlying stream.
         /// </summary>
         /// <param name="value"><see cref="Int16"/> to write.</param>
         public void WriteInt16(short value)
@@ -112,7 +112,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Writes a <see cref="Int32"/> to the underlying stream.
+        /// Writes an <see cref="Int32"/> to the underlying stream.
         /// </summary>
         /// <param name="value"><see cref="Int32"/> to write.</param>
         public void WriteInt32(int value)
@@ -131,7 +131,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Writes a <see cref="Int64"/> to the underlying stream.
+        /// Writes an <see cref="Int64"/> to the underlying stream.
         /// </summary>
         /// <param name="value"><see cref="Int64"/> to write.</param>
         public void WriteInt64(long value)

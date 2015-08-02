@@ -4,7 +4,7 @@ using System.IO;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Provides methods to extract packets from byte array.
+    /// Provides methods to extract packets from a <see cref="Byte"/> array.
     /// </summary>
     public class PacketBuffer
     {
@@ -58,7 +58,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Extracts the packets with the specified bitmask of <see cref="PacketExtractionFlags"/> enum.
+        /// Extracts the packet with the specified bitmask of <see cref="PacketExtractionFlags"/> enum.
         /// </summary>
         /// <param name="flags">Bitmask of <see cref="PacketExtractionFlags"/>.</param>
         /// <param name="packetLength">Length of the packet in bytes.</param>
