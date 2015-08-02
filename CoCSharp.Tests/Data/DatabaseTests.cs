@@ -10,7 +10,6 @@ namespace CoCSharp.Tests.Data
         public void TestLoadBuildingData()
         {
             var buildingDb = new BuildingDatabase("buildings.csv");
-            buildingDb.LoadDatabase1(typeof(BuildingData));
         }
     }
 }

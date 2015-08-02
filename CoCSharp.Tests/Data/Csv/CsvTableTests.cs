@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Csv;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Text;
 
@@ -65,6 +66,11 @@ namespace CoCSharp.Tests.Data.Csv
                 }
             }
             File.WriteAllText("characters_parsed.txt", strBuilder.ToString());
+        }
+
+        private void WriteCoCDataToTxt(Type cocDataType)
+        {
+
         }
 
         private void WriteTableToTxt(CsvTable table, string path)

@@ -55,9 +55,9 @@ namespace CoCSharp.Data.Csv
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="objType"></param>
+        /// <param name="objArray"></param>
         /// <returns></returns>
-        public static CsvTable Serialize(Type objType)
+        public static CsvTable Serialize(object[] objArray)
         {
             throw new NotImplementedException();
         }

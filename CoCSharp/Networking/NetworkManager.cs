@@ -60,7 +60,7 @@ namespace CoCSharp.Networking
         /// Reads an <see cref="IPacket"/> from a <see cref="SocketAsyncEventArgs"/> object.
         /// </summary>
         /// <param name="args">The <see cref="SocketAsyncEventArgs"/> object from which 
-        ///                    the <see cref="IPacket"/> will be read.</param>
+        /// the <see cref="IPacket"/> will be read.</param>
         /// <returns>The <see cref="IPacket"/> read.</returns>
         public IPacket ReadPacket(SocketAsyncEventArgs args)
         {
