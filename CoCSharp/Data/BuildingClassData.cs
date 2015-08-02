@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from building_classes.csv.
     /// </summary>
     public class BuildingClassData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="BuildingClassData"/> class.
         /// </summary>
         public BuildingClassData()
         {

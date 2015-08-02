@@ -5,7 +5,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     [Obsolete("Will be removed soon.")]
-    public class CoCStream : Stream // will stop using this stuff.
+    public class CoCStream : Stream
     {
         public CoCStream(Socket connection)
         {

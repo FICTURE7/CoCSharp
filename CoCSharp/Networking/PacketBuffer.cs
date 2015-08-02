@@ -15,7 +15,7 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PacketBuffer"/> class with the specified
-        /// byte[] buffer.
+        /// <see cref="Byte"/> array buffer.
         /// </summary>
         /// <param name="packetBuffer">The packet bytes.</param>
         public PacketBuffer(byte[] packetBuffer)

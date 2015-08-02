@@ -5,8 +5,14 @@ using System.IO;
 
 namespace CoCSharp.Logging
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PacketDumper
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public PacketDumper()
         {
             LoggingDirectory = "packet_dumps";
@@ -16,6 +22,10 @@ namespace CoCSharp.Logging
             //TODO: Compress old logs into a zip file.
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loggingDirectory"></param>
         public PacketDumper(string loggingDirectory)
         {
             LoggingDirectory = loggingDirectory;
@@ -43,7 +53,6 @@ namespace CoCSharp.Logging
                                                                          packet.ID, // hex
                                                                          packet.ID); // decimal 
             var filePath = Path.Combine(LoggingDirectory, fileName);
-
             File.WriteAllBytes(filePath, decryptedPacket);
         }
     }

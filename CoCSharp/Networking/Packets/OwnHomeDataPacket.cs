@@ -69,7 +69,7 @@ namespace CoCSharp.Networking.Packets
             reader.Seek(8, SeekOrigin.Current);
             Compressed = reader.ReadBoolean();
             Home = new Village();
-            Home.FromPacketReader(reader);
+            Home.ReadFromPacketReader(reader);
 
             //Unknown4 = reader.ReadInt();
             reader.Seek(4, SeekOrigin.Current);

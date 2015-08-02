@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from spells.csv.
     /// </summary>
     public class SpellData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="SpellData"/> class.
         /// </summary>
         public SpellData()
         {

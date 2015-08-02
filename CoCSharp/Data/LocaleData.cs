@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from locales.csv.
     /// </summary>
     public class LocaleData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="LocaleData"/> class.
         /// </summary>
         public LocaleData()
         {

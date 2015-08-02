@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from particle_emitters.csv.
     /// </summary>
     public class ParticleEmitterData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="ParticleEmitterData"/> class.
         /// </summary>
         public ParticleEmitterData()
         {

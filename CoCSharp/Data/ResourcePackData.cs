@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from resource_packs.csv.
     /// </summary>
     public class ResourcePackData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="ResourcePackData"/> class.
         /// </summary>
         public ResourcePackData()
         {

@@ -6,7 +6,7 @@
     public class CharacterData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="CharacterData"/> class.
         /// </summary>
         public CharacterData()
         {

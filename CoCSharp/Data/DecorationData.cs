@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from decos.csv.
     /// </summary>
     public class DecorationData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="CreditData"/> class.
         /// </summary>
         public DecorationData()
         {

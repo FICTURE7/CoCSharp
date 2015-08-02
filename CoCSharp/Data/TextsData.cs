@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from texts.csv.
     /// </summary>
     public class TextsData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="TextsData"/> class.
         /// </summary>
         public TextsData()
         {

@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    ///  Defines data from npc.csv.
     /// </summary>
     public class NpcData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="NpcData"/> class.
         /// </summary>
         public NpcData()
         {

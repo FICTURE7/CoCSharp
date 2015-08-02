@@ -7,8 +7,14 @@ using System.Text;
 
 namespace CoCSharp.Logging
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PacketLogger
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public PacketLogger()
         {
             LogConsole = true;
@@ -20,6 +26,10 @@ namespace CoCSharp.Logging
                            BindingFlags.NonPublic | BindingFlags.GetField;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logName"></param>
         public PacketLogger(string logName)
         {
             LogConsole = true;

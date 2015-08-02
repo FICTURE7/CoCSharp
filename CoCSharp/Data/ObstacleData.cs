@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from obstacles.csv.
     /// </summary>
     public class ObstacleData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="ObstacleData"/> class.
         /// </summary>
         public ObstacleData()
         {

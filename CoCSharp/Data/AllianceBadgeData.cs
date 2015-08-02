@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from alliance_badge.csv.
     /// </summary>
     public class AllianceBadgeData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="AllianceBadgeData"/> class.
         /// </summary>
         public AllianceBadgeData()
         {

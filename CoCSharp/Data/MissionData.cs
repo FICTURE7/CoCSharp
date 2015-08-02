@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from missions.csv.
     /// </summary>
     public class MissionData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="MissionData"/> class.
         /// </summary>
         public MissionData()
         {

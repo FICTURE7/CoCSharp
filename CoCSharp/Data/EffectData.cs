@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from effects.csv.
     /// </summary>
     public class EffectData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="EffectData"/> class.
         /// </summary>
         public EffectData()
         {

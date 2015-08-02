@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from globals.csv.
     /// </summary>
     public class GlobalData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="GlobalData"/> class.
         /// </summary>
         public GlobalData()
         {

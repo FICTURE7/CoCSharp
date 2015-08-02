@@ -3,12 +3,12 @@
 namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from credits.csv.
     /// </summary>
     public class CreditData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="CreditData"/> class.
         /// </summary>
         public CreditData()
         {

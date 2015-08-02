@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from townhall_levels.csv.
     /// </summary>
     public class TownHallLevelData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="TownHallLevelData"/> class.
         /// </summary>
         public TownHallLevelData()
         {

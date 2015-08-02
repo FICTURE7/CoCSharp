@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from traps.csv.
     /// </summary>
     public class TrapData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="TrapData"/> class.
         /// </summary>
         public TrapData()
         {

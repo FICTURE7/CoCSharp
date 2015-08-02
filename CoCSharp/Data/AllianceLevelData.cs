@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from alliance_levels.csv.
     /// </summary>
-    public class AllianceLevelData
+    public class AllianceLevelData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="AllianceLevelData"/> class.
         /// </summary>
         public AllianceLevelData()
         {

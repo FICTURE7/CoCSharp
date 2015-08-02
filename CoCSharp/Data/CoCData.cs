@@ -1,7 +1,7 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// Represents .csv file data.
+    /// Represents a Clash of Clans .csv file data.
     /// </summary>
     public abstract class CoCData
     {

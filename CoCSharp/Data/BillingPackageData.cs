@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from billing_packages.csv.
     /// </summary>
     public class BillingPackageData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="BillingPackageData"/> class.
         /// </summary>
         public BillingPackageData()
         {

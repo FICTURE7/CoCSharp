@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from regions.csv.
     /// </summary>
     public class RegionData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="RegionData"/> class.
         /// </summary>
         public RegionData()
         {

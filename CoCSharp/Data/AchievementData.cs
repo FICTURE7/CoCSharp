@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from achievements.csv.
     /// </summary>
     public class AchievementData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="AchievementData"/> class.
         /// </summary>
         public AchievementData()
         {

@@ -11,8 +11,8 @@ namespace CoCSharp.Proxy
         {
             Proxy = server;
             Connection = connection;
-            ClientNetworkManager = new NetworkManager(server, connection, HandleNetworkClient, direction);
-            ServerNetworkManager = new NetworkManager(server, connection, HandleNetworkServer, direction);
+            ClientNetworkManager = new NetworkManager(connection, HandleNetworkClient);
+            ServerNetworkManager = new NetworkManager(connection, HandleNetworkServer);
         }
 
         public string Username { get; set; }

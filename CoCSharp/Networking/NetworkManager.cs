@@ -1,53 +1,69 @@
-﻿using CoCSharp.Logging;
-using CoCSharp.Networking.Packets;
+﻿using CoCSharp.Networking.Packets;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 
 namespace CoCSharp.Networking
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NetworkManager
     {
-        // use this handler to handle network
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="packet"></param>
         public delegate void NetworkHandler(SocketAsyncEventArgs args, IPacket packet);
 
-        public NetworkManager(ICoCServer server, Socket connection, NetworkHandler networkHandler, PacketDirection direction)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkManager"/> class.
+        /// </summary>
+        /// <param name="connection"><see cref="Socket"/> to wrap.</param>
+        /// <param name="networkHandler"><see cref="NetworkHandler"/> that will handle incoming packet.</param>
+        public NetworkManager(Socket connection, NetworkHandler networkHandler)
         {
             if (PacketDictionary == null)  // could a use a static constructor?
                 InitializePacketDictionary();
 
             Connection = connection;
             Handler = networkHandler;
-            Direction = direction;
-            CoCServer = server;
-            CoCStream = new CoCStream(connection);
             CoCCrypto = new CoCCrypto();
             ReceiveEventPool = new SocketAsyncEventArgsPool(25);
             SendEventPool = new SocketAsyncEventArgsPool(25);
             StartReceive();
         }
 
+        /// <summary>
+        /// Gets whether data is available in the socket.
+        /// </summary>
         public bool DataAvailable { get { return Connection.Available > 0; } }
+        /// <summary>
+        /// Gets whether the socket is disconnected.
+        /// </summary>
         public bool Disconnected { get; private set; }
-        public CoCStream CoCStream { get; set; }
-        public Socket Connection { get; set; }
+        /// <summary>
+        /// Gets the <see cref="Socket"/>.
+        /// </summary>
+        public Socket Connection { get; private set; }
 
         private CoCCrypto CoCCrypto { get; set; }
-        private ICoCServer CoCServer { get; set; }
         private PacketDirection Direction { get; set; }
         private NetworkHandler Handler { get; set; }
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; }
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
 
+        /// <summary>
+        /// Reads an <see cref="IPacket"/> from a <see cref="SocketAsyncEventArgs"/> object.
+        /// </summary>
+        /// <param name="args">The <see cref="SocketAsyncEventArgs"/> object from which 
+        ///                    the <see cref="IPacket"/> will be read.</param>
+        /// <returns>The <see cref="IPacket"/> read.</returns>
         public IPacket ReadPacket(SocketAsyncEventArgs args)
         {
-            /* Receive data from the socket, saves it a buffer,
-             * then reads packet from the buffer. 
-             */
-
             if (args.BytesTransferred == 0)
                 return null; //TODO: Handle disconnection
 
@@ -90,18 +106,33 @@ namespace CoCSharp.Networking
                 }
 
                 packet.ReadPacket(dePacketReader);
-                // CoCServer.PacketLogger.LogPacket(packet, PacketDirection.Server);
-                // CoCServer.PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedData);
                 return packet;
             }
             return null;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packet"></param>
+        public void WritePacket(IPacket packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="seed"></param>
+        /// <param name="key"></param>
         public void UpdateChipers(ulong seed, byte[] key)
         {
             CoCCrypto.UpdateChipers(seed, key);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Disconnect()
         {
             Disconnected = true;

@@ -12,9 +12,10 @@
         string FileLog { get; set; }
 
         /// <summary>
-        /// Logs data to file log.
+        /// Logs data.
         /// </summary>
+        /// <param name="logCategory"></param>
         /// <param name="parameters"></param>
-        void Log(params object[] parameters);
+        void Log(LogCategory logCategory, params object[] parameters);
     }
 }

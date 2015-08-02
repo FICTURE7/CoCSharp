@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from alliance_portal.csv.
     /// </summary>
     public class AlliancePortalData : CoCData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="AlliancePortalData"/> class.
         /// </summary>
         public AlliancePortalData()
         {

@@ -8,28 +8,56 @@ using System.IO;
 
 namespace CoCSharp.Logic
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class Village
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public Village()
         {
-            this.Buildings = new List<Building>();
-            this.Obstacles = new List<Obstacle>();
-            this.Traps = new List<Trap>();
-            this.Decorations = new List<Decoration>();
+            Buildings = new List<Building>();
+            Obstacles = new List<Obstacle>();
+            Traps = new List<Trap>();
+            Decorations = new List<Decoration>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonProperty("buildings")]
         public List<Building> Buildings { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonProperty("obstacles")]
         public List<Obstacle> Obstacles { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonProperty("traps")]
         public List<Trap> Traps { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonProperty("decos")]
         public List<Decoration> Decorations { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public string RawJson { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="json"></param>
         public void FromJson(string json)
         {
             var village = JsonConvert.DeserializeObject<Village>(json);
@@ -43,12 +71,20 @@ namespace CoCSharp.Logic
             RawJson = json;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this);
         }
 
-        public void FromPacketReader(PacketReader reader)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="reader"></param>
+        public void ReadFromPacketReader(PacketReader reader)
         {
             var homeData = reader.ReadByteArray();
             var binaryReader = new BinaryReader(new MemoryStream(homeData));
@@ -62,7 +98,11 @@ namespace CoCSharp.Logic
             FromJson(json);
         }
 
-        public void ToPacketWriter(PacketWriter writer)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="writer"></param>
+        public void WriteToPacketWriter(PacketWriter writer)
         {
             var json = ToJson();
             var decompressedLength = json.Length;
@@ -76,6 +116,10 @@ namespace CoCSharp.Logic
             writer.Write(homeData, 0, homeData.Length);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbManager"></param>
         public void FromDatabase(DatabaseManager dbManager)
         {
             for (int x = 0; x < Buildings.Count; x++)

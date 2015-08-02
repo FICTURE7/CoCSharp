@@ -26,12 +26,12 @@ namespace SevenZip
         // these are the default properties, keeping it simple for now:
         private static object[] Properties = 
         {
-			(Int32)(Dictionary),
-			(Int32)(2),
-			(Int32)(3),
-			(Int32)(0),
-			(Int32)(2),
-			(Int32)(64),
+			(int)(Dictionary),
+			(int)(2),
+			(int)(3),
+			(int)(0),
+			(int)(2),
+			(int)(64),
 			"bt4",
 			EndOfStream
         };
@@ -43,18 +43,18 @@ namespace SevenZip
         /// <returns>Compressed bytes.</returns>
         public static byte[] Compress(byte[] inputBytes)
         {
-            if (inputBytes == null) 
+            if (inputBytes == null)
                 throw new ArgumentNullException("inputBytes");
 
-            MemoryStream inStream = new MemoryStream(inputBytes);
-            MemoryStream outStream = new MemoryStream();
-            Encoder encoder = new Encoder();
+            var inStream = new MemoryStream(inputBytes);
+            var outStream = new MemoryStream();
+            var encoder = new Encoder();
 
             encoder.SetCoderProperties(PropertiesIDs, Properties);
             encoder.WriteCoderProperties(outStream);
             var fileSize = inStream.Length;
             for (int i = 0; i < 8; i++)
-                outStream.WriteByte((Byte)(fileSize >> (8 * i)));
+                outStream.WriteByte((byte)(fileSize >> (8 * i)));
 
             encoder.Code(inStream, outStream, -1, -1, null);
             return outStream.ToArray();
@@ -63,11 +63,11 @@ namespace SevenZip
         /// <summary>
         /// Decompresses the inputBytes from Lzma
         /// </summary>
-        /// <param name="inputBytes">bytes to decompress</param>
+        /// <param name="inputBytes">Bytes to decompress</param>
         /// <returns>Decompressed bytes</returns>
         public static byte[] Decompress(byte[] inputBytes)
         {
-            if (inputBytes == null) 
+            if (inputBytes == null)
                 throw new ArgumentNullException("inputBytes");
 
             var decoder = new Decoder();
@@ -89,8 +89,8 @@ namespace SevenZip
                 outSize |= ((long)(byte)v) << (8 * i);
             }
 
-            decoder.SetDecoderProperties(properties2);
             var compressedSize = newInStream.Length - newInStream.Position;
+            decoder.SetDecoderProperties(properties2);
             decoder.Code(newInStream, newOutStream, compressedSize, outSize, null);
             return newOutStream.ToArray();
         }

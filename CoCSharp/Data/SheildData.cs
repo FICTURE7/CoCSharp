@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Data
 {
     /// <summary>
-    /// 
+    /// Defines data from shields.csv.
     /// </summary>
     public class SheildData
     {
         /// <summary>
-        /// 
+        /// Initalizes a new instance of the <see cref="SheildData"/> class.
         /// </summary>
         public SheildData()
         {
