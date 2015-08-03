@@ -22,7 +22,7 @@ namespace CoCSharp
         /// <summary>
         /// Logs data with the given parameters.
         /// </summary>
-        /// <param name="parameter">The parameters to teh packet with.</param>
-        void Log(params object[] parameter);
+        /// <param name="parameters">The parameters to log the packet with.</param>
+        void Log(params object[] parameters);
     }
 }

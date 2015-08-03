@@ -80,7 +80,7 @@ namespace CoCSharp.Proxy
         {
             var handler = (PacketHandler)null;
             if (!PacketHandlers.TryGetValue(packet.ID, out handler))
-                return;
+                return; // throw exception?
             handler(this, client, packet);
         }
 
