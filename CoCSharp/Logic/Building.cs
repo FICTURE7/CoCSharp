@@ -23,21 +23,5 @@ namespace CoCSharp.Logic
         public TimeSpan BuildTime { get; set; }
         public int BuildCost { get; set; }
         public Resource BuildResource { get; set; }
-
-        public override void FromDatabase(Database database)
-        {
-            var buildingDb = (BuildingDatabase)database;
-            var buildingOut = (Building)null;
-
-            if (!buildingDb.TryGetBuilding(ID, Level, out buildingOut))
-                return; // building not in database
-
-            Name = buildingOut.Name;
-            Hitpoints = buildingOut.Hitpoints;
-            BuildTime = buildingOut.BuildTime;
-            BuildCost = buildingOut.BuildCost;
-            BuildResource = buildingOut.BuildResource;
-            TownHallLevel = buildingOut.TownHallLevel;
-        }
     }
 }

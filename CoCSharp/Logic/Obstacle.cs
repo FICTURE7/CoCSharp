@@ -16,21 +16,5 @@ namespace CoCSharp.Logic
         public Resource LootResource { get; set; }
         public int LootCount { get; set; }
         public int RespawnWeight { get; set; }
-
-        public override void FromDatabase(Database database)
-        {
-            var obstacleDb = (ObstacleDatabase)database;
-            var obstacle = (Obstacle)null;
-
-            if (!obstacleDb.TryGetObstacle(ID, out obstacle))
-                return;
-
-            Name = obstacle.Name;
-            ClearResource = obstacle.ClearResource;
-            ClearCost = obstacle.ClearCost;
-            LootResource = obstacle.LootResource;
-            LootCount = obstacle.LootCount;
-            RespawnWeight = obstacle.RespawnWeight;
-        }
     }
 }

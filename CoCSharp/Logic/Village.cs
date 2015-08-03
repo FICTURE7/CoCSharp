@@ -115,24 +115,5 @@ namespace CoCSharp.Logic
             var homeData = ((MemoryStream)binaryWriter.BaseStream).ToArray();
             writer.Write(homeData, 0, homeData.Length);
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="dbManager"></param>
-        public void FromDatabase(DatabaseManager dbManager)
-        {
-            for (int x = 0; x < Buildings.Count; x++)
-                Buildings[x].FromDatabase(dbManager.BuildingDatabase);
-
-            for (int x = 0; x < Traps.Count; x++)
-                Traps[x].FromDatabase(dbManager.TrapDatabase);
-
-            for (int x = 0; x < Decorations.Count; x++)
-                Decorations[x].FromDatabase(dbManager.DecorationDatabase);
-
-            for (int x = 0; x < Obstacles.Count; x++)
-                Obstacles[x].FromDatabase(dbManager.ObstacleDatabase);
-        }
     }
 }

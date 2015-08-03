@@ -75,7 +75,6 @@
     <Compile Include="Data\AlliancePortalData.cs" />
     <Compile Include="Data\BillingPackageData.cs" />
     <Compile Include="Data\BuildingData.cs" />
-    <Compile Include="Data\BuildingDatabase.cs" />
     <Compile Include="Data\CharacterData.cs" />
     <Compile Include="Data\ClientGlobalData.cs" />
     <Compile Include="Data\Compression\Common\CommandLineParser.cs" />
@@ -102,10 +101,7 @@
     <Compile Include="Data\Csv\CsvRow.cs" />
     <Compile Include="Data\Csv\CsvSerializer.cs" />
     <Compile Include="Data\Csv\CsvTable.cs" />
-    <Compile Include="Data\Database.cs" />
-    <Compile Include="Data\DatabaseManager.cs" />
     <Compile Include="Data\DecorationData.cs" />
-    <Compile Include="Data\DecorationDatabase.cs" />
     <Compile Include="Data\EffectData.cs" />
     <Compile Include="Data\FaqData.cs" />
     <Compile Include="Data\Fingerprint.cs" />
@@ -120,7 +116,6 @@
     <Compile Include="Data\NewsData.cs" />
     <Compile Include="Data\NpcData.cs" />
     <Compile Include="Data\ObstacleData.cs" />
-    <Compile Include="Data\ObstacleDatabase.cs" />
     <Compile Include="Data\ParticleEmitterData.cs" />
     <Compile Include="Data\ProjectileData.cs" />
     <Compile Include="Data\RegionData.cs" />
@@ -132,7 +127,6 @@
     <Compile Include="Data\TextsPatchData.cs" />
     <Compile Include="Data\TownHallLevelData.cs" />
     <Compile Include="Data\TrapData.cs" />
-    <Compile Include="Data\TrapDatabase.cs" />
     <Compile Include="Data\WarData.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ICoCServer.cs" />

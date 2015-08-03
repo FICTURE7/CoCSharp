@@ -13,19 +13,5 @@ namespace CoCSharp.Logic
         public int MaxCount { get; set; }
         public int BuildCost { get; set; }
         public Resource BuildResource { get; set; }
-
-        public override void FromDatabase(Database database)
-        {
-            var decorationDb = (DecorationDatabase)database;
-            var decoration = (Decoration)null;
-
-            decorationDb.TryGetDecoration(ID, out decoration);
-
-            Name = decoration.Name;
-            RequiredLevel = decoration.RequiredLevel;
-            MaxCount = decoration.MaxCount;
-            BuildCost = decoration.BuildCost;
-            BuildResource = decoration.BuildResource;
-        }
     }
 }

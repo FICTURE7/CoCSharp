@@ -24,21 +24,5 @@ namespace CoCSharp.Logic
         public int BuildCost { get; set; }
         public Resource BuildResource { get; set; }
         public int RearmCost { get; set; }
-
-        public override void FromDatabase(Database database)
-        {
-            var trapDb = (TrapDatabase)database;
-            var trapOut = (Trap)null;
-
-            if (!trapDb.TryGetTrap(ID, Level, out trapOut))
-                return;
-
-            Name = trapOut.Name;
-            BuildTime = trapOut.BuildTime;
-            BuildCost = trapOut.BuildCost;
-            BuildResource = trapOut.BuildResource;
-            RearmCost = trapOut.RearmCost;
-            TownHallLevel = trapOut.TownHallLevel;
-        }
     }
 }

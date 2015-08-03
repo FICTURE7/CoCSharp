@@ -48,11 +48,5 @@ namespace CoCSharp.Logic
         /// </summary>
         [JsonProperty("y")]
         public virtual int Y { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="database"></param>
-        public virtual void FromDatabase(Database database) { }
     }
 }
