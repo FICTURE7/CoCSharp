@@ -1,4 +1,4 @@
-# CoC#
+<h1> CoC# </h1>
 Clash of Clans library written in C# to handle networking, csv files and more to come. It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
 
 ## What can it do?
