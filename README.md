@@ -30,7 +30,7 @@ var table = new CsvTable("buildings.csv", true);
 var buildingsData = CsvSerializer.Deserialize(table, typeof(BuildingData));
 ```
 
-## Projects using CoCSharp
+<h2>Projects using CoC#</h2>
 * [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Server): *(Work in progress)*
 * [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Proxy):
   * Proxy that logs parsed and raw decrypted/encrypted packets.
