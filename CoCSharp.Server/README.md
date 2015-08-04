@@ -3,4 +3,4 @@ The planned CoC# Server.
 
 ## What should it do?
 * Have a plugin API:
-  * Have a good plugin API
+  * Be a good plugin API, should be easy to use and as intuitive as possible. =)
