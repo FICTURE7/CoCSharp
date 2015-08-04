@@ -2,12 +2,10 @@
 Clash of Clans library written in C# to handle networking, csv files and more to come. It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
 
 ## What can it do?
-* CoCSharp.Common: Common data between client and server.
-  * Includes enum for resource type and building type.
 * CoCSharp.Data:
   * Includes classes for reading CSV files.
   * Includes classes for managing CSV files and downloading them.
-  * Includes classes for all CSV file data. Such as: BuildingData, TrapData, ObstacleData
+  * Includes classes for all CSV file data. Such as: BuildingData, TrapData, ObstacleData etc...
 * CoCSharp.Logging:
   * Includes classes to log and dump packet.
 * CoCSharp.Logic: Village object strutures. *(Needs to be refactored)*
@@ -34,8 +32,8 @@ var buildingsData = CsvSerializer.Deserialize(table, typeof(BuildingData));
 
 ## Projects using CoCSharp
 * CoCSharp.Server: *(Planned)*
-* CoCSharp.Proxy:
-  * Proxy that logs parsed and raw decrypted packets
+* [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Proxy):
+  * Proxy that logs parsed and raw decrypted/encrypted packets.
 
 ## Licensing
 CoCSharp is licensed under the [MIT License](http://mit-license.org/).
