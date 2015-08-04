@@ -1,5 +1,4 @@
-﻿using CoCSharp.Common;
-using System;
+﻿using System;
 using System.IO;
 
 namespace CoCSharp.Data.Csv
@@ -44,26 +43,6 @@ namespace CoCSharp.Data.Csv
         {
             var value = ReadRecordAsString(column);
             return value == string.Empty ? 0 : int.Parse(value);
-        }
-
-        public Resource ReadRecordAsResource(int column)
-        {
-            var value = ReadRecordAsString(column);
-            switch (value)
-            {
-                case "":
-                    return 0;
-                case "Gold":
-                    return Resource.Gold;
-                case "Elixir":
-                    return Resource.Elixir;
-                case "DarkElixir":
-                    return Resource.DarkElixir;
-                case "Diamonds":
-                    return Resource.Gem;
-                default:
-                    throw new InvalidDataException(value + " is not a valid resource string.");
-            }
         }
     }
 }

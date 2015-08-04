@@ -13,8 +13,6 @@ namespace CoCSharp.Data.Csv
     /// </summary>
     public class CsvTable
     {
-        //TODO: Implement save to CSV methods.
-
         /// <summary>
         /// Initalizes a new instance of the <see cref="CsvTable"/> class.
         /// </summary>

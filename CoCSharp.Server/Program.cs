@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Data.Csv;
+using CoCSharp.Logic;
 using System;
 using System.Net;
 using System.Threading;

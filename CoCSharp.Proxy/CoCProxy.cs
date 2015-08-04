@@ -13,9 +13,6 @@ namespace CoCSharp.Proxy
 {
     public class CoCProxy : ICoCServer
     {
-        public const int DefaultPort = 9339;
-        public const string DefaultServer = "gamea.clashofclans.com";
-
         public delegate void PacketHandler(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet);
 
         public CoCProxy()

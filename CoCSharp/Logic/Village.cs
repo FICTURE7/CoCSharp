@@ -2,7 +2,6 @@
 using CoCSharp.Networking;
 using Ionic.Zlib;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -14,13 +13,13 @@ namespace CoCSharp.Logic
     public class Village
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="Village"/> class.
         /// </summary>
         public Village()
         {
+            Traps = new List<Trap>();
             Buildings = new List<Building>();
             Obstacles = new List<Obstacle>();
-            Traps = new List<Trap>();
             Decorations = new List<Decoration>();
         }
 
@@ -51,7 +50,13 @@ namespace CoCSharp.Logic
         /// <summary>
         /// 
         /// </summary>
-        [JsonIgnore()]
+        [JsonProperty("respawnVars")]
+        public RespawnVars RespawnVars { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonIgnore]
         public string RawJson { get; set; }
 
         /// <summary>
@@ -61,9 +66,6 @@ namespace CoCSharp.Logic
         public void FromJson(string json)
         {
             var village = JsonConvert.DeserializeObject<Village>(json);
-            if (village == null) 
-                throw new InvalidOperationException("Invalid village Json string.");
-
             Buildings = village.Buildings;
             Obstacles = village.Obstacles;
             Traps = village.Traps;
@@ -91,10 +93,10 @@ namespace CoCSharp.Logic
             
             var decompressedLength = binaryReader.ReadInt32();
             var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
-            var json = ZlibStream.UncompressString(compressedJson);
-            
-            if (decompressedLength != json.Length) throw new InvalidDataException("Json length is not valid.");
-            
+            var json = ZlibStream.UncompressString(compressedJson);            
+            if (decompressedLength != json.Length) 
+                throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}."));
+     
             FromJson(json);
         }
 

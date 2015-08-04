@@ -67,7 +67,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\BuildingClass.cs" />
     <Compile Include="Data\AchievementData.cs" />
     <Compile Include="Data\AllianceBadgeData.cs" />
     <Compile Include="Data\AllianceBadgeLayerData.cs" />
@@ -121,6 +120,7 @@
     <Compile Include="Data\RegionData.cs" />
     <Compile Include="Data\ResourceData.cs" />
     <Compile Include="Data\ResourcePackData.cs" />
+    <Compile Include="Data\RespawnVars.cs" />
     <Compile Include="Data\SheildData.cs" />
     <Compile Include="Data\SpellData.cs" />
     <Compile Include="Data\TextsData.cs" />
@@ -138,7 +138,6 @@
     <Compile Include="Logic\Clan.cs" />
     <Compile Include="Logic\Decoration.cs" />
     <Compile Include="Logic\Obstacle.cs" />
-    <Compile Include="Common\Resource.cs" />
     <Compile Include="Logic\Trap.cs" />
     <Compile Include="Logic\Village.cs" />
     <Compile Include="Logic\VillageObject.cs" />
