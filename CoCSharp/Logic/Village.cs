@@ -11,7 +11,6 @@ namespace CoCSharp.Logic
     /// <summary>
     /// 
     /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
     public class Village
     {
         /// <summary>
@@ -52,6 +51,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore()]
         public string RawJson { get; set; }
 
         /// <summary>

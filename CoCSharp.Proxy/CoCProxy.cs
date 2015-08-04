@@ -23,9 +23,7 @@ namespace CoCSharp.Proxy
             Loggers = new List<ILogger>();
             ProxyConnections = new List<CoCProxyConnection>();
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
-            DatabaseManagers = new Dictionary<string, DatabaseManager>();
             AcceptEventPool = new SocketAsyncEventArgsPool(100);
-            RegisterLocalDatabases();
 
             ProxyPacketHandlers.RegisterHanlders(this);
         }
@@ -35,7 +33,6 @@ namespace CoCSharp.Proxy
         public List<ILogger> Loggers { get; set; }
         public List<CoCProxyConnection> ProxyConnections { get; set; }
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
-        public Dictionary<string, DatabaseManager> DatabaseManagers { get; set; }
         public Socket Listener { get; set; }
         public EndPoint EndPoint { get; set; }
 
@@ -63,11 +60,6 @@ namespace CoCSharp.Proxy
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
             PacketHandlers.Add(packet.ID, handler);
-        }
-
-        public void RegisterDatabaseManager(DatabaseManager manager, string hash)
-        {
-            DatabaseManagers.Add(hash, manager);
         }
 
         public void Log(params object[] parameters)
@@ -111,21 +103,6 @@ namespace CoCSharp.Proxy
                     AcceptEventPool.Push(args);
                     StartListen();
                     break;
-            }
-        }
-
-        private void RegisterLocalDatabases()
-        {
-            if (!Directory.Exists("databases"))
-                Directory.CreateDirectory("databases");
-
-            var dbFiles = Directory.GetDirectories("databases");
-            for (int i = 0; i < dbFiles.Length; i++)
-            {
-                var hash = Path.GetFileName(dbFiles[i]);
-                var dbManager = new DatabaseManager(hash);
-                DatabaseManagers.Add(dbManager.FingerprintHash, dbManager);
-                dbManager.LoadDatabases();
             }
         }
     }

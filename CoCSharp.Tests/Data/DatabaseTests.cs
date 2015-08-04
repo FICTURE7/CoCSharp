@@ -9,7 +9,7 @@ namespace CoCSharp.Tests.Data
         [TestMethod]
         public void TestLoadBuildingData()
         {
-            var buildingDb = new BuildingDatabase("buildings.csv");
+            
         }
     }
 }
