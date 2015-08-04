@@ -50,7 +50,7 @@ namespace CoCSharp.Logic
         /// 
         /// </summary>
         [JsonIgnore]
-        public virtual Village Village { get; private set; }
+        public virtual Village Village { get; internal set; }
 
         /// <summary>
         /// 

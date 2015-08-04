@@ -40,7 +40,7 @@ namespace CoCSharp.Logic
         /// </summary>
         [JsonProperty("traps")]
         public List<Trap> Traps { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -71,6 +71,18 @@ namespace CoCSharp.Logic
             Traps = village.Traps;
             Decorations = village.Decorations;
             RawJson = json;
+
+            for (int i = 0; i < Buildings.Count; i++)
+                Buildings[i].Village = this;
+
+            for (int i = 0; i < Obstacles.Count; i++)
+                Obstacles[i].Village = this;
+
+            for (int i = 0; i < Traps.Count; i++)
+                Traps[i].Village = this;
+
+            for (int i = 0; i < Decorations.Count; i++)
+                Decorations[i].Village = this;
         }
 
         /// <summary>
@@ -90,13 +102,13 @@ namespace CoCSharp.Logic
         {
             var homeData = reader.ReadByteArray();
             var binaryReader = new BinaryReader(new MemoryStream(homeData));
-            
+
             var decompressedLength = binaryReader.ReadInt32();
             var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
-            var json = ZlibStream.UncompressString(compressedJson);            
-            if (decompressedLength != json.Length) 
+            var json = ZlibStream.UncompressString(compressedJson);
+            if (decompressedLength != json.Length)
                 throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}."));
-     
+
             FromJson(json);
         }
 
@@ -110,7 +122,7 @@ namespace CoCSharp.Logic
             var decompressedLength = json.Length;
             var compressedJson = ZlibStream.CompressString(json);
             var binaryWriter = new BinaryWriter(new MemoryStream());
-            
+
             binaryWriter.Write(decompressedLength);
             binaryWriter.Write(compressedJson);
 

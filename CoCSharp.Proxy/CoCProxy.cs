@@ -59,7 +59,7 @@ namespace CoCSharp.Proxy
             PacketHandlers.Add(packet.ID, handler);
         }
 
-        public void Log(params object[] parameters)
+        public void Log(LogCategory category, params object[] parameters)
         {
             //TODO: Implement.
             throw new NotImplementedException();

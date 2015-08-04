@@ -97,7 +97,6 @@
     <Compile Include="Data\Csv\CsvSerializerSettings.cs" />
     <Compile Include="Data\Csv\CsvIgnoreAttribute.cs" />
     <Compile Include="Data\Csv\CsvPropertyAttribute.cs" />
-    <Compile Include="Data\Csv\CsvRow.cs" />
     <Compile Include="Data\Csv\CsvSerializer.cs" />
     <Compile Include="Data\Csv\CsvTable.cs" />
     <Compile Include="Data\DecorationData.cs" />
@@ -142,7 +141,6 @@
     <Compile Include="Logic\Village.cs" />
     <Compile Include="Logic\VillageObject.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
-    <Compile Include="Networking\CoCStream.cs" />
     <Compile Include="Networking\NetworkManager.cs" />
     <Compile Include="Networking\PacketBuffer.cs" />
     <Compile Include="Networking\PacketDirection.cs" />

@@ -20,9 +20,10 @@ namespace CoCSharp
         void Stop();
 
         /// <summary>
-        /// Logs data with the given parameters.
+        /// Logs data with the specified parameters and log category.
         /// </summary>
+        /// <param name="category">Log category to log tge data with.</param>
         /// <param name="parameters">The parameters to log the packet with.</param>
-        void Log(params object[] parameters);
+        void Log(LogCategory category, params object[] parameters);
     }
 }

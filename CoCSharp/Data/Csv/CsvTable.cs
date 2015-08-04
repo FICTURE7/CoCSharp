@@ -60,16 +60,6 @@ namespace CoCSharp.Data.Csv
         /// </summary>
         public DataRow TypesRow { get { return Table.Rows[0]; } }
 
-        public bool EndOfFile { get { return Reader.EndOfStream; } }
-
-        private StreamReader Reader { get; set; }
-
-        [Obsolete("Will be removed soon. Use CsvTable.Rows instead.")]
-        public CsvRow ReadNextRow()
-        {
-            var row = Reader.ReadLine().Split(',');
-            return new CsvRow(row);
-        }
         /// <summary>
         /// Reads the specified .csv file from disk without compression.
         /// </summary>
