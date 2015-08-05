@@ -1,6 +1,8 @@
 <h1>CoC# Proxy</h1>
 The CoC# proxy, a Clash of Clans proxy thats logs parsed and decrypted packets. CoCSharp.Proxy uses CoCSharp as its core library where most of the networking functionalities are implemented.
 
+CoC# Proxy is currently broken because am rethinking CoCSharp.Networking.
+
 ## What can it do?
 It can decrypt encrypted Clash of Clans packets/messages and trys to read them.
 
