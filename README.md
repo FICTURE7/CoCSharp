@@ -46,7 +46,7 @@ In the root directory run
 ```
 xbuild
 ```
-Then you should have the compiled binaries in `/bin`. Then you should be able to run the binaries using the latest version of mono.
+Then you should have the compiled binaries in `/bin`, and you should be able to run the binaries using the latest version of mono.
 
 ## Contributing
 Just create a fork and make changes to it, like adding features from Clash of Clans, refactoring and fixing bugs. Try to follow the code style. Make your pull requests focused and readable. You can also contribute by creating issues and reporting bugs, giving ideas for enhancement.
