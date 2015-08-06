@@ -12,6 +12,8 @@ namespace CoCSharp.Data.Csv
         /// </summary>
         public CsvSerializerSettings()
         {
+            /*  Should state the way to serialize or deserialize .csv files.
+             */
             throw new NotImplementedException();
         }
     }

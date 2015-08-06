@@ -112,7 +112,7 @@ namespace CoCSharp.Data.Csv
                         break;
 
                     default:
-                        throw new InvalidDataException(string.Format("Unhandled data type '{0}'.", typeRow[i]));
+                        throw new CsvSerializationException(string.Format("Unexpected data type '{0}'.", typeRow[i]));
                 }
                 Table.Columns.Add(columnNames[i], type);
             }

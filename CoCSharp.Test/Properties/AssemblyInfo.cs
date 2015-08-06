@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CoCSharp.Tests")]
+[assembly: AssemblyTitle("CoCSharp.Test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CoCSharp.Tests")]
+[assembly: AssemblyProduct("CoCSharp.Test")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7e466c6b-5e12-4714-b3e1-0132088a0829")]
+[assembly: Guid("76fcf9f6-716e-4888-9208-59fbfa11a4a1")]
 
 // Version information for an assembly consists of the following four values:
 //
