@@ -25,7 +25,7 @@ CoCSharp is trying to implement most the Clash of Clans features and also trying
 CoCSharp current networking system was designed mainly for a proxy and is not very flexible at the moment.
 
 ### CSV Tables
-Example to read a compressed "buildings.csv" file.
+Example to read a compressed `buildings.csv` file.
 ```c#
 // loads the .csv file
 var table = new CsvTable("buildings.csv", true);
@@ -33,10 +33,28 @@ var table = new CsvTable("buildings.csv", true);
 var buildingsData = CsvSerializer.Deserialize(table, typeof(BuildingData));
 ```
 
+## Compiling
+Use git to clone it
+```
+git clone --branch=messy-stuff git://github.com/FICTURE7/CoCSharp.git
+```
+Then you will have to restore the nuget packages.
+```
+nuget restore
+```
+In the root directory run
+```
+xbuild
+```
+Then you should have the compiled binaries in `/bin`. Then you should be able to run the binaries using the latest version of mono.
+
+## Contributing
+Just create a fork and make changes to it, like adding features from Clash of Clans, refactoring and fixing bugs. Try to follow the code style. Make your pull requests focused and readable. You can also contribute by creating issues and reporting bugs, giving ideas for enhancement.
+
 <h2>Projects using CoC#</h2>
 * [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Server): *(Work in progress)*
 * [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Proxy):
   * Proxy that logs parsed and raw decrypted/encrypted packets.
 
 ## Licensing
-CoCSharp is licensed under the [MIT License](http://mit-license.org/).
+CoCSharp is licensed under the permissive [MIT License](http://mit-license.org/).
