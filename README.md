@@ -22,7 +22,42 @@ Clash of Clans library written in C# to handle networking, csv files and more to
 CoCSharp is trying to implement most the Clash of Clans features and also trying be easy as possible to use.
 
 ### Networking
-CoCSharp current networking system was designed mainly for a proxy and is not very flexible at the moment.
+Example to write and read packets.
+```c#
+// creates a new Socket
+var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+// connects to the official clash of clans server
+socket.Connect("gamea.clashofclans.com", 9339);
+// creates a new NetworkManager
+// the NetworkHandler delegate is called when a packet is recieved
+// here we are using it to write the packet type and packet id
+var networkManager = new NetworkManager(socket, (SocketAsyncEventArgs args, IPacket packet) =>
+{
+    Console.WriteLine("Recieved {0}:{1}", packet.GetType().Name, packet.ID);
+});
+// sends a LoginRequestPacket to the server
+networkManager.WritePacket(new LoginRequestPacket()
+{
+    UserID = 0, 
+    UserToken = null,
+    ClientMajorVersion = 7,
+    ClientContentVersion = 0,
+    ClientMinorVersion = 156,
+    FingerprintHash = "8fbf97bdc0edae09ad9f358dc027d7ce92366330",
+    OpenUDID = "563a6f060d8624db",
+    MacAddress = null,
+    DeviceModel = "GT-I9300",
+    LocaleKey = 2000000,
+    Language = "en",
+    AdvertisingGUID = "",
+    OsVersion = "4.0.4",
+    IsAdvertisingTrackingEnabled = false,
+    AndroidDeviceID = "563a6f060d8624db",
+    FacebookDistributionID = "",
+    VendorGUID = "",
+    Seed = 1329685020 
+});
+```
 
 ### CSV Tables
 Example to read a compressed `buildings.csv` file.
