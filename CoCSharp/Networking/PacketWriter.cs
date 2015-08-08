@@ -4,6 +4,8 @@ using System.Text;
 
 namespace CoCSharp.Networking
 {
+    //TODO: Change Stream to StreamWriter.
+
     /// <summary>
     /// Implements methods to write Clash of Clans packets.
     /// </summary>
@@ -108,7 +110,7 @@ namespace CoCSharp.Networking
             var buffer = BitConverter.GetBytes(value);
             if (BitConverter.IsLittleEndian) 
                 Array.Reverse(buffer);
-            Write(buffer, 0, 3);
+            Write(buffer, 1, 3);
         }
 
         /// <summary>

@@ -70,7 +70,7 @@ namespace CoCSharp.Networking.Packets
             writer.WriteInt32(ClientMinorVersion);
             writer.WriteString(FingerprintHash);
 
-            writer.WriteString(Unknown1);
+            writer.WriteString(""); // Unknown 1
 
             writer.WriteString(OpenUDID);
             writer.WriteString(MacAddress);
@@ -80,8 +80,8 @@ namespace CoCSharp.Networking.Packets
             writer.WriteString(AdvertisingGUID);
             writer.WriteString(OsVersion);
 
-            writer.WriteByte(Unknown2);
-            writer.WriteString(Unknown3);
+            writer.WriteByte(1); // Unknown 2
+            writer.WriteString(""); // Unknown 3
 
             writer.WriteString(AndroidDeviceID);
             writer.WriteString(FacebookDistributionID);

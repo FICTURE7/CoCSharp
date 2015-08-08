@@ -101,15 +101,16 @@ namespace CoCSharp.Logic
         public void ReadFromPacketReader(PacketReader reader)
         {
             var homeData = reader.ReadByteArray();
-            var binaryReader = new BinaryReader(new MemoryStream(homeData));
+            using (var binaryReader = new BinaryReader(new MemoryStream(homeData)))
+            {
 
-            var decompressedLength = binaryReader.ReadInt32();
-            var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
-            var json = ZlibStream.UncompressString(compressedJson);
-            if (decompressedLength != json.Length)
-                throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}."));
-
-            FromJson(json);
+                var decompressedLength = binaryReader.ReadInt32();
+                var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
+                var json = ZlibStream.UncompressString(compressedJson);
+                //if (decompressedLength != json.Length)
+                //    throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}.", decompressedLength, json.Length));
+                FromJson(json);
+            }
         }
 
         /// <summary>
@@ -121,13 +122,14 @@ namespace CoCSharp.Logic
             var json = ToJson();
             var decompressedLength = json.Length;
             var compressedJson = ZlibStream.CompressString(json);
-            var binaryWriter = new BinaryWriter(new MemoryStream());
+            using (var binaryWriter = new BinaryWriter(new MemoryStream()))
+            {
+                binaryWriter.Write(decompressedLength);
+                binaryWriter.Write(compressedJson);
 
-            binaryWriter.Write(decompressedLength);
-            binaryWriter.Write(compressedJson);
-
-            var homeData = ((MemoryStream)binaryWriter.BaseStream).ToArray();
-            writer.Write(homeData, 0, homeData.Length);
+                var homeData = ((MemoryStream)binaryWriter.BaseStream).ToArray();
+                writer.Write(homeData, 0, homeData.Length);
+            }
         }
     }
 }

@@ -15,7 +15,8 @@
 
         public void WritePacket(PacketWriter writer)
         {
-
+            writer.WriteByteArray(Key);
+            writer.WriteInt32(Unknown1);
         }
     }
 }

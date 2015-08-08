@@ -11,9 +11,9 @@ namespace CoCSharp.Test.Csv.Data
         [Test]
         public void TestUncompressedCsvTable()
         {
-            var table = new CsvTable("characters.csv");
-            WriteTableToTxt(table, "characters_parsed.txt");
-            table.Save("saved_characters.csv");
+            var table = new CsvTable("Resources/characters.csv");
+            //WriteTableToTxt(table, "characters_parsed.txt");
+            //table.Save("saved_characters.csv");
         }
 
         private void WriteTableToTxt(CsvTable table, string path)

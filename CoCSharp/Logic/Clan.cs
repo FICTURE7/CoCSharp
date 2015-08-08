@@ -6,7 +6,7 @@
     public class Clan
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="Clan"/> class.
         /// </summary>
         public Clan()
         {

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NUnit.Framework;
+using System;
 
 namespace CoCSharp.Test.Data
 {
-    class FingerprintTests
+    [TestFixture]
+    public class FingerprintTests
     {
+
     }
 }

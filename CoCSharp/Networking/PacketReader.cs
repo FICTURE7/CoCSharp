@@ -4,6 +4,8 @@ using System.Text;
 
 namespace CoCSharp.Networking
 {
+    //TODO: Change Stream to StreamReader.
+
     /// <summary>
     /// Implements methods to read Clash of Clans packets.
     /// </summary>
@@ -154,6 +156,10 @@ namespace CoCSharp.Networking
         public byte[] ReadByteArray()
         {
             var length = ReadInt32();
+            if (length < 0)
+                return null;
+            if (length > BaseStream.Length - BaseStream.Position)
+                throw new InvalidDataException(string.Format("A byte array was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
             var buffer = ReadBytes(length, false);
             return buffer;
         }
@@ -167,6 +173,8 @@ namespace CoCSharp.Networking
             var length = ReadInt32();
             if (length < 0)
                 return null;
+            if (length > BaseStream.Length - BaseStream.Position)
+                throw new InvalidDataException(string.Format("A string was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
             var buffer = ReadBytes(length, false);
             return Encoding.UTF8.GetString(buffer);
         }

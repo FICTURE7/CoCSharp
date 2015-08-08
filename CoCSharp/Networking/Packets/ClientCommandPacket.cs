@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoCSharp.Networking.Packets
 {
@@ -16,12 +12,12 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-
+            throw new NotImplementedException();
         }
 
         public void WritePacket(PacketWriter writer)
         {
-
+            throw new NotImplementedException();
         }
     }
 }
