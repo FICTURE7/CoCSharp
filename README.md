@@ -29,8 +29,8 @@ var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 // connects to the official clash of clans server
 socket.Connect("gamea.clashofclans.com", 9339);
 // creates a new NetworkManager
-// the NetworkHandler delegate is called when a packet is recieved
-// here we are using it to write the packet type and packet id
+// the PacketReceivedHandler delegate is called when a packet is recieved
+// here we are using it to write the packet type and packet id to the console
 var networkManager = new NetworkManager(socket, (SocketAsyncEventArgs args, IPacket packet) =>
 {
     Console.WriteLine("Recieved {0}:{1}", packet.GetType().Name, packet.ID);
