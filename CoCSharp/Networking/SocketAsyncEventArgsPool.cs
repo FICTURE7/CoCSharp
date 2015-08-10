@@ -4,7 +4,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Implements methods to manage <see cref="SocketAsyncEvenArgs"/> object
+    /// Implements methods to manage <see cref="SocketAsyncEventArgs"/> objects
     /// in pools.
     /// </summary>
     public class SocketAsyncEventArgsPool
@@ -54,7 +54,10 @@ namespace CoCSharp.Networking
         /// <param name="args">The <see cref="SocketAsyncEventArgs"/> object.</param>
         public void Push(SocketAsyncEventArgs args)
         {
-            Pool.Push(args);
+            lock (Pool)
+            {
+                Pool.Push(args);
+            }
         }
 
         /// <summary>
@@ -63,7 +66,10 @@ namespace CoCSharp.Networking
         /// <returns></returns>
         public SocketAsyncEventArgs Pop()
         {
-            return Pool.Pop();
+            lock (Pool)
+            {
+                return Pool.Pop();
+            }
         }
     }
 }

@@ -158,7 +158,7 @@
     <Compile Include="Networking\Packets\IPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveRequestPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveResponsePacket.cs" />
-    <Compile Include="Networking\Packets\LoginFailed.cs" />
+    <Compile Include="Networking\Packets\LoginFailedPacket.cs" />
     <Compile Include="Networking\Packets\OwnHomeDataPacket.cs" />
     <Compile Include="Networking\Packets\LoginRequestPacket.cs" />
     <Compile Include="Networking\PacketReader.cs" />

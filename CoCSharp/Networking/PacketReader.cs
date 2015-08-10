@@ -4,52 +4,21 @@ using System.Text;
 
 namespace CoCSharp.Networking
 {
-    //TODO: Change Stream to StreamReader.
-
     /// <summary>
     /// Implements methods to read Clash of Clans packets.
     /// </summary>
-    public class PacketReader : Stream
+    public class PacketReader : BinaryReader
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PacketReader"/> class with
         /// the specified base <see cref="Stream"/>.
         /// </summary>
-        /// <param name="baseStream">The base stream.</param>
-        public PacketReader(Stream baseStream)
+        /// <param name="stream">The base stream.</param>
+        public PacketReader(Stream stream)
+            : base(stream)
         {
-            BaseStream = baseStream;
+            // Space
         }
-
-        /// <summary>
-        /// Gets a value indicating whether the underlying stream suppors reading.
-        /// </summary>
-        public override bool CanRead { get { return BaseStream.CanRead; } }
-        /// <summary>
-        /// Gets a value indicating whether the underlying stream suppors writing.
-        /// </summary>
-        public override bool CanWrite { get { return BaseStream.CanWrite; } }
-        /// <summary>
-        /// Gets a value indicating whether the underlying stream suppors seeking.
-        /// </summary>
-        public override bool CanSeek { get { return BaseStream.CanSeek; } }
-        /// <summary>
-        /// Gets the length of the underlying stream in bytes.
-        /// </summary>
-        public override long Length { get { return BaseStream.Length; } }
-        /// <summary>
-        /// Gets or sets the current position in the underlying stream.
-        /// </summary>
-        public override long Position
-        {
-            get { return BaseStream.Position; }
-            set { BaseStream.Position = value; }
-        }
-
-        /// <summary>
-        /// Gets the underlying stream.
-        /// </summary>
-        public Stream BaseStream { get; set; }
 
         /// <summary>
         /// Reads a sequence of bytes from the underlying stream and advances the 
@@ -68,16 +37,16 @@ namespace CoCSharp.Networking
         /// Reads a <see cref="Byte"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="Byte"/> read.</returns>
-        public override int ReadByte()
+        public override byte ReadByte()
         {
-            return BaseStream.ReadByte();
+            return (byte)BaseStream.ReadByte();
         }
 
         /// <summary>
         /// Reads a <see cref="Boolean"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="Boolean"/> read.</returns>
-        public bool ReadBoolean()
+        public override bool ReadBoolean()
         {
             return ReadByte() == 1 ? true : false;
         }
@@ -86,7 +55,7 @@ namespace CoCSharp.Networking
         /// Reads an <see cref="Int16"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="Int16"/> read.</returns>
-        public short ReadInt16()
+        public override short ReadInt16()
         {
             return (short)ReadUInt16();
         }
@@ -95,27 +64,36 @@ namespace CoCSharp.Networking
         /// Reads a <see cref="UInt16"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="UInt16"/> read.</returns>
-        public ushort ReadUInt16()
+        public override ushort ReadUInt16()
         {
-            var buffer = ReadBytes(2);
+            var buffer = ReadBytesWithEndian(2);
             return BitConverter.ToUInt16(buffer, 0);
         }
 
         /// <summary>
-        /// Reads a 3 bytes long int.
+        /// Reads a 3 bytes long int. Clash of Clans packets uses this to encode there length.
         /// </summary>
         /// <returns>3 bytes int.</returns>
-        public int ReadPacketLength()
+        public int ReadInt24()
         {
-            var packetLengthBuffer = ReadBytes(3, false);
+            var packetLengthBuffer = ReadBytesWithEndian(3, false);
             return ((packetLengthBuffer[0] << 16) | (packetLengthBuffer[1] << 8)) | packetLengthBuffer[2];
+        }
+
+        /// <summary>
+        /// Reads a 3 bytes long uint.
+        /// </summary>
+        /// <returns>3 bytes int.</returns>
+        public uint ReadUInt24()
+        {
+            return (uint)ReadInt24();
         }
 
         /// <summary>
         /// Reads an <see cref="Int32"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="Int32"/> read.</returns>
-        public int ReadInt32()
+        public override int ReadInt32()
         {
             return (int)ReadUInt32();
         }
@@ -124,9 +102,9 @@ namespace CoCSharp.Networking
         /// Reads a <see cref="UInt32"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="UInt32"/> read.</returns>
-        public uint ReadUInt32()
+        public override uint ReadUInt32()
         {
-            var buffer = ReadBytes(4);
+            var buffer = ReadBytesWithEndian(4);
             return BitConverter.ToUInt32(buffer, 0);
         }
 
@@ -134,7 +112,7 @@ namespace CoCSharp.Networking
         /// Reads an <see cref="Int64"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="Int64"/> read.</returns>
-        public long ReadInt64()
+        public override long ReadInt64()
         {
             return (long)ReadUInt64();
         }
@@ -143,9 +121,9 @@ namespace CoCSharp.Networking
         /// Reads a <see cref="UInt64"/> from the underlying stream.
         /// </summary>
         /// <returns><see cref="UInt64"/> read.</returns>
-        public ulong ReadUInt64()
+        public override ulong ReadUInt64()
         {
-            var buffer = ReadBytes(8);
+            var buffer = ReadBytesWithEndian(8);
             return BitConverter.ToUInt64(buffer, 0);
         }
 
@@ -160,7 +138,7 @@ namespace CoCSharp.Networking
                 return null;
             if (length > BaseStream.Length - BaseStream.Position)
                 throw new InvalidDataException(string.Format("A byte array was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
-            var buffer = ReadBytes(length, false);
+            var buffer = ReadBytesWithEndian(length, false);
             return buffer;
         }
 
@@ -168,26 +146,15 @@ namespace CoCSharp.Networking
         /// Reads a <see cref="String"/> from the underlying stream.
         /// </summary>
         /// <returns></returns>
-        public string ReadString()
+        public override string ReadString()
         {
             var length = ReadInt32();
             if (length < 0)
                 return null;
             if (length > BaseStream.Length - BaseStream.Position)
                 throw new InvalidDataException(string.Format("A string was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
-            var buffer = ReadBytes(length, false);
+            var buffer = ReadBytesWithEndian(length, false);
             return Encoding.UTF8.GetString(buffer);
-        }
-
-        /// <summary>
-        /// Not supposed to use this.
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new InvalidOperationException("PacketReader is not suppose to write stuff.");
         }
 
         /// <summary>
@@ -197,30 +164,12 @@ namespace CoCSharp.Networking
         /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point
         ///                      used to obtain the new position.</param>
         /// <returns>The new position of the underlying stream.</returns>
-        public override long Seek(long offset, SeekOrigin origin)
+        public long Seek(long offset, SeekOrigin origin)
         {
             return BaseStream.Seek(offset, origin);
         }
 
-        /// <summary>
-        /// Sets the length of the underlying stream.
-        /// </summary>
-        /// <param name="value">The desired length of the current stream in bytes.</param>
-        public override void SetLength(long value)
-        {
-            BaseStream.SetLength(value);
-        }
-
-        /// <summary>
-        /// Not implemented.
-        /// </summary>
-        public override void Flush()
-        {
-            throw new NotImplementedException();
-        }
-
-
-        private byte[] ReadBytes(int count, bool switchEndian = true)
+        private byte[] ReadBytesWithEndian(int count, bool switchEndian = true)
         {
             var buffer = new byte[count];
             BaseStream.Read(buffer, 0, count);

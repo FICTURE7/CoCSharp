@@ -1,11 +1,6 @@
 ﻿using CoCSharp.Networking.Packets;
-using SevenZip;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoCSharp.Client.Handlers
 {
@@ -13,20 +8,33 @@ namespace CoCSharp.Client.Handlers
     {
         public static void HandleLoginFailedPacket(CoCClient client, IPacket packet)
         {
-            var lfpacket = packet as LoginFailed;
-            File.WriteAllBytes("com_fingerprint", lfpacket.CompressedFingerprintJson);
+            var lfPacket = packet as LoginFailedPacket;
+            Console.WriteLine("Failed to login, reason: {0}", lfPacket.FailureReason);
+            switch (lfPacket.FailureReason)
+            {
+                case LoginFailedPacket.LoginFailureReason.OutdatedContent:
+                    if (lfPacket.Fingerprint != null)
+                    {
+                        var fingerprintJson = lfPacket.Fingerprint.ToJson();
+                        File.WriteAllText("fingerprint.json", fingerprintJson);
+
+                        Console.WriteLine("Server expected hash: {0}", lfPacket.Fingerprint.Hash);
+                    }
+                    break;
+            }
         }
 
-        public static void HandleUpdateKeyPacket(CoCClient client, IPacket packet)
+        public static void HandleLoginSuccessPacket(CoCClient client, IPacket packet)
         {
-            var ukPacket = packet as UpdateKeyPacket;
-            client.NetworkManager.UpdateChipers((ulong)client.Seed, ukPacket.Key);
+            var lsPacket = packet as LoginSuccessPacket;
+            Console.WriteLine("Successfully logged in!");
+            //client.SendChatMessage("hi!");
         }
 
         public static void RegisterLoginPacketHandlers(CoCClient client)
         {
-            client.RegisterPacketHandler(new UpdateKeyPacket(), HandleUpdateKeyPacket);
-            client.RegisterPacketHandler(new LoginFailed(), HandleLoginFailedPacket);
+            client.RegisterPacketHandler(new LoginFailedPacket(), HandleLoginFailedPacket);
+            client.RegisterPacketHandler(new LoginSuccessPacket(), HandleLoginSuccessPacket);
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Implements methods to read and write <see cref="IPacket"/>s to a <see cref="Socket"/>.
+    /// Implements methods to read and write <see cref="IPacket"/>s with <see cref="Socket"/>.
     /// </summary>
     public class NetworkManager
     {
@@ -29,7 +29,8 @@ namespace CoCSharp.Networking
                 InitializePacketDictionary();
 
             Connection = connection;
-            Handler = packetReceivedHandler;
+            PacketReceived = packetReceivedHandler;
+            Seed = MathHelper.Random.Next();
             CoCCrypto = new CoCCrypto();
             ReceiveEventPool = new SocketAsyncEventArgsPool(25);
             SendEventPool = new SocketAsyncEventArgsPool(25);
@@ -48,10 +49,11 @@ namespace CoCSharp.Networking
         /// Gets the <see cref="Socket"/>.
         /// </summary>
         public Socket Connection { get; private set; }
+        public int Seed { get; private set; }
 
         private CoCCrypto CoCCrypto { get; set; }
         private PacketDirection Direction { get; set; }
-        private PacketReceivedHandler Handler { get; set; }
+        private PacketReceivedHandler PacketReceived { get; set; }
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; }
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
@@ -68,50 +70,50 @@ namespace CoCSharp.Networking
                 return null; //TODO: Handle disconnection
 
             var timeout = DateTime.Now.AddMilliseconds(500);
-            while (DateTime.Now < timeout) // not needed anymore?
+            var packetBuffer = (PacketBuffer)args.UserToken;
+            using (var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer)))
             {
-                var packetBuffer = (PacketBuffer)args.UserToken;
-                using (var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer)))
+                if (PacketBuffer.HeaderSize > args.BytesTransferred) // check if there is a header
+                    return null;
+
+                // read header
+                var packetID = enPacketReader.ReadUInt16();
+                var packetLength = enPacketReader.ReadInt24();
+                var packetVersion = enPacketReader.ReadUInt16();
+
+                // read body
+                if (packetLength > args.BytesTransferred) // check if data is enough data is avaliable in the buffer
+                    return null;
+
+                var encryptedData = packetBuffer.ExtractPacket(PacketExtractionFlags.Body |
+                                                               PacketExtractionFlags.Remove,
+                                                               packetLength);
+                var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
+                CoCCrypto.Decrypt(decryptedData);
+
+                using (var dePacketReader = new PacketReader(new MemoryStream(decryptedData)))
                 {
-                    if (PacketBuffer.HeaderSize > args.BytesTransferred) // check if there is a header
-                        continue;
-
-                    // read header
-                    var packetID = enPacketReader.ReadUInt16();
-                    var packetLength = enPacketReader.ReadPacketLength();
-                    var packetVersion = enPacketReader.ReadUInt16();
-
-                    // read body
-                    if (packetLength > args.BytesTransferred) // check if data is enough data is avaliable in the buffer
-                        continue;
-
-                    var encryptedData = packetBuffer.ExtractPacket(PacketExtractionFlags.Body |
-                                                                   PacketExtractionFlags.Remove, // hmhmhm
-                                                                   packetLength);
-                    var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
-
-                    CoCCrypto.Decrypt(decryptedData);
-
-                    using (var dePacketReader = new PacketReader(new MemoryStream(decryptedData)))
+                    var packet = GetPacketInstance(packetID);
+                    if (packet is UnknownPacket)
                     {
-                        var packet = GetPacketInstance(packetID);
-                        if (packet is UnknownPacket)
+                        packet = new UnknownPacket
                         {
-                            packet = new UnknownPacket
-                            {
-                                ID = packetID,
-                                Length = packetLength,
-                                Version = packetVersion
-                            };
-                            ((UnknownPacket)packet).EncryptedData = encryptedData;
-                        }
-
-                        packet.ReadPacket(dePacketReader);
-                        return packet;
+                            ID = packetID,
+                            Length = packetLength,
+                            Version = packetVersion,
+                            EncryptedData = encryptedData,
+                            DecryptedData = decryptedData
+                        };
                     }
+                    packet.ReadPacket(dePacketReader);
+                    if (packet is UpdateKeyPacket) // encryption failing cause of async stuff
+                    {
+                        var ukPacket = packet as UpdateKeyPacket;
+                        UpdateChipers((ulong)Seed, ukPacket.Key);
+                    }
+                    return packet;
                 }
             }
-            return null;
         }
 
         /// <summary>
@@ -131,13 +133,15 @@ namespace CoCSharp.Networking
                 {
                     enPacketWriter.WriteUInt16(packet.ID);
                     enPacketWriter.WritePacketLength(buffer.Length);
-                    enPacketWriter.WriteUInt16(0); // the unknown
+                    enPacketWriter.WriteUInt16(0); // the unknown or the packet version
                     enPacketWriter.Write(buffer, 0, buffer.Length);
 
                     var rawPacket = ((MemoryStream)enPacketWriter.BaseStream).ToArray();
-                    var args = SendEventPool.Pop();
+                    var args = new SocketAsyncEventArgs();
+                    //args.Completed += OperationCompleted;
                     args.SetBuffer(rawPacket, 0, rawPacket.Length);
-                    Connection.SendAsync(args);
+                    if (!Connection.SendAsync(args))
+                        OperationCompleted(Connection, args);
                 }
             }
         }
@@ -177,15 +181,16 @@ namespace CoCSharp.Networking
         {
             args.Completed -= OperationCompleted;
 
-            if (args.SocketError != SocketError.Success) // handle stuff better here
+            if (args.SocketError != SocketError.Success)
                 return;
 
             switch (args.LastOperation)
             {
                 case SocketAsyncOperation.Receive:
-                    var packet = ReadPacket(args);
+                    var packet = (IPacket)null;
+                    packet = ReadPacket(args);
                     if (packet != null)
-                        Handler(args, packet); // pass the packet and args to the code user nethandler
+                        PacketReceived(args, packet);
                     ReceiveEventPool.Push(args);
                     StartReceive();
                     break;
@@ -216,7 +221,7 @@ namespace CoCSharp.Networking
 
             // Clientbound
             PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
-            PacketDictionary.Add(new LoginFailed().ID, typeof(LoginFailed)); // 20103
+            PacketDictionary.Add(new LoginFailedPacket().ID, typeof(LoginFailedPacket)); // 20103
             PacketDictionary.Add(new LoginSuccessPacket().ID, typeof(LoginSuccessPacket)); // 20104
             PacketDictionary.Add(new KeepAliveResponsePacket().ID, typeof(KeepAliveResponsePacket)); // 20108
             PacketDictionary.Add(new OwnHomeDataPacket().ID, typeof(OwnHomeDataPacket)); // 24101

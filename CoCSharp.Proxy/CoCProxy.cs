@@ -13,14 +13,15 @@ namespace CoCSharp.Proxy
 {
     public class CoCProxy : ICoCServer
     {
-        public delegate void PacketHandler(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet);
+        public delegate void PacketHandler(CoCProxy proxyServer, CoCProxyClient client, IPacket packet);
 
         public CoCProxy()
         {
             Loggers = new List<ILogger>();
-            ProxyConnections = new List<CoCProxyConnection>();
+            ProxyClients = new List<CoCProxyClient>();
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
             AcceptEventPool = new SocketAsyncEventArgsPool(100);
+            PacketLogger = new PacketLogger();
 
             ProxyPacketHandlers.RegisterHanlders(this);
         }
@@ -28,11 +29,12 @@ namespace CoCSharp.Proxy
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
         public List<ILogger> Loggers { get; set; }
-        public List<CoCProxyConnection> ProxyConnections { get; set; }
+        public List<CoCProxyClient> ProxyClients { get; set; }
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
         public Socket Listener { get; set; }
         public EndPoint EndPoint { get; set; }
 
+        public PacketLogger PacketLogger { get; set; }
         private bool ShuttingDown { get; set; }
         private SocketAsyncEventArgsPool AcceptEventPool { get; set; }
 
@@ -65,14 +67,6 @@ namespace CoCSharp.Proxy
             throw new NotImplementedException();
         }
 
-        private void HandlePacket(CoCProxyConnection client, IPacket packet)
-        {
-            var handler = (PacketHandler)null;
-            if (!PacketHandlers.TryGetValue(packet.ID, out handler))
-                return; // throw exception?
-            handler(this, client, packet);
-        }
-
         private void StartListen()
         {
             while (AcceptEventPool.Count > 1)
@@ -93,9 +87,10 @@ namespace CoCSharp.Proxy
             {
                 case SocketAsyncOperation.Accept:
                     var connection = args.AcceptSocket;
-                    var remoteClient = new CoCProxyConnection(this, connection);
-                    
-                    ProxyConnections.Add(remoteClient);               
+                    var remoteClient = new CoCProxyClient(this, connection);
+
+                    remoteClient.Start(new TcpClient(ServerAddress, ServerPort).Client);
+                    ProxyClients.Add(remoteClient);
                     args.AcceptSocket = null;
                     AcceptEventPool.Push(args);
                     StartListen();

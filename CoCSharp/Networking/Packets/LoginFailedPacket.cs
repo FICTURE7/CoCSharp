@@ -1,19 +1,21 @@
-﻿namespace CoCSharp.Networking.Packets
+﻿using CoCSharp.Data;
+
+namespace CoCSharp.Networking.Packets
 {
-    public class LoginFailed : IPacket
+    public class LoginFailedPacket : IPacket
     {
         public enum LoginFailureReason : int
         {
             OutdatedContent = 7,
             OutdatedVersion = 8,
-            Maintenance  = 10,
+            Maintenance = 10,
             Banned = 11,
         };
 
         public ushort ID { get { return 0x4E87; } }
 
         public LoginFailureReason FailureReason;
-        public string FingerprintJson;
+        public Fingerprint Fingerprint;
         public string HostName;
         public string RackcdnUrl;
         public string iTunesUrl; // market url
@@ -26,7 +28,9 @@
         public void ReadPacket(PacketReader reader)
         {
             FailureReason = (LoginFailureReason)reader.ReadInt32();
-            FingerprintJson = reader.ReadString();
+            var fingerprintJson = reader.ReadString();
+            if (fingerprintJson != null)
+                Fingerprint = new Fingerprint(fingerprintJson);
             HostName = reader.ReadString();
             RackcdnUrl = reader.ReadString();
             iTunesUrl = reader.ReadString();
@@ -40,7 +44,8 @@
         public void WritePacket(PacketWriter writer)
         {
             writer.WriteInt32((int)FailureReason);
-            writer.WriteString(FingerprintJson);
+            if (Fingerprint != null)
+                writer.WriteString(Fingerprint.ToJson());
             writer.WriteString(HostName);
             writer.WriteString(RackcdnUrl);
             writer.WriteString(iTunesUrl);

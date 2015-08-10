@@ -19,7 +19,7 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
-
+            writer.Write(EncryptedData, 0, EncryptedData.Length);
         }
     }
 }

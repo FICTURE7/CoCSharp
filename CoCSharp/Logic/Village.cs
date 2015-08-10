@@ -101,9 +101,10 @@ namespace CoCSharp.Logic
         public void ReadFromPacketReader(PacketReader reader)
         {
             var homeData = reader.ReadByteArray();
+            if (homeData == null)
+                return;
             using (var binaryReader = new BinaryReader(new MemoryStream(homeData)))
             {
-
                 var decompressedLength = binaryReader.ReadInt32();
                 var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
                 var json = ZlibStream.UncompressString(compressedJson);

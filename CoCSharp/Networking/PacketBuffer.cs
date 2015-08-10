@@ -21,6 +21,7 @@ namespace CoCSharp.Networking
         public PacketBuffer(byte[] packetBuffer)
         {
             Buffer = packetBuffer;
+            OriginalBuffer = packetBuffer;
             OriginalBufferSize = packetBuffer.Length;
         }
 
@@ -28,6 +29,7 @@ namespace CoCSharp.Networking
         /// Gets the packet buffer bytes.
         /// </summary>
         public byte[] Buffer { get; private set; }
+        public byte[] OriginalBuffer { get; private set; }
 
         private int OriginalBufferSize { get; set; }
 

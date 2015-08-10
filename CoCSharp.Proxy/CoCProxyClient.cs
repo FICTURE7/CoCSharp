@@ -7,12 +7,11 @@ namespace CoCSharp.Proxy
 {
     public class CoCProxyClient
     {
-        public CoCProxyClient(ICoCServer server, Socket connection, PacketDirection direction)
+        public CoCProxyClient(CoCProxy server, Socket connection)
         {
             Proxy = server;
             Connection = connection;
-            //ClientNetworkManager = new NetworkManager(connection, HandleNetworkClient);
-            //ServerNetworkManager = new NetworkManager(connection, HandleNetworkServer);
+            ClientNetworkManager = new NetworkManager(connection, HandleNetworkClient);
         }
 
         public string Username { get; set; }
@@ -26,16 +25,25 @@ namespace CoCSharp.Proxy
         public NetworkManager ClientNetworkManager { get; set; }
         public NetworkManager ServerNetworkManager { get; set; }
 
-        private ICoCServer Proxy { get; set; }
+        private CoCProxy Proxy { get; set; }
+
+        public void Start(Socket connection)
+        {
+            ServerNetworkManager = new NetworkManager(connection, HandleNetworkServer);
+        }
 
         private void HandleNetworkClient(SocketAsyncEventArgs args, IPacket packet)
         {
-            ServerNetworkManager.Connection.Send(args.Buffer);
+            var packetbuffer = (PacketBuffer)args.UserToken;
+            ServerNetworkManager.Connection.Send(packetbuffer.OriginalBuffer);
+            Proxy.PacketLogger.LogPacket(packet, PacketDirection.Server);
         }
 
         private void HandleNetworkServer(SocketAsyncEventArgs args, IPacket packet)
         {
-            ClientNetworkManager.Connection.Send(args.Buffer);
+            var packetbuffer = (PacketBuffer)args.UserToken;
+            ClientNetworkManager.Connection.Send(packetbuffer.OriginalBuffer);
+            Proxy.PacketLogger.LogPacket(packet, PacketDirection.Client);
         }
     }
 }

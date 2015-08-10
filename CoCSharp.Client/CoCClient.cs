@@ -1,4 +1,5 @@
-﻿using CoCSharp.Client.Handlers;
+﻿using CoCSharp.Client.Events;
+using CoCSharp.Client.Handlers;
 using CoCSharp.Logging;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
@@ -19,10 +20,16 @@ namespace CoCSharp.Client
             UserID = 0;
             UserToken = null;
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            PacketLogger = new PacketLogger();
+            PacketLogger = new PacketLogger()
+            {
+                LogConsole = false
+            };
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
+            NextKeepAlive = DateTime.Now;
+            KeepAliveManager = new KeepAliveManager(this);
 
             LoginPacketHandlers.RegisterLoginPacketHandlers(this);
+            InGamePacketHandlers.RegisterInGamePacketHandler(this);
         }
 
         public Socket Connection { get; set; }
@@ -33,14 +40,18 @@ namespace CoCSharp.Client
         public long UserID { get; private set; }
         public string UserToken { get; private set; }
         public int Seed { get; private set; }
-
         public PacketLogger PacketLogger { get; set; }
         public NetworkManager NetworkManager { get; set; }
 
+        private KeepAliveManager KeepAliveManager { get; set; }
+        private DateTime NextKeepAlive { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
 
         public void Connect(IPEndPoint endPoint)
         {
+            if (endPoint == null)
+                throw new ArgumentNullException("endPoint");
+
             var args = new SocketAsyncEventArgs();
             args.Completed += ConnectAsyncCompleted;
             args.RemoteEndPoint = endPoint;
@@ -59,7 +70,7 @@ namespace CoCSharp.Client
                 ClientMajorVersion = 7,
                 ClientContentVersion = 0,
                 ClientMinorVersion = 156,
-                FingerprintHash = "a84b8e7ec2d4e421dc23c315174de5e36231a2d0",
+                FingerprintHash = "ae9b056807ac8bfa58a3e879b1f1601ff17d1df5",
                 OpenUDID = "563a6f060d8624db",
                 MacAddress = null,
                 DeviceModel = "GT-I9300",
@@ -71,7 +82,16 @@ namespace CoCSharp.Client
                 AndroidDeviceID = "563a6f060d8624db",
                 FacebookDistributionID = "",
                 VendorGUID = "",
-                Seed = this.Seed
+                Seed = NetworkManager.Seed
+            });
+            KeepAliveManager.Start();
+        }
+
+        public void SendChatMessage(string message)
+        {
+            QueuePacket(new ChatMessageClientPacket()
+            {
+                Message = message
             });
         }
 
@@ -79,6 +99,8 @@ namespace CoCSharp.Client
         {
             if (packet == null)
                 throw new ArgumentNullException("packet");
+            if (NetworkManager == null)
+                throw new InvalidOperationException("Tried to send a packet before NetworkManager was initialized.");
 
             PacketLogger.LogPacket(packet, PacketDirection.Server);
             NetworkManager.WritePacket(packet);
@@ -86,21 +108,28 @@ namespace CoCSharp.Client
 
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
+            if (packet == null)
+                throw new ArgumentNullException("packet");
+            if (handler == null)
+                throw new ArgumentNullException("handler");
+
             PacketHandlers.Add(packet.ID, handler);
         }
 
-        private void HandlePacket(IPacket packet)
+        private void HandleReceivedPacket(SocketAsyncEventArgs args, IPacket packet)
         {
+            PacketLogger.LogPacket(packet, PacketDirection.Client);
             var handler = (PacketHandler)null;
             if (!PacketHandlers.TryGetValue(packet.ID, out handler))
                 return;
             handler(this, packet);
         }
 
-        private void HandleReceivedPacket(SocketAsyncEventArgs args, IPacket packet)
+        public event EventHandler<ChatMessageEventArgs> ChatMessage;
+        protected internal virtual void OnChatMessage(ChatMessageEventArgs e)
         {
-            PacketLogger.LogPacket(packet, PacketDirection.Client);
-            HandlePacket(packet);
+            if (ChatMessage != null)
+                ChatMessage(this, e);
         }
     }
 }

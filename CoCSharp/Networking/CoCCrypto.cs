@@ -104,8 +104,6 @@ namespace CoCSharp.Networking
 
         private class RC4
         {
-            //TODO: Increase swag
-
             public RC4(byte[] key)
             {
                 Key = KSA(key);

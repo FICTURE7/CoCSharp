@@ -8,40 +8,39 @@ namespace CoCSharp.Proxy.Handlers
 {
     public static class ProxyPacketHandlers
     {
-        public static void HandleLoginSuccessPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
+        public static void HandleLoginSuccessPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var lsPacket = packet as LoginSuccessPacket;
 
-            client.Client.UserID = lsPacket.UserID;
-            client.Client.UserToken = lsPacket.UserToken;
-            client.Client.LoggedIn = true;
+            client.UserID = lsPacket.UserID;
+            client.UserToken = lsPacket.UserToken;
+            client.LoggedIn = true;
         }
 
-        public static void HandleUpdateKeyPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
+        public static void HandleUpdateKeyPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var ukPacket = packet as UpdateKeyPacket;
 
-            client.Client.ClientNetworkManager.UpdateChipers((ulong)client.Client.Seed, ukPacket.Key);
-            client.Server.ClientNetworkManager.UpdateChipers((ulong)client.Client.Seed, ukPacket.Key);
+            client.ClientNetworkManager.UpdateChipers((ulong)client.Seed, ukPacket.Key);
+            client.ClientNetworkManager.UpdateChipers((ulong)client.Seed, ukPacket.Key);
         }
 
-        public static void HandleLoginRequestPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
+        public static void HandleLoginRequestPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var lrPacket = packet as LoginRequestPacket;
 
-            client.Start((ICoCServer)proxyServer, new TcpClient(proxyServer.ServerAddress, proxyServer.ServerPort).Client);
-            client.Client.Seed = lrPacket.Seed;
-            client.Client.UserID = lrPacket.UserID;
-            client.Client.UserToken = lrPacket.UserToken;
-            client.Client.FingerprintHash = lrPacket.FingerprintHash;
+            client.Seed = lrPacket.Seed;
+            client.UserID = lrPacket.UserID;
+            client.UserToken = lrPacket.UserToken;
+            client.FingerprintHash = lrPacket.FingerprintHash;
         }
 
-        public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyConnection client, IPacket packet)
+        public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var ohPacket = packet as OwnHomeDataPacket;
-            client.Client.Username = ohPacket.Username;
-            client.Client.UserID = ohPacket.UserID;
-            client.Client.Home = ohPacket.Home;
+            client.Username = ohPacket.Username;
+            client.UserID = ohPacket.UserID;
+            client.Home = ohPacket.Home;
         }
 
         public static void RegisterHanlders(CoCProxy proxyServer)

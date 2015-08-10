@@ -16,7 +16,7 @@
         public void WritePacket(PacketWriter writer)
         {
             writer.WriteString(NewName);
-            writer.WriteBoolean(Unknown1);
+            writer.WriteBoolean(true); // Unknown1
         }
     }
 }

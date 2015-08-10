@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoCProxy.cs" />
-    <Compile Include="CoCProxyConnection.cs" />
     <Compile Include="CoCProxyClient.cs" />
     <Compile Include="Handlers\ProxyPacketHandlers.cs" />
     <Compile Include="Program.cs" />

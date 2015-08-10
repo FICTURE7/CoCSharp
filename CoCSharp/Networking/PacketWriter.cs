@@ -4,52 +4,21 @@ using System.Text;
 
 namespace CoCSharp.Networking
 {
-    //TODO: Change Stream to StreamWriter.
-
     /// <summary>
     /// Implements methods to write Clash of Clans packets.
     /// </summary>
-    public class PacketWriter : Stream
+    public class PacketWriter : BinaryWriter
     {
         /// <summary>
         /// Initalizes a new instance of the <see cref="PacketWriter"/> class with
         /// the specified base <see cref="Stream"/>.
         /// </summary>
         /// <param name="baseStream">The base stream.</param>
-        public PacketWriter(Stream baseStream)
+        public PacketWriter(Stream stream)
+            : base(stream)
         {
-            BaseStream = baseStream;
+            // Space
         }
-
-        /// <summary>
-        /// Gets a value indicating whether the underlying stream suppors reading.
-        /// </summary>
-        public override bool CanRead { get { return BaseStream.CanRead; } }
-        /// <summary>
-        /// Gets a value indicating whether the underlying stream suppors writing.
-        /// </summary>
-        public override bool CanWrite { get { return BaseStream.CanWrite; } }
-        /// <summary>
-        /// Gets a value indicating whether the underlying stream suppors seeking.
-        /// </summary>
-        public override bool CanSeek { get { return BaseStream.CanSeek; } }
-        /// <summary>
-        /// Gets the length of the underlying stream in bytes.
-        /// </summary>
-        public override long Length { get { return BaseStream.Length; } }
-        /// <summary>
-        /// Gets or sets the current position in the underlying stream.
-        /// </summary>
-        public override long Position
-        {
-            get { return BaseStream.Position; }
-            set { BaseStream.Position = value; }
-        }
-
-        /// <summary>
-        /// Gets the underlying stream.
-        /// </summary>
-        public Stream BaseStream { get; set; }
 
         /// <summary>
         /// Writes the specified sequence of bytes to the underlying stream and advances the
@@ -67,7 +36,7 @@ namespace CoCSharp.Networking
         /// Writes a <see cref="Byte"/> to the underlying stream.
         /// </summary>
         /// <param name="value"><see cref="Byte"/> to write.</param>
-        public override void WriteByte(byte value)
+        public void WriteByte(byte value)
         {
             BaseStream.WriteByte(value);
         }
@@ -177,44 +146,15 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Not supposed to use this.
-        /// </summary>
-        /// <param name="buffer">Why are you even reading this.</param>
-        /// <param name="offset">Lol?</param>
-        /// <param name="count">xD</param>
-        /// <returns>Well, I warned you.</returns>
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            throw new InvalidOperationException("PacketWriter is not suppose to write.");
-        }
-
-        /// <summary>
         /// Sets the position of the underlying stream.
         /// </summary>
         /// <param name="offset">A byte offset relative to the origin parameter.</param>
         /// <param name="origin">A value of type <see cref="SeekOrigin"/> indicating the reference point
         ///                      used to obtain the new position.</param>
         /// <returns>The new position of the underlying stream.</returns>
-        public override long Seek(long offset, SeekOrigin origin)
+        public long Seek(long offset, SeekOrigin origin)
         {
             return BaseStream.Seek(offset, origin);
-        }
-
-        /// <summary>
-        /// Sets the length of the underlying stream.
-        /// </summary>
-        /// <param name="value">The desired length of the current stream in bytes.</param>
-        public override void SetLength(long value)
-        {
-            BaseStream.SetLength(value);
-        }
-
-        /// <summary>
-        /// Not implemented.
-        /// </summary>
-        public override void Flush()
-        {
-            throw new NotImplementedException();
         }
 
         private void WriteBytes(byte[] buffer, bool switchEndian = true)
