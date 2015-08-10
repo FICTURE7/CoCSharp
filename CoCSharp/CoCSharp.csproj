@@ -142,6 +142,7 @@
     <Compile Include="Logic\Trap.cs" />
     <Compile Include="Logic\Village.cs" />
     <Compile Include="Logic\VillageObject.cs" />
+    <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\NetworkManager.cs" />
     <Compile Include="Networking\PacketBuffer.cs" />
