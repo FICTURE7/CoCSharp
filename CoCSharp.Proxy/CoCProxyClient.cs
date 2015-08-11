@@ -34,15 +34,13 @@ namespace CoCSharp.Proxy
 
         private void HandleNetworkClient(SocketAsyncEventArgs args, IPacket packet)
         {
-            var packetbuffer = (PacketBuffer)args.UserToken;
-            ServerNetworkManager.Connection.Send(packetbuffer.OriginalBuffer);
+            ServerNetworkManager.WritePacket(packet);
             Proxy.PacketLogger.LogPacket(packet, PacketDirection.Server);
         }
 
         private void HandleNetworkServer(SocketAsyncEventArgs args, IPacket packet)
         {
-            var packetbuffer = (PacketBuffer)args.UserToken;
-            ClientNetworkManager.Connection.Send(packetbuffer.OriginalBuffer);
+            ClientNetworkManager.WritePacket(packet);
             Proxy.PacketLogger.LogPacket(packet, PacketDirection.Client);
         }
     }

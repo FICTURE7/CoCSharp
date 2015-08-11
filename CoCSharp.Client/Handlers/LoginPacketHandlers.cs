@@ -28,13 +28,19 @@ namespace CoCSharp.Client.Handlers
         {
             var lsPacket = packet as LoginSuccessPacket;
             Console.WriteLine("Successfully logged in!");
-            //client.SendChatMessage("hi!");
+        }
+
+        public static void HandleUpdateKeyPacket(CoCClient client, IPacket packet)
+        {
+            var ukPacket = packet as UpdateKeyPacket;
+            client.NetworkManager.UpdateChipers((ulong)client.NetworkManager.Seed, ukPacket.Key);
         }
 
         public static void RegisterLoginPacketHandlers(CoCClient client)
         {
             client.RegisterPacketHandler(new LoginFailedPacket(), HandleLoginFailedPacket);
             client.RegisterPacketHandler(new LoginSuccessPacket(), HandleLoginSuccessPacket);
+            client.RegisterPacketHandler(new UpdateKeyPacket(), HandleUpdateKeyPacket);
         }
     }
 }

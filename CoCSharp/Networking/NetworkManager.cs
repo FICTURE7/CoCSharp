@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace CoCSharp.Networking
 {
@@ -69,7 +70,6 @@ namespace CoCSharp.Networking
             if (args.BytesTransferred == 0)
                 return null; //TODO: Handle disconnection
 
-            var timeout = DateTime.Now.AddMilliseconds(500);
             var packetBuffer = (PacketBuffer)args.UserToken;
             using (var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer)))
             {
@@ -79,7 +79,7 @@ namespace CoCSharp.Networking
                 // read header
                 var packetID = enPacketReader.ReadUInt16();
                 var packetLength = enPacketReader.ReadInt24();
-                var packetVersion = enPacketReader.ReadUInt16();
+                var packetVersion = enPacketReader.ReadUInt16(); // the unknown
 
                 // read body
                 if (packetLength > args.BytesTransferred) // check if data is enough data is avaliable in the buffer
@@ -106,11 +106,6 @@ namespace CoCSharp.Networking
                         };
                     }
                     packet.ReadPacket(dePacketReader);
-                    if (packet is UpdateKeyPacket) // encryption failing cause of async stuff
-                    {
-                        var ukPacket = packet as UpdateKeyPacket;
-                        UpdateChipers((ulong)Seed, ukPacket.Key);
-                    }
                     return packet;
                 }
             }
@@ -138,10 +133,9 @@ namespace CoCSharp.Networking
 
                     var rawPacket = ((MemoryStream)enPacketWriter.BaseStream).ToArray();
                     var args = new SocketAsyncEventArgs();
-                    //args.Completed += OperationCompleted;
                     args.SetBuffer(rawPacket, 0, rawPacket.Length);
                     if (!Connection.SendAsync(args))
-                        OperationCompleted(Connection, args);
+                        AsyncOperationCompleted(Connection, args);
                 }
             }
         }
@@ -167,32 +161,27 @@ namespace CoCSharp.Networking
 
         private void StartReceive()
         {
-            while (ReceiveEventPool.Count > 1)
-            {
-                var receiveArgs = ReceiveEventPool.Pop();
-                receiveArgs.Completed += OperationCompleted;
+            var receiveArgs = ReceiveEventPool.Pop();
+            receiveArgs.Completed += AsyncOperationCompleted;
 
-                if (!Connection.ReceiveAsync(receiveArgs))
-                    OperationCompleted(Connection, receiveArgs);
-            }
+            if (!Connection.ReceiveAsync(receiveArgs))
+                AsyncOperationCompleted(Connection, receiveArgs);
         }
 
-        private void OperationCompleted(object sender, SocketAsyncEventArgs args)
+        private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
-            args.Completed -= OperationCompleted;
-
+            args.Completed -= AsyncOperationCompleted;
             if (args.SocketError != SocketError.Success)
-                return;
+                throw new SocketException((int)args.SocketError);
 
             switch (args.LastOperation)
             {
                 case SocketAsyncOperation.Receive:
-                    var packet = (IPacket)null;
-                    packet = ReadPacket(args);
+                    var packet = ReadPacket(args);
                     if (packet != null)
-                        PacketReceived(args, packet);
-                    ReceiveEventPool.Push(args);
+                        PacketReceived(args, packet); // pass it to the handler
                     StartReceive();
+                    ReceiveEventPool.Push(args);
                     break;
             }
         }
@@ -202,7 +191,7 @@ namespace CoCSharp.Networking
             var packetType = (Type)null;
             if (!PacketDictionary.TryGetValue(id, out packetType))
                 return new UnknownPacket();
-            return (IPacket)Activator.CreateInstance(packetType);
+            return (IPacket)Activator.CreateInstance(packetType); // creates an instance for that packetid
         }
 
         private static void InitializePacketDictionary()

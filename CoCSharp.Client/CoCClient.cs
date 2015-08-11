@@ -16,13 +16,12 @@ namespace CoCSharp.Client
 
         public CoCClient()
         {
-            Seed = new Random().Next();
             UserID = 0;
             UserToken = null;
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
             PacketLogger = new PacketLogger()
             {
-                LogConsole = false
+                LogConsole = true
             };
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
             NextKeepAlive = DateTime.Now;
@@ -39,7 +38,6 @@ namespace CoCSharp.Client
         }
         public long UserID { get; private set; }
         public string UserToken { get; private set; }
-        public int Seed { get; private set; }
         public PacketLogger PacketLogger { get; set; }
         public NetworkManager NetworkManager { get; set; }
 
@@ -100,7 +98,7 @@ namespace CoCSharp.Client
             if (packet == null)
                 throw new ArgumentNullException("packet");
             if (NetworkManager == null)
-                throw new InvalidOperationException("Tried to send a packet before NetworkManager was initialized.");
+                throw new InvalidOperationException("Tried to send a packet before NetworkManager was initialized or before socket was connected.");
 
             PacketLogger.LogPacket(packet, PacketDirection.Server);
             NetworkManager.WritePacket(packet);

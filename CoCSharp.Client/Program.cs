@@ -22,7 +22,12 @@ namespace CoCSharp.Client
             var endPoint = new IPEndPoint(ipAddresses[0], port);
             Console.WriteLine("Connecting to {0}...", endPoint.Address);
             Client.Connect(endPoint);
-            Console.ReadLine();
+
+            while (true)
+            {
+                var message = Console.ReadLine();
+                Client.SendChatMessage(message);
+            }
         }
     }
 }

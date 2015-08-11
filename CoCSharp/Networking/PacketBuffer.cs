@@ -3,6 +3,8 @@ using System.IO;
 
 namespace CoCSharp.Networking
 {
+    //TODO: NEED TO FIX DIS BED BOI!!
+
     /// <summary>
     /// Provides methods to extract packets from a <see cref="Byte"/> array.
     /// </summary>
@@ -21,7 +23,6 @@ namespace CoCSharp.Networking
         public PacketBuffer(byte[] packetBuffer)
         {
             Buffer = packetBuffer;
-            OriginalBuffer = packetBuffer;
             OriginalBufferSize = packetBuffer.Length;
         }
 
@@ -29,7 +30,6 @@ namespace CoCSharp.Networking
         /// Gets the packet buffer bytes.
         /// </summary>
         public byte[] Buffer { get; private set; }
-        public byte[] OriginalBuffer { get; private set; }
 
         private int OriginalBufferSize { get; set; }
 
@@ -81,6 +81,7 @@ namespace CoCSharp.Networking
                 var buffer = new byte[Buffer.Length - (packetLength + HeaderSize)];
                 Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
                 Buffer = buffer;
+                ResizeToOriginalSize();
             }
             return packetStream.ToArray();
         }
