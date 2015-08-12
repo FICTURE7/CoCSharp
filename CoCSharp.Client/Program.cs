@@ -1,5 +1,9 @@
-﻿using System;
+﻿using CoCSharp.Networking;
+using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
+using System.Threading;
 
 namespace CoCSharp.Client
 {
@@ -20,6 +24,7 @@ namespace CoCSharp.Client
             var ipAddresses = Dns.GetHostAddresses(args[0]);
             var port = int.Parse(args[1]);
             var endPoint = new IPEndPoint(ipAddresses[0], port);
+            Console.WriteLine("Main thread: {0}", Thread.CurrentThread.ManagedThreadId);
             Console.WriteLine("Connecting to {0}...", endPoint.Address);
             Client.Connect(endPoint);
 

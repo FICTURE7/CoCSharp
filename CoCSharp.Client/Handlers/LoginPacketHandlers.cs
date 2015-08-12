@@ -1,6 +1,8 @@
 ﻿using CoCSharp.Networking.Packets;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace CoCSharp.Client.Handlers
 {
@@ -32,8 +34,10 @@ namespace CoCSharp.Client.Handlers
 
         public static void HandleUpdateKeyPacket(CoCClient client, IPacket packet)
         {
+            Console.WriteLine("Updating encryption on thread {0}", Thread.CurrentThread.ManagedThreadId);
             var ukPacket = packet as UpdateKeyPacket;
             client.NetworkManager.UpdateChipers((ulong)client.NetworkManager.Seed, ukPacket.Key);
+            Console.WriteLine("Updated encryption on thread {0}", Thread.CurrentThread.ManagedThreadId);
         }
 
         public static void RegisterLoginPacketHandlers(CoCClient client)

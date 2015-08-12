@@ -17,20 +17,30 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="args"></param>
         /// <param name="packet"></param>
-        public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet); // Incoming handler<L
+        public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="ex"></param>
+        public delegate void PacketReceivedFailedHandler(SocketAsyncEventArgs args, Exception ex);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManager"/> class.
         /// </summary>
         /// <param name="connection"><see cref="Socket"/> to wrap.</param>
         /// <param name="networkHandler"><see cref="PacketReceivedHandler"/> that will handle incoming packet.</param>
-        public NetworkManager(Socket connection, PacketReceivedHandler packetReceivedHandler)
+        /// <param name="packetReceivedFailedHandler"><see cref="PacketReceivedFailedHandler"/> that will handle incoming packet that failed to read.</param>
+        public NetworkManager(Socket connection, 
+                              PacketReceivedHandler packetReceivedHandler, 
+                              PacketReceivedFailedHandler packetReceivedFailedHandler)
         {
             if (PacketDictionary == null)  // could a use a static constructor?
                 InitializePacketDictionary();
 
             Connection = connection;
             PacketReceived = packetReceivedHandler;
+            PacketReceivedFailed = packetReceivedFailedHandler;
             Seed = MathHelper.Random.Next();
             CoCCrypto = new CoCCrypto();
             ReceiveEventPool = new SocketAsyncEventArgsPool(25);
@@ -55,6 +65,7 @@ namespace CoCSharp.Networking
         private CoCCrypto CoCCrypto { get; set; }
         private PacketDirection Direction { get; set; }
         private PacketReceivedHandler PacketReceived { get; set; }
+        private PacketReceivedFailedHandler PacketReceivedFailed { get; set; }
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; }
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
@@ -67,6 +78,7 @@ namespace CoCSharp.Networking
         /// <returns>The <see cref="IPacket"/> read.</returns>
         public IPacket ReadPacket(SocketAsyncEventArgs args)
         {
+            // Console.WriteLine("Being reading packet on thread {0}", Thread.CurrentThread.ManagedThreadId);
             if (args.BytesTransferred == 0)
                 return null; //TODO: Handle disconnection
 
@@ -91,6 +103,8 @@ namespace CoCSharp.Networking
                 var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
                 CoCCrypto.Decrypt(decryptedData);
 
+                args.SetBuffer(packetBuffer.Buffer, 0, packetBuffer.Buffer.Length);
+
                 using (var dePacketReader = new PacketReader(new MemoryStream(decryptedData)))
                 {
                     var packet = GetPacketInstance(packetID);
@@ -106,6 +120,7 @@ namespace CoCSharp.Networking
                         };
                     }
                     packet.ReadPacket(dePacketReader);
+                    // Console.WriteLine("End reading packet on thread {0}", Thread.CurrentThread.ManagedThreadId);
                     return packet;
                 }
             }
@@ -177,7 +192,13 @@ namespace CoCSharp.Networking
             switch (args.LastOperation)
             {
                 case SocketAsyncOperation.Receive:
-                    var packet = ReadPacket(args);
+                    var packet = (IPacket)null;
+
+                    try 
+                    { packet = ReadPacket(args); }
+                    catch (Exception ex)
+                    { PacketReceivedFailed(args, ex); }
+
                     if (packet != null)
                         PacketReceived(args, packet); // pass it to the handler
                     StartReceive();

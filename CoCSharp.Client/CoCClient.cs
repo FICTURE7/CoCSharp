@@ -60,7 +60,7 @@ namespace CoCSharp.Client
         {
             if (e.SocketError != SocketError.Success)
                 throw new SocketException((int)e.SocketError);
-            NetworkManager = new NetworkManager(e.ConnectSocket, HandleReceivedPacket);
+            NetworkManager = new NetworkManager(e.ConnectSocket, HandleReceivedPacket, HandleReceicedPacketFailed);
             QueuePacket(new LoginRequestPacket()
             {
                 UserID = this.UserID,
@@ -121,6 +121,11 @@ namespace CoCSharp.Client
             if (!PacketHandlers.TryGetValue(packet.ID, out handler))
                 return;
             handler(this, packet);
+        }
+
+        private void HandleReceicedPacketFailed(SocketAsyncEventArgs args, Exception ex)
+        {
+            Console.WriteLine("Failed to read packet: {0}", ex.Message);
         }
 
         public event EventHandler<ChatMessageEventArgs> ChatMessage;

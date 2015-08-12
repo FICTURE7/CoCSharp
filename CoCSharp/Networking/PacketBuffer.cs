@@ -50,16 +50,6 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Resize to the buffer to its original size.
-        /// </summary>
-        public void ResizeToOriginalSize()
-        {
-            var buff = Buffer;
-            Array.Resize(ref buff, OriginalBufferSize);
-            Buffer = buff;
-        }
-
-        /// <summary>
         /// Extracts the packet with the specified bitmask of <see cref="PacketExtractionFlags"/> enum.
         /// </summary>
         /// <param name="flags">Bitmask of <see cref="PacketExtractionFlags"/>.</param>
@@ -80,8 +70,8 @@ namespace CoCSharp.Networking
             {
                 var buffer = new byte[Buffer.Length - (packetLength + HeaderSize)];
                 Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
+                Array.Resize(ref buffer, OriginalBufferSize);
                 Buffer = buffer;
-                ResizeToOriginalSize();
             }
             return packetStream.ToArray();
         }

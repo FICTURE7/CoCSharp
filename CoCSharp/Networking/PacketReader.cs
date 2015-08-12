@@ -137,7 +137,7 @@ namespace CoCSharp.Networking
             if (length < 0)
                 return null;
             if (length > BaseStream.Length - BaseStream.Position)
-                throw new InvalidDataException(string.Format("A byte array was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
+                throw new InvalidPacketException(string.Format("A byte array was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
             var buffer = ReadBytesWithEndian(length, false);
             return buffer;
         }
@@ -152,7 +152,7 @@ namespace CoCSharp.Networking
             if (length < 0)
                 return null;
             if (length > BaseStream.Length - BaseStream.Position)
-                throw new InvalidDataException(string.Format("A string was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
+                throw new InvalidPacketException(string.Format("A string was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
             var buffer = ReadBytesWithEndian(length, false);
             return Encoding.UTF8.GetString(buffer);
         }

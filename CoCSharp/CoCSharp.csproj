@@ -144,6 +144,7 @@
     <Compile Include="Logic\VillageObject.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
+    <Compile Include="Networking\InvalidPacketException.cs" />
     <Compile Include="Networking\NetworkManager.cs" />
     <Compile Include="Networking\PacketBuffer.cs" />
     <Compile Include="Networking\PacketDirection.cs" />
