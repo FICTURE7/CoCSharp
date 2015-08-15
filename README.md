@@ -34,7 +34,7 @@ socket.Connect("gamea.clashofclans.com", 9339);
 var networkManager = new NetworkManager(socket, (SocketAsyncEventArgs args, IPacket packet) =>
 {
     Console.WriteLine("Recieved {0}:{1}", packet.GetType().Name, packet.ID);
-});
+}, null);
 // sends a LoginRequestPacket to the server
 networkManager.WritePacket(new LoginRequestPacket()
 {
