@@ -215,7 +215,10 @@ namespace CoCSharp.Networking
                                 PacketReceived(args, packets[i]); // pass it to the handler
                         }
                         catch (Exception ex)
-                        { PacketReceivedFailed(args, ex); }
+                        {
+                            if (PacketReceivedFailed != null)
+                                PacketReceivedFailed(args, ex);
+                        }
 
                         StartReceive();
                         ReceiveEventPool.Push(args);
