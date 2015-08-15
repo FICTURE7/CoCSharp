@@ -31,19 +31,19 @@ socket.Connect("gamea.clashofclans.com", 9339);
 // creates a new NetworkManager
 // the PacketReceivedHandler delegate is called when a packet is recieved
 // here we are using it to write the packet type and packet id to the console
-var networkManager = new NetworkManager(socket, (SocketAsyncEventArgs args, IPacket packet) =>
+var networkManagerAsync = new NetworkManagerAsync(socket, (SocketAsyncEventArgs args, IPacket packet) =>
 {
     Console.WriteLine("Recieved {0}:{1}", packet.GetType().Name, packet.ID);
 }, null);
 // sends a LoginRequestPacket to the server
-networkManager.WritePacket(new LoginRequestPacket()
+networkManagerAsync.WritePacket(new LoginRequestPacket()
 {
     UserID = 0, 
     UserToken = null,
     ClientMajorVersion = 7,
     ClientContentVersion = 0,
     ClientMinorVersion = 156,
-    FingerprintHash = "8fbf97bdc0edae09ad9f358dc027d7ce92366330",
+    FingerprintHash = "ae9b056807ac8bfa58a3e879b1f1601ff17d1df5",
     OpenUDID = "563a6f060d8624db",
     MacAddress = null,
     DeviceModel = "GT-I9300",
@@ -58,6 +58,27 @@ networkManager.WritePacket(new LoginRequestPacket()
     Seed = 1329685020 
 });
 ```
+
+### Logging
+If you would like to log packets in a more fancy manner use this instead
+```c#
+// creates a new PacketLogger that will log
+// to the console and to the file "log_filename.log"
+var packetLogger = new PacketLogger("log_filename.log")
+{
+    LogConsole = true
+    // set to false if you dont want logs in the console
+    // it is true by default, you could do that
+    // var packetLogger = PacketLogger("log_filename.log")
+    // simply
+};
+var networkManager = new NetworkManagerAsync(socket, (SocketAsyncEventArgs args, IPacket packet) =>
+{
+    packetLogger.LogPacket(packet, PacketDirection.Client);
+}, null);
+```
+and you should see logs in your console.
+
 
 ### CSV Tables
 Example to read a compressed `buildings.csv` file.
