@@ -27,7 +27,7 @@ namespace CoCSharp.Server
         public bool LoggedIn { get; set; }
         public Village Home { get; set; }
         public Socket Connection { get; set; }
-        public NetworkManager NetworkManager { get; set; }
+        public NetworkManagerAsync NetworkManager { get; set; }
         
         private SocketAsyncEventArgsPool SendAsyncEventPool { get; set; }
         private SocketAsyncEventArgsPool ReceiveAsyncEventPool { get; set; }

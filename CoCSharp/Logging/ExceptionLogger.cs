@@ -1,12 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoCSharp.Logging
 {
-    public class ExceptionLogger
+    public class ExceptionLogger : ILogger
     {
+        public ExceptionLogger()
+        {
+
+        }
+
+        public bool Active { get; set; }
+        public string FileLog { get; set; }
+
+        public void Log(LogCategory logCategory, params object[] paramters)
+        {
+            
+        }
     }
 }

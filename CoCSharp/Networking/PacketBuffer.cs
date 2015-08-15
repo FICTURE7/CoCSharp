@@ -20,9 +20,10 @@ namespace CoCSharp.Networking
         /// <see cref="Byte"/> array buffer.
         /// </summary>
         /// <param name="packetBuffer">The packet bytes.</param>
-        public PacketBuffer(byte[] packetBuffer)
+        public PacketBuffer(byte[] packetBuffer, int index)
         {
             Buffer = packetBuffer;
+            Index = index;
             OriginalBufferSize = packetBuffer.Length;
         }
 
@@ -30,6 +31,8 @@ namespace CoCSharp.Networking
         /// Gets the packet buffer bytes.
         /// </summary>
         public byte[] Buffer { get; private set; }
+
+        public int Index { get; set; }
 
         private int OriginalBufferSize { get; set; }
 
@@ -39,14 +42,6 @@ namespace CoCSharp.Networking
         public void Clear()
         {
             Array.Clear(Buffer, 0, Buffer.Length);
-        }
-
-        /// <summary>
-        /// Resets the buffer.
-        /// </summary>
-        public void Reset()
-        {
-            Buffer = new byte[OriginalBufferSize];
         }
 
         /// <summary>

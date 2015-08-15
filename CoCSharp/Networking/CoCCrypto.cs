@@ -19,7 +19,7 @@ namespace CoCSharp.Networking
         /// </summary>
         public CoCCrypto()
         {
-            InitializeChipers(InitialKey + InitialNonce);
+            InitializeCiphers(InitialKey + InitialNonce);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace CoCSharp.Networking
         /// <param name="key"></param>
         public CoCCrypto(string key)
         {
-            InitializeChipers(key);
+            InitializeCiphers(key);
         }
 
         private RC4 Encryptor { get; set; }
@@ -66,19 +66,19 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="clientSeed">Client seed.</param>
         /// <param name="serverNonce">Server random nonce.</param>
-        public void UpdateChipers(ulong clientSeed, byte[] serverNonce)
+        public void UpdateCiphers(ulong clientSeed, byte[] serverNonce)
         {
             var newNonce = ScrambleNonce(clientSeed, serverNonce);
             var key = InitialKey + newNonce;
 
-            InitializeChipers(key);
+            InitializeCiphers(key);
         }
 
         /// <summary>
         /// Initializes the chipers with the specified key.
         /// </summary>
         /// <param name="key">The key used to update the chipers.</param>
-        public void InitializeChipers(string key)
+        public void InitializeCiphers(string key)
         {
             Encryptor = new RC4(key);
             Decryptor = new RC4(key);

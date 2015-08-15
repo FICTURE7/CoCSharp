@@ -123,7 +123,11 @@ namespace CoCSharp.Logging
         {
             var builder = new StringBuilder();
 
-            if (bytes.Length == 0) return "[]"; // empty array
+            if (bytes.Length == 0)
+            {
+                builder.Indent("[]");
+                return builder.ToString();
+            }
 
             builder.Indent("[");
             for (int i = 0; i < bytes.Length; i++)

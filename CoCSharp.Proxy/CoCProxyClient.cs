@@ -11,7 +11,7 @@ namespace CoCSharp.Proxy
         {
             Proxy = server;
             Connection = connection;
-            ClientNetworkManager = new NetworkManager(connection, HandleNetworkClient, null);
+            ClientNetworkManager = new NetworkManagerAsync(connection, HandleNetworkClient, null);
         }
 
         public string Username { get; set; }
@@ -22,14 +22,14 @@ namespace CoCSharp.Proxy
         public bool LoggedIn { get; set; }
         public Village Home { get; set; }
         public Socket Connection { get; set; }
-        public NetworkManager ClientNetworkManager { get; set; }
-        public NetworkManager ServerNetworkManager { get; set; }
+        public NetworkManagerAsync ClientNetworkManager { get; set; }
+        public NetworkManagerAsync ServerNetworkManager { get; set; }
 
         private CoCProxy Proxy { get; set; }
 
         public void Start(Socket connection)
         {
-            ServerNetworkManager = new NetworkManager(connection, HandleNetworkServer, null);
+            ServerNetworkManager = new NetworkManagerAsync(connection, HandleNetworkServer, null);
         }
 
         private void HandleNetworkClient(SocketAsyncEventArgs args, IPacket packet)

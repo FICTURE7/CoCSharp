@@ -4,12 +4,12 @@ using System.Runtime.Serialization;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// 
+    /// The exception that is thrown when a Clash of Clans packet is invalid.
     /// </summary>
     public class InvalidPacketException : Exception
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="InvalidPacketException"/> class.
         /// </summary>
         public InvalidPacketException()
             : base()
@@ -18,9 +18,10 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="InvalidPacketException"/> class with
+        /// the specified message.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">The message thats describe the error.</param>
         public InvalidPacketException(string message)
             : base(message)
         {

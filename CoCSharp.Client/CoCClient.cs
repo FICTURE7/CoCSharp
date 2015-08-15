@@ -21,10 +21,9 @@ namespace CoCSharp.Client
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
             PacketLogger = new PacketLogger()
             {
-                LogConsole = true
+                LogConsole = false
             };
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
-            NextKeepAlive = DateTime.Now;
             KeepAliveManager = new KeepAliveManager(this);
 
             LoginPacketHandlers.RegisterLoginPacketHandlers(this);
@@ -39,10 +38,9 @@ namespace CoCSharp.Client
         public long UserID { get; private set; }
         public string UserToken { get; private set; }
         public PacketLogger PacketLogger { get; set; }
-        public NetworkManager NetworkManager { get; set; }
+        public NetworkManagerAsync NetworkManager { get; set; }
 
         private KeepAliveManager KeepAliveManager { get; set; }
-        private DateTime NextKeepAlive { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
 
         public void Connect(IPEndPoint endPoint)
@@ -60,7 +58,7 @@ namespace CoCSharp.Client
         {
             if (e.SocketError != SocketError.Success)
                 throw new SocketException((int)e.SocketError);
-            NetworkManager = new NetworkManager(e.ConnectSocket, HandleReceivedPacket, HandleReceicedPacketFailed);
+            NetworkManager = new NetworkManagerAsync(e.ConnectSocket, HandleReceivedPacket, HandleReceicedPacketFailed);
             QueuePacket(new LoginRequestPacket()
             {
                 UserID = this.UserID,
