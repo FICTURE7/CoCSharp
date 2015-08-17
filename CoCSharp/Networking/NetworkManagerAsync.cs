@@ -16,13 +16,13 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="args"></param>
         /// <param name="packet"></param>
-        public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet);
+        public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet); // switch to events?
         /// <summary>
         /// 
         /// </summary>
         /// <param name="args"></param>
         /// <param name="ex"></param>
-        public delegate void PacketReceivedFailedHandler(SocketAsyncEventArgs args, Exception ex);
+        public delegate void PacketReceivedFailedHandler(SocketAsyncEventArgs args, Exception ex); // switch to events?
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class.
@@ -73,7 +73,7 @@ namespace CoCSharp.Networking
         private PacketReceivedHandler PacketReceived { get; set; }
         private PacketReceivedFailedHandler PacketReceivedFailed { get; set; }
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
-        private SocketAsyncEventArgsPool SendEventPool { get; set; }
+        private SocketAsyncEventArgsPool SendEventPool { get; set; } // we are not using this properly. :{
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
         private Object _ObjLock = new Object();
 
@@ -112,6 +112,8 @@ namespace CoCSharp.Networking
                                                                    packetLength);
                     var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
                     CoCCrypto.Decrypt(decryptedData);
+
+                    //TODO: PacketBuffer should use SocketAsyncEventArgs directly.
                     args.SetBuffer(packetBuffer.Buffer, 0, packetBuffer.Buffer.Length);
                     numBytesToProcess -= packetLength + PacketBuffer.HeaderSize;
 
@@ -134,7 +136,7 @@ namespace CoCSharp.Networking
                 }
 
                 if (packet is UpdateKeyPacket)
-                    UpdateCiphers((ulong)Seed, ((UpdateKeyPacket)packet).Key);
+                    UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key);
                 list.Add(packet);
             }
             return list.ToArray();
@@ -150,17 +152,19 @@ namespace CoCSharp.Networking
             {
                 packet.WritePacket(dePacketWriter);
 
-                var buffer = ((MemoryStream)dePacketWriter.BaseStream).ToArray();
-                CoCCrypto.Encrypt(buffer);
+                var body = ((MemoryStream)dePacketWriter.BaseStream).ToArray();
+                CoCCrypto.Encrypt(body);
 
-                using (var enPacketWriter = new PacketWriter(new MemoryStream()))
+                using (var enPacketWriter = new PacketWriter(new MemoryStream())) // write header
                 {
                     enPacketWriter.WriteUInt16(packet.ID);
-                    enPacketWriter.WritePacketLength(buffer.Length);
+                    enPacketWriter.WriteInt24(body.Length);
                     enPacketWriter.WriteUInt16(0); // the unknown or the packet version
-                    enPacketWriter.Write(buffer, 0, buffer.Length);
+                    enPacketWriter.Write(body, 0, body.Length);
 
                     var rawPacket = ((MemoryStream)enPacketWriter.BaseStream).ToArray();
+
+                    // should avoid new objs
                     var args = new SocketAsyncEventArgs();
                     args.SetBuffer(rawPacket, 0, rawPacket.Length);
                     if (!Connection.SendAsync(args))
@@ -174,9 +178,9 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="seed"></param>
         /// <param name="key"></param>
-        public void UpdateCiphers(ulong seed, byte[] key)
+        public void UpdateCiphers(int seed, byte[] key)
         {
-            CoCCrypto.UpdateCiphers(seed, key);
+            CoCCrypto.UpdateCiphers((ulong)seed, key);
         }
 
         /// <summary>
@@ -208,17 +212,19 @@ namespace CoCSharp.Networking
                 switch (args.LastOperation)
                 {
                     case SocketAsyncOperation.Receive:
+                        var packets = (IPacket[])null;
                         try
                         {
-                            var packets = ReadPackets(args);
-                            for (int i = 0; i < packets.Length; i++)
-                                PacketReceived(args, packets[i]); // pass it to the handler
+                            packets = ReadPackets(args);
                         }
                         catch (Exception ex)
                         {
                             if (PacketReceivedFailed != null)
                                 PacketReceivedFailed(args, ex);
                         }
+
+                        for (int i = 0; i < packets.Length; i++)
+                            PacketReceived(args, packets[i]); // pass it to the handler
 
                         StartReceive();
                         ReceiveEventPool.Push(args);

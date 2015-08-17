@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+
 namespace CoCSharp.Networking.Packets
 {
     public class LoginSuccessPacket : IPacket

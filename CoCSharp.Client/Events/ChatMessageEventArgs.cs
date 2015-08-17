@@ -5,13 +5,17 @@ namespace CoCSharp.Client.Events
 {
     public class ChatMessageEventArgs : EventArgs
     {
-        public ChatMessageEventArgs(string message, ChatMessageServerPacket packet)
+        public ChatMessageEventArgs(ChatMessageServerPacket packet)
         {
-            Message = message;
             Packet = packet;
+            Message = packet.Message;
+            Username = packet.Username;
+            ClanName = packet.ClanName;
         }
 
-        public ChatMessageServerPacket Packet { get; set; }
-        public string Message { get; set; }
+        public ChatMessageServerPacket Packet { get; private set; }
+        public string Message { get; private set; }
+        public string Username { get; private set; }
+        public string ClanName { get; private set; }
     }
 }

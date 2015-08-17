@@ -21,8 +21,8 @@ namespace CoCSharp.Proxy.Handlers
         {
             var ukPacket = packet as UpdateKeyPacket;
 
-            client.ClientNetworkManager.UpdateCiphers((ulong)client.Seed, ukPacket.Key);
-            client.ClientNetworkManager.UpdateCiphers((ulong)client.Seed, ukPacket.Key);
+            client.ClientNetworkManager.UpdateCiphers(client.Seed, ukPacket.Key);
+            client.ClientNetworkManager.UpdateCiphers(client.Seed, ukPacket.Key);
         }
 
         public static void HandleLoginRequestPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)

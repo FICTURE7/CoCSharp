@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-namespace CoCSharp.Networking.Packets
+﻿namespace CoCSharp.Networking.Packets
 {
     public class UnknownPacket : IPacket
     {

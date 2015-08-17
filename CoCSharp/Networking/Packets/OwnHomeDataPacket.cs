@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Logic;
-using Ionic.Zlib;
 using System;
 using System.IO;
 
@@ -7,7 +6,8 @@ namespace CoCSharp.Networking.Packets
 {
     public class OwnHomeDataPacket : IPacket
     {
-        //Not very consistant, it changes when in League, shizz changed since last update
+        //TODO: REMAKE
+
         public ushort ID { get { return 0x5E25; } }
 
         public TimeSpan LastVisit;

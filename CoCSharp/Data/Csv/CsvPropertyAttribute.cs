@@ -6,7 +6,7 @@ namespace CoCSharp.Data.Csv
     /// Instruct the <see cref="CsvSerializer"/> to serialize the with the specified
     /// property name.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class CsvPropertyAttribute : Attribute
     {
         /// <summary>

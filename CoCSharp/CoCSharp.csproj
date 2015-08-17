@@ -151,6 +151,7 @@
     <Compile Include="Networking\Commands\CancelConstructionCommand.cs" />
     <Compile Include="Networking\Commands\CancelUnitProductionCommand.cs" />
     <Compile Include="Networking\Commands\CancelUpgradeUnitCommand.cs" />
+    <Compile Include="Networking\Commands\ChangeAvatarNameCommand.cs" />
     <Compile Include="Networking\Commands\ClearObstacleCommand.cs" />
     <Compile Include="Networking\Commands\CollectResourcesCommand.cs" />
     <Compile Include="Networking\Commands\ICommand.cs" />

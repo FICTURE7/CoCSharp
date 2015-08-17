@@ -1,15 +1,16 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
 
 namespace CoCSharp.Networking
 {
-    //TODO: NEED TO FIX DIS BED BOI!!
-
     /// <summary>
     /// Provides methods to extract packets from a <see cref="Byte"/> array.
     /// </summary>
     public class PacketBuffer
     {
+        //TODO: Improve this bad boi
+
         /// <summary>
         /// Header size in bytes of the Clash of Clans packet structure.
         /// </summary>
@@ -20,10 +21,9 @@ namespace CoCSharp.Networking
         /// <see cref="Byte"/> array buffer.
         /// </summary>
         /// <param name="packetBuffer">The packet bytes.</param>
-        public PacketBuffer(byte[] packetBuffer, int index)
+        public PacketBuffer(byte[] packetBuffer)
         {
             Buffer = packetBuffer;
-            Index = index;
             OriginalBufferSize = packetBuffer.Length;
         }
 
@@ -31,8 +31,6 @@ namespace CoCSharp.Networking
         /// Gets the packet buffer bytes.
         /// </summary>
         public byte[] Buffer { get; private set; }
-
-        public int Index { get; set; }
 
         private int OriginalBufferSize { get; set; }
 
@@ -52,23 +50,25 @@ namespace CoCSharp.Networking
         /// <returns>Packet bytes.</returns>
         public byte[] ExtractPacket(PacketExtractionFlags flags, int packetLength)
         {
-            var packetStream = new MemoryStream(packetLength + HeaderSize);
-            if (flags.HasFlag(PacketExtractionFlags.Header))
+            using (var packetStream = new MemoryStream(packetLength + HeaderSize))
             {
-                packetStream.Write(Buffer, 0, HeaderSize);
+                if (flags.HasFlag(PacketExtractionFlags.Header))
+                {
+                    packetStream.Write(Buffer, 0, HeaderSize);
+                }
+                if (flags.HasFlag(PacketExtractionFlags.Body))
+                {
+                    packetStream.Write(Buffer, HeaderSize, packetLength);
+                }
+                if (flags.HasFlag(PacketExtractionFlags.Remove))
+                {
+                    var buffer = new byte[Buffer.Length - (packetLength + HeaderSize)];
+                    Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
+                    Array.Resize(ref buffer, OriginalBufferSize);
+                    Buffer = buffer;
+                }
+                return packetStream.ToArray();
             }
-            if (flags.HasFlag(PacketExtractionFlags.Body))
-            {
-                packetStream.Write(Buffer, HeaderSize, packetLength);
-            }
-            if (flags.HasFlag(PacketExtractionFlags.Remove))
-            {
-                var buffer = new byte[Buffer.Length - (packetLength + HeaderSize)];
-                Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
-                Array.Resize(ref buffer, OriginalBufferSize);
-                Buffer = buffer;
-            }
-            return packetStream.ToArray();
         }
     }
 }

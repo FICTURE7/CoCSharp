@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Logging;
-using System.Collections.Generic;
 using System.Net;
 
 namespace CoCSharp

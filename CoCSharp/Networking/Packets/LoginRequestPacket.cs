@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace CoCSharp.Networking.Packets
+﻿namespace CoCSharp.Networking.Packets
 {
     public class LoginRequestPacket : IPacket
     {

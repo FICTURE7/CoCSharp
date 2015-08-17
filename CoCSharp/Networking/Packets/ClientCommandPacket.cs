@@ -12,18 +12,24 @@ namespace CoCSharp.Networking.Packets
         public int Checksum;
         public ICommand[] Commands;
 
-        private static Dictionary<int, ICommand> CommandDictionary { get; set; }
+        private static Dictionary<int, Type> CommandDictionary { get; set; }
 
         public void ReadPacket(PacketReader reader)
         {
+            if (CommandDictionary == null)
+                InitializeCommandDictionary();
+
             Subtick = reader.ReadInt32();
             Checksum = reader.ReadInt32();
             Commands = new ICommand[reader.ReadInt32()];
-            throw new NotImplementedException();
 
             for (int i = 0; i < Commands.Length; i++)
             {
                 var commandID = reader.ReadInt32();
+                var command = CreateCommandInstance(commandID);
+                if (command == null)
+                    break;
+                command.ReadCommand(reader);
             }
         }
 
@@ -37,6 +43,20 @@ namespace CoCSharp.Networking.Packets
                 writer.WriteInt32(Commands[i].ID);
                 Commands[i].WriteCommand(writer);
             }
+        }
+
+        private static void InitializeCommandDictionary()
+        {
+            CommandDictionary = new Dictionary<int, Type>();
+            CommandDictionary.Add(new BuyBuildingCommand().ID, typeof(BuyBuildingCommand));
+        }
+
+        private static ICommand CreateCommandInstance(int id)
+        {
+            var packetType = (Type)null;
+            if (!CommandDictionary.TryGetValue(id, out packetType))
+                return null;
+            return (ICommand)Activator.CreateInstance(packetType); // creates an instance for that packetid
         }
     }
 }

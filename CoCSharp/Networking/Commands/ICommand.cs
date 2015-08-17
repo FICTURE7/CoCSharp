@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CoCSharp.Networking.Commands
+﻿namespace CoCSharp.Networking.Commands
 {
     /// <summary>
     /// 

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="CoCClient.cs" />
     <Compile Include="Events\ChatMessageEventArgs.cs" />
+    <Compile Include="Events\LoginEventArgs.cs" />
     <Compile Include="Handlers\InGamePacketHandlers.cs" />
     <Compile Include="Handlers\LoginPacketHandlers.cs" />
     <Compile Include="KeepAliveManager.cs" />

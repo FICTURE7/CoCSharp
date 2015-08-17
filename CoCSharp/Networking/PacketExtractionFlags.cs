@@ -3,7 +3,7 @@
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Controls the <see cref="PacketBuffer"/> extracts the packet bytes.
+    /// Controls the <see cref="PacketBuffer"/> on how it extracts packets bytes.
     /// </summary>
     [Flags]
     public enum PacketExtractionFlags : byte

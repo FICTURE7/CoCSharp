@@ -74,12 +74,22 @@ namespace CoCSharp.Networking
         /// to the underlying stream.
         /// </summary>
         /// <param name="value"><see cref="Int32"/> to write.</param>
-        public void WritePacketLength(int value)
+        public void WriteInt24(int value)
         {
             var buffer = BitConverter.GetBytes(value);
             if (BitConverter.IsLittleEndian) 
                 Array.Reverse(buffer);
             Write(buffer, 1, 3);
+        }
+
+        /// <summary>
+        /// Writes the given <see cref="Int32"/> as a 3 bytes long int
+        /// to the underlying stream.
+        /// </summary>
+        /// <param name="value"><see cref="Int32"/> to write.</param>
+        public void WriteUInt24(uint value)
+        {
+            WriteInt24((int)value);
         }
 
         /// <summary>

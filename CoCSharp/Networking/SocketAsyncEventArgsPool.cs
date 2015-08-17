@@ -20,7 +20,7 @@ namespace CoCSharp.Networking
             Pool = new Stack<SocketAsyncEventArgs>(capacity);
             for (int i = 0; i < capacity; i++)
             {
-                var packetBuffer = new PacketBuffer(new byte[65535], i);
+                var packetBuffer = new PacketBuffer(new byte[65535]);
                 var args = new SocketAsyncEventArgs();
 
                 args.UserToken = packetBuffer;

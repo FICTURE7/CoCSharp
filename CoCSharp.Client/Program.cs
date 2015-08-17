@@ -1,9 +1,5 @@
-﻿using CoCSharp.Networking;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net;
-using System.Text;
-using System.Threading;
 
 namespace CoCSharp.Client
 {
@@ -16,15 +12,15 @@ namespace CoCSharp.Client
 #if DEBUG
             args = new string[]
             {
-                "gamea.clashofclans.com",
+                "52.24.108.178",
                 "9339"
             };
 #endif
             Client = new CoCClient();
+            Client.ChatMessage += OnChatMessage;
             var ipAddresses = Dns.GetHostAddresses(args[0]);
             var port = int.Parse(args[1]);
             var endPoint = new IPEndPoint(ipAddresses[0], port);
-            Console.WriteLine("Main thread: {0}", Thread.CurrentThread.ManagedThreadId);
             Console.WriteLine("Connecting to {0}...", endPoint.Address);
             Client.Connect(endPoint);
 
@@ -33,6 +29,14 @@ namespace CoCSharp.Client
                 var message = Console.ReadLine();
                 Client.SendChatMessage(message);
             }
+        }
+
+        private static void OnChatMessage(object sender, Events.ChatMessageEventArgs e)
+        {
+            var message = e.ClanName == null ?
+                          string.Format("<{0}>: {1}", e.Username, e.Message) :
+                          string.Format("<[{0}]{1}>: {2}", e.ClanName, e.Username, e.Message);
+            Console.WriteLine(message);
         }
     }
 }

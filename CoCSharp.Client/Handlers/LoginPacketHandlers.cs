@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Networking.Packets;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace CoCSharp.Client.Handlers
 {
@@ -28,11 +29,17 @@ namespace CoCSharp.Client.Handlers
         {
             var lsPacket = packet as LoginSuccessPacket;
             Console.WriteLine("Successfully logged in!");
+            Console.Write("Name: ");
+            var name = Console.ReadLine();
+            client.QueuePacket(new ChangeAvatarNamePacket()
+            {
+                NewName = name
+            });
         }
 
         public static void HandleUpdateKeyPacket(CoCClient client, IPacket packet)
         {
-            Console.WriteLine("Updated encryption with new key.");
+            Console.WriteLine("Updated ciphers with new server key.");
         }
 
         public static void RegisterLoginPacketHandlers(CoCClient client)

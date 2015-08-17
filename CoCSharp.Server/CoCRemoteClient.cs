@@ -9,14 +9,14 @@ namespace CoCSharp.Server
 {
     public class CoCRemoteClient
     {
+        public delegate void PacketHandler(CoCRemoteClient client, CoCServer server, IPacket packet);
+
         public CoCRemoteClient(CoCServer server, Socket connection)
         {
-            this.Connection = connection;
-            // this.NetworkManager = new NetworkManager(connection);
-            this.SendAsyncEventPool = new SocketAsyncEventArgsPool(50);
-            this.ReceiveAsyncEventPool = new SocketAsyncEventArgsPool(50);
-
-            StartReceive();
+            Connection = connection;
+            Server = server;
+            NetworkManager = new NetworkManagerAsync(connection, HandlePacketReceived, HandleReceicedPacketFailed);
+            PacketHandlers = new Dictionary<ushort, PacketHandler>();
         }
 
         public string Username { get; set; }
@@ -26,51 +26,37 @@ namespace CoCSharp.Server
         public int Seed { get; set; }
         public bool LoggedIn { get; set; }
         public Village Home { get; set; }
+        public CoCServer Server { get; set; }
         public Socket Connection { get; set; }
         public NetworkManagerAsync NetworkManager { get; set; }
         
-        private SocketAsyncEventArgsPool SendAsyncEventPool { get; set; }
-        private SocketAsyncEventArgsPool ReceiveAsyncEventPool { get; set; }
-        private Dictionary<ushort, Type> PacketHandlers { get; set; }
+        private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
 
         public void QueuePacket(IPacket packet)
         {
-            var args = SendAsyncEventPool.Pop();
-            args.Completed += OperationCompleted;
+            if (packet == null)
+                throw new ArgumentNullException("packet");
+            // Server.Log(packet);
+            NetworkManager.WritePacket(packet);
         }
 
-        private void StartReceive()
+        public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
-            var args = ReceiveAsyncEventPool.Pop();
-            args.Completed += OperationCompleted;
-
-            if (!Connection.ReceiveAsync(args))
-                OperationCompleted(Connection, args);
+            PacketHandlers.Add(packet.ID, handler);
         }
 
-        private void OperationCompleted(object sender, SocketAsyncEventArgs e)
+        private void HandlePacketReceived(SocketAsyncEventArgs args, IPacket packet)
         {
-            e.Completed -= OperationCompleted;
-
-            switch (e.LastOperation)
-            {
-                case SocketAsyncOperation.Receive:
-                    // handle shit here
-
-                    // clear the buffer
-                    SendAsyncEventPool.Push(e);
-                    break;
-
-                case SocketAsyncOperation.Send:
-                    // check if disconnection
-                    SendAsyncEventPool.Push(e);
-                    break;
-            }
+            Console.WriteLine(packet.ID);
+            var handler = (PacketHandler)null;
+            if (!PacketHandlers.TryGetValue(packet.ID, out handler))
+                return;
+            handler(this, Server, packet);
         }
 
-        private void HandleReceived(SocketAsyncEventArgs args)
+        private void HandleReceicedPacketFailed(SocketAsyncEventArgs args, Exception ex)
         {
-            var buffer = args.Buffer;
+            Console.WriteLine("Failed to read packet: {0}", ex.Message);
         }
     }
 }

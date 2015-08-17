@@ -173,7 +173,8 @@ namespace CoCSharp.Networking
         {
             var buffer = new byte[count];
             BaseStream.Read(buffer, 0, count);
-            if (BitConverter.IsLittleEndian && switchEndian) Array.Reverse(buffer); // CoC uses big-endian
+            if (BitConverter.IsLittleEndian && switchEndian) 
+                Array.Reverse(buffer);
             return buffer;
         }
     }

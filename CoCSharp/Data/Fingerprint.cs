@@ -28,19 +28,19 @@ namespace CoCSharp.Data
 
         /// <summary>
         /// Gets or sets an array of <see cref="Fingerprint.FingerprintFile"/> of
-        /// the fingerprint file.
+        /// the fingerprint.
         /// </summary>
         [JsonProperty("files")]
         public FingerprintFile[] Files { get; set; }
 
         /// <summary>
-        /// Gets or sets the hash of the fingerprint file.
+        /// Gets or sets the hash of the fingerprint.
         /// </summary>
         [JsonProperty("sha")]
         public string Hash { get; set; }
 
         /// <summary>
-        /// Gets or sets the version of the fingerprint file.
+        /// Gets or sets the version of the fingerprint.
         /// </summary>
         [JsonProperty("version")]
         public string Version { get; set; }

@@ -56,6 +56,8 @@ namespace CoCSharp.Client
 
         private void ConnectAsyncCompleted(object sender, SocketAsyncEventArgs e)
         {
+            // 6c12b527e6810ff7301d972042ae3614f3d73acc
+            // ae9b056807ac8bfa58a3e879b1f1601ff17d1df5
             if (e.SocketError != SocketError.Success)
                 throw new SocketException((int)e.SocketError);
             NetworkManager = new NetworkManagerAsync(e.ConnectSocket, HandleReceivedPacket, HandleReceicedPacketFailed);
@@ -66,7 +68,7 @@ namespace CoCSharp.Client
                 ClientMajorVersion = 7,
                 ClientContentVersion = 0,
                 ClientMinorVersion = 156,
-                FingerprintHash = "ae9b056807ac8bfa58a3e879b1f1601ff17d1df5",
+                FingerprintHash = "6c12b527e6810ff7301d972042ae3614f3d73acc",
                 OpenUDID = "563a6f060d8624db",
                 MacAddress = null,
                 DeviceModel = "GT-I9300",
@@ -131,6 +133,13 @@ namespace CoCSharp.Client
         {
             if (ChatMessage != null)
                 ChatMessage(this, e);
+        }
+
+        public event EventHandler<LoginEventArgs> Login;
+        protected internal virtual void OnLogin(LoginEventArgs e)
+        {
+            if (Login != null)
+                Login(this, e);
         }
     }
 }
