@@ -109,6 +109,7 @@ xbuild
 Then you should have the compiled binaries in `/bin`, and you should be able to run the binaries using the latest version of mono.
 
 ```
+mono CoCSharp.Proxy/bin/Debug/CoCSharp.Proxy.exe
 ```
 
 ## Contributing
