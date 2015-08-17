@@ -13,7 +13,7 @@ Clash of Clans library written in C# to handle networking, csv files and more to
   * Includes classes to log and dump packet.
 * CoCSharp.Logic: Village object strutures. *(Needs to be refactored)*
   * Includes class for village objects: Village, Trap, Obstacle, Building etc...
-* CoCSharp.Networking: Networking and protocol support. *(Needs to be more flexible)*
+* CoCSharp.Networking: Networking and protocol support.
   * Defines some packets of the CoC networking protocol.
   * Includes classes to read and write CoC packets.
   * Includes encryption support for 7.x versions.
@@ -90,6 +90,10 @@ var buildingsData = CsvSerializer.Deserialize(table, typeof(BuildingData));
 ```
 
 ## Compiling
+The simplest way to compile CoCSharp is to use Visual Studio and pressing `F6` to build the solution or you could use the latest version of mono to compile CoCSharp.
+
+Run the following commands to build CoCSharp using mono.
+
 Use git to clone it
 ```
 git clone --branch=messy-stuff git://github.com/FICTURE7/CoCSharp.git
@@ -98,17 +102,23 @@ Then you will have to restore the nuget packages.
 ```
 nuget restore
 ```
-In the root directory run
+In the root directory run or where `CoCSharp.sln` is located.
 ```
 xbuild
 ```
 Then you should have the compiled binaries in `/bin`, and you should be able to run the binaries using the latest version of mono.
 
+```
+```
+
 ## Contributing
 Just create a fork and make changes to it, like adding features from Clash of Clans, refactoring and fixing bugs. Try to follow the code style. Make your pull requests focused and readable. You can also contribute by creating issues and reporting bugs, giving ideas for enhancement.
 
-<h2>Projects using CoC#</h2>
+<h2>Projects Using CoC#</h2>
 * [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Server): *(Work in progress)*
+  * Server that can't do much at the moment.
+* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Client):
+  * Simple client that can read chat message and send keep alive requests.
 * [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Proxy):
   * Proxy that logs parsed and raw decrypted/encrypted packets.
 
