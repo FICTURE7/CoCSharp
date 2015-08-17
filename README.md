@@ -33,7 +33,8 @@ socket.Connect("gamea.clashofclans.com", 9339);
 // creates a new NetworkManagerAsync
 // the PacketReceivedHandler delegate is called when a packet is recieved
 // here we are using it to write the packet type and packet id to the console
-var networkManagerAsync = new NetworkManagerAsync(socket, (SocketAsyncEventArgs args, IPacket packet) =>
+var networkManagerAsync = new NetworkManagerAsync(socket, 
+(SocketAsyncEventArgs args, IPacket packet) =>
 {
     Console.WriteLine("Recieved {0}:{1}", packet.GetType().Name, packet.ID);
 }, null /*use this delegate to handle errors*/);
@@ -74,7 +75,8 @@ var packetLogger = new PacketLogger("log_filename.log")
     // var packetLogger = PacketLogger("log_filename.log")
     // simply
 };
-var networkManager = new NetworkManagerAsync(socket, (SocketAsyncEventArgs args, IPacket packet) =>
+var networkManager = new NetworkManagerAsync(socket, 
+(SocketAsyncEventArgs args, IPacket packet) =>
 {
     packetLogger.LogPacket(packet, PacketDirection.Client);
 }, null /*use this delegate to handle errors*/);
