@@ -5,14 +5,14 @@ CoC# <a href="https://travis-ci.org/FICTURE7/CoCSharp"><img src="https://travis-
 Clash of Clans library written in C# to handle networking, csv files and more to come. It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
 
 ## What can it do?
-* CoCSharp.Data:
+* CoCSharp.Data: CSV file structures and other data structures.
   * Includes classes for reading CSV files.
   * Includes classes for managing CSV files and downloading them.
   * Includes classes for all CSV file data. Such as: BuildingData, TrapData, ObstacleData etc...
-* CoCSharp.Logging:
+* CoCSharp.Logging: *(Needs to be improved)*
   * Includes classes to log and dump packet.
-* CoCSharp.Logic: Village object strutures. *(Needs to be refactored)*
-  * Includes class for village objects: Village, Trap, Obstacle, Building etc...
+* CoCSharp.Logic: Village object strutures. *(Needs to be improved)*
+  * Includes classes for village objects: Village, Trap, Obstacle, Building etc...
 * CoCSharp.Networking: Networking and protocol support.
   * Defines some packets of the CoC networking protocol.
   * Includes classes to read and write CoC packets.
@@ -22,19 +22,21 @@ Clash of Clans library written in C# to handle networking, csv files and more to
 CoCSharp is trying to implement most the Clash of Clans features and also trying be easy as possible to use.
 
 ### Networking
-Example to write and read packets.
+CoCSharp.Networking implements the `SocketAsyncEventArgs` async model.
+
+Example to write and read packets async.
 ```c#
 // creates a new Socket
 var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 // connects to the official clash of clans server
 socket.Connect("gamea.clashofclans.com", 9339);
-// creates a new NetworkManager
+// creates a new NetworkManagerAsync
 // the PacketReceivedHandler delegate is called when a packet is recieved
 // here we are using it to write the packet type and packet id to the console
 var networkManagerAsync = new NetworkManagerAsync(socket, (SocketAsyncEventArgs args, IPacket packet) =>
 {
     Console.WriteLine("Recieved {0}:{1}", packet.GetType().Name, packet.ID);
-}, null);
+}, null /*use this delegate to handle errors*/);
 // sends a LoginRequestPacket to the server
 networkManagerAsync.WritePacket(new LoginRequestPacket()
 {
@@ -55,12 +57,12 @@ networkManagerAsync.WritePacket(new LoginRequestPacket()
     AndroidDeviceID = "563a6f060d8624db",
     FacebookDistributionID = "",
     VendorGUID = "",
-    Seed = 1329685020 
+    Seed = 1329685020 // should be random
 });
 ```
 
 ### Logging
-If you would like to log packets in a more fancy manner use this instead
+If you would like to log packets in a more fancy way use this instead
 ```c#
 // creates a new PacketLogger that will log
 // to the console and to the file "log_filename.log"
@@ -75,7 +77,7 @@ var packetLogger = new PacketLogger("log_filename.log")
 var networkManager = new NetworkManagerAsync(socket, (SocketAsyncEventArgs args, IPacket packet) =>
 {
     packetLogger.LogPacket(packet, PacketDirection.Client);
-}, null);
+}, null /*use this delegate to handle errors*/);
 ```
 and you should see logs in your console.
 
@@ -92,9 +94,9 @@ var buildingsData = CsvSerializer.Deserialize(table, typeof(BuildingData));
 ## Compiling
 The simplest way to compile CoCSharp is to use Visual Studio and pressing `F6` to build the solution or you could use the latest version of mono to compile CoCSharp.
 
-Run the following commands to build CoCSharp using mono.
+Run the following commands to build CoCSharp with mono.
 
-Use git to clone it
+Use a git clone
 ```
 git clone --branch=messy-stuff git://github.com/FICTURE7/CoCSharp.git
 ```
