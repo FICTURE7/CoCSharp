@@ -136,6 +136,7 @@
     <Compile Include="Logging\LogCategory.cs" />
     <Compile Include="Logging\PacketDumper.cs" />
     <Compile Include="Logging\PacketLogger.cs" />
+    <Compile Include="Logic\Avatar.cs" />
     <Compile Include="Logic\Building.cs" />
     <Compile Include="Logic\Clan.cs" />
     <Compile Include="Logic\Decoration.cs" />

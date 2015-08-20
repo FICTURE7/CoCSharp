@@ -48,7 +48,16 @@ namespace CoCSharp.Networking
         /// <returns><see cref="Boolean"/> read.</returns>
         public override bool ReadBoolean()
         {
-            return ReadByte() == 1 ? true : false;
+            var state = ReadByte();
+            switch (state)
+            {
+                case 1:
+                    return true;
+                case 0:
+                    return false;
+                default:
+                    throw new InvalidPacketException("A boolean had an incorrect value: " + state);
+            }
         }
 
         /// <summary>
@@ -134,8 +143,10 @@ namespace CoCSharp.Networking
         public byte[] ReadByteArray()
         {
             var length = ReadInt32();
-            if (length < 0)
+            if (length == -1)
                 return null;
+            if (length < -1)
+                throw new InvalidPacketException("A byte array length was incorrect: " + length);
             if (length > BaseStream.Length - BaseStream.Position)
                 throw new InvalidPacketException(string.Format("A byte array was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
             var buffer = ReadBytesWithEndian(length, false);
@@ -149,8 +160,10 @@ namespace CoCSharp.Networking
         public override string ReadString()
         {
             var length = ReadInt32();
-            if (length < 0)
+            if (length == -1)
                 return null;
+            if (length < -1)
+                throw new InvalidPacketException("A string length was incorrect: " + length);
             if (length > BaseStream.Length - BaseStream.Position)
                 throw new InvalidPacketException(string.Format("A string was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
             var buffer = ReadBytesWithEndian(length, false);
@@ -173,7 +186,7 @@ namespace CoCSharp.Networking
         {
             var buffer = new byte[count];
             BaseStream.Read(buffer, 0, count);
-            if (BitConverter.IsLittleEndian && switchEndian) 
+            if (BitConverter.IsLittleEndian && switchEndian)
                 Array.Reverse(buffer);
             return buffer;
         }

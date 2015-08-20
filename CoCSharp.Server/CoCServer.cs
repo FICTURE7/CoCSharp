@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Networking;
+using CoCSharp.Networking.Packets;
 using CoCSharp.Server.Handlers;
 using System;
 using System.Collections.Generic;
@@ -41,27 +42,28 @@ namespace CoCSharp.Server
 
         private void AcceptSocketAsync()
         {
-            while (AcceptAsyncEventPool.Count > 1 && !ShuttingDown) 
+            while (AcceptAsyncEventPool.Count > 1 && !ShuttingDown)
             {
                 var args = AcceptAsyncEventPool.Pop();
-                args.Completed += OperationCompleted;
+                args.Completed += AcceptCompleted;
 
                 if (!Listener.AcceptAsync(args))
-                    OperationCompleted(Listener, args);
+                    AcceptCompleted(Listener, args);
             }
         }
 
-        private void OperationCompleted(object sender, SocketAsyncEventArgs e)
+        private void AcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
-            e.Completed -= OperationCompleted;
+            e.Completed -= AcceptCompleted;
             switch (e.LastOperation)
             {
                 case SocketAsyncOperation.Accept:
-                    Console.WriteLine("Something connected.");
-                    var client = new CoCRemoteClient(this, e.AcceptSocket);
+                    var socket = e.AcceptSocket;
+                    e.AcceptSocket = null;
+                    Console.WriteLine("Accepted new socket: {0}", socket.RemoteEndPoint);
+                    var client = new CoCRemoteClient(this, socket);
                     Clients.Add(client);
                     InGamePacketHandler.RegisterInGamePacketHandlers(client);
-                    e.AcceptSocket = null;
                     AcceptAsyncEventPool.Push(e);
                     break;
             }

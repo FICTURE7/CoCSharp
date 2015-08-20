@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace CoCSharp.Networking
@@ -9,6 +10,8 @@ namespace CoCSharp.Networking
     /// </summary>
     public class SocketAsyncEventArgsPool
     {
+        private Object _ObjLock = new Object();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SocketAsyncEventArgsPool"/> class with
         /// the specified capacity.
@@ -20,21 +23,18 @@ namespace CoCSharp.Networking
             Pool = new Stack<SocketAsyncEventArgs>(capacity);
             for (int i = 0; i < capacity; i++)
             {
-                var packetBuffer = new PacketBuffer(new byte[65535]);
                 var args = new SocketAsyncEventArgs();
-
-                args.UserToken = packetBuffer;
-                args.SetBuffer(packetBuffer.Buffer, 0, packetBuffer.Buffer.Length);
+                var packetBuffer = new PacketBuffer(args);
                 Push(args);
             }
         }
 
         /// <summary>
-        /// Max capacity of the pool.
+        /// Gets the capacity of the pool.
         /// </summary>
         public int Capacity { get; private set; }
         /// <summary>
-        /// Current number of <see cref="SocketAsyncEventArgs"/> objects.
+        /// Gets the current number of <see cref="SocketAsyncEventArgs"/> objects.
         /// </summary>
         public int Count { get { return Pool.Count; } }
 
@@ -54,7 +54,7 @@ namespace CoCSharp.Networking
         /// <param name="args">The <see cref="SocketAsyncEventArgs"/> object.</param>
         public void Push(SocketAsyncEventArgs args)
         {
-            lock (Pool)
+            lock (_ObjLock)
             {
                 Pool.Push(args);
             }
@@ -66,7 +66,7 @@ namespace CoCSharp.Networking
         /// <returns></returns>
         public SocketAsyncEventArgs Pop()
         {
-            lock (Pool)
+            lock (_ObjLock)
             {
                 return Pool.Pop();
             }

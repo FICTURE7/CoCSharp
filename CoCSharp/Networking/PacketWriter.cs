@@ -136,8 +136,12 @@ namespace CoCSharp.Networking
         /// <param name="value">Array of <see cref="Byte"/> to write.</param>
         public void WriteByteArray(byte[] value)
         {
-            WriteInt32(value.Length);
-            WriteBytes(value, false);
+            if (value == null) WriteInt32(-1);
+            else
+            {
+                WriteInt32(value.Length);
+                WriteBytes(value, false);
+            }
         }
 
         /// <summary>

@@ -11,18 +11,20 @@ namespace CoCSharp.Networking
     /// </summary>
     public class NetworkManagerAsync
     {
+        private Object _ObjLock = new Object();
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="args"></param>
         /// <param name="packet"></param>
-        public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet); // switch to events?
+        public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="args"></param>
         /// <param name="ex"></param>
-        public delegate void PacketReceivedFailedHandler(SocketAsyncEventArgs args, Exception ex); // switch to events?
+        public delegate void PacketReceivedFailedHandler(SocketAsyncEventArgs args, Exception ex);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class.
@@ -30,6 +32,7 @@ namespace CoCSharp.Networking
         /// <param name="connection"><see cref="Socket"/> to wrap.</param>
         /// <param name="networkHandler"><see cref="PacketReceivedHandler"/> that will handle incoming packet.</param>
         /// <param name="packetReceivedFailedHandler"><see cref="PacketReceivedFailedHandler"/> that will handle incoming packet that failed to read.</param>
+        /// <exception cref="System.ArgumentNullException"/>
         public NetworkManagerAsync(Socket connection,
                               PacketReceivedHandler packetReceivedHandler,
                               PacketReceivedFailedHandler packetReceivedFailedHandler)
@@ -75,7 +78,6 @@ namespace CoCSharp.Networking
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; } // we are not using this properly. :{
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
-        private Object _ObjLock = new Object();
 
         /// <summary>
         /// 
@@ -86,58 +88,67 @@ namespace CoCSharp.Networking
         {
             var list = new List<IPacket>();
             var numBytesToProcess = args.BytesTransferred;
+            if (numBytesToProcess == 0)
+                return null;
+
             while (true)
             {
                 if (numBytesToProcess == 0)
-                    break; //TODO: Handle disconnection
+                    break;
 
                 var packet = (IPacket)null;
                 var packetBuffer = (PacketBuffer)args.UserToken;
-                using (var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer)))
+                try
                 {
-                    if (PacketBuffer.HeaderSize > numBytesToProcess) // check if there is a header
-                        break;
-
-                    // read header
-                    var packetID = enPacketReader.ReadUInt16();
-                    var packetLength = enPacketReader.ReadInt24();
-                    var packetVersion = enPacketReader.ReadUInt16(); // the unknown
-
-                    // read body
-                    if (packetLength > numBytesToProcess) // check if data is enough data is avaliable in the buffer
-                        break;
-
-                    var encryptedData = packetBuffer.ExtractPacket(PacketExtractionFlags.Body |
-                                                                   PacketExtractionFlags.Remove,
-                                                                   packetLength);
-                    var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
-                    CoCCrypto.Decrypt(decryptedData);
-
-                    //TODO: PacketBuffer should use SocketAsyncEventArgs directly.
-                    args.SetBuffer(packetBuffer.Buffer, 0, packetBuffer.Buffer.Length);
-                    numBytesToProcess -= packetLength + PacketBuffer.HeaderSize;
-
-                    using (var dePacketReader = new PacketReader(new MemoryStream(decryptedData)))
+                    using (var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer)))
                     {
-                        packet = CreatePacketInstance(packetID);
-                        if (packet is UnknownPacket)
-                        {
-                            packet = new UnknownPacket
-                            {
-                                ID = packetID,
-                                Length = packetLength,
-                                Version = packetVersion,
-                                EncryptedData = encryptedData,
-                                DecryptedData = decryptedData
-                            };
-                        }
-                        packet.ReadPacket(dePacketReader);
-                    }
-                }
+                        if (PacketBuffer.HeaderSize > numBytesToProcess) // check if there is a header
+                            break;
 
-                if (packet is UpdateKeyPacket)
-                    UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key);
-                list.Add(packet);
+                        // read header
+                        var packetID = enPacketReader.ReadUInt16();
+                        var packetLength = enPacketReader.ReadInt24();
+                        var packetVersion = enPacketReader.ReadUInt16(); // the unknown
+
+                        // read body
+                        if (packetLength > numBytesToProcess) // check if data is enough data is avaliable in the buffer
+                            break;
+
+                        var encryptedData = packetBuffer.ExtractPacket(PacketExtractionFlags.Body |
+                                                                       PacketExtractionFlags.Remove,
+                                                                       packetLength);
+                        var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
+                        CoCCrypto.Decrypt(decryptedData);
+
+                        //TODO: PacketBuffer should use SocketAsyncEventArgs directly.
+                        numBytesToProcess -= packetLength + PacketBuffer.HeaderSize;
+
+                        using (var dePacketReader = new PacketReader(new MemoryStream(decryptedData)))
+                        {
+                            packet = CreatePacketInstance(packetID);
+                            if (packet is UnknownPacket)
+                            {
+                                packet = new UnknownPacket
+                                {
+                                    ID = packetID,
+                                    Length = packetLength,
+                                    Version = packetVersion,
+                                    EncryptedData = encryptedData,
+                                    DecryptedData = decryptedData
+                                };
+                            }
+                            packet.ReadPacket(dePacketReader);
+                        }
+                    }
+                    if (packet is UpdateKeyPacket)
+                        UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key);
+                    list.Add(packet);
+                }
+                catch (Exception ex)
+                {
+                    if (PacketReceivedFailed != null)
+                        PacketReceivedFailed(args, ex);
+                }
             }
             return list.ToArray();
         }
@@ -146,15 +157,17 @@ namespace CoCSharp.Networking
         /// 
         /// </summary>
         /// <param name="packet"></param>
+        /// <exception cref="System.ArgumentNullException"/>
         public void WritePacket(IPacket packet)
         {
+            if (packet == null)
+                throw new ArgumentNullException("packet");
+
             using (var dePacketWriter = new PacketWriter(new MemoryStream()))
             {
                 packet.WritePacket(dePacketWriter);
-
                 var body = ((MemoryStream)dePacketWriter.BaseStream).ToArray();
                 CoCCrypto.Encrypt(body);
-
                 using (var enPacketWriter = new PacketWriter(new MemoryStream())) // write header
                 {
                     enPacketWriter.WriteUInt16(packet.ID);
@@ -178,8 +191,12 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="seed"></param>
         /// <param name="key"></param>
+        /// <exception cref="System.ArgumentNullException"/>
         public void UpdateCiphers(int seed, byte[] key)
         {
+            if (key == null)
+                throw new ArgumentNullException("key");
+
             CoCCrypto.UpdateCiphers((ulong)seed, key);
         }
 
@@ -196,12 +213,12 @@ namespace CoCSharp.Networking
         {
             var receiveArgs = ReceiveEventPool.Pop();
             receiveArgs.Completed += AsyncOperationCompleted;
-
             if (!Connection.ReceiveAsync(receiveArgs))
                 AsyncOperationCompleted(Connection, receiveArgs);
         }
 
-        private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
+        private int _counter = 0;
+        public void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
             args.Completed -= AsyncOperationCompleted;
             if (args.SocketError != SocketError.Success)
@@ -213,15 +230,10 @@ namespace CoCSharp.Networking
                 {
                     case SocketAsyncOperation.Receive:
                         var packets = (IPacket[])null;
-                        try
-                        {
-                            packets = ReadPackets(args);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (PacketReceivedFailed != null)
-                                PacketReceivedFailed(args, ex);
-                        }
+                        packets = ReadPackets(args);
+
+                        if (packets == null)
+                            return;
 
                         for (int i = 0; i < packets.Length; i++)
                             PacketReceived(args, packets[i]); // pass it to the handler

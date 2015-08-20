@@ -5,7 +5,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Provides methods to extract packets from a <see cref="Byte"/> array.
+    /// Provides methods to extract packets from a <see cref="SocketAsyncEventArgs"/> object.
     /// </summary>
     public class PacketBuffer
     {
@@ -18,19 +18,27 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PacketBuffer"/> class with the specified
-        /// <see cref="Byte"/> array buffer.
+        /// <see cref="SocketAsyncEventArgs"/>.
         /// </summary>
-        /// <param name="packetBuffer">The packet bytes.</param>
-        public PacketBuffer(byte[] packetBuffer)
+        /// <param name="args"></param>
+        /// <exception cref="System.ArgumentNullException"/>
+        public PacketBuffer(SocketAsyncEventArgs args)
         {
-            Buffer = packetBuffer;
-            OriginalBufferSize = packetBuffer.Length;
+            if (args == null)
+                throw new ArgumentNullException("args");
+
+            var buffer = new byte[65535];
+            OriginalBufferSize = buffer.Length;
+            SocketAsyncEventArgs = args;
+            args.UserToken = this;
+            args.SetBuffer(buffer, 0, buffer.Length);
         }
 
         /// <summary>
         /// Gets the packet buffer bytes.
         /// </summary>
-        public byte[] Buffer { get; private set; }
+        public byte[] Buffer { get { return SocketAsyncEventArgs.Buffer; } }
+        public SocketAsyncEventArgs SocketAsyncEventArgs { get; private set; }
 
         private int OriginalBufferSize { get; set; }
 
@@ -65,7 +73,7 @@ namespace CoCSharp.Networking
                     var buffer = new byte[Buffer.Length - (packetLength + HeaderSize)];
                     Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
                     Array.Resize(ref buffer, OriginalBufferSize);
-                    Buffer = buffer;
+                    SocketAsyncEventArgs.SetBuffer(buffer, 0, OriginalBufferSize);
                 }
                 return packetStream.ToArray();
             }

@@ -25,8 +25,11 @@ namespace CoCSharp.Networking
         /// the specified key.
         /// </summary>
         /// <param name="key"></param>
+        /// <exception cref="System.ArgumentNullException"/>
         public CoCCrypto(string key)
         {
+            if (key == null)
+                throw new ArgumentNullException("key");
             InitializeCiphers(key);
         }
 
@@ -37,26 +40,26 @@ namespace CoCSharp.Networking
         /// Encrypts the provided bytes.
         /// </summary>
         /// <param name="data">Bytes to encrypt.</param>
+        /// <exception cref="System.ArgumentNullException"/>
         public void Encrypt(byte[] data)
         {
+            if (data == null)
+                throw new ArgumentNullException("data");
             for (int k = 0; k < data.Length; k++)
-            {
-                var xor = Encryptor.PRGA();
-                data[k] ^= xor;
-            }
+                data[k] ^= Encryptor.PRGA();
         }
 
         /// <summary>
         /// Decrypts the provided bytes.
         /// </summary>
         /// <param name="data">Bytes to decrypt.</param>
+        /// <exception cref="System.ArgumentNullException"/>
         public void Decrypt(byte[] data)
         {
+            if (data == null)
+                throw new ArgumentNullException("data");
             for (int k = 0; k < data.Length; k++)
-            {
-                var xor = Decryptor.PRGA();
-                data[k] ^= xor;
-            }
+                data[k] ^= Decryptor.PRGA();
         }
 
         /// <summary>
@@ -64,19 +67,21 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="clientSeed">Client seed.</param>
         /// <param name="serverNonce">Server random nonce.</param>
+        /// <exception cref="System.ArgumentNullException"/>
         public void UpdateCiphers(ulong clientSeed, byte[] serverNonce)
         {
+            if (serverNonce == null)
+                throw new ArgumentNullException("serverNonce");
             var newNonce = ScrambleNonce(clientSeed, serverNonce);
             var key = InitialKey + newNonce;
-
             InitializeCiphers(key);
         }
 
         /// <summary>
         /// Initializes the chipers with the specified key.
         /// </summary>
-        /// <param name="key">The key used to update the chipers.</param>
-        public void InitializeCiphers(string key)
+        /// <param name="key">The key used to update the cipher.</param>
+        private void InitializeCiphers(string key)
         {
             Encryptor = new RC4(key);
             Decryptor = new RC4(key);

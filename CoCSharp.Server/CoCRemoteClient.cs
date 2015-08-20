@@ -29,14 +29,13 @@ namespace CoCSharp.Server
         public CoCServer Server { get; set; }
         public Socket Connection { get; set; }
         public NetworkManagerAsync NetworkManager { get; set; }
-        
+
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
 
         public void QueuePacket(IPacket packet)
         {
             if (packet == null)
                 throw new ArgumentNullException("packet");
-            // Server.Log(packet);
             NetworkManager.WritePacket(packet);
         }
 
@@ -47,7 +46,6 @@ namespace CoCSharp.Server
 
         private void HandlePacketReceived(SocketAsyncEventArgs args, IPacket packet)
         {
-            Console.WriteLine(packet.ID);
             var handler = (PacketHandler)null;
             if (!PacketHandlers.TryGetValue(packet.ID, out handler))
                 return;

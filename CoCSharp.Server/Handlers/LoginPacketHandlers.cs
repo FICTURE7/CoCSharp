@@ -13,7 +13,7 @@ namespace CoCSharp.Server.Handlers
         {
             client.QueuePacket(new LoginSuccessPacket()
             {
-                UserID = 0,
+                UserID = 12312332,
                 UserToken = "SOMETOKEN",
                 ServerEnvironment = "prod",
                 DateJoined = "123123",

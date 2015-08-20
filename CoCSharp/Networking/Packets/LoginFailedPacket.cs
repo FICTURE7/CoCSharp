@@ -6,10 +6,40 @@ namespace CoCSharp.Networking.Packets
     {
         public enum LoginFailureReason : int
         {
+            /// <summary>
+            /// 
+            /// </summary>
             OutdatedContent = 7,
+
+            /// <summary>
+            /// 
+            /// </summary>
             OutdatedVersion = 8,
+
+            /// <summary>
+            /// 
+            /// </summary>
+            Unknown1 = 9,
+
+            /// <summary>
+            /// 
+            /// </summary>
             Maintenance = 10,
-            Banned = 11,
+
+            /// <summary>
+            /// 
+            /// </summary>
+            TemporarilyBanned = 11,
+
+            /// <summary>
+            /// 
+            /// </summary>
+            TakeRest = 12,
+
+            /// <summary>
+            /// 
+            /// </summary>
+            Locked = 13
         };
 
         public ushort ID { get { return 0x4E87; } }
