@@ -9,7 +9,7 @@ namespace CoCSharp.Proxy
         public CoCRemoteClient(Socket connection)
         {
             this.Connection = connection;
-            this.NetworkManager = new NetworkManager(connection);
+            this.NetworkManager = new ProxyNetworkManager(connection);
         }
 
         public string Username { get; set; }
@@ -20,6 +20,7 @@ namespace CoCSharp.Proxy
         public bool LoggedIn { get; set; }
         public Village Home { get; set; }
         public Socket Connection { get; set; }
-        public NetworkManager NetworkManager { get; set; }
+        public ProxyNetworkManager NetworkManager { get; set; }
     }
 }
+

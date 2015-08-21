@@ -1,8 +1,18 @@
 ﻿namespace CoCSharp.Networking
 {
+    /// <summary>
+    /// Direction of a packet.
+    /// </summary>
     public enum PacketDirection
     {
-        Client = 0x00,
-        Server = 0x01
+        /// <summary>
+        /// To client.
+        /// </summary>
+        Client,
+
+        /// <summary>
+        /// To server.
+        /// </summary>
+        Server
     };
 }

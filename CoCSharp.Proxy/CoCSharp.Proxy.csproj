@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,15 +48,16 @@
     <Compile Include="CoCProxy.cs" />
     <Compile Include="CoCProxyClient.cs" />
     <Compile Include="CoCRemoteClient.cs" />
+    <Compile Include="CoCStream.cs" />
     <Compile Include="Handlers\ProxyPacketHandlers.cs" />
-    <Compile Include="Logging\PacketDumper.cs" />
-    <Compile Include="Logging\PacketLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyConfiguration.cs" />
+    <Compile Include="ProxyNetworkManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">

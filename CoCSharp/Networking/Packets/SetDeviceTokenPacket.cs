@@ -13,7 +13,7 @@
 
         public void WritePacket(PacketWriter writer)
         {
-
+            writer.WriteString(Token);
         }
     }
 }

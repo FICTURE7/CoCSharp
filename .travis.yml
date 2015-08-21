@@ -1,0 +1,4 @@
+language: csharp
+solution: CoCSharp.sln
+mono:
+    - latest

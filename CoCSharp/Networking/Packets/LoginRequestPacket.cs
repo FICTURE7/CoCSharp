@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace CoCSharp.Networking.Packets
+﻿namespace CoCSharp.Networking.Packets
 {
     public class LoginRequestPacket : IPacket
     {
@@ -34,11 +32,11 @@ namespace CoCSharp.Networking.Packets
 
         public void ReadPacket(PacketReader reader)
         {
-            UserID = reader.ReadLong();
+            UserID = reader.ReadInt64();
             UserToken = reader.ReadString();
-            ClientMajorVersion = reader.ReadInt();
-            ClientContentVersion = reader.ReadInt();
-            ClientMinorVersion = reader.ReadInt();
+            ClientMajorVersion = reader.ReadInt32();
+            ClientContentVersion = reader.ReadInt32();
+            ClientMinorVersion = reader.ReadInt32();
             FingerprintHash = reader.ReadString();
 
             Unknown1 = reader.ReadString();
@@ -46,7 +44,7 @@ namespace CoCSharp.Networking.Packets
             OpenUDID = reader.ReadString();
             MacAddress = reader.ReadString();
             DeviceModel = reader.ReadString();
-            LocaleKey = reader.ReadInt();
+            LocaleKey = reader.ReadInt32();
             Language = reader.ReadString();
             AdvertisingGUID = reader.ReadString();
             OsVersion = reader.ReadString();
@@ -56,38 +54,38 @@ namespace CoCSharp.Networking.Packets
 
             AndroidDeviceID = reader.ReadString();
             FacebookDistributionID = reader.ReadString();
-            IsAdvertisingTrackingEnabled = reader.ReadBool();
+            IsAdvertisingTrackingEnabled = reader.ReadBoolean();
             VendorGUID = reader.ReadString();
-            Seed = reader.ReadInt();
+            Seed = reader.ReadInt32();
         }
 
         public void WritePacket(PacketWriter writer)
         {
-            writer.WriteLong(UserID);
+            writer.WriteInt64(UserID);
             writer.WriteString(UserToken);
-            writer.WriteInt(ClientMajorVersion);
-            writer.WriteInt(ClientContentVersion);
-            writer.WriteInt(ClientMinorVersion);
+            writer.WriteInt32(ClientMajorVersion);
+            writer.WriteInt32(ClientContentVersion);
+            writer.WriteInt32(ClientMinorVersion);
             writer.WriteString(FingerprintHash);
 
-            writer.WriteString(Unknown1);
+            writer.WriteString(""); // Unknown 1
 
             writer.WriteString(OpenUDID);
             writer.WriteString(MacAddress);
             writer.WriteString(DeviceModel);
-            writer.WriteInt(LocaleKey);
+            writer.WriteInt32(LocaleKey);
             writer.WriteString(Language);
             writer.WriteString(AdvertisingGUID);
             writer.WriteString(OsVersion);
 
-            writer.WriteByte(Unknown2);
-            writer.WriteString(Unknown3);
+            writer.WriteByte(1); // Unknown 2
+            writer.WriteString(""); // Unknown 3
 
             writer.WriteString(AndroidDeviceID);
             writer.WriteString(FacebookDistributionID);
-            writer.WriteBool(IsAdvertisingTrackingEnabled);
+            writer.WriteBoolean(IsAdvertisingTrackingEnabled);
             writer.WriteString(VendorGUID);
-            writer.WriteInt(Seed);
+            writer.WriteInt32(Seed);
         }
     }
 }

@@ -1,8 +1,7 @@
-﻿using CoCSharp.Databases;
+﻿using CoCSharp.Logging;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using CoCSharp.Proxy.Handlers;
-using CoCSharp.Proxy.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,7 @@ using System.Threading;
 
 namespace CoCSharp.Proxy
 {
-    public class CoCProxy : CoCServer
+    public class CoCProxy
     {
         public const int DefaultPort = 9339;
         public const string DefaultServer = "gamea.clashofclans.com";
@@ -25,16 +24,7 @@ namespace CoCSharp.Proxy
             this.PacketDumper = new PacketDumper();
             this.Clients = new List<CoCProxyClient>();
             this.PacketHandlers = new Dictionary<ushort, PacketHandler>();
-            this.DatabaseManagers = new Dictionary<string, DatabaseManager>();
-            this.AcceptAsyncEventPool = new Stack<SocketAsyncEventArgs>();
-            for (int i = 0; i < 10; i++)
-            {
-                var acceptEvent = new SocketAsyncEventArgs();
-                acceptEvent.Completed += AsyncOperationCompleted;
-                AcceptAsyncEventPool.Push(acceptEvent);
-            }
 
-            RegisterDownloadedDatabases();
             ProxyPacketHandlers.RegisterHanlders(this);
         }
 
@@ -44,13 +34,11 @@ namespace CoCSharp.Proxy
         public PacketDumper PacketDumper { get; set; }
         public List<CoCProxyClient> Clients { get; set; }
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
-        public Dictionary<string, DatabaseManager> DatabaseManagers { get; set; }
         public Socket Listener { get; set; }
         public IPEndPoint EndPoint { get; set; }
 
         private bool ShuttingDown { get; set; }
         private Thread NetworkThread { get; set; }
-        private Stack<SocketAsyncEventArgs> AcceptAsyncEventPool { get; set; }
 
         public void Start(IPEndPoint endPoint)
         {
@@ -64,6 +52,7 @@ namespace CoCSharp.Proxy
 
             NetworkThread.Name = "NetworkThread";
             NetworkThread.Start();
+            Listener.BeginAccept(AcceptClient, Listener);
         }
 
         public void Stop()
@@ -83,9 +72,12 @@ namespace CoCSharp.Proxy
             PacketHandlers.Add(packet.ID, handler);
         }
 
-        public void RegisterDatabaseManager(DatabaseManager manager, string hash)
+        private void AcceptClient(IAsyncResult ar)
         {
-            DatabaseManagers.Add(hash, manager);
+            var socket = Listener.EndAccept(ar);
+            Console.WriteLine("Accepted new socket: {0}", socket.RemoteEndPoint);
+            Clients.Add(new CoCProxyClient(socket));
+            Listener.BeginAccept(AcceptClient, Listener);
         }
 
         private void HandlePacket(CoCProxyClient client, IPacket packet)
@@ -100,15 +92,6 @@ namespace CoCSharp.Proxy
             while (true)
             {
                 if (ShuttingDown) return;
-
-                while (AcceptAsyncEventPool.Count > 1) // make use of 9 of the aysnc objs
-                {
-                    var acceptEvent = AcceptAsyncEventPool.Pop();
-                    var willRaiseEvent = Listener.AcceptAsync(acceptEvent);
-
-                    if (!willRaiseEvent)
-                        HandleAcceptOperation(acceptEvent);
-                }
 
                 for (int i = 0; i < Clients.Count; i++)
                 {
@@ -134,15 +117,14 @@ namespace CoCSharp.Proxy
                                 PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
                             }
                         }
-                        catch (SocketException ex)
+                        catch (InvalidPacketException ex)
                         {
-                            Console.WriteLine("[SocketException]: Client => {0}", ex.Message);
-                            Clients.RemoveAt(i);
-                            break;
+                            Console.WriteLine("[InvalidPacketException]: Client => {0}", ex.Message);
+                            // break;
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("[Exception]: Client => {0}", ex.Message);
+                            Console.WriteLine("[{0}]: Client => {1}", ex.GetType().Name, ex.Message);
                             Clients.RemoveAt(i);
                             break;
                         }
@@ -172,15 +154,14 @@ namespace CoCSharp.Proxy
                                 PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
                             }
                         }
-                        catch (SocketException ex)
+                        catch (InvalidPacketException ex)
                         {
-                            Console.WriteLine("[SocketException]: ProxyClient => {0}", ex.Message);
-                            Clients.RemoveAt(i);
-                            break;
+                            Console.WriteLine("[InvalidPacketException]: Client => {0}", ex.Message);
+                            // break;
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("[Exception]: ProxyClient => {0}", ex.Message);
+                            Console.WriteLine("[{0}]: Client => {1}", ex.GetType().Name, ex.Message);
                             Clients.RemoveAt(i);
                             break;
                         }
@@ -189,39 +170,6 @@ namespace CoCSharp.Proxy
                 Thread.Sleep(1);
             }
         }
-
-        private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs e)
-        {
-            switch (e.LastOperation) // TODO: Check for errors
-            {
-                case SocketAsyncOperation.Accept:
-                    HandleAcceptOperation(e);
-                    break;
-            }
-        }
-
-        private void HandleAcceptOperation(SocketAsyncEventArgs acceptEvent)
-        {
-            var remoteClient = new CoCProxyClient(acceptEvent.AcceptSocket);
-            Clients.Add(remoteClient);
-
-            acceptEvent.AcceptSocket = null;
-            AcceptAsyncEventPool.Push(acceptEvent); // reuse the obj
-        }
-
-        private void RegisterDownloadedDatabases()
-        {
-            if (!Directory.Exists("databases")) 
-                Directory.CreateDirectory("databases");
-
-            var dbFiles = Directory.GetDirectories("databases");
-            for (int i = 0; i < dbFiles.Length; i++)
-            {
-                var hash = Path.GetFileName(dbFiles[i]);
-                var dbManager = new DatabaseManager(hash);
-                DatabaseManagers.Add(dbManager.FingerprintHash, dbManager);
-                dbManager.LoadDatabases();
-            }
-        }
     }
 }
+

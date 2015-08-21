@@ -3,6 +3,10 @@ Thumbs.db
 ehthumbs.db
 bin/
 obj/
+packages/
+TestResults/
+Scripts/*.txt
+Scripts/*.py~
 
 # Folder config file
 Desktop.ini

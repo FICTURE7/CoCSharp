@@ -1,5 +1,4 @@
-﻿using CoCSharp.Proxy.Handlers;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -21,14 +20,14 @@ namespace CoCSharp.Proxy
                 File.Delete("packets.log");
 
             Proxy = new CoCProxy();
-            Proxy.PacketLogger.LogPrivateFields = Configuration.LogPrivatePacketFields;
-            Proxy.PacketDumper.Active = Configuration.LogRawPacket;
+            // Proxy.PacketLogger.LogPrivateFields = Configuration.LogPrivatePacketFields;
+            // Proxy.PacketDumper.Active = Configuration.LogRawPacket;
             Proxy.ServerAddress = Configuration.ServerAddress;
             Proxy.ServerPort = Configuration.ServerPort;
 
             Proxy.Start(new IPEndPoint(IPAddress.Any, Configuration.ProxyPort));
 
-            Console.WriteLine("CoC# is running on *:{0}", Proxy.EndPoint.Port);
+            Console.WriteLine("CoC# is running on *:{0}", Configuration.ProxyPort);
             Thread.Sleep(-1);
         }
     }

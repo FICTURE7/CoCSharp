@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-namespace CoCSharp.Networking.Packets
+﻿namespace CoCSharp.Networking.Packets
 {
     public class UnknownPacket : IPacket
     {
@@ -19,7 +17,7 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
-            // writer.Write(EncryptedData, 0, Length);
+            writer.Write(EncryptedData, 0, EncryptedData.Length);
         }
     }
 }
