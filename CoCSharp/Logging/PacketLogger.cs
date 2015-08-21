@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Networking;
+using CoCSharp.Networking.Commands;
 using CoCSharp.Networking.Packets;
 using System;
 using System.IO;
@@ -22,7 +23,7 @@ namespace CoCSharp.Logging
             {
                 AutoFlush = true
             };
-            BindingFlags = BindingFlags.Public | BindingFlags.Instance | 
+            BindingFlags = BindingFlags.Public | BindingFlags.Instance |
                            BindingFlags.NonPublic | BindingFlags.GetField;
         }
 
@@ -46,7 +47,7 @@ namespace CoCSharp.Logging
         public void LogPacket(IPacket packet, PacketDirection direction)
         {
             var builder = new StringBuilder();
-            var prefix = direction == PacketDirection.Server ? "[CLIENT > SERVER] " : 
+            var prefix = direction == PacketDirection.Server ? "[CLIENT > SERVER] " :
                                                                "[CLIENT < SERVER] ";
             var packetType = packet.GetType();
             var packetName = packetType.Name;
@@ -82,6 +83,11 @@ namespace CoCSharp.Logging
 
                     if (fieldValue == null) builder.Append("null");
                     else if (fieldValue is string) builder.AppendFormat("{0}{1}{2}", "\"", fieldValue, "\"");
+                    else if (fieldValue is ICommand[])
+                    {
+                        var cmd = fieldValue as ICommand[];
+                        builder.Append(DumpCommandArray(cmd));
+                    }
                     else if (fieldValue is byte[])
                     {
                         var byteArray = fieldValue as byte[];
@@ -141,6 +147,58 @@ namespace CoCSharp.Logging
             }
             builder.AppendLine();
             builder.Indent("]");
+            return builder.ToString();
+        }
+
+        private static string DumpCommandArray(ICommand[] cmds)
+        {
+            var builder = new StringBuilder();
+
+            if (cmds.Length == 0)
+                builder.Append("Empty");
+
+            for (int i = 0; i < cmds.Length; i++)
+            {
+                var cmdType = cmds[i].GetType();
+                var cmdName = cmdType.Name;
+                var cmdFields = cmdType.GetFields();
+
+                builder.Append(cmdName);
+                builder.Indent("[");
+                builder.AppendLine();
+
+                for (int k = 0; k < cmdFields.Length; k++)
+                {
+                    var field = cmdFields[i];
+                    var fieldName = field.Name;
+                    var fieldValue = field.GetValue(cmds[i]);
+
+                    if (field.IsPrivate)
+                        continue;
+
+                    builder.Indent();
+                    builder.AppendFormat("{0}: ", fieldName);
+
+                    if (fieldValue == null) builder.Append("null");
+                    else if (fieldValue is string) builder.AppendFormat("{0}{1}{2}", "\"", fieldValue, "\"");
+                    else if (fieldValue is ICommand[])
+                    {
+                        var cmd = fieldValue as ICommand[];
+                        builder.Append(DumpCommandArray(cmd));
+                    }
+                    else if (fieldValue is byte[])
+                    {
+                        var byteArray = fieldValue as byte[];
+                        builder.AppendLine();
+                        builder.Append(DumpByteArray(byteArray));
+                    }
+                    else builder.Append(fieldValue);
+                    builder.AppendLine();
+                }
+
+                builder.AppendLine();
+                builder.Indent("]");
+            }
             return builder.ToString();
         }
     }

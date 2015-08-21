@@ -11,6 +11,11 @@ namespace CoCSharp.Server.Handlers
     {
         public static void HandleLoginRequestPacket(CoCRemoteClient client, CoCServer server, IPacket packet)
         {
+            client.Seed = ((LoginRequestPacket)packet).Seed;
+            client.QueuePacket(new UpdateKeyPacket()
+            {
+                Key = new byte[] { 23, 32, 45, 13, 54, 43 }
+            });
             client.QueuePacket(new LoginSuccessPacket()
             {
                 UserID = 12312332,
@@ -29,6 +34,11 @@ namespace CoCSharp.Server.Handlers
                 RevisionVersion = 0,
                 CountryCode = "MU"
             });
+        }
+
+        public static void RegisterLoginPacketHandlers(CoCRemoteClient client)
+        {
+            client.RegisterPacketHandler(new LoginRequestPacket(), HandleLoginRequestPacket);
         }
     }
 }

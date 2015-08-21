@@ -38,6 +38,9 @@ namespace CoCSharp.Networking
         /// Gets the packet buffer bytes.
         /// </summary>
         public byte[] Buffer { get { return SocketAsyncEventArgs.Buffer; } }
+        /// <summary>
+        /// 
+        /// </summary>
         public SocketAsyncEventArgs SocketAsyncEventArgs { get; private set; }
 
         private int OriginalBufferSize { get; set; }

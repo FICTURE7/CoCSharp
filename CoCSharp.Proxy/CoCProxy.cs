@@ -1,5 +1,4 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Logging;
+﻿using CoCSharp.Logging;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using CoCSharp.Proxy.Handlers;
@@ -8,50 +7,62 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace CoCSharp.Proxy
 {
-    public class CoCProxy : ICoCServer
+    public class CoCProxy
     {
+        public const int DefaultPort = 9339;
+        public const string DefaultServer = "gamea.clashofclans.com";
+
         public delegate void PacketHandler(CoCProxy proxyServer, CoCProxyClient client, IPacket packet);
 
         public CoCProxy()
         {
-            Loggers = new List<ILogger>();
-            ProxyClients = new List<CoCProxyClient>();
-            PacketHandlers = new Dictionary<ushort, PacketHandler>();
-            AcceptEventPool = new SocketAsyncEventArgsPool(100);
-            PacketLogger = new PacketLogger();
+            this.PacketLogger = new PacketLogger();
+            this.PacketDumper = new PacketDumper();
+            this.Clients = new List<CoCProxyClient>();
+            this.PacketHandlers = new Dictionary<ushort, PacketHandler>();
 
             ProxyPacketHandlers.RegisterHanlders(this);
         }
 
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
-        public List<ILogger> Loggers { get; set; }
-        public List<CoCProxyClient> ProxyClients { get; set; }
+        public PacketLogger PacketLogger { get; set; }
+        public PacketDumper PacketDumper { get; set; }
+        public List<CoCProxyClient> Clients { get; set; }
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
         public Socket Listener { get; set; }
-        public EndPoint EndPoint { get; set; }
+        public IPEndPoint EndPoint { get; set; }
 
-        public PacketLogger PacketLogger { get; set; }
         private bool ShuttingDown { get; set; }
-        private SocketAsyncEventArgsPool AcceptEventPool { get; set; }
+        private Thread NetworkThread { get; set; }
 
-        public void Start(EndPoint endPoint)
+        public void Start(IPEndPoint endPoint)
         {
             ShuttingDown = false;
             EndPoint = endPoint;
+            NetworkThread = new Thread(HandleNetwork);
 
             Listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             Listener.Bind(endPoint);
-            Listener.Listen(200);
-            StartListen();
+            Listener.Listen(100);
+
+            NetworkThread.Name = "NetworkThread";
+            NetworkThread.Start();
+            Listener.BeginAccept(AcceptClient, Listener);
         }
 
         public void Stop()
         {
-            ShuttingDown = true;
+            if (NetworkThread != null)
+            {
+                ShuttingDown = true;
+                NetworkThread.Abort();
+            }
+
             if (Listener != null)
                 Listener.Close();
         }
@@ -61,41 +72,104 @@ namespace CoCSharp.Proxy
             PacketHandlers.Add(packet.ID, handler);
         }
 
-        public void Log(LogCategory category, params object[] parameters)
+        private void AcceptClient(IAsyncResult ar)
         {
-            //TODO: Implement.
-            throw new NotImplementedException();
+            var socket = Listener.EndAccept(ar);
+            Console.WriteLine("Accepted new socket: {0}", socket.RemoteEndPoint);
+            Clients.Add(new CoCProxyClient(socket));
+            Listener.BeginAccept(AcceptClient, Listener);
         }
 
-        private void StartListen()
+        private void HandlePacket(CoCProxyClient client, IPacket packet)
         {
-            while (AcceptEventPool.Count > 1)
-            {
-                var acceptEvent = AcceptEventPool.Pop();
-                acceptEvent.Completed += AcceptAsyncCompleted;
-
-                if (!Listener.AcceptAsync(acceptEvent))
-                    AcceptAsyncCompleted(Listener, acceptEvent);
-            }
+            var handler = (PacketHandler)null;
+            if (!PacketHandlers.TryGetValue(packet.ID, out handler)) return;
+            handler(this, client, packet);
         }
 
-        private void AcceptAsyncCompleted(object sender, SocketAsyncEventArgs args)
+        private void HandleNetwork()
         {
-            args.Completed -= AcceptAsyncCompleted;
-
-            switch (args.LastOperation) // TODO: Check for errors
+            while (true)
             {
-                case SocketAsyncOperation.Accept:
-                    var connection = args.AcceptSocket;
-                    var remoteClient = new CoCProxyClient(this, connection);
+                if (ShuttingDown) return;
 
-                    remoteClient.Start(new TcpClient(ServerAddress, ServerPort).Client);
-                    ProxyClients.Add(remoteClient);
-                    args.AcceptSocket = null;
-                    AcceptEventPool.Push(args);
-                    StartListen();
-                    break;
+                for (int i = 0; i < Clients.Count; i++)
+                {
+                    //TODO: Kick client due to keep alive timeouts.
+                    while (Clients[i].Client.NetworkManager.DataAvailable)
+                    {
+                        try
+                        {
+                            /* S <- P <- C
+                             * Proxying data from client to server.
+                             */
+
+                            var rawPacket = (byte[])null; // raw encrypted packet
+                            var decryptedPacket = (byte[])null;
+                            var packet = Clients[i].Client.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from client
+
+                            if (packet != null) HandlePacket(Clients[i], packet);
+
+                            if (rawPacket != null && packet != null)
+                            {
+                                Clients[i].Server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
+                                PacketLogger.LogPacket(packet, PacketDirection.Server);
+                                PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
+                            }
+                        }
+                        catch (InvalidPacketException ex)
+                        {
+                            Console.WriteLine("[InvalidPacketException]: Client => {0}", ex.Message);
+                            // break;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("[{0}]: Client => {1}", ex.GetType().Name, ex.Message);
+                            Clients.RemoveAt(i);
+                            break;
+                        }
+                    }
+
+                    if (Clients[i].Server == null) continue;
+
+                    while (Clients[i].Server.NetworkManager.DataAvailable)
+                    {
+                        try
+                        {
+                            /* S -> P -> C
+                             * Proxying data from server to client.
+                             */
+
+                            var rawPacket = (byte[])null;
+                            var decryptedPacket = (byte[])null;
+                            var packet = Clients[i].Server.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from server
+
+                            if (packet != null) HandlePacket(Clients[i], packet);
+
+                            if (rawPacket != null && packet != null)
+                            {
+                                // could log packets in a sperate thread
+                                Clients[i].Client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
+                                PacketLogger.LogPacket(packet, PacketDirection.Client);
+                                PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
+                            }
+                        }
+                        catch (InvalidPacketException ex)
+                        {
+                            Console.WriteLine("[InvalidPacketException]: Client => {0}", ex.Message);
+                            // break;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("[{0}]: Client => {1}", ex.GetType().Name, ex.Message);
+                            Clients.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+                Thread.Sleep(1);
             }
         }
     }
 }
+

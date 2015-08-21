@@ -1,5 +1,4 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Networking;
+﻿using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using System;
 using System.Net.Sockets;
@@ -12,35 +11,36 @@ namespace CoCSharp.Proxy.Handlers
         {
             var lsPacket = packet as LoginSuccessPacket;
 
-            client.UserID = lsPacket.UserID;
-            client.UserToken = lsPacket.UserToken;
-            client.LoggedIn = true;
+            client.Client.UserID = lsPacket.UserID;
+            client.Client.UserToken = lsPacket.UserToken;
+            client.Client.LoggedIn = true;
         }
 
         public static void HandleUpdateKeyPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var ukPacket = packet as UpdateKeyPacket;
 
-            client.ClientNetworkManager.UpdateCiphers(client.Seed, ukPacket.Key);
-            client.ClientNetworkManager.UpdateCiphers(client.Seed, ukPacket.Key);
+            client.Client.NetworkManager.UpdateCiphers((ulong)client.Client.Seed, ukPacket.Key);
+            client.Server.NetworkManager.UpdateCiphers((ulong)client.Client.Seed, ukPacket.Key);
         }
 
         public static void HandleLoginRequestPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var lrPacket = packet as LoginRequestPacket;
 
-            client.Seed = lrPacket.Seed;
-            client.UserID = lrPacket.UserID;
-            client.UserToken = lrPacket.UserToken;
-            client.FingerprintHash = lrPacket.FingerprintHash;
+            client.Start(new TcpClient(proxyServer.ServerAddress, proxyServer.ServerPort).Client);
+            client.Client.Seed = lrPacket.Seed;
+            client.Client.UserID = lrPacket.UserID;
+            client.Client.UserToken = lrPacket.UserToken;
+            client.Client.FingerprintHash = lrPacket.FingerprintHash;
         }
 
         public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var ohPacket = packet as OwnHomeDataPacket;
-            client.Username = ohPacket.Username;
-            client.UserID = ohPacket.UserID;
-            client.Home = ohPacket.Home;
+            client.Client.Username = ohPacket.Username;
+            client.Client.UserID = ohPacket.UserID;
+            client.Client.Home = ohPacket.Home;
         }
 
         public static void RegisterHanlders(CoCProxy proxyServer)
@@ -52,3 +52,4 @@ namespace CoCSharp.Proxy.Handlers
         }
     }
 }
+

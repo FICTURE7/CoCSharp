@@ -47,10 +47,13 @@
   <ItemGroup>
     <Compile Include="CoCProxy.cs" />
     <Compile Include="CoCProxyClient.cs" />
+    <Compile Include="CoCRemoteClient.cs" />
+    <Compile Include="CoCStream.cs" />
     <Compile Include="Handlers\ProxyPacketHandlers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyConfiguration.cs" />
+    <Compile Include="ProxyNetworkManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

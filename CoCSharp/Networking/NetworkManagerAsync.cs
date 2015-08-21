@@ -97,7 +97,7 @@ namespace CoCSharp.Networking
                     break;
 
                 var packet = (IPacket)null;
-                var packetBuffer = (PacketBuffer)args.UserToken;
+                var packetBuffer = args.UserToken as PacketBuffer;
                 try
                 {
                     using (var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer)))
@@ -119,8 +119,6 @@ namespace CoCSharp.Networking
                                                                        packetLength);
                         var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
                         CoCCrypto.Decrypt(decryptedData);
-
-                        //TODO: PacketBuffer should use SocketAsyncEventArgs directly.
                         numBytesToProcess -= packetLength + PacketBuffer.HeaderSize;
 
                         using (var dePacketReader = new PacketReader(new MemoryStream(decryptedData)))
@@ -141,7 +139,7 @@ namespace CoCSharp.Networking
                         }
                     }
                     if (packet is UpdateKeyPacket)
-                        UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key);
+                        UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key); // handle update key packet
                     list.Add(packet);
                 }
                 catch (Exception ex)
@@ -168,6 +166,10 @@ namespace CoCSharp.Networking
                 packet.WritePacket(dePacketWriter);
                 var body = ((MemoryStream)dePacketWriter.BaseStream).ToArray();
                 CoCCrypto.Encrypt(body);
+
+                if(packet is UpdateKeyPacket)
+                    UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key); // handle update key packet
+
                 using (var enPacketWriter = new PacketWriter(new MemoryStream())) // write header
                 {
                     enPacketWriter.WriteUInt16(packet.ID);
@@ -217,7 +219,6 @@ namespace CoCSharp.Networking
                 AsyncOperationCompleted(Connection, receiveArgs);
         }
 
-        private int _counter = 0;
         public void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
             args.Completed -= AsyncOperationCompleted;

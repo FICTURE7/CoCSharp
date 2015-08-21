@@ -26,10 +26,10 @@ namespace CoCSharp.Networking.Packets
             for (int i = 0; i < Commands.Length; i++)
             {
                 var commandID = reader.ReadInt32();
-                var command = CreateCommandInstance(commandID);
-                if (command == null)
+                Commands[i] = CreateCommandInstance(commandID);
+                if (Commands[i] == null)
                     break;
-                command.ReadCommand(reader);
+                Commands[i].ReadCommand(reader);
             }
         }
 
@@ -49,6 +49,7 @@ namespace CoCSharp.Networking.Packets
         {
             CommandDictionary = new Dictionary<int, Type>();
             CommandDictionary.Add(new BuyBuildingCommand().ID, typeof(BuyBuildingCommand));
+            CommandDictionary.Add(new CollectResourcesCommand().ID, typeof(CollectResourcesCommand));
         }
 
         private static ICommand CreateCommandInstance(int id)
