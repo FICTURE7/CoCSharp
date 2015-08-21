@@ -18,6 +18,8 @@ Clash of Clans library written in C# to handle networking, csv files and more to
 # CoCSharp
 Clash of Clans library written in C# to handle networking and csv files(more to come?). It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
 
+Active branch: [messy-stuff](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff)
+
 ## What can it do?
 >>>>>>> master
 * CoCSharp.Networking: Networking and protocol support.
