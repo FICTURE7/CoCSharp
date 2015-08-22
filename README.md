@@ -116,11 +116,11 @@ mono CoCSharp.Proxy/bin/Debug/CoCSharp.Proxy.exe
 Just create a fork and make changes to it, like adding features from Clash of Clans, refactoring and fixing bugs. Try to follow the code style. Make your pull requests focused and readable. You can also contribute by creating issues and reporting bugs, giving ideas for enhancement.
 
 <h2>Projects Using CoC#</h2>
-* [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Server): *(Work in progress)*
+* [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Server): *(Work in progress)*
   * Server that can't do much at the moment.
-* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Client):
+* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Client):
   * Simple client that can read chat message and send keep alive requests.
-* [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Proxy):
+* [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Proxy):
   * Proxy that logs parsed and raw decrypted/encrypted packets.
 
 ## Licensing
