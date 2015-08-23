@@ -29,12 +29,6 @@ namespace CoCSharp.Client.Handlers
         {
             var lsPacket = packet as LoginSuccessPacket;
             Console.WriteLine("Successfully logged in!");
-            Console.Write("Name: ");
-            var name = Console.ReadLine();
-            client.QueuePacket(new ChangeAvatarNamePacket()
-            {
-                NewName = name
-            });
         }
 
         public static void HandleUpdateKeyPacket(CoCClient client, IPacket packet)
