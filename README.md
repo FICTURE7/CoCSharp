@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <h1> 
 CoC# <a href="https://travis-ci.org/FICTURE7/CoCSharp"><img src="https://travis-ci.org/FICTURE7/CoCSharp.svg?branch=messy-stuff" alt="Build Status"></a>
 </h1>
@@ -14,19 +13,6 @@ Clash of Clans library written in C# to handle networking, csv files and more to
   * Includes classes to log and dump packet.
 * CoCSharp.Logic: Village object strutures. *(Needs to be improved)*
   * Includes classes for village objects: Village, Trap, Obstacle, Building etc...
-=======
-# CoCSharp
-Clash of Clans library written in C# to handle networking and csv files(more to come?). It was written based off of the [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
-
-Active branch: [messy-stuff](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff)
-
-## What can it do?
->>>>>>> master
-* CoCSharp.Networking: Networking and protocol support.
-  * Defines some packets of the CoC networking protocol.
-  * Includes classes to read and write CoC packets.
-  * Includes encryption support for 7.x versions.
-<<<<<<< HEAD
   
 ## Usage
 CoCSharp is trying to implement most the Clash of Clans features and also trying be easy as possible to use.
@@ -110,7 +96,7 @@ Run the following commands to build CoCSharp with mono.
 
 Use a git clone
 ```
-git clone --branch=messy-stuff git://github.com/FICTURE7/CoCSharp.git
+git clone --branch=master git://github.com/FICTURE7/CoCSharp.git
 ```
 Then you will have to restore the nuget packages.
 ```
@@ -130,27 +116,12 @@ mono CoCSharp.Proxy/bin/Debug/CoCSharp.Proxy.exe
 Just create a fork and make changes to it, like adding features from Clash of Clans, refactoring and fixing bugs. Try to follow the code style. Make your pull requests focused and readable. You can also contribute by creating issues and reporting bugs, giving ideas for enhancement.
 
 <h2>Projects Using CoC#</h2>
-* [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Server): *(Work in progress)*
+* [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Server): *(Work in progress)*
   * Server that can't do much at the moment.
-* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Client):
+* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Client):
   * Simple client that can read chat message and send keep alive requests.
-* [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/messy-stuff/CoCSharp.Proxy):
+* [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Proxy):
   * Proxy that logs parsed and raw decrypted/encrypted packets.
 
 ## Licensing
 CoCSharp is licensed under the permissive [MIT License](http://mit-license.org/).
-=======
-* CoCSharp.Databases: CSV files support. *(Needs to be refactored)*
-  * Includes classes for reading CSV files.
-  * Includes classes for managing CSV files and downloading thm
-* CoCSharp.Logic: Village object strutures. *(Needs to be refactored)*
-  * Includes class for village objects: Village, Trap, Obstacle, Building etc...
-  
-## Projects using CoCSharp
-* CoCSharp.Server: *(Planned)*
-* CoCSharp.Proxy:
-  * Proxy that logs parsed and raw decrypted packets
-
-## Licensing
-CoCSharp is licensed under the [MIT License](http://mit-license.org/)
->>>>>>> master
