@@ -7,7 +7,7 @@ namespace CoCSharp.Networking.Packets
         public ushort ID { get { return 0x4E88; } }
 
         public long UserID;
-        private long UserID2;
+        public long UserID2;
         public string UserToken;
         public string FacebookID;
         public string GameCenterID;
@@ -17,11 +17,11 @@ namespace CoCSharp.Networking.Packets
         public string ServerEnvironment; // could implment Enum here
         public int LoginCount;
         public TimeSpan PlayTime;
-        private int Unknown1;
+        public int Unknown1;
         public string FacebookAppID;
-        public string DateLastPlayed;
-        public string DateJoined;
-        private int Unknown2;
+        public DateTime DateLastPlayed;
+        public DateTime DateJoined;
+        public int Unknown2;
         public string GooglePlusID;
         public string CountryCode;
 
@@ -42,8 +42,8 @@ namespace CoCSharp.Networking.Packets
             Unknown1 = reader.ReadInt32();
 
             FacebookAppID = reader.ReadString();
-            DateLastPlayed = reader.ReadString();
-            DateJoined = reader.ReadString();
+            DateLastPlayed = DateTimeConverter.FromJavaTimestamp(double.Parse(reader.ReadString()));
+            DateJoined = DateTimeConverter.FromJavaTimestamp(double.Parse(reader.ReadString()));
 
             Unknown2 = reader.ReadInt32();
 
@@ -68,8 +68,8 @@ namespace CoCSharp.Networking.Packets
             writer.WriteInt32(Unknown1);
 
             writer.WriteString(FacebookAppID);
-            writer.WriteString(DateLastPlayed);
-            writer.WriteString(DateJoined);
+            writer.WriteString(DateTimeConverter.ToJavaTimestamp(DateLastPlayed).ToString()); // should round stuff?
+            writer.WriteString(DateTimeConverter.ToJavaTimestamp(DateJoined).ToString());
 
             writer.WriteInt32(Unknown2);
 
