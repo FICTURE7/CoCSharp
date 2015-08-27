@@ -9,10 +9,10 @@ namespace CoCSharp.Networking.Packets
         public string ClanName;
         public int Unknown1;
         public int Unknown2;
-        public int WarsWon;
+        public int MembersCount; // memberscount
         public int TotalPoints;
         public int RequiedTrophies;
-        public int MembersCount;
+        public int WarsWon; // warswon
         public int Level;
         public int Unknown3;
         public int Sheild;
@@ -33,10 +33,10 @@ namespace CoCSharp.Networking.Packets
             ClanName = reader.ReadString();
             Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
-            WarsWon = reader.ReadInt32();
+            MembersCount = reader.ReadInt32();
             TotalPoints = reader.ReadInt32();
             RequiedTrophies = reader.ReadInt32();
-            MembersCount = reader.ReadInt32();
+            WarsWon = reader.ReadInt32();
             Unknown3 = reader.ReadInt32();
             Level = reader.ReadInt32();
             Sheild = reader.ReadInt32();
@@ -78,13 +78,44 @@ namespace CoCSharp.Networking.Packets
             writer.WriteString(ClanName);
             writer.WriteInt32(Unknown1);
             writer.WriteInt32(Unknown2);
-            writer.WriteInt32(WarsWon);
+            writer.WriteInt32(MembersCount);
             writer.WriteInt32(TotalPoints);
             writer.WriteInt32(RequiedTrophies);
-            writer.WriteInt32(MembersCount);
+            writer.WriteInt32(WarsWon);
+            writer.WriteInt32(Unknown3);
             writer.WriteInt32(Level);
+            writer.WriteInt32(Sheild);
+            writer.WriteInt32(WarFrequency);
+            writer.WriteInt32(Unknown4);
+            writer.WriteInt32(ClanPerksPoints);
+            writer.WriteInt32(Unknown5);
+            writer.WriteString(Description);
+            writer.WriteInt32(Unknown6);
+            writer.WriteInt32(Unknown7);
+
+            writer.WriteInt32(Members.Count);
+            for (int i = 0; i < Members.Count; i++)
+            {
+                var allianceMember = Members[i];
+                writer.WriteInt64(allianceMember.UserID);
+                writer.WriteString(allianceMember.Name);
+                writer.WriteInt32(allianceMember.Role);
+                writer.WriteInt32(allianceMember.Level);
+                writer.WriteInt32(allianceMember.League);
+                writer.WriteInt32(allianceMember.Trophies);
+                writer.WriteInt32(allianceMember.TroopsDonated);
+                writer.WriteInt32(allianceMember.TroopsReceived);
+                writer.WriteInt32(allianceMember.Rank);
+                writer.WriteInt32(allianceMember.PreviousRank);
+                writer.WriteInt32(allianceMember.NewMember);
+                writer.WriteInt32(allianceMember.ClanWarPreference);
+                writer.WriteInt32(allianceMember.ClanWarPreference1);
+                writer.WriteInt32(allianceMember.Unknown1);
+                writer.WriteInt64(allianceMember.UserID1);
+            }
         }
 
+        //TODO: Make kooler
         public class AllianceMemberInfo
         {
             public long UserID;
