@@ -5,23 +5,23 @@ namespace CoCSharp.Data.Csv
     /// <summary>
     /// The exception thrown when an error occurs during CSV serialization or deserialization.
     /// </summary>
-    public class CsvSerializationException : Exception
+    public class CsvException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CsvSerializationException"/> class.
+        /// Initializes a new instance of the <see cref="CsvException"/> class.
         /// </summary>
-        public CsvSerializationException()
+        public CsvException()
             : base()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CsvSerializationException"/> class with
+        /// Initializes a new instance of the <see cref="CsvException"/> class with
         /// the specified message.
         /// </summary>
         /// <param name="message">Message of the <see cref="Exception"/>.</param>
-        public CsvSerializationException(string message)
+        public CsvException(string message)
             : base(message)
         {
             // Space
