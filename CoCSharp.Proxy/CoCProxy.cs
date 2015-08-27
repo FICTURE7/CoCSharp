@@ -4,7 +4,6 @@ using CoCSharp.Networking.Packets;
 using CoCSharp.Proxy.Handlers;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -20,10 +19,10 @@ namespace CoCSharp.Proxy
 
         public CoCProxy()
         {
-            this.PacketLogger = new PacketLogger();
-            this.PacketDumper = new PacketDumper();
-            this.Clients = new List<CoCProxyClient>();
-            this.PacketHandlers = new Dictionary<ushort, PacketHandler>();
+            PacketLogger = new PacketLogger();
+            PacketDumper = new PacketDumper();
+            Clients = new List<CoCProxyClient>();
+            PacketHandlers = new Dictionary<ushort, PacketHandler>();
 
             ProxyPacketHandlers.RegisterHanlders(this);
         }
@@ -83,7 +82,8 @@ namespace CoCSharp.Proxy
         private void HandlePacket(CoCProxyClient client, IPacket packet)
         {
             var handler = (PacketHandler)null;
-            if (!PacketHandlers.TryGetValue(packet.ID, out handler)) return;
+            if (!PacketHandlers.TryGetValue(packet.ID, out handler))
+                return;
             handler(this, client, packet);
         }
 
@@ -91,7 +91,8 @@ namespace CoCSharp.Proxy
         {
             while (true)
             {
-                if (ShuttingDown) return;
+                if (ShuttingDown)
+                    return;
 
                 for (int i = 0; i < Clients.Count; i++)
                 {
@@ -108,7 +109,8 @@ namespace CoCSharp.Proxy
                             var decryptedPacket = (byte[])null;
                             var packet = Clients[i].Client.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from client
 
-                            if (packet != null) HandlePacket(Clients[i], packet);
+                            if (packet != null) 
+                                HandlePacket(Clients[i], packet);
 
                             if (rawPacket != null && packet != null)
                             {
@@ -117,20 +119,16 @@ namespace CoCSharp.Proxy
                                 PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
                             }
                         }
-                        catch (InvalidPacketException ex)
-                        {
-                            Console.WriteLine("[InvalidPacketException]: Client => {0}", ex.Message);
-                            // break;
-                        }
                         catch (Exception ex)
                         {
                             Console.WriteLine("[{0}]: Client => {1}", ex.GetType().Name, ex.Message);
                             Clients.RemoveAt(i);
-                            break;
+                            goto ResetLoop;
                         }
                     }
 
-                    if (Clients[i].Server == null) continue;
+                    if (Clients[i].Server == null)
+                        continue;
 
                     while (Clients[i].Server.NetworkManager.DataAvailable)
                     {
@@ -144,28 +142,26 @@ namespace CoCSharp.Proxy
                             var decryptedPacket = (byte[])null;
                             var packet = Clients[i].Server.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from server
 
-                            if (packet != null) HandlePacket(Clients[i], packet);
+                            if (packet != null)
+                                HandlePacket(Clients[i], packet);
 
                             if (rawPacket != null && packet != null)
                             {
-                                // could log packets in a sperate thread
                                 Clients[i].Client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
                                 PacketLogger.LogPacket(packet, PacketDirection.Client);
                                 PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
                             }
                         }
-                        catch (InvalidPacketException ex)
-                        {
-                            Console.WriteLine("[InvalidPacketException]: Client => {0}", ex.Message);
-                            // break;
-                        }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("[{0}]: Client => {1}", ex.GetType().Name, ex.Message);
+                            Console.WriteLine("[{0}]: Server => {1}", ex.GetType().Name, ex.Message);
                             Clients.RemoveAt(i);
-                            break;
+                            goto ResetLoop;
                         }
                     }
+
+                ResetLoop:
+                    break;
                 }
                 Thread.Sleep(1);
             }

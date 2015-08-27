@@ -38,7 +38,7 @@ namespace CoCSharp.Proxy.Handlers
         public static void HandleOwnHomeDataPacket(CoCProxy proxyServer, CoCProxyClient client, IPacket packet)
         {
             var ohPacket = packet as OwnHomeDataPacket;
-            client.Client.Username = ohPacket.Username;
+            client.Client.Username = ohPacket.Avatar.Username;
             client.Client.UserID = ohPacket.UserID;
             client.Client.Home = ohPacket.Home;
         }

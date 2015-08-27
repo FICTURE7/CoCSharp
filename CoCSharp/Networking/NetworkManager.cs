@@ -4,6 +4,9 @@ namespace CoCSharp.Networking
 {
     public class NetworkManager
     {
-
+        public NetworkManager()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

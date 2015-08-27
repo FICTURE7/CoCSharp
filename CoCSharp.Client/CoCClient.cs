@@ -14,10 +14,13 @@ namespace CoCSharp.Client
     {
         public delegate void PacketHandler(CoCClient client, IPacket packet);
 
+
+        //55846688979
+        //h7tnt78fpf97x4c4hmfscsr9kc8nxpsjsjadhmmz
         public CoCClient()
         {
-            UserID = 0;
-            UserToken = null;
+            UserID = 55846688979;
+            UserToken = "h7tnt78fpf97x4c4hmfscsr9kc8nxpsjsjadhmmz";
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
             PacketLogger = new PacketLogger()
             {
@@ -68,7 +71,7 @@ namespace CoCSharp.Client
                 ClientMajorVersion = 7,
                 ClientContentVersion = 0,
                 ClientMinorVersion = 156,
-                FingerprintHash = "6c12b527e6810ff7301d972042ae3614f3d73acc",
+                FingerprintHash = "ae9b056807ac8bfa58a3e879b1f1601ff17d1df5",
                 OpenUDID = "563a6f060d8624db",
                 MacAddress = null,
                 DeviceModel = "GT-I9300",

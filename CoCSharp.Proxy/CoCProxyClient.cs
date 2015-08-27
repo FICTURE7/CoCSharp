@@ -7,7 +7,7 @@ namespace CoCSharp.Proxy
     {
         public CoCProxyClient(Socket clientConnection)
         {
-            this.Client = new CoCRemoteClient(clientConnection);
+            Client = new CoCRemoteClient(clientConnection);
         }
 
         public CoCRemoteClient Client { get; set; }

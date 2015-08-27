@@ -1,10 +1,12 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace CoCSharp
 {
     internal static class StringBuilderExtensions
     {
-        internal const string IndentString = "    ";
+        // increase fancyness
+        public const string IndentString = "    ";
 
         public static void Indent(this StringBuilder builder)
         {
@@ -13,7 +15,8 @@ namespace CoCSharp
 
         public static void Indent(this StringBuilder builder, int indentLevel)
         {
-            for (int i = 0; i < indentLevel; i++) builder.Append(IndentString);
+            for (int i = 0; i < indentLevel; i++) 
+                builder.Append(IndentString);
         }
 
         public static void Indent(this StringBuilder builder, object value)

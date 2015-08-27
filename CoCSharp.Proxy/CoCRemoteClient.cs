@@ -8,8 +8,8 @@ namespace CoCSharp.Proxy
     {
         public CoCRemoteClient(Socket connection)
         {
-            this.Connection = connection;
-            this.NetworkManager = new ProxyNetworkManager(connection);
+            Connection = connection;
+            NetworkManager = new ProxyNetworkManager(connection);
         }
 
         public string Username { get; set; }

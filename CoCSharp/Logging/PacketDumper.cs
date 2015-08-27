@@ -40,8 +40,8 @@ namespace CoCSharp.Logging
 
         public void LogPacket(IPacket packet, PacketDirection direction, byte[] decryptedPacket)
         {
-            if (!Active) 
-                return; // throw expection
+            //if (!Active) 
+            //    return; // throw expection
 
             var packetType = packet.GetType();
             var fileTime = DateTime.Now.ToString("[~HH.mm.ss.fff] ");

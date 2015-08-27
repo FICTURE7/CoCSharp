@@ -13,11 +13,12 @@ namespace CoCSharp.Networking
 
         public ProxyNetworkManager(Socket connection)
         {
-            this.Connection = connection;
-            this.CoCStream = new CoCStream(connection);
-            this.CoCCrypto = new CoCCrypto();
+            if (PacketDictionary == null)
+                InitializePacketDictionary(); 
 
-            if (PacketDictionary == null) InitializePacketDictionary(); // intialize dictionary
+            Connection = connection;
+            CoCStream = new CoCStream(connection);
+            CoCCrypto = new CoCCrypto();
         }
 
         public bool DataAvailable { get { return Connection.Available > 0; } }
@@ -149,6 +150,9 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AvatarProfileRequestPacket().ID, typeof(AvatarProfileRequestPacket)); // 14325
             PacketDictionary.Add(new AllianceChatMessageClientPacket().ID, typeof(AllianceChatMessageClientPacket)); // 14315
             PacketDictionary.Add(new ChatMessageClientPacket().ID, typeof(ChatMessageClientPacket)); // 14715
+            PacketDictionary.Add(new AllianceInfoRequestPacket().ID, typeof(AllianceInfoRequestPacket));
+            PacketDictionary.Add(new AvatarRankListRequestPacket().ID, typeof(AvatarRankListRequestPacket));
+            PacketDictionary.Add(new AvatarLocalRankListRequestPacket().ID, typeof(AvatarLocalRankListRequestPacket));
 
             // Clientbound
             PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
@@ -157,7 +161,11 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new OwnHomeDataPacket().ID, typeof(OwnHomeDataPacket)); // 24101
             PacketDictionary.Add(new AllianceChatMessageServerPacket().ID, typeof(AllianceChatMessageServerPacket)); // 24312
             PacketDictionary.Add(new ChatMessageServerPacket().ID, typeof(ChatMessageServerPacket)); // 24715
-            PacketDictionary.Add(new ClientCommandPacket().ID, typeof(ClientCommandPacket));
+            PacketDictionary.Add(new AllianceInfoResponsePacket().ID, typeof(AllianceInfoResponsePacket));
+            PacketDictionary.Add(new AvatarRankListResponsePacket().ID, typeof(AvatarRankListResponsePacket));
+            PacketDictionary.Add(new AvatarLocalRankListResponsePacket().ID, typeof(AvatarLocalRankListResponsePacket));
+            PacketDictionary.Add(new AllianceJoinRequestFailedPacket().ID, typeof(AllianceJoinRequestFailedPacket));
+            PacketDictionary.Add(new AvatarProfileResponsePacket().ID, typeof(AvatarProfileResponsePacket));
         }
     }
 }

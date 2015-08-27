@@ -12,7 +12,7 @@ namespace CoCSharp.Client
 #if DEBUG
             args = new string[]
             {
-                "52.24.108.178",
+                "gamea.clashofclans.com",
                 "9339"
             };
 #endif
@@ -33,10 +33,19 @@ namespace CoCSharp.Client
 
         private static void OnChatMessage(object sender, Events.ChatMessageEventArgs e)
         {
-            var message = e.ClanName == null ?
-                          string.Format("<{0}>: {1}", e.Username, e.Message) :
-                          string.Format("<[{0}]{1}>: {2}", e.ClanName, e.Username, e.Message);
-            Console.WriteLine(message);
+            if (e.ClanName == null)
+            {
+                Console.WriteLine("<{0}>: {1}", e.Username, e.Message);
+            }
+            else
+            {
+                Console.Write("<[");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write(e.ClanName);
+                Console.ResetColor();
+                Console.Write("]");
+                Console.WriteLine("{0}>: {1}", e.Username, e.Message);
+            }
         }
     }
 }

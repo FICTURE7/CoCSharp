@@ -15,9 +15,15 @@ namespace CoCSharp.Networking.Packets
         public string Username;
         private int Unknown3; // = 10 when member, = 11 when elder
         private int Unknown4;
-        public int MemberStatus;
+        public MemberStatusId MemberStatus;
         public TimeSpan MessageTime;
         public string Message;
+
+        public enum MemberStatusId
+        {
+            Elder = 1,
+            CoLeader = 4
+        };
 
         public void ReadPacket(PacketReader reader)
         {
@@ -37,7 +43,7 @@ namespace CoCSharp.Networking.Packets
                     Username = reader.ReadString();
                     Unknown3 = reader.ReadInt32();
                     Unknown4 = reader.ReadInt32();
-                    MemberStatus = reader.ReadInt32();
+                    MemberStatus = (MemberStatusId)reader.ReadInt32();
                     MessageTime = TimeSpan.FromSeconds(reader.ReadInt32());
                     Message = reader.ReadString();
                     break;
@@ -65,7 +71,7 @@ namespace CoCSharp.Networking.Packets
                     writer.WriteString(Username);
                     writer.WriteInt32(Unknown3);
                     writer.WriteInt32(Unknown4);
-                    writer.WriteInt32(MemberStatus);
+                    writer.WriteInt32((int)MemberStatus);
                     writer.WriteInt32((int)MessageTime.TotalSeconds);
                     writer.WriteString(Message);
                     break;
