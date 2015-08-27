@@ -95,7 +95,7 @@
     <Compile Include="Data\Compression\LzmaUtils.cs" />
     <Compile Include="Data\BuildingClassData.cs" />
     <Compile Include="Data\CreditData.cs" />
-    <Compile Include="Data\Csv\CsvSerializationException.cs" />
+    <Compile Include="Data\Csv\CsvException.cs" />
     <Compile Include="Data\Csv\CsvSerializerSettings.cs" />
     <Compile Include="Data\Csv\CsvIgnoreAttribute.cs" />
     <Compile Include="Data\Csv\CsvPropertyAttribute.cs" />
@@ -129,6 +129,7 @@
     <Compile Include="Data\TownHallLevelData.cs" />
     <Compile Include="Data\TrapData.cs" />
     <Compile Include="Data\WarData.cs" />
+    <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ICoCServer.cs" />
     <Compile Include="Logging\ExceptionLogger.cs" />
@@ -173,7 +174,15 @@
     <Compile Include="Networking\PacketExtractionFlags.cs" />
     <Compile Include="Networking\Packets\AllianceChatMessageClientPacket.cs" />
     <Compile Include="Networking\Packets\AllianceChatMessageServerPacket.cs" />
+    <Compile Include="Networking\Packets\AllianceInfoResponsePacket.cs" />
+    <Compile Include="Networking\Packets\AllianceInfoRequestPacket.cs" />
+    <Compile Include="Networking\Packets\AllianceJoinRequestFailedPacket.cs" />
+    <Compile Include="Networking\Packets\AvatarLocalRankListRequestPacket.cs" />
+    <Compile Include="Networking\Packets\AvatarLocalRankListResponsePacket.cs" />
     <Compile Include="Networking\Packets\AvatarProfileRequestPacket.cs" />
+    <Compile Include="Networking\Packets\AvatarProfileResponsePacket.cs" />
+    <Compile Include="Networking\Packets\AvatarRankListRequestPacket.cs" />
+    <Compile Include="Networking\Packets\AvatarRankListResponsePacket.cs" />
     <Compile Include="Networking\Packets\BindFacebookAccountPacket.cs" />
     <Compile Include="Networking\Packets\ChangeAvatarNamePacket.cs" />
     <Compile Include="Networking\Packets\ChatMessageClientPacket.cs" />
