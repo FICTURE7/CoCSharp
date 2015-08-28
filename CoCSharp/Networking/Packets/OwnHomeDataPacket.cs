@@ -104,7 +104,7 @@ namespace CoCSharp.Networking.Packets
             AllianceCastleLevel = reader.ReadInt32(); // -1 if not constructed
             AllianceCastleUnitCapacity = reader.ReadInt32();
             AllianceCastleUnitCount = reader.ReadInt32();
-            Avatar.TownhallLevel = reader.ReadInt32();
+            Avatar.TownHallLevel = reader.ReadInt32();
             Avatar.Username = reader.ReadString();
             FacebookID = reader.ReadString();
             Avatar.Level = reader.ReadInt32();

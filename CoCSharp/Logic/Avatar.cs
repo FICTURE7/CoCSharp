@@ -24,7 +24,7 @@ namespace CoCSharp.Logic
 
         public long ID { get; set; }
         public int Trophies { get; set; }
-        public int TownhallLevel { get; set; }
+        public int TownHallLevel { get; set; }
         public int Level { get; set; }
         public int Experience { get; set; }
         public int Gems { get; set; }
