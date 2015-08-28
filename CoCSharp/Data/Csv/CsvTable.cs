@@ -29,7 +29,7 @@ namespace CoCSharp.Data.Csv
         public CsvTable(string path)
         {
             Table = new DataTable();
-            FromFile(path);
+            Load(path);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace CoCSharp.Data.Csv
         public CsvTable(string path, bool compressed)
         {
             Table = new DataTable();
-            FromFile(path, compressed);
+            Load(path, compressed);
         }
 
         /// <summary>
@@ -64,10 +64,10 @@ namespace CoCSharp.Data.Csv
         /// Reads the specified .csv file from disk without compression.
         /// </summary>
         /// <param name="path">Path to the .csv file.</param>
-        public void FromFile(string path)
+        public void Load(string path)
         {
             var bytes = File.ReadAllBytes(path);
-            FromBytes(bytes);
+            Load(bytes);
         }
 
         /// <summary>
@@ -75,17 +75,17 @@ namespace CoCSharp.Data.Csv
         /// </summary>
         /// <param name="path">Path to the .csv file.</param>
         /// <param name="compressed">Whether the .csv file is compressed or not.</param>
-        public void FromFile(string path, bool compressed)
+        public void Load(string path, bool compressed)
         {
             var bytes = File.ReadAllBytes(path);
-            FromBytes(bytes, compressed);
+            Load(bytes, compressed);
         }
 
         /// <summary>
         /// Reads the specified .csv file from a <see cref="Byte"/> array without compression.
         /// </summary>
         /// <param name="bytes"><see cref="Byte"/> array of the .csv file.</param>
-        public void FromBytes(byte[] bytes)
+        public void Load(byte[] bytes)
         {
             var rawCsv = Encoding.UTF8.GetString(bytes);
             var rows = Regex.Split(rawCsv.Replace("\"", string.Empty), "\r\n");
@@ -132,7 +132,7 @@ namespace CoCSharp.Data.Csv
         /// </summary>
         /// <param name="bytes"><see cref="Byte"/> array of the .csv file.</param>
         /// <param name="compressed">>Whether the .csv file is compressed or not.</param>
-        public void FromBytes(byte[] bytes, bool compressed)
+        public void Load(byte[] bytes, bool compressed)
         {
             if (compressed)
             {
@@ -141,10 +141,10 @@ namespace CoCSharp.Data.Csv
                     mem.Write(bytes, 0, 9); // fix the header
                     mem.Write(new byte[4], 0, 4);
                     mem.Write(bytes, 9, bytes.Length - 9);
-                    FromBytes(LzmaUtils.Decompress(mem.ToArray()));
+                    Load(LzmaUtils.Decompress(mem.ToArray()));
                 }
             }
-            else FromBytes(bytes);
+            else Load(bytes);
         }
 
         /// <summary>
