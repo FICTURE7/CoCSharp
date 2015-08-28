@@ -14,13 +14,10 @@ namespace CoCSharp.Client
     {
         public delegate void PacketHandler(CoCClient client, IPacket packet);
 
-
-        //55846688979
-        //h7tnt78fpf97x4c4hmfscsr9kc8nxpsjsjadhmmz
         public CoCClient()
         {
-            UserID = 55846688979;
-            UserToken = "h7tnt78fpf97x4c4hmfscsr9kc8nxpsjsjadhmmz";
+            UserID = 0;
+            UserToken = null;
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
             PacketLogger = new PacketLogger()
             {
@@ -38,8 +35,8 @@ namespace CoCSharp.Client
         {
             get { return Connection.Connected; }
         }
-        public long UserID { get; private set; }
-        public string UserToken { get; private set; }
+        public long UserID { get; set; }
+        public string UserToken { get; set; }
         public PacketLogger PacketLogger { get; set; }
         public NetworkManagerAsync NetworkManager { get; set; }
 

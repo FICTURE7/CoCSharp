@@ -5,7 +5,10 @@ namespace CoCSharp.Proxy
 {
     public class ProxyConfiguration
     {
-        public ProxyConfiguration() { }
+        public ProxyConfiguration()
+        {
+            // Spaces
+        }
 
         public bool DeleteLogOnStartup { get; set; }
         public bool LogRawPacket { get; set; }

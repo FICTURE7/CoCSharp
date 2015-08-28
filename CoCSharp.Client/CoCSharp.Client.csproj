@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientConfiguration.cs" />
     <Compile Include="CoCClient.cs" />
     <Compile Include="Events\ChatMessageEventArgs.cs" />
     <Compile Include="Events\LoginEventArgs.cs" />

@@ -6,6 +6,7 @@ namespace CoCSharp.Client
     public class Program
     {
         public static CoCClient Client { get; set; }
+        public static ClientConfiguration Configuration { get; set; }
 
         public static void Main(string[] args)
         {
@@ -16,13 +17,21 @@ namespace CoCSharp.Client
                 "9339"
             };
 #endif
+            var port = -1;
+            var address = (IPAddress)null;
+            if (!TryGetPort(args, out port))
+                return;
+            if (!TryGetIPAddress(args, out address))
+                return;
+
+            Configuration = ClientConfiguration.LoadConfiguration("clientConfig.xml");
             Client = new CoCClient();
             Client.ChatMessage += OnChatMessage;
-            var ipAddresses = Dns.GetHostAddresses(args[0]);
-            var port = int.Parse(args[1]);
-            var endPoint = new IPEndPoint(ipAddresses[0], port);
-            Console.WriteLine("Connecting to {0}...", endPoint.Address);
-            Client.Connect(endPoint);
+            Client.UserID = Configuration.UserID;
+            Client.UserToken = Configuration.UserToken;
+
+            Console.WriteLine("Connecting to {0}:{1}...", address, port);
+            Client.Connect(new IPEndPoint(address, port));
 
             while (true)
             {
@@ -33,10 +42,7 @@ namespace CoCSharp.Client
 
         private static void OnChatMessage(object sender, Events.ChatMessageEventArgs e)
         {
-            if (e.ClanName == null)
-            {
-                Console.WriteLine("<{0}>: {1}", e.Username, e.Message);
-            }
+            if (e.ClanName == null) Console.WriteLine("<{0}>: {1}", e.Username, e.Message);
             else
             {
                 Console.Write("<[");
@@ -45,6 +51,52 @@ namespace CoCSharp.Client
                 Console.ResetColor();
                 Console.Write("]");
                 Console.WriteLine("{0}>: {1}", e.Username, e.Message);
+            }
+        }
+
+        private static bool TryGetPort(string[] args, out int port)
+        {
+            var lport = -1;
+            if (int.TryParse(args[1], out lport))
+            {
+                port = lport;
+                return true;
+            }
+            Console.WriteLine("Error: Invalid port number '{0}'", args[1]);
+            port = lport;
+            return false;
+        }
+
+        private static bool TryGetIPAddress(string[] args, out IPAddress address)
+        {
+            var laddress = (IPAddress)null;
+            if (IPAddress.TryParse(args[0], out laddress))
+            {
+                address = laddress;
+                return true;
+            }
+            Console.WriteLine("Trying to resolve Dns...");
+            if (TryResolve(args[0], out laddress))
+            {
+                address = laddress;
+                return true;
+            }
+            Console.WriteLine("Error: Failed to resolve Dns...");
+            address = laddress;
+            return false;
+        }
+
+        private static bool TryResolve(string hostAddr, out IPAddress address)
+        {
+            try
+            {
+                address = Dns.GetHostAddresses(hostAddr)[0];
+                return true;
+            }
+            catch
+            {
+                address = null;
+                return false;
             }
         }
     }
