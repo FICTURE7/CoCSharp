@@ -8,12 +8,14 @@ namespace CoCSharp.Client
     {
         public KeepAliveManager(CoCClient client)
         {
+            Delay = 5;
             Client = client;
             NextKeepAlive = DateTime.Now;
             LastKeepAlive = DateTime.MaxValue;
             KeepAliveThread = new Thread(UpdateKeepAlives);
         }
 
+        public int Delay { get; set; }
         public DateTime NextKeepAlive { get; private set; }
         public DateTime LastKeepAlive { get; private set; }
 
@@ -41,7 +43,7 @@ namespace CoCSharp.Client
                 {
                     Client.QueuePacket(new KeepAliveRequestPacket());
                     LastKeepAlive = DateTime.Now;
-                    NextKeepAlive = DateTime.Now.AddSeconds(5);
+                    NextKeepAlive = DateTime.Now.AddSeconds(Delay);
                 }
             }
         }

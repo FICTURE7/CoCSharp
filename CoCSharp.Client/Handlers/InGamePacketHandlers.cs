@@ -6,15 +6,30 @@ namespace CoCSharp.Client.Handlers
 {
     public static class InGamePacketHandlers
     {
-        public static void HandleChatMessageServer(CoCClient client, IPacket packet)
+        public static void HandleChatMessageServerPacket(CoCClient client, IPacket packet)
         {
             var cmsPacket = packet as ChatMessageServerPacket;
             client.OnChatMessage(new ChatMessageEventArgs(cmsPacket));
         }
 
+        public static void HandleOwnHomeDataPacket(CoCClient client, IPacket packet)
+        {
+            var ohdPacket = packet as OwnHomeDataPacket;
+            client.Home = ohdPacket.Home;
+            client.Avatar.Username = ohdPacket.Avatar.Username;
+            Console.Title = string.Format("[{0}] - {1}", ohdPacket.Avatar.Clan.Name, ohdPacket.Avatar.Username);
+            Console.WriteLine("Village Info: ");
+            Console.WriteLine("\tBuildings count: {0}", ohdPacket.Home.Buildings.Count);
+            Console.WriteLine("\tDecorations count: {0}", ohdPacket.Home.Decorations.Count);
+            Console.WriteLine("\tObstacles count: {0}", ohdPacket.Home.Obstacles.Count);
+            Console.WriteLine("\tTraps count: {0}", ohdPacket.Home.Traps.Count);
+            Console.WriteLine();
+        }
+
         public static void RegisterInGamePacketHandler(CoCClient client)
         {
-            client.RegisterPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServer);
+            client.RegisterPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServerPacket);
+            client.RegisterPacketHandler(new OwnHomeDataPacket(), HandleOwnHomeDataPacket);
         }
     }
 }

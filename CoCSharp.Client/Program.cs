@@ -27,8 +27,8 @@ namespace CoCSharp.Client
             Configuration = ClientConfiguration.LoadConfiguration("clientConfig.xml");
             Client = new CoCClient();
             Client.ChatMessage += OnChatMessage;
-            Client.UserID = Configuration.UserID;
-            Client.UserToken = Configuration.UserToken;
+            Client.Avatar.ID = Configuration.UserID;
+            Client.Avatar.Token = Configuration.UserToken;
 
             Console.WriteLine("Connecting to {0}:{1}...", address, port);
             Client.Connect(new IPEndPoint(address, port));
@@ -36,7 +36,7 @@ namespace CoCSharp.Client
             while (true)
             {
                 var message = Console.ReadLine();
-                Client.SendChatMessage(message);
+                Client.SendChatMessage(message); //TODO: Handle stuff interms of commands.
             }
         }
 
@@ -75,7 +75,7 @@ namespace CoCSharp.Client
                 address = laddress;
                 return true;
             }
-            Console.WriteLine("Trying to resolve Dns...");
+            Console.WriteLine("Resolving to resolve Dns...");
             if (TryResolve(args[0], out laddress))
             {
                 address = laddress;

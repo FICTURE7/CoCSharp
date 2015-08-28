@@ -1,6 +1,8 @@
 ﻿using CoCSharp.Client.Events;
 using CoCSharp.Client.Handlers;
+using CoCSharp.Data;
 using CoCSharp.Logging;
+using CoCSharp.Logic;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Packets;
 using System;
@@ -16,27 +18,29 @@ namespace CoCSharp.Client
 
         public CoCClient()
         {
-            UserID = 0;
-            UserToken = null;
+            Fingerprint = new Fingerprint();
+            Home = new Village();
+            Avatar = new Avatar();
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            PacketHandlers = new Dictionary<ushort, PacketHandler>();
+            KeepAliveManager = new KeepAliveManager(this);
             PacketLogger = new PacketLogger()
             {
                 LogConsole = false
             };
-            PacketHandlers = new Dictionary<ushort, PacketHandler>();
-            KeepAliveManager = new KeepAliveManager(this);
 
             LoginPacketHandlers.RegisterLoginPacketHandlers(this);
             InGamePacketHandlers.RegisterInGamePacketHandler(this);
         }
 
-        public Socket Connection { get; set; }
         public bool Connected
         {
             get { return Connection.Connected; }
         }
-        public long UserID { get; set; }
-        public string UserToken { get; set; }
+        public Socket Connection { get; set; }
+        public Village Home { get; set; }
+        public Avatar Avatar { get; set; }
+        public Fingerprint Fingerprint { get; set; }
         public PacketLogger PacketLogger { get; set; }
         public NetworkManagerAsync NetworkManager { get; set; }
 
@@ -60,11 +64,12 @@ namespace CoCSharp.Client
             // ae9b056807ac8bfa58a3e879b1f1601ff17d1df5
             if (e.SocketError != SocketError.Success)
                 throw new SocketException((int)e.SocketError);
+
             NetworkManager = new NetworkManagerAsync(e.ConnectSocket, HandleReceivedPacket, HandleReceicedPacketFailed);
             QueuePacket(new LoginRequestPacket()
             {
-                UserID = this.UserID,
-                UserToken = this.UserToken,
+                UserID = Avatar.ID,
+                UserToken = Avatar.Token,
                 ClientMajorVersion = 7,
                 ClientContentVersion = 0,
                 ClientMinorVersion = 156,

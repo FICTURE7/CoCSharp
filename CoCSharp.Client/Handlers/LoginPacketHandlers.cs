@@ -28,7 +28,7 @@ namespace CoCSharp.Client.Handlers
         public static void HandleLoginSuccessPacket(CoCClient client, IPacket packet)
         {
             var lsPacket = packet as LoginSuccessPacket;
-            Console.WriteLine("Successfully logged in!");
+            Console.WriteLine("Successfully logged in!\r\n");
         }
 
         public static void HandleUpdateKeyPacket(CoCClient client, IPacket packet)

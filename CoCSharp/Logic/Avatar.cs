@@ -7,7 +7,8 @@ namespace CoCSharp.Logic
     {
         public Avatar()
         {
-            // Space
+            ID = 0;
+            Token = null;
         }
 
         public Avatar(long id)
