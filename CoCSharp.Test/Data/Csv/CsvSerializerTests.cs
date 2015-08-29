@@ -19,12 +19,12 @@ namespace CoCSharp.Test.Csv.Data
         [Test]
         public void TestDeserialize()
         {
-            var objs = CsvSerializer.Deserialize(_Table, typeof(CharacterData));
-            foreach (var obj in objs)
-            {
-                var data = (CoCData)obj;
-                Console.WriteLine(data.ID);
-            }
+            //var objs = CsvSerializer.Deserialize(_Table, typeof(CharacterData));
+            //foreach (var obj in objs)
+            //{
+            //    var data = (CoCData)obj;
+            //    Console.WriteLine(data.ID);
+            //}
         }
     }
 }
