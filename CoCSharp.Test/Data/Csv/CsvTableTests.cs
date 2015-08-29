@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Data.Csv;
 using NUnit.Framework;
+using System;
 using System.IO;
 using System.Text;
 
@@ -12,11 +13,10 @@ namespace CoCSharp.Test.Csv.Data
         public void TestUncompressedCsvTable()
         {
             var table = new CsvTable("Resources/characters.csv");
-            //WriteTableToTxt(table, "characters_parsed.txt");
-            //table.Save("saved_characters.csv");
+            PrintTable(table);
         }
 
-        private void WriteTableToTxt(CsvTable table, string path)
+        private void PrintTable(CsvTable table)
         {
             var strBuilder = new StringBuilder();
             for (int i = 0; i < table.Columns.Count; i++)
@@ -29,7 +29,7 @@ namespace CoCSharp.Test.Csv.Data
                     strBuilder.Append(table.Rows[i].ItemArray[k].ToString().PadRight(100));
                 strBuilder.AppendLine();
             }
-            File.WriteAllText(path, strBuilder.ToString());
+            Console.WriteLine(strBuilder.ToString());
         }
     }
 }
