@@ -239,7 +239,7 @@ namespace CoCSharp.Networking.Packets
                 var elixir = reader.ReadInt32();
             }
 
-            Unknown26 = reader.ReadInt32(); // troops donated?
+            Unknown26 = reader.ReadInt32();
             Unknown27 = reader.ReadInt32();
             Unknown28 = reader.ReadInt32();
         }

@@ -1,8 +1,8 @@
-﻿namespace CoCSharp.Networking.Commands
+﻿namespace CoCSharp.Networking.Packets.Commands
 {
-    public class MoveBuildingCommand : ICommand
+    public class BuyBuildingCommand : ICommand
     {
-        public int ID { get { return 0x1F5; } }
+        public int ID { get { return 0x1F4; } }
 
         public int X;
         public int Y;

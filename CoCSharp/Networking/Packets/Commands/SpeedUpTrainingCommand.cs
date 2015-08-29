@@ -1,8 +1,8 @@
-﻿namespace CoCSharp.Networking.Commands
+﻿namespace CoCSharp.Networking.Packets.Commands
 {
-    public class CollectResourcesCommand : ICommand
+    public class SpeedUpTrainingCommand : ICommand
     {
-        public int ID { get { return 0x1FA; } }
+        public int ID { get { return 0x201; } }
 
         public int BuildingID;
         private int Unknown1;

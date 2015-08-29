@@ -19,11 +19,8 @@ namespace CoCSharp.Server
         public IPEndPoint EndPoint { get; set; }
         public List<CoCRemoteClient> Clients { get; set; }
 
-        private bool ShuttingDown { get; set; }
-
         public void Start(IPEndPoint endPoint)
         {
-            ShuttingDown = false;
             EndPoint = endPoint;
             Listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             Listener.Bind(endPoint);

@@ -1,4 +1,4 @@
-﻿using CoCSharp.Networking.Commands;
+﻿using CoCSharp.Networking.Packets.Commands;
 using System;
 using System.Collections.Generic;
 

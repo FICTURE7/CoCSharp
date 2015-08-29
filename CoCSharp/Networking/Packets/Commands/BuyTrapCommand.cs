@@ -1,4 +1,4 @@
-﻿namespace CoCSharp.Networking.Commands
+﻿namespace CoCSharp.Networking.Packets.Commands
 {
     public class BuyTrapCommand : ICommand
     {

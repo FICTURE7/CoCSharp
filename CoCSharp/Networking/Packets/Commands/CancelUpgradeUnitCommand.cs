@@ -1,8 +1,8 @@
-﻿namespace CoCSharp.Networking.Commands
+﻿namespace CoCSharp.Networking.Packets.Commands
 {
-    public class CancelConstructionCommand : ICommand
+    public class CancelUpgradeUnitCommand : ICommand
     {
-        public int ID { get { return 0x1F9; } }
+        public int ID { get { return 0x203; } }
 
         public int BuildingID;
         private int Unknown1;

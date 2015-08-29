@@ -1,14 +1,15 @@
-﻿namespace CoCSharp.Networking.Commands
+﻿namespace CoCSharp.Networking.Packets.Commands
 {
-    public class TrainUnitCommand : ICommand
+    public class CancelUnitProductionCommand : ICommand
     {
-        public int ID { get { return 0x1FC; } }
+        public int ID { get { return 0x1FD; } }
 
         public int BuildingID;
         private int Unknown1;
         public int CharacterID;
         public int Count;
         private int Unknown2;
+        private int Unknown3;
 
         public void ReadCommand(PacketReader reader)
         {
@@ -17,6 +18,7 @@
             CharacterID = reader.ReadInt32();
             Count = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
+            Unknown3 = reader.ReadInt32();
         }
 
         public void WriteCommand(PacketWriter writer)
@@ -26,6 +28,7 @@
             writer.WriteInt32(CharacterID);
             writer.WriteInt32(Count);
             writer.WriteInt32(Unknown2);
+            writer.WriteInt32(Unknown3);
         }
     }
 }
