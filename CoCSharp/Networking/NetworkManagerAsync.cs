@@ -68,9 +68,9 @@ namespace CoCSharp.Networking
         /// </summary>
         public Socket Connection { get; private set; }
         /// <summary>
-        /// Gets the seed for encryption.
+        /// Gets or sets the seed for encryption.
         /// </summary>
-        public int Seed { get; private set; }
+        public int Seed { get; set; }
 
         private CoCCrypto CoCCrypto { get; set; }
         private PacketReceivedHandler PacketReceived { get; set; }
