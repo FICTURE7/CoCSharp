@@ -13,6 +13,7 @@
             // Space
         }
 
+        public string Name { get; set; }
         public string TID { get; set; }
         public string InfoTID { get; set; }
         public string SWF { get; set; }
