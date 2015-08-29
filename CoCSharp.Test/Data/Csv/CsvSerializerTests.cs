@@ -13,7 +13,7 @@ namespace CoCSharp.Test.Csv.Data
         [SetUp]
         public void Initialize()
         {
-            _Table = new CsvTable("Resources/characters.csv");
+            // _Table = new CsvTable("Resources//characters.csv");
         }
 
         [Test]
