@@ -4,9 +4,9 @@ ehthumbs.db
 bin/
 obj/
 packages/
-TestResults/
 Scripts/*.txt
 Scripts/*.py~
+TestResult.xml
 
 # Folder config file
 Desktop.ini
