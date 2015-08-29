@@ -5,6 +5,6 @@
     /// </summary>
     public abstract class CoCData
     {
-        // Space
+        public int ID { get; set; }
     }
 }
