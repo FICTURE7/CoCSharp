@@ -102,7 +102,6 @@ namespace CoCSharp.Networking
             CoCCrypto.UpdateCiphers(seed, key);
         }
 
-        //TODO: Implement this in CoCStream
         private byte[] ExtractRawPacket(int packetLength)
         {
             /* Extract packet body + header from CoCStream.ReadBuffer and 
@@ -118,7 +117,6 @@ namespace CoCSharp.Networking
             return packetData;
         }
 
-        //TODO: Implement this in CoCStream
         private byte[] GetPacketBody(int packetLength)
         {
             /* Get packet body bytes from CoCStream.ReadBuffer without 
