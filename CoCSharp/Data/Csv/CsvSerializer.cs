@@ -23,13 +23,14 @@ namespace CoCSharp.Data.Csv
                 throw new ArgumentNullException("table");
             if (objectType == null)
                 throw new ArgumentNullException("objectType");
-            if (!objectType.IsAssignableFrom(typeof(CoCData)))
-                throw new ArgumentException("objectType is not a assignable from type CoCData.");
+            if (!objectType.IsSubclassOf(typeof(CoCData)))
+                throw new ArgumentException("objectType is not a subclass of type CoCData.");
 
             var rows = table.Rows;
             var properties = objectType.GetProperties();
             var parentObj = (object)null;
             var objList = new List<object>();
+            var id = -1;
 
             for (int x = 0; x < rows.Count; x++)
             {
@@ -37,6 +38,12 @@ namespace CoCSharp.Data.Csv
                 for (int i = 0; i < properties.Length; i++) // set property value loop
                 {
                     var property = properties[i];
+                    if (property.DeclaringType != objectType)
+                    {
+                        property.SetMethod.Invoke(childObj, new object[] { id });
+                        continue;
+                    }
+
                     if (HasIgnoreAttribute(property))
                         continue; // ignore CsvIgnoreAttribute
 
@@ -47,13 +54,16 @@ namespace CoCSharp.Data.Csv
                     if (parentObj != null && value == DBNull.Value) // get data from parent
                         parameters = new object[] { property.GetMethod.Invoke(parentObj, null) };
                     else if (value == DBNull.Value)
-                        continue;
+                        continue; // keep default value
 
                     var isParent = property.Name == "Name" && value != DBNull.Value;
                     property.SetMethod.Invoke(childObj, parameters);
 
                     if (isParent)
+                    {
+                        id += 1;
                         parentObj = childObj;
+                    }
                 }
                 objList.Add(childObj);
             }
