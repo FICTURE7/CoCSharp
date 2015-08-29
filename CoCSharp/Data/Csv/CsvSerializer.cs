@@ -19,6 +19,13 @@ namespace CoCSharp.Data.Csv
         /// <returns>Returns the deserialized object array.</returns>
         public static object[] Deserialize(CsvTable table, Type objectType)
         {
+            if (table == null)
+                throw new ArgumentNullException("table");
+            if (objectType == null)
+                throw new ArgumentNullException("objectType");
+            if (!objectType.IsAssignableFrom(typeof(CoCData)))
+                throw new ArgumentException("objectType is not a assignable from type CoCData.");
+
             var rows = table.Rows;
             var properties = objectType.GetProperties();
             var parentObj = (object)null;
