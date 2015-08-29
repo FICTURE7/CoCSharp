@@ -1,10 +1,5 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Data.Csv;
-using CoCSharp.Logic;
-using System;
-using System.IO;
+﻿using System;
 using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 
 namespace CoCSharp.Server

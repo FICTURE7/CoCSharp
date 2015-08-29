@@ -17,18 +17,17 @@ namespace CoCSharp.Server
             Server = server;
             NetworkManager = new NetworkManagerAsync(connection, HandlePacketReceived, HandleReceicedPacketFailed);
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
+            Avatar = new Avatar();
+            Home = new Village();
         }
 
-        public string Username { get; set; }
-        public string UserToken { get; set; }
         public string FingerprintHash { get; set; }
-        public long UserID { get; set; }
-        public int Seed { get; set; }
         public bool LoggedIn { get; set; }
         public Village Home { get; set; }
+        public Avatar Avatar { get; set; }
         public CoCServer Server { get; set; }
-        public Socket Connection { get; set; }
         public NetworkManagerAsync NetworkManager { get; set; }
+        public Socket Connection { get; set; }
 
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
 

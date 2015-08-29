@@ -1,4 +1,5 @@
-﻿using CoCSharp.Networking.Packets;
+﻿using CoCSharp.Logic;
+using CoCSharp.Networking.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,10 @@ namespace CoCSharp.Server.Handlers
     {
         public static void HandleLoginRequestPacket(CoCRemoteClient client, CoCServer server, IPacket packet)
         {
-            client.Seed = ((LoginRequestPacket)packet).Seed;
+            client.NetworkManager.Seed = ((LoginRequestPacket)packet).Seed;
             client.QueuePacket(new UpdateKeyPacket()
             {
-                Key = new byte[] { 23, 32, 45, 13, 54, 43 }
+                Key = new byte[] { 23, 32, 45, 13, 54, 43 } // should generate random.
             });
             client.QueuePacket(new LoginSuccessPacket()
             {
@@ -33,6 +34,20 @@ namespace CoCSharp.Server.Handlers
                 PlayTime = new TimeSpan(0, 0, 0),
                 RevisionVersion = 0,
                 CountryCode = "MU"
+            });
+            client.QueuePacket(new OwnHomeDataPacket()
+            {
+                LastVisit = TimeSpan.FromSeconds(0),
+                Unknown1 = -1,
+                Timestamp = DateTime.UtcNow,
+                Unknown2 = 0,
+                UserID1 = 12312332,
+                ShieldDuration = TimeSpan.FromSeconds(10),
+                Unknown3 = 1200,
+                Unknown4 = 60,
+                Compressed = true,
+                Home = new Village(),
+                Unknown6 = 0
             });
         }
 

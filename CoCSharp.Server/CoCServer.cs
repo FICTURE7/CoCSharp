@@ -1,4 +1,5 @@
-﻿using CoCSharp.Server.Handlers;
+﻿using CoCSharp.Logic;
+using CoCSharp.Server.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -13,6 +14,7 @@ namespace CoCSharp.Server
             Clients = new List<CoCRemoteClient>();
         }
 
+        public Avatar NewAvatar { get { return new Avatar(); } }
         public Socket Listener { get; set; }
         public IPEndPoint EndPoint { get; set; }
         public List<CoCRemoteClient> Clients { get; set; }

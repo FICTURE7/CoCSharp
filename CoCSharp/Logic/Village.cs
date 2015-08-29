@@ -98,7 +98,7 @@ namespace CoCSharp.Logic
         /// 
         /// </summary>
         /// <param name="reader"></param>
-        public void ReadFromPacketReader(PacketReader reader)
+        public void Read(PacketReader reader)
         {
             var homeData = reader.ReadByteArray();
             if (homeData == null)
@@ -118,7 +118,7 @@ namespace CoCSharp.Logic
         /// 
         /// </summary>
         /// <param name="writer"></param>
-        public void WriteToPacketWriter(PacketWriter writer)
+        public void Write(PacketWriter writer)
         {
             var json = ToJson();
             var decompressedLength = json.Length;

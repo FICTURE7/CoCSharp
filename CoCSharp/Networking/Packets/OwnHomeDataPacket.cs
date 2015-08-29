@@ -53,7 +53,6 @@ namespace CoCSharp.Networking.Packets
         public void ReadPacket(PacketReader reader)
         {
             var offset = 0x2A;
-            File.WriteAllBytes("OwnHomePacket dump", ((MemoryStream)reader.BaseStream).ToArray());
             LastVisit = TimeSpan.FromSeconds(reader.ReadInt32());
             Unknown1 = reader.ReadInt32();
             Timestamp = DateTimeConverter.FromUnixTimestamp(reader.ReadInt32());
@@ -64,7 +63,7 @@ namespace CoCSharp.Networking.Packets
             Unknown4 = reader.ReadInt32();
             Compressed = reader.ReadBoolean();
             Home = new Village();
-            Home.ReadFromPacketReader(reader);
+            Home.Read(reader);
 
             Avatar = new Avatar();
             // Seems like a whole object
@@ -256,7 +255,7 @@ namespace CoCSharp.Networking.Packets
             writer.WriteInt32(Unknown3);
             writer.WriteInt32(Unknown4);
             writer.WriteBoolean(Compressed);
-            Home.WriteToPacketWriter(writer);
+            Home.Write(writer);
             writer.WriteInt32(Unknown6);
             writer.WriteInt64(UserID1);
             writer.WriteInt64(UserID2);
