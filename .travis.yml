@@ -6,5 +6,5 @@ install:
     - nuget restore CoCSharp.sln
     - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
-    - xbuild /p:Configuration=Release CoCSharp.sln
-    - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./CoCSharp.Test/bin/Release/CoCSharp.Test.dll
+    - xbuild CoCSharp.sln
+    - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./CoCSharp.Test/bin/Debug/CoCSharp.Test.dll
