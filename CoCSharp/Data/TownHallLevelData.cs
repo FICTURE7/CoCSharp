@@ -14,7 +14,6 @@ namespace CoCSharp.Data
             // Space
         }
 
-        //TODO: Add CsvPropertyAttribute to some of those properties.
         public string Name { get; set; }
         public int AttackCost { get; set; }
         public int ResourceStorageLootPercentage { get; set; }
