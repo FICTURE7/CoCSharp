@@ -11,7 +11,7 @@
         public int ClientMinorVersion;
         public string FingerprintHash;
 
-        private string Unknown1;
+        public string Unknown1;
 
         public string OpenUDID;
         public string MacAddress;
@@ -19,10 +19,10 @@
         public int LocaleKey;
         public string Language;
         public string AdvertisingGUID;
-        public string OsVersion;
+        public string OSVersion;
 
-        private byte Unknown2;
-        private string Unknown3;
+        public byte Unknown2;
+        public string Unknown3;
 
         public bool IsAdvertisingTrackingEnabled;
         public string AndroidDeviceID;
@@ -47,9 +47,9 @@
             LocaleKey = reader.ReadInt32();
             Language = reader.ReadString();
             AdvertisingGUID = reader.ReadString();
-            OsVersion = reader.ReadString();
+            OSVersion = reader.ReadString();
 
-            Unknown2 = (byte)reader.ReadByte();
+            Unknown2 = reader.ReadByte();
             Unknown3 = reader.ReadString();
 
             AndroidDeviceID = reader.ReadString();
@@ -68,7 +68,7 @@
             writer.WriteInt32(ClientMinorVersion);
             writer.WriteString(FingerprintHash);
 
-            writer.WriteString(""); // Unknown 1
+            writer.WriteString(Unknown1);
 
             writer.WriteString(OpenUDID);
             writer.WriteString(MacAddress);
@@ -76,10 +76,10 @@
             writer.WriteInt32(LocaleKey);
             writer.WriteString(Language);
             writer.WriteString(AdvertisingGUID);
-            writer.WriteString(OsVersion);
+            writer.WriteString(OSVersion);
 
-            writer.WriteByte(1); // Unknown 2
-            writer.WriteString(""); // Unknown 3
+            writer.WriteByte(Unknown2);
+            writer.WriteString(Unknown3);
 
             writer.WriteString(AndroidDeviceID);
             writer.WriteString(FacebookDistributionID);
