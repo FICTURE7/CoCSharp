@@ -5,7 +5,7 @@
         public ushort ID { get { return 0x27E4; } }
 
         public string NewName;
-        private bool Unknown1;
+        public bool Unknown1;
 
         public void ReadPacket(PacketReader reader)
         {
@@ -16,7 +16,7 @@
         public void WritePacket(PacketWriter writer)
         {
             writer.WriteString(NewName);
-            writer.WriteBoolean(true); // Unknown1
+            writer.WriteBoolean(Unknown1);
         }
     }
 }
