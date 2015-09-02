@@ -2,7 +2,7 @@
 {
     public class ServerErrorPacket : IPacket
     {
-        public ushort ID { get { return 0x5e33; } }
+        public ushort ID { get { return 0x5E33; } }
 
         public string ErrorMessage;
 
