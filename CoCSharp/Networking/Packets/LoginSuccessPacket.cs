@@ -7,7 +7,7 @@ namespace CoCSharp.Networking.Packets
         public ushort ID { get { return 0x4E88; } }
 
         public long UserID;
-        public long UserID2;
+        public long UserID1;
         public string UserToken;
         public string FacebookID;
         public string GameCenterID;
@@ -28,7 +28,7 @@ namespace CoCSharp.Networking.Packets
         public void ReadPacket(PacketReader reader)
         {
             UserID = reader.ReadInt64();
-            UserID2 = reader.ReadInt64();
+            UserID1 = reader.ReadInt64();
             UserToken = reader.ReadString();
             FacebookID = reader.ReadString();
             GameCenterID = reader.ReadString();
@@ -54,7 +54,7 @@ namespace CoCSharp.Networking.Packets
         public void WritePacket(PacketWriter writer)
         {
             writer.WriteInt64(UserID);
-            writer.WriteInt64(UserID2);
+            writer.WriteInt64(UserID1);
             writer.WriteString(UserToken);
             writer.WriteString(FacebookID);
             writer.WriteString(GameCenterID);
