@@ -5,8 +5,8 @@
         public ushort ID { get { return 0x37F5; } }
 
         public long UserID;
-        private long UserID2;
-        private byte Unknown1;
+        public long UserID2;
+        public byte Unknown1;
 
         public void ReadPacket(PacketReader reader)
         {
