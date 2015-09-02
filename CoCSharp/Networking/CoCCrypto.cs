@@ -30,6 +30,7 @@ namespace CoCSharp.Networking
         {
             if (key == null)
                 throw new ArgumentNullException("key");
+
             InitializeCiphers(key);
         }
 
@@ -45,6 +46,7 @@ namespace CoCSharp.Networking
         {
             if (data == null)
                 throw new ArgumentNullException("data");
+
             for (int k = 0; k < data.Length; k++)
                 data[k] ^= Encryptor.PRGA();
         }
@@ -58,6 +60,7 @@ namespace CoCSharp.Networking
         {
             if (data == null)
                 throw new ArgumentNullException("data");
+
             for (int k = 0; k < data.Length; k++)
                 data[k] ^= Decryptor.PRGA();
         }
@@ -72,9 +75,21 @@ namespace CoCSharp.Networking
         {
             if (serverNonce == null)
                 throw new ArgumentNullException("serverNonce");
+
             var newNonce = ScrambleNonce(clientSeed, serverNonce);
             var key = InitialKey + newNonce;
             InitializeCiphers(key);
+        }
+
+        /// <summary>
+        /// Generates a random byte array of atleast 20 bytes long.
+        /// </summary>
+        /// <returns>The random byte array.</returns>
+        public static byte[] CreateRandomByteArray()
+        {
+            var buffer = new byte[MathHelper.Random.Next(20)];
+            MathHelper.Random.NextBytes(buffer);
+            return buffer;
         }
 
         /// <summary>
@@ -97,7 +112,7 @@ namespace CoCSharp.Networking
         {
             var scrambler = new Scrambler(clientSeed);
             var byte100 = 0;
-            for (int i = 0; i < 100; i++) 
+            for (int i = 0; i < 100; i++)
                 byte100 = scrambler.GetByte();
             var scrambled = string.Empty;
             for (int i = 0; i < serverNonce.Length; i++)
