@@ -6,22 +6,22 @@
 
         public string Message;
         public string Username;
-        private int Unknown1;
-        private int Unknown2;
+        public int Level;
+        public int League;
         public long UserID;
-        private long UserID2;
+        public long UserID2;
         public bool HasClan;
         public long ClanID;
         public string ClanName;
-        private int Unknown3;
+        public int Unknown3;
 
         public void ReadPacket(PacketReader reader)
         {
             Message = reader.ReadString();
             Username = reader.ReadString();
 
-            Unknown1 = reader.ReadInt32();
-            Unknown2 = reader.ReadInt32();
+            Level = reader.ReadInt32();
+            League = reader.ReadInt32();
 
             UserID = reader.ReadInt64();
             UserID2 = reader.ReadInt64();
@@ -39,8 +39,8 @@
             writer.WriteString(Message);
             writer.WriteString(Username);
 
-            writer.WriteInt32(Unknown1);
-            writer.WriteInt32(Unknown2);
+            writer.WriteInt32(Level);
+            writer.WriteInt32(League);
 
             writer.WriteInt64(UserID);
             writer.WriteInt64(UserID2);
