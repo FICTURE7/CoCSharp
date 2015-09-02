@@ -9,10 +9,10 @@ namespace CoCSharp.Networking.Packets
         public string ClanName;
         public int Unknown1;
         public int Unknown2;
-        public int MembersCount; // memberscount
+        public int MembersCount;
         public int TotalPoints;
         public int RequiedTrophies;
-        public int WarsWon; // warswon
+        public int WarsWon;
         public int Level;
         public int Unknown3;
         public int Sheild;
