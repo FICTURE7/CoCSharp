@@ -6,7 +6,7 @@
     public interface IPacket // IMessage
     {
         /// <summary>
-        /// ID of packet.
+        /// Gets the ID of the packet.
         /// </summary>
         ushort ID { get; }
 
