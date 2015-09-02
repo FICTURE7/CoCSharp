@@ -4,6 +4,7 @@ namespace CoCSharp
 {
     internal static class MathHelper
     {
-        public static Random Random = new Random();
+        private static Random _Random = new Random();
+        public static Random Random { get { return _Random; } }
     }
 }
