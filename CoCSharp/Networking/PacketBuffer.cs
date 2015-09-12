@@ -5,7 +5,8 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Provides methods to extract packets from a <see cref="m_SocketAsyncEventArgs"/> object.
+    /// Provides methods to extract packets from a <see cref="SocketAsyncEventArgs"/> object or <see cref="Byte"/>
+    /// array.
     /// </summary>
     public class PacketBuffer
     {
@@ -18,7 +19,7 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PacketBuffer"/> class with the specified
-        /// <see cref="m_SocketAsyncEventArgs"/>.
+        /// <see cref="SocketAsyncEventArgs"/>.
         /// </summary>
         /// <param name="args"></param>
         /// <exception cref="System.ArgumentNullException"/>
@@ -38,14 +39,14 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PacketBuffer"/> class with the specified
-        /// <see cref="m_SocketAsyncEventArgs"/>.
+        /// <see cref="Byte"/> array.
         /// </summary>
         /// <param name="args"></param>
         /// <exception cref="System.ArgumentNullException"/>
         public PacketBuffer(byte[] buffer)
         {
             if (buffer == null)
-                throw new ArgumentNullException("args");
+                throw new ArgumentNullException("buffer");
 
             m_InitializedFromByteArray = false;
             m_OriginalBufferSize = buffer.Length;
