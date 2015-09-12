@@ -5,7 +5,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Provides methods to extract packets from a <see cref="SocketAsyncEventArgs"/> object.
+    /// Provides methods to extract packets from a <see cref="m_SocketAsyncEventArgs"/> object.
     /// </summary>
     public class PacketBuffer
     {
@@ -18,7 +18,7 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PacketBuffer"/> class with the specified
-        /// <see cref="SocketAsyncEventArgs"/>.
+        /// <see cref="m_SocketAsyncEventArgs"/>.
         /// </summary>
         /// <param name="args"></param>
         /// <exception cref="System.ArgumentNullException"/>
@@ -28,30 +28,44 @@ namespace CoCSharp.Networking
                 throw new ArgumentNullException("args");
 
             var buffer = new byte[65535];
-            OriginalBufferSize = buffer.Length;
-            SocketAsyncEventArgs = args;
+            m_InitializedFromByteArray = false;
+            m_OriginalBufferSize = buffer.Length;
+            m_SocketAsyncEventArgs = args;
+
             args.UserToken = this;
             args.SetBuffer(buffer, 0, buffer.Length);
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PacketBuffer"/> class with the specified
+        /// <see cref="m_SocketAsyncEventArgs"/>.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="System.ArgumentNullException"/>
+        public PacketBuffer(byte[] buffer)
+        {
+            if (buffer == null)
+                throw new ArgumentNullException("args");
+
+            m_InitializedFromByteArray = false;
+            m_OriginalBufferSize = buffer.Length;
+        }
+
+        /// <summary>
         /// Gets the packet buffer bytes.
         /// </summary>
-        public byte[] Buffer { get { return SocketAsyncEventArgs.Buffer; } }
-        /// <summary>
-        /// 
-        /// </summary>
-        public SocketAsyncEventArgs SocketAsyncEventArgs { get; private set; }
-
-        private int OriginalBufferSize { get; set; }
-
-        /// <summary>
-        /// Clears the buffer.
-        /// </summary>
-        public void Clear()
+        public byte[] Buffer
         {
-            Array.Clear(Buffer, 0, Buffer.Length);
+            get
+            {
+                return m_InitializedFromByteArray == true ? m_Buffer : m_SocketAsyncEventArgs.Buffer;
+            }
         }
+
+        private SocketAsyncEventArgs m_SocketAsyncEventArgs = null;
+        private bool m_InitializedFromByteArray = false;
+        private int m_OriginalBufferSize = -1;
+        private byte[] m_Buffer = null;
 
         /// <summary>
         /// Extracts the packet with the specified bitmask of <see cref="PacketExtractionFlags"/> enum.
@@ -75,8 +89,11 @@ namespace CoCSharp.Networking
                 {
                     var buffer = new byte[Buffer.Length - (packetLength + HeaderSize)];
                     Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
-                    Array.Resize(ref buffer, OriginalBufferSize);
-                    SocketAsyncEventArgs.SetBuffer(buffer, 0, OriginalBufferSize);
+                    Array.Resize(ref buffer, m_OriginalBufferSize);
+                    if (!m_InitializedFromByteArray)
+                        m_SocketAsyncEventArgs.SetBuffer(buffer, 0, m_OriginalBufferSize);
+                    else
+                        m_Buffer = buffer;
                 }
                 return packetStream.ToArray();
             }
