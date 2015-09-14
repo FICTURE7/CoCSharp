@@ -17,7 +17,10 @@ namespace CoCSharp.Client.Handlers
             var ohdPacket = packet as OwnHomeDataPacket;
             client.Home = ohdPacket.Home;
             client.Avatar.Username = ohdPacket.Avatar.Username;
-            Console.Title = string.Format("[{0}] - {1}", ohdPacket.Avatar.Clan.Name, ohdPacket.Avatar.Username);
+            if (ohdPacket.Avatar.Clan != null)
+                Console.Title = string.Format("[{0}] - {1}", ohdPacket.Avatar.Clan.Name, ohdPacket.Avatar.Username);
+            else
+                Console.Title = string.Format("[NO-CLAN] - {1}", ohdPacket.Avatar.Username);
             Console.WriteLine("Village Info: ");
             Console.WriteLine("\tBuildings count: {0}", ohdPacket.Home.Buildings.Count);
             Console.WriteLine("\tDecorations count: {0}", ohdPacket.Home.Decorations.Count);
@@ -26,10 +29,17 @@ namespace CoCSharp.Client.Handlers
             Console.WriteLine();
         }
 
+        public static void HandleServerErrorPacket(CoCClient client, IPacket packet)
+        {
+            var errPacket = packet as ServerErrorPacket;
+            Console.WriteLine("Server Error: {0}", errPacket.ErrorMessage);
+        }
+
         public static void RegisterInGamePacketHandler(CoCClient client)
         {
             client.RegisterPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServerPacket);
             client.RegisterPacketHandler(new OwnHomeDataPacket(), HandleOwnHomeDataPacket);
+            client.RegisterPacketHandler(new ServerErrorPacket(), HandleServerErrorPacket);
         }
     }
 }
