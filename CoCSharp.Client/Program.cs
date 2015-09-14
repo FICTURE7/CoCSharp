@@ -75,7 +75,7 @@ namespace CoCSharp.Client
                 address = laddress;
                 return true;
             }
-            Console.WriteLine("Resolving to resolve Dns...");
+            Console.WriteLine("Trying to resolve Dns...");
             if (TryResolve(args[0], out laddress))
             {
                 address = laddress;
