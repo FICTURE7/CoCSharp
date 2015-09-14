@@ -20,7 +20,7 @@ namespace CoCSharp.Client.Handlers
             if (ohdPacket.Avatar.Clan != null)
                 Console.Title = string.Format("[{0}] - {1}", ohdPacket.Avatar.Clan.Name, ohdPacket.Avatar.Username);
             else
-                Console.Title = string.Format("[NO-CLAN] - {1}", ohdPacket.Avatar.Username);
+                Console.Title = string.Format("[NO-CLAN] - {0}", ohdPacket.Avatar.Username);
             Console.WriteLine("Village Info: ");
             Console.WriteLine("\tBuildings count: {0}", ohdPacket.Home.Buildings.Count);
             Console.WriteLine("\tDecorations count: {0}", ohdPacket.Home.Decorations.Count);
