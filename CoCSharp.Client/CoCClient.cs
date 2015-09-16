@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using CoCSharp.Client.API;
 
 namespace CoCSharp.Client
 {
@@ -29,7 +28,7 @@ namespace CoCSharp.Client
             {
                 LogConsole = false
             };
-
+            PluginLoader = new PluginLoader();
             PluginLoader.LoadPlugins();
 
             LoginPacketHandlers.RegisterLoginPacketHandlers(this);

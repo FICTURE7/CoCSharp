@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using CoCSharp.PluginApi;
 
-namespace CoCSharp.Client.API
+namespace CoCSharp.Client
 {
     class PluginLoader
     {
         private List<IPlugin> loadedPlugins = new List<IPlugin>(); 
-        private List<Thread> updateThreads = new List<Thread>(); 
+        private List<Thread> updateThreads = new List<Thread>();
 
         public void LoadPlugins()
         {
@@ -24,12 +25,13 @@ namespace CoCSharp.Client.API
                 List<Type> pluginTypes = new List<Type>();
                 foreach (var pluginFile in pluginFiles) // Load all types which implement IPlugin
                 {
-                    pluginTypes.AddRange((from t in Assembly.Load("plugins//" + pluginFile).GetExportedTypes()
-                                         where !t.IsInterface && !t.IsAbstract
-                                         where typeof(IPlugin).IsAssignableFrom(t)
-                                         select t).ToArray());
+                    pluginTypes.AddRange((from t in Assembly.LoadFrom(pluginFile).GetExportedTypes()
+                        where !t.IsInterface && !t.IsAbstract
+                        where typeof (IPlugin).IsAssignableFrom(t)
+                        select t).ToArray());
                 }
-                loadedPlugins.AddRange(pluginTypes.Select(t => (IPlugin)Activator.CreateInstance(t)).ToArray()); // Create a instance of them
+                loadedPlugins.AddRange(pluginTypes.Select(t => (IPlugin) Activator.CreateInstance(t)).ToArray());
+                // Create a instance of them
                 foreach (var plugin in loadedPlugins)
                 {
                     try

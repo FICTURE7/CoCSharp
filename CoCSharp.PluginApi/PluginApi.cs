@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CoCSharp.Client.API
+namespace CoCSharp.PluginApi
 {
     public class PluginApi
     {
@@ -13,7 +9,7 @@ namespace CoCSharp.Client.API
             Console.WriteLine(msg);
         }
 
-        
+
 
         //TODO: Add plugin api functions which can be accessed by the plugin
     }
