@@ -16,7 +16,7 @@ namespace CoCSharp.Logging
         public PacketDumper()
         {
             LoggingDirectory = "packet_dumps";
-            if (!Directory.Exists(LoggingDirectory)) 
+            if (!Directory.Exists(LoggingDirectory))
                 Directory.CreateDirectory(LoggingDirectory);
 
             //TODO: Compress old logs into a zip file.
@@ -29,7 +29,7 @@ namespace CoCSharp.Logging
         public PacketDumper(string loggingDirectory)
         {
             LoggingDirectory = loggingDirectory;
-            if (!Directory.Exists(loggingDirectory)) 
+            if (!Directory.Exists(loggingDirectory))
                 Directory.CreateDirectory(loggingDirectory);
 
             //TODO: Compress old logs into a zip file.
@@ -47,9 +47,9 @@ namespace CoCSharp.Logging
             var fileTime = DateTime.Now.ToString("[~HH.mm.ss.fff] ");
             var filePrefix = direction == PacketDirection.Server ? "[CLIENT 2 SERVER] " :
                                                                    "[SERVER 2 CLIENT] ";
-            var fileName = string.Format("{0} {1} {2} - 0x{3:X2} ({4})", fileTime, 
-                                                                         filePrefix, 
-                                                                         packetType.Name, 
+            var fileName = string.Format("{0} {1} {2} - 0x{3:X2} ({4})", fileTime,
+                                                                         filePrefix,
+                                                                         packetType.Name,
                                                                          packet.ID, // hex
                                                                          packet.ID); // decimal 
             var filePath = Path.Combine(LoggingDirectory, fileName);

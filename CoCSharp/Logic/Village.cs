@@ -65,6 +65,7 @@ namespace CoCSharp.Logic
         /// <param name="json"></param>
         public void FromJson(string json)
         {
+            //TODO: Make this method static.
             var village = JsonConvert.DeserializeObject<Village>(json);
             Buildings = village.Buildings;
             Obstacles = village.Obstacles;

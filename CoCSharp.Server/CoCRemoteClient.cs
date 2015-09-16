@@ -21,21 +21,22 @@ namespace CoCSharp.Server
             Home = new Village();
         }
 
-        public string FingerprintHash { get; set; }
-        public bool LoggedIn { get; set; }
         public Village Home { get; set; }
         public Avatar Avatar { get; set; }
-        public CoCServer Server { get; set; }
+        public TimeSpan PlayTime { get; set; }
+        public DateTime DateJoined { get; set; }
+        public DateTime DateLastPlayed { get; set; }
         public NetworkManagerAsync NetworkManager { get; set; }
         public Socket Connection { get; set; }
 
+        private CoCServer Server { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
 
         public void QueuePacket(IPacket packet)
         {
             if (packet == null)
                 throw new ArgumentNullException("packet");
-            NetworkManager.WritePacket(packet);
+            NetworkManager.SendPacket(packet);
         }
 
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
@@ -53,7 +54,7 @@ namespace CoCSharp.Server
 
         private void HandleReceicedPacketFailed(SocketAsyncEventArgs args, Exception ex)
         {
-            Console.WriteLine("Failed to read packet: {0}", ex.Message);
+            Console.WriteLine("Failed to read packet: \r\n{0}", ex.Message);
         }
     }
 }

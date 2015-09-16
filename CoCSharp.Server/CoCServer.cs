@@ -1,7 +1,9 @@
 ﻿using CoCSharp.Logic;
+using CoCSharp.Networking.Packets;
 using CoCSharp.Server.Handlers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -12,9 +14,13 @@ namespace CoCSharp.Server
         public CoCServer()
         {
             Clients = new List<CoCRemoteClient>();
+            AvatarManager = new AvatarManager(this);
+            DefaultVillage = new Village();
+            DefaultVillage.FromJson(File.ReadAllText("default_village.json"));
         }
 
-        public Avatar NewAvatar { get { return new Avatar(); } }
+        public Village DefaultVillage { get; set; }
+        public AvatarManager AvatarManager { get; set; }
         public Socket Listener { get; set; }
         public IPEndPoint EndPoint { get; set; }
         public List<CoCRemoteClient> Clients { get; set; }
@@ -38,10 +44,12 @@ namespace CoCSharp.Server
         {
             var socket = Listener.EndAccept(ar);
             var client = new CoCRemoteClient(this, socket);
-            Clients.Add(client);
+            Console.WriteLine("Accepted new connection: {0}", socket.RemoteEndPoint);
 
+            // should use a single dictionary of handlers instead.
             LoginPacketHandlers.RegisterLoginPacketHandlers(client);
             InGamePacketHandler.RegisterInGamePacketHandlers(client);
+            Clients.Add(client);
             Listener.BeginAccept(AcceptClient, Listener);
         }
     }

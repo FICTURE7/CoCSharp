@@ -14,7 +14,7 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <param name="id">Sets the ID of this <see cref="Trap"/> class.</param>
         /// <param name="level">Sets the ID of this <see cref="Trap"/> class.</param>
-        public Trap(int id, int level, Village village) 
+        public Trap(int id, int level, Village village)
             : base(id, village)
         {
             Level = level;

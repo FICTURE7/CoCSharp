@@ -49,6 +49,7 @@
     <Compile Include="CoCRemoteClient.cs" />
     <Compile Include="Handlers\InGamePacketHandler.cs" />
     <Compile Include="Handlers\LoginPacketHandlers.cs" />
+    <Compile Include="AvatarManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 namespace CoCSharp.Logic
-{   
+{
     /// <summary>
     /// 
     /// </summary>

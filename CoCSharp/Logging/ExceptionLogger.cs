@@ -14,7 +14,7 @@ namespace CoCSharp.Logging
 
         public void Log(LogCategory logCategory, params object[] paramters)
         {
-            
+
         }
     }
 }
