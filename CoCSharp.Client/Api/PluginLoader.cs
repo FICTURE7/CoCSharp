@@ -34,7 +34,7 @@ namespace CoCSharp.Client.API
                 {
                     try
                     {
-                        plugin.PreInit();
+                        plugin.PreStart();
                     }
                     catch (Exception ex)
                     {
@@ -45,7 +45,7 @@ namespace CoCSharp.Client.API
                 {
                     try
                     {
-                        plugin.Init();
+                        plugin.OnStart();
                     }
                     catch (Exception ex)
                     {
@@ -56,7 +56,7 @@ namespace CoCSharp.Client.API
                 {
                     try
                     {
-                        plugin.PostInit();
+                        plugin.PostStart();
                     }
                     catch (Exception ex)
                     {
@@ -117,7 +117,7 @@ namespace CoCSharp.Client.API
             {
                 try
                 {
-                    plugin.PreDeInit();
+                    plugin.PreStop();
                 }
                 catch (Exception ex)
                 {
@@ -128,7 +128,7 @@ namespace CoCSharp.Client.API
             {
                 try
                 {
-                    plugin.DeInit();
+                    plugin.OnStop();
                 }
                 catch (Exception ex)
                 {
@@ -139,7 +139,7 @@ namespace CoCSharp.Client.API
             {
                 try
                 {
-                    plugin.PostDeInit();
+                    plugin.PostStop();
                 }
                 catch (Exception ex)
                 {
