@@ -4,6 +4,7 @@
 # Build
 bin/
 obj/
+.vscode/
 
 # Nuget
 packages/
