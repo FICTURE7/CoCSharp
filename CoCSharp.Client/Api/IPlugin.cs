@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoCSharp.Client.Api
+namespace CoCSharp.Client.API
 {
     public interface IPlugin
     {
@@ -14,13 +14,13 @@ namespace CoCSharp.Client.Api
         //TODO: List<string> Dependencies { get; set; }
 
         //Livecycle:
-        void preInit();
+        void PreInit();
         void Init();
-        void postInit();
-        void update(); // Called every 100 ms
-        void onCmdRecv(string cmd, string[] param);
-        void preDeInit();
+        void PostInit();
+        void Update(); // Called every 100 ms
+        void OnCmdRecv(string cmd, string[] param);
+        void PreDeInit();
         void DeInit();
-        void postDeInit(); 
+        void PostDeInit(); 
     }
 }

@@ -7,7 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 
-namespace CoCSharp.Client.Api
+namespace CoCSharp.Client.API
 {
     class PluginLoader
     {
@@ -34,7 +34,7 @@ namespace CoCSharp.Client.Api
                 {
                     try
                     {
-                        plugin.preInit();
+                        plugin.PreInit();
                     }
                     catch (Exception ex)
                     {
@@ -56,7 +56,7 @@ namespace CoCSharp.Client.Api
                 {
                     try
                     {
-                        plugin.postInit();
+                        plugin.PostInit();
                     }
                     catch (Exception ex)
                     {
@@ -90,7 +90,7 @@ namespace CoCSharp.Client.Api
                     {
                         try
                         {
-                            plugin.update();
+                            plugin.Update();
                         }
                         catch (Exception ex)
                         {
@@ -117,7 +117,7 @@ namespace CoCSharp.Client.Api
             {
                 try
                 {
-                    plugin.preDeInit();
+                    plugin.PreDeInit();
                 }
                 catch (Exception ex)
                 {
@@ -139,7 +139,7 @@ namespace CoCSharp.Client.Api
             {
                 try
                 {
-                    plugin.postDeInit();
+                    plugin.PostDeInit();
                 }
                 catch (Exception ex)
                 {

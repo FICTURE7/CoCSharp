@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using CoCSharp.Client.Api;
+using CoCSharp.Client.API;
 
 namespace CoCSharp.Client
 {

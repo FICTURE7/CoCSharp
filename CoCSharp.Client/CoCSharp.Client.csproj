@@ -41,9 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api\IPlugin.cs" />
-    <Compile Include="Api\PluginApi.cs" />
-    <Compile Include="Api\PluginLoader.cs" />
+    <Compile Include="API\IPlugin.cs" />
+    <Compile Include="API\PluginApi.cs" />
+    <Compile Include="API\PluginLoader.cs" />
     <Compile Include="ClientConfiguration.cs" />
     <Compile Include="CoCClient.cs" />
     <Compile Include="Events\ChatMessageEventArgs.cs" />
