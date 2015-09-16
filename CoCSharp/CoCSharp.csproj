@@ -196,6 +196,7 @@
     <Compile Include="Networking\Packets\LoginRequestPacket.cs" />
     <Compile Include="Networking\PacketReader.cs" />
     <Compile Include="Networking\Packets\LoginSuccessPacket.cs" />
+    <Compile Include="Networking\PacketToken.cs" />
     <Compile Include="Networking\Packets\ServerErrorPacket.cs" />
     <Compile Include="Networking\Packets\SetDeviceTokenPacket.cs" />
     <Compile Include="Networking\PacketWriter.cs" />

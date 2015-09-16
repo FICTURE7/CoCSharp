@@ -14,7 +14,7 @@ namespace CoCSharp.Networking
         public ProxyNetworkManager(Socket connection)
         {
             if (PacketDictionary == null)
-                InitializePacketDictionary(); 
+                InitializePacketDictionary();
 
             Connection = connection;
             CoCStream = new CoCStream(connection);
@@ -39,6 +39,7 @@ namespace CoCSharp.Networking
             {
                 CoCStream.ReadToBuffer(); // reads data saves it a buffer
 
+                //var packetBuffer = new PacketBuffer(CoCStream.ReadBuffer.ToArray());
                 var enPacketReader = new PacketReader(CoCStream.ReadBuffer);
 
                 // read header
@@ -57,7 +58,7 @@ namespace CoCSharp.Networking
 
                 var dePacketReader = new PacketReader(new MemoryStream(decryptedData));
 
-                var packet = GetPacket(packetID);
+                var packet = CreatePacketInstance(packetID);
                 if (packet is UnknownPacket)
                 {
                     packet = new UnknownPacket
@@ -70,7 +71,9 @@ namespace CoCSharp.Networking
                 }
 
                 decryptedPacket = decryptedData;
-                rawPacket = ExtractRawPacket(packetLength); // raw encrypted packet
+                rawPacket = ExtractRawPacket(packetLength);
+                //CoCStream.ReadBuffer = new MemoryStream(4096);
+                //CoCStream.Write(packetBuffer.Buffer, 0, packetBuffer.Buffer.Length);
                 try
                 {
                     packet.ReadPacket(dePacketReader);
@@ -81,20 +84,6 @@ namespace CoCSharp.Networking
             decryptedPacket = null;
             rawPacket = null;
             return null;
-        }
-
-        public void WritePacket(IPacket packet)
-        {
-            /* Writes packet to a buffer,
-             * then sends the buffer to the socket
-             */
-            MemoryStream tempStream = new MemoryStream();
-            packet.WritePacket(new PacketWriter(tempStream));
-            byte[] buffer = new byte[tempStream.Length];
-            tempStream.Read(buffer, 0, buffer.Length);
-            buffer = (buffer.Skip(HeaderSize).ToArray());
-            CoCCrypto.Encrypt(buffer);
-            CoCStream.Write(buffer, 0, buffer.Length);
         }
 
         public void UpdateCiphers(ulong seed, byte[] key)
@@ -111,7 +100,7 @@ namespace CoCSharp.Networking
             var packetData = CoCStream.ReadBuffer.ToArray().Take(packetLength + HeaderSize).ToArray(); // extract packet
             var otherData = CoCStream.ReadBuffer.ToArray().Skip(packetData.Length).ToArray(); // remove packet from buffer
 
-            CoCStream.ReadBuffer = new MemoryStream(4096); // clear buffer
+            CoCStream.ReadBuffer = new MemoryStream(4096);
             CoCStream.ReadBuffer.Write(otherData, 0, otherData.Length);
 
             return packetData;
@@ -127,11 +116,11 @@ namespace CoCSharp.Networking
             return packetData;
         }
 
-        private static IPacket GetPacket(ushort id)
+        private static IPacket CreatePacketInstance(ushort id)
         {
             var packetType = (Type)null;
-
-            if (!PacketDictionary.TryGetValue(id, out packetType)) return new UnknownPacket();
+            if (!PacketDictionary.TryGetValue(id, out packetType))
+                return new UnknownPacket();
             return (IPacket)Activator.CreateInstance(packetType);
         }
 

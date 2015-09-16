@@ -34,3 +34,4 @@ def gen_allproperties(d):
             gen_properties(f, filename.replace('.csv', '_properties.txt'))
 
 gen_allproperties(sys.argv[1])
+
