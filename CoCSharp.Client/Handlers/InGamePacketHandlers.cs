@@ -17,15 +17,12 @@ namespace CoCSharp.Client.Handlers
             var ohdPacket = packet as OwnHomeDataPacket;
             client.Home = ohdPacket.Home;
             client.Avatar.Username = ohdPacket.Avatar.Username;
-<<<<<<< HEAD
-            Console.Title = string.Format("[{0}] - {1}", ohdPacket.Avatar.Clan == null ? "null" : 
-                                                         ohdPacket.Avatar.Clan.Name, ohdPacket.Avatar.Username);
-=======
+            
             if (ohdPacket.Avatar.Clan != null)
                 Console.Title = string.Format("[{0}] - {1}", ohdPacket.Avatar.Clan.Name, ohdPacket.Avatar.Username);
             else
-                Console.Title = string.Format("[NO-CLAN] - {0}", ohdPacket.Avatar.Username);
->>>>>>> 8aaeb47915cb292f939cacb38823ba66d43a87b5
+                Console.Title = string.Format("{0}", ohdPacket.Avatar.Username);
+                
             Console.WriteLine("Village Info: ");
             Console.WriteLine("\tBuildings count: {0}", ohdPacket.Home.Buildings.Count);
             Console.WriteLine("\tDecorations count: {0}", ohdPacket.Home.Decorations.Count);
