@@ -66,6 +66,7 @@ namespace CoCSharp.Client
                 throw new SocketException((int)e.SocketError);
 
             NetworkManager = new NetworkManagerAsync(e.ConnectSocket, HandleReceivedPacket, HandleReceicedPacketFailed);
+            NetworkManager.Seed = new Random().Next();
             QueuePacket(new LoginRequestPacket()
             {
                 UserID = Avatar.ID,
@@ -80,7 +81,7 @@ namespace CoCSharp.Client
                 LocaleKey = 2000000,
                 Language = "en",
                 AdvertisingGUID = "",
-                OsVersion = "4.0.4",
+                OSVersion = "4.0.4",
                 IsAdvertisingTrackingEnabled = false,
                 AndroidDeviceID = "563a6f060d8624db",
                 FacebookDistributionID = "",
@@ -106,7 +107,7 @@ namespace CoCSharp.Client
                 throw new InvalidOperationException("Tried to send a packet before NetworkManager was initialized or before socket was connected.");
 
             PacketLogger.LogPacket(packet, PacketDirection.Server);
-            NetworkManager.WritePacket(packet);
+            NetworkManager.SendPacket(packet);
         }
 
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)

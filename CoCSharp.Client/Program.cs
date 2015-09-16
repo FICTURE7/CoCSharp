@@ -42,14 +42,14 @@ namespace CoCSharp.Client
 
         private static void OnChatMessage(object sender, Events.ChatMessageEventArgs e)
         {
-            if (e.ClanName == null) Console.WriteLine("<{0}>: {1}", e.Username, e.Message);
+            if (e.ClanName == null) Console.WriteLine("<[Lvl:{3}]{1}>: {2}", e.Username, e.Message, e.Packet.Level);
             else
             {
                 Console.Write("<[");
                 Console.ForegroundColor = ConsoleColor.DarkMagenta;
                 Console.Write(e.ClanName);
                 Console.ResetColor();
-                Console.Write("]");
+                Console.Write("][Lvl:{0}]", e.Packet.Level);
                 Console.WriteLine("{0}>: {1}", e.Username, e.Message);
             }
         }
