@@ -12,7 +12,7 @@
         {
             // Space
         }
-        
+
         public string Name { get; set; }
         public int TeamSize { get; set; }
         public int PreparationMinutes { get; set; }

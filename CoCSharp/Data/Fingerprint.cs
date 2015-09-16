@@ -65,7 +65,7 @@ namespace CoCSharp.Data
         {
             return JsonConvert.SerializeObject(this);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>

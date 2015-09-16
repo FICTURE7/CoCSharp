@@ -18,6 +18,6 @@
         public string IconExportName { get; set; }
         public string IconLayer0 { get; set; }
         public string IconLayer1 { get; set; }
-        public string IconLayer2  { get; set; }
+        public string IconLayer2 { get; set; }
     }
 }
