@@ -97,6 +97,7 @@ namespace CoCSharp.Client.API
                             if (plugin.Name != null) Console.WriteLine("Error while updateing {0}: {1}", plugin.Name, ex);
                             else Console.WriteLine("Error while updateing UNKNOWN: {0}", ex);
                         }
+                        Thread.Sleep(100);
                     }
                 }
                 catch (Exception ex)
