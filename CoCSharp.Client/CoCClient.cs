@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using CoCSharp.Client.API;
 
 namespace CoCSharp.Client
 {
@@ -29,8 +30,15 @@ namespace CoCSharp.Client
                 LogConsole = false
             };
 
+            PluginLoader.LoadPlugins();
+
             LoginPacketHandlers.RegisterLoginPacketHandlers(this);
             InGamePacketHandlers.RegisterInGamePacketHandler(this);
+        }
+
+        ~CoCClient()
+        {
+            PluginLoader.UnloadPlugins();
         }
 
         public bool Connected
@@ -46,6 +54,8 @@ namespace CoCSharp.Client
 
         private KeepAliveManager KeepAliveManager { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
+
+        private PluginLoader PluginLoader { get; set; }
 
         public void Connect(IPEndPoint endPoint)
         {
