@@ -25,10 +25,14 @@ namespace CoCSharp.Client
                 List<Type> pluginTypes = new List<Type>();
                 foreach (var pluginFile in pluginFiles) // Load all types which implement IPlugin
                 {
-                    pluginTypes.AddRange((from t in Assembly.LoadFrom(pluginFile).GetExportedTypes()
-                        where !t.IsInterface && !t.IsAbstract
-                        where typeof (IPlugin).IsAssignableFrom(t)
-                        select t).ToArray());
+                    try
+                    {
+                        pluginTypes.AddRange((from t in Assembly.LoadFrom(pluginFile).GetExportedTypes()
+                            where !t.IsInterface && !t.IsAbstract
+                            where typeof (IPlugin).IsAssignableFrom(t)
+                            select t).ToArray());
+                    }
+                    catch { }
                 }
                 loadedPlugins.AddRange(pluginTypes.Select(t => (IPlugin) Activator.CreateInstance(t)).ToArray());
                 // Create a instance of them

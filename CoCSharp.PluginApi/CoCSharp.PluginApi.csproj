@@ -36,6 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\ChatMsgEventArgs.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="PluginApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

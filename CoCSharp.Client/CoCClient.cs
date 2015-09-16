@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using CoCSharp.PluginApi.Events;
 
 namespace CoCSharp.Client
 {
@@ -147,6 +148,8 @@ namespace CoCSharp.Client
         {
             if (ChatMessage != null)
                 ChatMessage(this, e);
+            // Plugin Api Events
+            PluginApi.PluginApi.OnChatMsg(new ChatMsgEventArgs(e.ClanName, e.Username, e.Message)); 
         }
 
         public event EventHandler<LoginEventArgs> Login;
