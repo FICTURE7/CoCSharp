@@ -7,11 +7,13 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Implements methods to read and write <see cref="IPacket"/>s with <see cref="Socket"/>.
+    /// Implements methods to read and write <see cref="IPacket"/>s to <see cref="Socket"/>.
     /// </summary>
     public class NetworkManagerAsync
     {
         private Object _ObjLock = new Object();
+
+        //TODO: Remove SocketAsyncEventArgs from params cause its UserToken is from an internal class.
 
         /// <summary>
         /// 
@@ -19,6 +21,7 @@ namespace CoCSharp.Networking
         /// <param name="args"></param>
         /// <param name="packet"></param>
         public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet);
+
         /// <summary>
         /// 
         /// </summary>
@@ -48,11 +51,10 @@ namespace CoCSharp.Networking
             Connection = connection;
             PacketReceived = packetReceivedHandler;
             PacketReceivedFailed = packetReceivedFailedHandler;
-            Seed = MathHelper.Random.Next(); // must make this moar flexible
             CoCCrypto = new CoCCrypto();
             ReceiveEventPool = new SocketAsyncEventArgsPool(25);
             SendEventPool = new SocketAsyncEventArgsPool(25);
-            StartReceive();
+            StartReceive(ReceiveEventPool.Pop());
         }
 
         /// <summary>
@@ -64,7 +66,7 @@ namespace CoCSharp.Networking
         /// </summary>
         public bool Disconnected { get; private set; }
         /// <summary>
-        /// Gets the <see cref="Socket"/>.
+        /// Gets the <see cref="Socket"/> from which packets will be read and written.
         /// </summary>
         public Socket Connection { get; private set; }
         /// <summary>
@@ -80,83 +82,11 @@ namespace CoCSharp.Networking
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
 
         /// <summary>
-        /// 
+        /// Sends the specified packet to the socket asynchronously.
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public IPacket[] ReadPackets(SocketAsyncEventArgs args)
-        {
-            var list = new List<IPacket>();
-            var numBytesToProcess = args.BytesTransferred;
-            if (numBytesToProcess == 0)
-                return null;
-
-            while (true)
-            {
-                if (numBytesToProcess == 0)
-                    break;
-
-                var packet = (IPacket)null;
-                var packetBuffer = args.UserToken as PacketBuffer;
-                try
-                {
-                    using (var enPacketReader = new PacketReader(new MemoryStream(packetBuffer.Buffer)))
-                    {
-                        if (PacketBuffer.HeaderSize > numBytesToProcess) // check if there is a header
-                            break;
-
-                        // read header
-                        var packetID = enPacketReader.ReadUInt16();
-                        var packetLength = enPacketReader.ReadInt24();
-                        var packetVersion = enPacketReader.ReadUInt16(); // the unknown
-
-                        // read body
-                        if (packetLength > numBytesToProcess) // check if data is enough data is avaliable in the buffer
-                            break;
-
-                        var encryptedData = packetBuffer.ExtractPacket(PacketExtractionFlags.Body |
-                                                                       PacketExtractionFlags.Remove,
-                                                                       packetLength);
-                        var decryptedData = (byte[])encryptedData.Clone(); // cloning just cause we want the encrypted data
-                        CoCCrypto.Decrypt(decryptedData);
-                        numBytesToProcess -= packetLength + PacketBuffer.HeaderSize;
-
-                        using (var dePacketReader = new PacketReader(new MemoryStream(decryptedData)))
-                        {
-                            packet = CreatePacketInstance(packetID);
-                            if (packet is UnknownPacket)
-                            {
-                                packet = new UnknownPacket
-                                {
-                                    ID = packetID,
-                                    Length = packetLength,
-                                    Version = packetVersion,
-                                    EncryptedData = encryptedData,
-                                    DecryptedData = decryptedData
-                                };
-                            }
-                            packet.ReadPacket(dePacketReader);
-                        }
-                    }
-                    if (packet is UpdateKeyPacket)
-                        UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key); // handle update key packet
-                    list.Add(packet);
-                }
-                catch (Exception ex)
-                {
-                    if (PacketReceivedFailed != null)
-                        PacketReceivedFailed(args, ex);
-                }
-            }
-            return list.ToArray();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packet"></param>
+        /// <param name="packet">The <see cref="IPacket"/> that will be sent.</param>
         /// <exception cref="System.ArgumentNullException"/>
-        public void WritePacket(IPacket packet)
+        public void SendPacket(IPacket packet)
         {
             if (packet == null)
                 throw new ArgumentNullException("packet");
@@ -167,7 +97,7 @@ namespace CoCSharp.Networking
                 var body = ((MemoryStream)dePacketWriter.BaseStream).ToArray();
                 CoCCrypto.Encrypt(body);
 
-                if(packet is UpdateKeyPacket)
+                if (packet is UpdateKeyPacket)
                     UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key); // handle update key packet
 
                 using (var enPacketWriter = new PacketWriter(new MemoryStream())) // write header
@@ -191,10 +121,15 @@ namespace CoCSharp.Networking
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="seed"></param>
-        /// <param name="key"></param>
-        /// <exception cref="System.ArgumentNullException"/>
-        public void UpdateCiphers(int seed, byte[] key)
+        public void Disconnect()
+        {
+            //TODO: Better handling
+
+            Disconnected = true;
+            Connection.Close();
+        }
+
+        private void UpdateCiphers(int seed, byte[] key)
         {
             if (key == null)
                 throw new ArgumentNullException("key");
@@ -202,21 +137,126 @@ namespace CoCSharp.Networking
             CoCCrypto.UpdateCiphers((ulong)seed, key);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Disconnect()
+
+        private IPacket[] ProcessReceive(SocketAsyncEventArgs args)
         {
-            Disconnected = true;
-            Connection.Close();
+            var packetList = new List<IPacket>();
+            var packetToken = args.UserToken as PacketToken;
+            var bytesToProcess = args.BytesTransferred;
+
+            if (bytesToProcess == 0)
+            {
+                //TODO: Fire event
+                Disconnected = true;
+                return null;
+            }
+
+        ReadPacket:
+
+            // read header
+            if (packetToken.HeaderReceiveOffset != PacketBuffer.HeaderSize) // we do not have the header
+            {
+                if (PacketBuffer.HeaderSize > bytesToProcess) // we got less that 7 bytes, some parts of the header
+                {
+                    Console.WriteLine("[Net:ID {0}] Not enough bytes to read header.", packetToken.TokenID);
+
+                    Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Header, packetToken.HeaderReceiveOffset, bytesToProcess);
+                    packetToken.HeaderReceiveOffset += bytesToProcess;
+                    packetToken.ReceiveOffset = 0;
+                    StartReceive(args);
+                    return packetList.ToArray();
+                }
+                else // if we got more than enough data for the header
+                {
+                    Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Header, packetToken.HeaderReceiveOffset, PacketBuffer.HeaderSize);
+                    packetToken.HeaderReceiveOffset += PacketBuffer.HeaderSize;
+                    packetToken.ReceiveOffset += PacketBuffer.HeaderSize; // probs here?
+                    bytesToProcess -= PacketBuffer.HeaderSize;
+                    ReadHeader(packetToken);
+                }
+            }
+
+            // read body
+            if (packetToken.BodyReceiveOffset != packetToken.Length)
+            {
+                if (packetToken.Length - packetToken.BodyReceiveOffset > bytesToProcess) // if we dont have enough to read body
+                {
+                    Console.WriteLine("[Net:ID {0}] Not enough bytes to read body.", packetToken.TokenID);
+
+                    Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Body, packetToken.BodyReceiveOffset, bytesToProcess);
+                    packetToken.BodyReceiveOffset += bytesToProcess;
+                    packetToken.ReceiveOffset = 0;
+                    StartReceive(args);
+                    return packetList.ToArray();
+                }
+                else // if we got more than enough data for the body
+                {
+                    Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Body, packetToken.BodyReceiveOffset, packetToken.Length - packetToken.BodyReceiveOffset);
+                    bytesToProcess -= packetToken.Length - packetToken.BodyReceiveOffset;
+                    packetToken.ReceiveOffset += packetToken.Length - packetToken.BodyReceiveOffset;
+                    packetToken.BodyReceiveOffset += packetToken.Length;
+                }
+            }
+
+            var packet = CreatePacketInstance(packetToken.ID);
+            var packetDeData = (byte[])packetToken.Body.Clone();
+            CoCCrypto.Decrypt(packetDeData);
+
+            if (packet is UnknownPacket)
+            {
+                packet = new UnknownPacket()
+                {
+                    ID = packetToken.ID,
+                    Length = packetToken.Length,
+                    Version = packetToken.Version,
+                    EncryptedData = packetToken.Body,
+                    DecryptedData = packetDeData
+                };
+            }
+
+            using (var reader = new PacketReader(new MemoryStream(packetDeData)))
+            {
+                try
+                {
+                    if (!(packet is UnknownPacket))
+                        packet.ReadPacket(reader);
+                }
+                catch (Exception ex)
+                {
+                    if (PacketReceivedFailed != null)
+                        PacketReceivedFailed(args, ex);
+                    packetToken.Reset();
+                    goto ReadPacket;
+                }
+            }
+
+            if (packet is UpdateKeyPacket)
+                UpdateCiphers(Seed, ((UpdateKeyPacket)packet).Key);
+
+            packetList.Add(packet);
+            packetToken.Reset();
+            if (bytesToProcess != 0)
+                goto ReadPacket;
+
+            packetToken.ReceiveOffset = 0;
+            ReceiveEventPool.Push(args);
+            StartReceive(ReceiveEventPool.Pop());
+            return packetList.ToArray();
         }
 
-        private void StartReceive()
+        private void ReadHeader(PacketToken token)
         {
-            var receiveArgs = ReceiveEventPool.Pop();
-            receiveArgs.Completed += AsyncOperationCompleted;
-            if (!Connection.ReceiveAsync(receiveArgs))
-                AsyncOperationCompleted(Connection, receiveArgs);
+            token.ID = (ushort)((token.Header[0] << 8) | (token.Header[1]));
+            token.Length = (token.Header[2] << 16) | (token.Header[3] << 8) | (token.Header[4]);
+            token.Version = (ushort)((token.Header[5] << 8) | (token.Header[6]));
+            token.Body = new byte[token.Length];
+        }
+
+        private void StartReceive(SocketAsyncEventArgs e)
+        {
+            e.Completed += AsyncOperationCompleted;
+            if (!Connection.ReceiveAsync(e))
+                AsyncOperationCompleted(Connection, e);
         }
 
         public void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
@@ -225,24 +265,19 @@ namespace CoCSharp.Networking
             if (args.SocketError != SocketError.Success)
                 throw new SocketException((int)args.SocketError);
 
-            lock (_ObjLock)
+            switch (args.LastOperation)
             {
-                switch (args.LastOperation)
-                {
-                    case SocketAsyncOperation.Receive:
-                        var packets = (IPacket[])null;
-                        packets = ReadPackets(args);
-
-                        if (packets == null)
-                            return;
-
-                        for (int i = 0; i < packets.Length; i++)
-                            PacketReceived(args, packets[i]); // pass it to the handler
-
-                        StartReceive();
-                        ReceiveEventPool.Push(args);
+                case SocketAsyncOperation.Receive:
+                    var packets = (IPacket[])null;
+                    packets = ProcessReceive(args);
+                    if (packets == null || packets.Length == 0)
                         break;
-                }
+                    for (int i = 0; i < packets.Length; i++)
+                        PacketReceived(args, packets[i]); // pass it to the handler
+                    break;
+
+                case SocketAsyncOperation.Send:
+                    break;
             }
         }
 
@@ -264,8 +299,8 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new SetDeviceTokenPacket().ID, typeof(SetDeviceTokenPacket)); // 10113
             PacketDictionary.Add(new ChangeAvatarNamePacket().ID, typeof(ChangeAvatarNamePacket)); // 10212
             PacketDictionary.Add(new BindFacebookAccountPacket().ID, typeof(BindFacebookAccountPacket)); // 14201
-            PacketDictionary.Add(new AvatarProfileRequestPacket().ID, typeof(AvatarProfileRequestPacket)); // 14325
             PacketDictionary.Add(new AllianceChatMessageClientPacket().ID, typeof(AllianceChatMessageClientPacket)); // 14315
+            PacketDictionary.Add(new AvatarProfileRequestPacket().ID, typeof(AvatarProfileRequestPacket)); // 14325
             PacketDictionary.Add(new ChatMessageClientPacket().ID, typeof(ChatMessageClientPacket)); // 14715
 
             // Clientbound

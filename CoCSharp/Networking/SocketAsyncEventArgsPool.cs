@@ -10,7 +10,7 @@ namespace CoCSharp.Networking
     /// </summary>
     public class SocketAsyncEventArgsPool
     {
-        private Object _ObjLock = new Object();
+        private Object m_ObjLock = new Object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SocketAsyncEventArgsPool"/> class with
@@ -24,7 +24,7 @@ namespace CoCSharp.Networking
             for (int i = 0; i < capacity; i++)
             {
                 var args = new SocketAsyncEventArgs();
-                var packetBuffer = new PacketBuffer(args);
+                var packetBuffer = new PacketToken(args);
                 Push(args);
             }
         }
@@ -54,7 +54,7 @@ namespace CoCSharp.Networking
         /// <param name="args">The <see cref="SocketAsyncEventArgs"/> object.</param>
         public void Push(SocketAsyncEventArgs args)
         {
-            lock (_ObjLock)
+            lock (m_ObjLock)
             {
                 Pool.Push(args);
             }
@@ -66,7 +66,7 @@ namespace CoCSharp.Networking
         /// <returns></returns>
         public SocketAsyncEventArgs Pop()
         {
-            lock (_ObjLock)
+            lock (m_ObjLock)
             {
                 return Pool.Pop();
             }

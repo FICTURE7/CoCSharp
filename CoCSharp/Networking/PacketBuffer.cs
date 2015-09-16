@@ -33,7 +33,6 @@ namespace CoCSharp.Networking
             m_OriginalBufferSize = buffer.Length;
             m_SocketAsyncEventArgs = args;
 
-            args.UserToken = this;
             args.SetBuffer(buffer, 0, buffer.Length);
         }
 
@@ -41,14 +40,15 @@ namespace CoCSharp.Networking
         /// Initializes a new instance of the <see cref="PacketBuffer"/> class with the specified
         /// <see cref="Byte"/> array.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="buffer"></param>
         /// <exception cref="System.ArgumentNullException"/>
         public PacketBuffer(byte[] buffer)
         {
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
 
-            m_InitializedFromByteArray = false;
+            m_InitializedFromByteArray = true;
+            m_Buffer = buffer;
             m_OriginalBufferSize = buffer.Length;
         }
 
@@ -89,10 +89,13 @@ namespace CoCSharp.Networking
                 if (flags.HasFlag(PacketExtractionFlags.Remove))
                 {
                     var buffer = new byte[Buffer.Length - (packetLength + HeaderSize)];
-                    Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
-                    Array.Resize(ref buffer, m_OriginalBufferSize);
+
                     if (!m_InitializedFromByteArray)
+                    {
+                        Array.Copy(Buffer, packetLength + HeaderSize, buffer, 0, buffer.Length);
+                        Array.Resize(ref buffer, m_OriginalBufferSize);
                         m_SocketAsyncEventArgs.SetBuffer(buffer, 0, m_OriginalBufferSize);
+                    }
                     else
                         m_Buffer = buffer;
                 }

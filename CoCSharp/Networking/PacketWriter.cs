@@ -77,7 +77,7 @@ namespace CoCSharp.Networking
         public void WriteInt24(int value)
         {
             var buffer = BitConverter.GetBytes(value);
-            if (BitConverter.IsLittleEndian) 
+            if (BitConverter.IsLittleEndian)
                 Array.Reverse(buffer);
             Write(buffer, 1, 3);
         }

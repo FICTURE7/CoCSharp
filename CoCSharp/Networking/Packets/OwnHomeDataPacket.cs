@@ -32,7 +32,7 @@ namespace CoCSharp.Networking.Packets
         public int AllianceCastleLevel;
         public int AllianceCastleUnitCapacity;
         public int AllianceCastleUnitCount;
-        public string FacebookID;
+        public string FacebookID; // in Avatar object also?
         public int Gems1;
         public int Unknown14;
         public int Unknown15;
@@ -99,7 +99,7 @@ namespace CoCSharp.Networking.Packets
                 Unknown10 = reader.ReadInt64();
 
             reader.Seek(offset, SeekOrigin.Current);
-            Unknown11 = reader.ReadInt32(); 
+            Unknown11 = reader.ReadInt32();
             AllianceCastleLevel = reader.ReadInt32(); // -1 if not constructed
             AllianceCastleUnitCapacity = reader.ReadInt32();
             AllianceCastleUnitCount = reader.ReadInt32();
@@ -246,9 +246,10 @@ namespace CoCSharp.Networking.Packets
 
         public void WritePacket(PacketWriter writer)
         {
+            var offset = 0x2A;
             writer.WriteInt32((int)LastVisit.TotalSeconds);
             writer.WriteInt32(Unknown1);
-            writer.WriteInt32((int)DateTimeConverter.ToUnixTimestamp(DateTime.UtcNow));
+            writer.WriteInt32((int)DateTimeConverter.ToUnixTimestamp(Timestamp));
             writer.WriteInt32(Unknown2);
             writer.WriteInt64(UserID);
             writer.WriteInt32((int)ShieldDuration.TotalSeconds);
@@ -259,6 +260,53 @@ namespace CoCSharp.Networking.Packets
             writer.WriteInt32(Unknown6);
             writer.WriteInt64(UserID1);
             writer.WriteInt64(UserID2);
+
+            if (Avatar.Clan != null)
+            {
+                writer.WriteBoolean(true);
+                writer.WriteInt64(Avatar.Clan.ID);
+                writer.WriteString(Avatar.Clan.Name);
+                writer.WriteInt64(Avatar.Clan.Badge);
+                writer.WriteInt32(0); // TODO: Make unknown.
+                writer.WriteInt64(Avatar.Clan.Level);
+                offset += 1;
+            }
+
+            writer.WriteBoolean(Unknown7);
+            if (Unknown7)
+                writer.WriteInt64(Unknown8);
+            writer.WriteBoolean(Unknown9);
+            if (Unknown9)
+                writer.WriteInt64(Unknown10);
+
+            writer.Write(new byte[offset]);
+            writer.WriteInt32(Unknown11);
+            writer.WriteInt32(AllianceCastleLevel);
+            writer.WriteInt32(AllianceCastleUnitCapacity);
+            writer.WriteInt32(AllianceCastleUnitCount);
+            writer.WriteInt32(Avatar.TownHallLevel);
+            writer.WriteString(Avatar.Username);
+            writer.WriteString(FacebookID);
+            writer.WriteInt32(Unknown14);
+            writer.WriteInt32(Unknown15);
+            writer.WriteInt32(Avatar.Trophies);
+            writer.WriteInt32(Avatar.AttacksWon);
+            writer.WriteInt32(Avatar.AttacksLost);
+            writer.WriteInt32(Avatar.DefencesWon);
+            writer.WriteInt32(Avatar.DefencesLost);
+            writer.WriteInt32(Unknown16);
+            writer.WriteInt32(Unknown17);
+            writer.WriteInt32(Unknown18);
+            writer.WriteBoolean(Unknown19);
+            if (Unknown19)
+                writer.WriteInt64(Unknown20);
+            writer.WriteByte(Unknown21);
+            writer.WriteInt32(Unknown22);
+            writer.WriteInt32(Unknown23);
+            writer.WriteInt32(Unknown24);
+            writer.WriteInt32(Unknown25);
+            for (int i = 0; i < 16; i++)
+                writer.WriteInt32(0);
         }
     }
 }
