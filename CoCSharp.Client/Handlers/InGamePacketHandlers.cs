@@ -1,4 +1,4 @@
-﻿using CoCSharp.Client.Events;
+﻿using CoCSharp.Client.API.Events;
 using CoCSharp.Networking.Packets;
 using System;
 

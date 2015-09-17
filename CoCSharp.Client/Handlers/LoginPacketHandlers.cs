@@ -1,7 +1,7 @@
-﻿using CoCSharp.Networking.Packets;
+﻿using CoCSharp.Client.API.Events;
+using CoCSharp.Networking.Packets;
 using System;
 using System.IO;
-using System.Threading;
 
 namespace CoCSharp.Client.Handlers
 {
@@ -28,6 +28,7 @@ namespace CoCSharp.Client.Handlers
         public static void HandleLoginSuccessPacket(CoCClient client, IPacket packet)
         {
             var lsPacket = packet as LoginSuccessPacket;
+            client.OnLogin(new LoginEventArgs(lsPacket));
             Console.WriteLine("Successfully logged in!\r\n");
         }
 

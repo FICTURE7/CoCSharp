@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CoCSharp.Client</RootNamespace>
     <AssemblyName>CoCSharp.Client</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,25 +42,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PluginLoader.cs" />
+    <Compile Include="PluginManager.cs" />
     <Compile Include="ClientConfiguration.cs" />
     <Compile Include="CoCClient.cs" />
-    <Compile Include="Events\ChatMessageEventArgs.cs" />
-    <Compile Include="Events\LoginEventArgs.cs" />
     <Compile Include="Handlers\InGamePacketHandlers.cs" />
     <Compile Include="Handlers\LoginPacketHandlers.cs" />
     <Compile Include="KeepAliveManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoCSharp.PluginApi\CoCSharp.PluginApi.csproj">
-      <Project>{26ed309d-4bc4-4816-817e-68c7d918a859}</Project>
-      <Name>CoCSharp.PluginApi</Name>
+    <ProjectReference Include="..\CoCSharp.Client.API\CoCSharp.Client.API.csproj">
+      <Project>{f565f4d1-1250-40f5-9523-519c3011bc1a}</Project>
+      <Name>CoCSharp.Client.API</Name>
     </ProjectReference>
     <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">
       <Project>{f8756685-cd4b-4c2e-9bee-269a27cbb6b2}</Project>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Client.API.Events;
+using System;
 using System.Net;
 
 namespace CoCSharp.Client
@@ -40,8 +41,9 @@ namespace CoCSharp.Client
             }
         }
 
-        private static void OnChatMessage(object sender, Events.ChatMessageEventArgs e)
+        private static void OnChatMessage(object sender, ChatMessageEventArgs e)
         {
+            //TODO: Give flexibilty for plugin dev to remove this.
             if (e.ClanName == null) Console.WriteLine("<[Lvl:{3}]{1}>: {2}", e.Username, e.Message, e.Packet.Level);
             else
             {
