@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CoCSharp.Client.API
+﻿namespace CoCSharp.PluginApi
 {
     public interface IPlugin // interface required due to how the plugin system works
     {
@@ -21,6 +15,6 @@ namespace CoCSharp.Client.API
         void OnCmdRecv(string cmd, string[] param);
         void PreStop();
         void OnStop();
-        void PostStop(); 
+        void PostStop();
     }
 }

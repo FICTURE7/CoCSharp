@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp.Client", "CoCSharp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CocSharp.ClientApi", "CocSharp.ClientApi\CocSharp.ClientApi.csproj", "{DFD06A84-74CB-4941-85D7-5A7F103C3B9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{32D40E80-DCD5-4002-BF45-1E8D3A665817}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp.PluginApi", "CoCSharp.PluginApi\CoCSharp.PluginApi.csproj", "{26ED309D-4BC4-4816-817E-68C7D918A859}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{DFD06A84-74CB-4941-85D7-5A7F103C3B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFD06A84-74CB-4941-85D7-5A7F103C3B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFD06A84-74CB-4941-85D7-5A7F103C3B9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32D40E80-DCD5-4002-BF45-1E8D3A665817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32D40E80-DCD5-4002-BF45-1E8D3A665817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32D40E80-DCD5-4002-BF45-1E8D3A665817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32D40E80-DCD5-4002-BF45-1E8D3A665817}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26ED309D-4BC4-4816-817E-68C7D918A859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26ED309D-4BC4-4816-817E-68C7D918A859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26ED309D-4BC4-4816-817E-68C7D918A859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26ED309D-4BC4-4816-817E-68C7D918A859}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
