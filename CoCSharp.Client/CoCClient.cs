@@ -42,9 +42,9 @@ namespace CoCSharp.Client
         public Village Home { get; set; }
         public Avatar Avatar { get; set; }
         public Fingerprint Fingerprint { get; set; }
-        public PacketLogger PacketLogger { get; set; }
-        public NetworkManagerAsync NetworkManager { get; set; }
 
+        private PacketLogger PacketLogger { get; set; }
+        private NetworkManagerAsync NetworkManager { get; set; }
         private KeepAliveManager KeepAliveManager { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
         private PluginManager PluginManager { get; set; }
@@ -65,7 +65,8 @@ namespace CoCSharp.Client
             if (e.SocketError != SocketError.Success)
                 throw new SocketException((int)e.SocketError);
 
-            NetworkManager = new NetworkManagerAsync(e.ConnectSocket, HandleReceivedPacket, HandleReceicedPacketFailed);
+            NetworkManager = new NetworkManagerAsync(e.ConnectSocket);
+            NetworkManager.PacketReceived += OnPacketReceived;
             NetworkManager.Seed = new Random().Next();
             QueuePacket(new LoginRequestPacket()
             {
@@ -89,6 +90,19 @@ namespace CoCSharp.Client
                 Seed = NetworkManager.Seed
             });
             KeepAliveManager.Start();
+        }
+
+        private void OnPacketReceived(object sender, PacketReceivedEventArgs e)
+        {
+            if (e.Exception == null)
+            {
+                PacketLogger.LogPacket(e.Packet, PacketDirection.Client);
+                var handler = (PacketHandler)null;
+                if (!PacketHandlers.TryGetValue(e.Packet.ID, out handler))
+                    return;
+                handler(this, e.Packet);
+            }
+            else Console.WriteLine("Failed to read packet: {0}", e.Exception.Message);
         }
 
         public void SendChatMessage(string message)
@@ -122,16 +136,12 @@ namespace CoCSharp.Client
 
         private void HandleReceivedPacket(SocketAsyncEventArgs args, IPacket packet)
         {
-            PacketLogger.LogPacket(packet, PacketDirection.Client);
-            var handler = (PacketHandler)null;
-            if (!PacketHandlers.TryGetValue(packet.ID, out handler))
-                return;
-            handler(this, packet);
+
         }
 
         private void HandleReceicedPacketFailed(SocketAsyncEventArgs args, Exception ex)
         {
-            Console.WriteLine("Failed to read packet: {0}", ex.Message);
+
         }
 
         public event EventHandler<ChatMessageEventArgs> ChatMessage;

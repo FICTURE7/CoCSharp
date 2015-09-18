@@ -148,6 +148,7 @@
     <Compile Include="Logic\VillageObject.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
+    <Compile Include="Networking\PacketReceivedEventArgs.cs" />
     <Compile Include="Networking\Packets\Commands\BuyBuildingCommand.cs" />
     <Compile Include="Networking\Packets\Commands\BuyDecorationCommand.cs" />
     <Compile Include="Networking\Packets\Commands\BuyTrapCommand.cs" />

@@ -29,14 +29,6 @@ namespace CoCSharp.Client.API
         /// Gets or sets the <see cref="Data.Fingerprint"/> associated with this <see cref="ICoCClient"/>.
         /// </summary>
         Fingerprint Fingerprint { get; set; }
-        /// <summary>
-        /// Gets or sets the <see cref="Logging.PacketLogger"/> associated with this <see cref="ICoCClient"/>.
-        /// </summary>
-        PacketLogger PacketLogger { get; set; }
-        /// <summary>
-        /// Gets or sets the <see cref="Networking.NetworkManagerAsync"/> associated with this <see cref="ICoCClient"/>.
-        /// </summary>
-        NetworkManagerAsync NetworkManager { get; set; }
 
         /// <summary>
         /// Sends the specified message to the global chat.

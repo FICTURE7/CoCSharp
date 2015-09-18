@@ -11,46 +11,28 @@ namespace CoCSharp.Networking
     /// </summary>
     public class NetworkManagerAsync
     {
-        private Object _ObjLock = new Object();
-
         //TODO: Remove SocketAsyncEventArgs from params cause its UserToken is from an internal class.
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="packet"></param>
-        public delegate void PacketReceivedHandler(SocketAsyncEventArgs args, IPacket packet);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="ex"></param>
-        public delegate void PacketReceivedFailedHandler(SocketAsyncEventArgs args, Exception ex);
+        public event EventHandler<PacketReceivedEventArgs> PacketReceived;
+        protected internal void OnPacketReceived(PacketReceivedEventArgs args)
+        {
+            if (PacketReceived != null)
+                PacketReceived(this, args);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class.
         /// </summary>
         /// <param name="connection"><see cref="Socket"/> to wrap.</param>
-        /// <param name="networkHandler"><see cref="PacketReceivedHandler"/> that will handle incoming packet.</param>
-        /// <param name="packetReceivedFailedHandler"><see cref="PacketReceivedFailedHandler"/> that will handle incoming packet that failed to read.</param>
-        /// <exception cref="System.ArgumentNullException"/>
-        public NetworkManagerAsync(Socket connection,
-                                   PacketReceivedHandler packetReceivedHandler,
-                                   PacketReceivedFailedHandler packetReceivedFailedHandler)
+        /// <exception cref="ArgumentNullException"/>
+        public NetworkManagerAsync(Socket connection)
         {
             if (PacketDictionary == null)  // could a use a static constructor?
                 InitializePacketDictionary();
             if (connection == null)
                 throw new ArgumentNullException("connection");
-            if (packetReceivedHandler == null)
-                throw new ArgumentNullException("packetReceivedHandler");
-
 
             Connection = connection;
-            PacketReceived = packetReceivedHandler;
-            PacketReceivedFailed = packetReceivedFailedHandler;
             CoCCrypto = new CoCCrypto();
             ReceiveEventPool = new SocketAsyncEventArgsPool(25);
             SendEventPool = new SocketAsyncEventArgsPool(25);
@@ -75,8 +57,6 @@ namespace CoCSharp.Networking
         public int Seed { get; set; }
 
         private CoCCrypto CoCCrypto { get; set; }
-        private PacketReceivedHandler PacketReceived { get; set; }
-        private PacketReceivedFailedHandler PacketReceivedFailed { get; set; }
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; } // we are not using this properly. :{
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
@@ -151,7 +131,7 @@ namespace CoCSharp.Networking
                 return null;
             }
 
-        ReadPacket:
+            ReadPacket:
 
             // read header
             if (packetToken.HeaderReceiveOffset != PacketBuffer.HeaderSize) // we do not have the header
@@ -223,8 +203,7 @@ namespace CoCSharp.Networking
                 }
                 catch (Exception ex)
                 {
-                    if (PacketReceivedFailed != null)
-                        PacketReceivedFailed(args, ex);
+                    OnPacketReceived(new PacketReceivedEventArgs(packet, ex));
                     packetToken.Reset();
                     goto ReadPacket;
                 }
@@ -273,7 +252,7 @@ namespace CoCSharp.Networking
                     if (packets == null || packets.Length == 0)
                         break;
                     for (int i = 0; i < packets.Length; i++)
-                        PacketReceived(args, packets[i]); // pass it to the handler
+                        OnPacketReceived(new PacketReceivedEventArgs(packets[i], null));
                     break;
 
                 case SocketAsyncOperation.Send:
