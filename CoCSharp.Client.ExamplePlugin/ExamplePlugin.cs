@@ -1,8 +1,8 @@
 ﻿using CoCSharp.Client.API;
 using System;
-using CoCSharp.Client.API.Events;
+using System.Threading;
 
-namespace ExamplePlugin
+namespace CoCSharp.Client.ExamplePlugin
 {
     public class ExamplePlugin : Plugin
     {
@@ -15,21 +15,9 @@ namespace ExamplePlugin
         public override string Description { get { return "A plugin just for sample."; } }
         public override string Author { get { return "FICTURE7 & castelbuilder123"; } }
 
-        public override void OnLoad()
+        public override void OnUpdate()
         {
-            Client.ChatMessage += OnChatMessage;
-            Client.Login += OnLogin;
-            Console.WriteLine("Plugin loaded!", Name);
-        }
-
-        private void OnLogin(object sender, LoginEventArgs e)
-        {
-            Console.WriteLine("Logged in!");
-        }
-
-        private void OnChatMessage(object sender, ChatMessageEventArgs e)
-        {
-            Console.WriteLine("Got message!\n{0}", e.Message);
+            Console.WriteLine("Updating on thread {0}!", Thread.CurrentThread.ManagedThreadId);
         }
     }
 }
