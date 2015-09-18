@@ -45,7 +45,7 @@ namespace CoCSharp.Client
         private static void OnChatMessage(object sender, ChatMessageEventArgs e)
         {
             //TODO: Give flexibilty for plugin dev to remove this.
-            if (e.ClanName == null) Console.WriteLine("<[Lvl:{3}]{1}>: {2}", e.Username, e.Message, e.Packet.Level);
+            if (e.ClanName == null) Console.WriteLine("<[Lvl:{0}]{1}>: {2}", e.Packet.Level, e.Username, e.Message);
             else
             {
                 Console.Write("<[");
