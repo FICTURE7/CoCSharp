@@ -11,7 +11,7 @@ namespace CoCSharp.Networking
             Exception = ex;
         }
 
-        public IPacket Packet { get; set; }
-        public Exception Exception { get; set; }
+        public IPacket Packet { get; private set; }
+        public Exception Exception { get; private set; }
     }
 }
