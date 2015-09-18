@@ -1,4 +1,5 @@
-﻿using CoCSharp.Client.Events;
+﻿using CoCSharp.Client.API;
+using CoCSharp.Client.API.Events;
 using CoCSharp.Client.Handlers;
 using CoCSharp.Data;
 using CoCSharp.Logging;
@@ -12,7 +13,7 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Client
 {
-    public class CoCClient
+    public class CoCClient : ICoCClient
     {
         public delegate void PacketHandler(CoCClient client, IPacket packet);
 
@@ -28,15 +29,15 @@ namespace CoCSharp.Client
             {
                 LogConsole = false
             };
+            PluginManager = new PluginManager(this);
 
             LoginPacketHandlers.RegisterLoginPacketHandlers(this);
             InGamePacketHandlers.RegisterInGamePacketHandler(this);
+            PluginManager.LoadPlugins();
+            PluginManager.EnablePlugins();
         }
 
-        public bool Connected
-        {
-            get { return Connection.Connected; }
-        }
+        public bool Connected { get { return Connection.Connected; } }
         public Socket Connection { get; set; }
         public Village Home { get; set; }
         public Avatar Avatar { get; set; }
@@ -46,6 +47,7 @@ namespace CoCSharp.Client
 
         private KeepAliveManager KeepAliveManager { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
+        private PluginManager PluginManager { get; set; }
 
         public void Connect(IPEndPoint endPoint)
         {
@@ -60,8 +62,6 @@ namespace CoCSharp.Client
 
         private void ConnectAsyncCompleted(object sender, SocketAsyncEventArgs e)
         {
-            // 6c12b527e6810ff7301d972042ae3614f3d73acc
-            // ae9b056807ac8bfa58a3e879b1f1601ff17d1df5
             if (e.SocketError != SocketError.Success)
                 throw new SocketException((int)e.SocketError);
 
@@ -72,9 +72,9 @@ namespace CoCSharp.Client
                 UserID = Avatar.ID,
                 UserToken = Avatar.Token,
                 ClientMajorVersion = 7,
-                ClientContentVersion = 0,
-                ClientMinorVersion = 156,
-                FingerprintHash = "ae9b056807ac8bfa58a3e879b1f1601ff17d1df5",
+                ClientContentVersion = 12,
+                ClientMinorVersion = 200,
+                FingerprintHash = "5ad93639a41f49ab0e7783f80f9a5ac5cf7491c1",
                 OpenUDID = "563a6f060d8624db",
                 MacAddress = null,
                 DeviceModel = "GT-I9300",

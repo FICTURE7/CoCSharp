@@ -37,8 +37,8 @@ namespace CoCSharp.Networking
         /// <param name="packetReceivedFailedHandler"><see cref="PacketReceivedFailedHandler"/> that will handle incoming packet that failed to read.</param>
         /// <exception cref="System.ArgumentNullException"/>
         public NetworkManagerAsync(Socket connection,
-                              PacketReceivedHandler packetReceivedHandler,
-                              PacketReceivedFailedHandler packetReceivedFailedHandler)
+                                   PacketReceivedHandler packetReceivedHandler,
+                                   PacketReceivedFailedHandler packetReceivedFailedHandler)
         {
             if (PacketDictionary == null)  // could a use a static constructor?
                 InitializePacketDictionary();
@@ -158,7 +158,7 @@ namespace CoCSharp.Networking
             {
                 if (PacketBuffer.HeaderSize > bytesToProcess) // we got less that 7 bytes, some parts of the header
                 {
-                    Console.WriteLine("[Net:ID {0}] Not enough bytes to read header.", packetToken.TokenID);
+                    // Console.WriteLine("[Net:ID {0}] Not enough bytes to read header.", packetToken.TokenID);
 
                     Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Header, packetToken.HeaderReceiveOffset, bytesToProcess);
                     packetToken.HeaderReceiveOffset += bytesToProcess;
@@ -181,7 +181,7 @@ namespace CoCSharp.Networking
             {
                 if (packetToken.Length - packetToken.BodyReceiveOffset > bytesToProcess) // if we dont have enough to read body
                 {
-                    Console.WriteLine("[Net:ID {0}] Not enough bytes to read body.", packetToken.TokenID);
+                    // Console.WriteLine("[Net:ID {0}] Not enough bytes to read body.", packetToken.TokenID);
 
                     Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Body, packetToken.BodyReceiveOffset, bytesToProcess);
                     packetToken.BodyReceiveOffset += bytesToProcess;

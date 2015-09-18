@@ -45,6 +45,7 @@ namespace CoCSharp.Client
                     LastKeepAlive = DateTime.Now;
                     NextKeepAlive = DateTime.Now.AddSeconds(Delay);
                 }
+                Thread.Sleep(Delay - 2); // could get error here if Delay < 2
             }
         }
     }

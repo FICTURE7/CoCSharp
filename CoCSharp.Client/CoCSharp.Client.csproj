@@ -11,6 +11,7 @@
     <AssemblyName>CoCSharp.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,10 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PluginManager.cs" />
     <Compile Include="ClientConfiguration.cs" />
     <Compile Include="CoCClient.cs" />
-    <Compile Include="Events\ChatMessageEventArgs.cs" />
-    <Compile Include="Events\LoginEventArgs.cs" />
     <Compile Include="Handlers\InGamePacketHandlers.cs" />
     <Compile Include="Handlers\LoginPacketHandlers.cs" />
     <Compile Include="KeepAliveManager.cs" />
@@ -55,6 +55,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CoCSharp.Client.API\CoCSharp.Client.API.csproj">
+      <Project>{f565f4d1-1250-40f5-9523-519c3011bc1a}</Project>
+      <Name>CoCSharp.Client.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">
       <Project>{f8756685-cd4b-4c2e-9bee-269a27cbb6b2}</Project>
       <Name>CoCSharp</Name>

@@ -1,7 +1,7 @@
 ﻿using CoCSharp.Networking.Packets;
 using System;
 
-namespace CoCSharp.Client.Events
+namespace CoCSharp.Client.API.Events
 {
     public class ChatMessageEventArgs : EventArgs
     {
