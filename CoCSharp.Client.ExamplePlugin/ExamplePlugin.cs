@@ -13,7 +13,7 @@ namespace ExamplePlugin
 
         public override string Name { get { return "Example Plugin"; } }
         public override string Description { get { return "A plugin just for sample."; } }
-        public override string Author { get { return "FICTURE7"; } }
+        public override string Author { get { return "FICTURE7 & castelbuilder123"; } }
 
         public override void OnLoad()
         {
