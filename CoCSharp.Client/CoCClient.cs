@@ -34,6 +34,7 @@ namespace CoCSharp.Client
             LoginPacketHandlers.RegisterLoginPacketHandlers(this);
             InGamePacketHandlers.RegisterInGamePacketHandler(this);
             PluginManager.LoadPlugins();
+            PluginManager.EnablePlugins();
         }
 
         public bool Connected { get { return Connection.Connected; } }
