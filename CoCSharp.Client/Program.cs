@@ -11,6 +11,7 @@ namespace CoCSharp.Client
 
         public static void Main(string[] args)
         {
+            //TODO: Implement better command line handling.
 #if DEBUG
             args = new string[]
             {

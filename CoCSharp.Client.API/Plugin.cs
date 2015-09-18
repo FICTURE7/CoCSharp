@@ -31,6 +31,8 @@
                     m_Client = value;
                     m_Loaded = true;
                 }
+                else
+                    throw new PluginException("Cannot set Client property.");
             }
         }
         private ICoCClient m_Client = null;
