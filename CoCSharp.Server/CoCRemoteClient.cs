@@ -15,7 +15,8 @@ namespace CoCSharp.Server
         {
             Connection = connection;
             Server = server;
-            NetworkManager = new NetworkManagerAsync(connection, HandlePacketReceived, HandleReceicedPacketFailed);
+            NetworkManager = new NetworkManagerAsync(connection);
+            NetworkManager.PacketReceived += OnPacketReceived;
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
             Avatar = new Avatar();
             Home = new Village();
@@ -39,22 +40,21 @@ namespace CoCSharp.Server
             NetworkManager.SendPacket(packet);
         }
 
+        private void OnPacketReceived(object sender, PacketReceivedEventArgs e)
+        {
+            if (e.Exception == null)
+            {
+                var handler = (PacketHandler)null;
+                if (!PacketHandlers.TryGetValue(e.Packet.ID, out handler))
+                    return;
+                handler(this, Server, e.Packet);
+            }
+            else Console.WriteLine("Failed to read packet: \r\n{0}", e.Exception.Message);
+        }
+
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
             PacketHandlers.Add(packet.ID, handler);
-        }
-
-        private void HandlePacketReceived(SocketAsyncEventArgs args, IPacket packet)
-        {
-            var handler = (PacketHandler)null;
-            if (!PacketHandlers.TryGetValue(packet.ID, out handler))
-                return;
-            handler(this, Server, packet);
-        }
-
-        private void HandleReceicedPacketFailed(SocketAsyncEventArgs args, Exception ex)
-        {
-            Console.WriteLine("Failed to read packet: \r\n{0}", ex.Message);
         }
     }
 }

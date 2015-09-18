@@ -52,9 +52,7 @@ namespace CoCSharp.Client
             Console.Write("Disabling plugin...");
             PluginsEnabled = false;
             for (int i = 0; i < LoadedPlugins.Count; i++)
-            {
                 LoadedPlugins[i].OnDisable();
-            }
             m_UpdateThread.Abort();
             Console.WriteLine("Done!");
         }
@@ -99,9 +97,7 @@ namespace CoCSharp.Client
             }
 
             for (int i = 0; i < LoadedPlugins.Count; i++)
-            {
                 m_Updates.Add(new PluginUpdate(LoadedPlugins[i]));
-            }
             Console.WriteLine("Done!");
         }
 
@@ -124,7 +120,6 @@ namespace CoCSharp.Client
                     var pluginUpdate = m_Updates[i];
                     if (!pluginUpdate.UpdateTask.IsCompleted)
                        continue; // TODO: Warn user about it.
-
                     pluginUpdate.StartTime = DateTime.Now;
                     pluginUpdate.UpdateTask.Start();
                 }
