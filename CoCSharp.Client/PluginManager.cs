@@ -30,23 +30,30 @@ namespace CoCSharp.Client
             var pluginTypes = new List<Type>();
             for (int i = 0; i < pluginFiles.Length; i++)
             {
-                if (Path.GetExtension(pluginFiles[i]) != ".dll")
-                    continue;
-
-                var assembly = Assembly.LoadFrom(pluginFiles[i]);
-                var types = assembly.GetExportedTypes();
-                for (int j = 0; j < types.Length; j++)
+                try
                 {
-                    if (m_PluginType.IsAssignableFrom(types[j]) && !types[j].IsAbstract)
-                    {
-                        var plugin = Activator.CreateInstance(types[j]) as Plugin;
-                        plugin.Client = m_Client;
-                        LoadedPlugins.Add(plugin);
+                    if (Path.GetExtension(pluginFiles[i]) != ".dll")
+                        continue;
 
-                        plugin.OnLoad();
+                    var assembly = Assembly.LoadFrom(pluginFiles[i]);
+                    var types = assembly.GetExportedTypes();
+                    for (int j = 0; j < types.Length; j++)
+                    {
+                        if (m_PluginType.IsAssignableFrom(types[j]) && !types[j].IsAbstract)
+                        {
+                            var plugin = Activator.CreateInstance(types[j]) as Plugin;
+                            plugin.Client = m_Client;
+                            LoadedPlugins.Add(plugin);
+
+                            plugin.OnLoad();
+                        }
                     }
+                    LoadedPluginAssemblies.Add(assembly);
                 }
-                LoadedPluginAssemblies.Add(assembly);
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error while loading {0}: {1}", pluginFiles[i], ex);
+                }
             }
         }
 
