@@ -148,6 +148,7 @@
     <Compile Include="Logic\VillageObject.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
+    <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
     <Compile Include="Networking\PacketReceivedEventArgs.cs" />
     <Compile Include="Networking\Packets\Commands\BuyBuildingCommand.cs" />
     <Compile Include="Networking\Packets\Commands\BuyDecorationCommand.cs" />
@@ -171,7 +172,7 @@
     <Compile Include="Networking\InvalidPacketException.cs" />
     <Compile Include="Networking\NetworkManager.cs" />
     <Compile Include="Networking\NetworkManagerAsync.cs" />
-    <Compile Include="Networking\PacketBuffer.cs" />
+    <Compile Include="Networking\PacketExtractor.cs" />
     <Compile Include="Networking\PacketDirection.cs" />
     <Compile Include="Networking\PacketExtractionFlags.cs" />
     <Compile Include="Networking\Packets\AllianceChatMessageClientPacket.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="Networking\Packets\LoginRequestPacket.cs" />
     <Compile Include="Networking\PacketReader.cs" />
     <Compile Include="Networking\Packets\LoginSuccessPacket.cs" />
+    <Compile Include="Networking\PacketBufferManager.cs" />
     <Compile Include="Networking\PacketToken.cs" />
     <Compile Include="Networking\Packets\ServerErrorPacket.cs" />
     <Compile Include="Networking\Packets\SetDeviceTokenPacket.cs" />
