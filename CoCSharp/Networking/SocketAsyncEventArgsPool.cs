@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Sockets;
 
 namespace CoCSharp.Networking
@@ -8,9 +7,9 @@ namespace CoCSharp.Networking
     /// Implements methods to manage <see cref="SocketAsyncEventArgs"/> objects
     /// in pools.
     /// </summary>
-    public class SocketAsyncEventArgsPool
+    internal class SocketAsyncEventArgsPool
     {
-        private Object m_ObjLock = new Object();
+        private object m_ObjLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SocketAsyncEventArgsPool"/> class with
@@ -21,12 +20,6 @@ namespace CoCSharp.Networking
         {
             Capacity = capacity;
             Pool = new Stack<SocketAsyncEventArgs>(capacity);
-            for (int i = 0; i < capacity; i++)
-            {
-                var args = new SocketAsyncEventArgs();
-                var packetBuffer = new PacketToken(args);
-                Push(args);
-            }
         }
 
         /// <summary>
@@ -39,14 +32,6 @@ namespace CoCSharp.Networking
         public int Count { get { return Pool.Count; } }
 
         private Stack<SocketAsyncEventArgs> Pool { get; set; }
-
-        /// <summary>
-        /// Clears the pool.
-        /// </summary>
-        public void Clear()
-        {
-            Pool.Clear();
-        }
 
         /// <summary>
         /// Push the specified <see cref="SocketAsyncEventArgs"/> object to the pool.

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace CoCSharp.Networking
 {
-    internal class PacketToken
+    internal sealed class PacketToken
     {
-        private static int m_NextTokenId = 0;
-        public PacketToken(SocketAsyncEventArgs args)
+        private static int m_NextTokenId = 1;
+        private PacketToken(SocketAsyncEventArgs args)
         {
             args.UserToken = this;
-            PacketBuffer = new PacketBuffer(args);
-            Header = new byte[PacketBuffer.HeaderSize];
+            Header = new byte[PacketExtractor.HeaderSize];
+            ReceiveOffset = args.Offset;
             TokenID = m_NextTokenId;
             m_NextTokenId++;
         }
@@ -19,20 +18,15 @@ namespace CoCSharp.Networking
         public int Length { get; set; }
         public ushort Version { get; set; }
 
+        public int ReceiveOffset { get; set; }
+
         public byte[] Header { get; set; }
         public int HeaderReceiveOffset { get; set; }
-        public int ReceiveOffset { get; set; }
 
         public byte[] Body { get; set; }
         public int BodyReceiveOffset { get; set; }
 
-
-
-
-        public bool HasReadHeader { get; set; }
-        public int BytesReceivedCount { get; set; }
-        public int TokenID { get; set; }
-        public PacketBuffer PacketBuffer { get; set; }
+        public int TokenID { get; private set; } // for testing
 
         public void Reset()
         {
@@ -40,13 +34,16 @@ namespace CoCSharp.Networking
             Length = 0;
             Version = 0;
 
-            Header = new byte[PacketBuffer.HeaderSize];
+            Header = new byte[PacketExtractor.HeaderSize];
             HeaderReceiveOffset = 0;
 
             Body = null;
             BodyReceiveOffset = 0;
+        }
 
-            HasReadHeader = false;
+        public static void Create(SocketAsyncEventArgs args)
+        {
+            args.UserToken = new PacketToken(args);
         }
     }
 }

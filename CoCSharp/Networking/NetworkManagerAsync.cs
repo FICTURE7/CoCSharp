@@ -11,13 +11,11 @@ namespace CoCSharp.Networking
     /// </summary>
     public class NetworkManagerAsync
     {
-        //TODO: Remove SocketAsyncEventArgs from params cause its UserToken is from an internal class.
-
-        public event EventHandler<PacketReceivedEventArgs> PacketReceived;
-        protected internal void OnPacketReceived(PacketReceivedEventArgs args)
+        #region Constructors
+        static NetworkManagerAsync()
         {
-            if (PacketReceived != null)
-                PacketReceived(this, args);
+            if (PacketDictionary == null) // incase this called twice.
+                InitializePacketDictionary();
         }
 
         /// <summary>
@@ -27,18 +25,43 @@ namespace CoCSharp.Networking
         /// <exception cref="ArgumentNullException"/>
         public NetworkManagerAsync(Socket connection)
         {
-            if (PacketDictionary == null)  // could a use a static constructor?
-                InitializePacketDictionary();
             if (connection == null)
                 throw new ArgumentNullException("connection");
 
             Connection = connection;
+            Settings = new NetworkManagerAsyncSettings();
             CoCCrypto = new CoCCrypto();
             ReceiveEventPool = new SocketAsyncEventArgsPool(25);
             SendEventPool = new SocketAsyncEventArgsPool(25);
+            SetAsyncOperationPools();
+
             StartReceive(ReceiveEventPool.Pop());
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with
+        /// the specified <see cref="NetworkManagerAsyncSettings"/>.
+        /// </summary>
+        /// <param name="connection"><see cref="Socket"/> to wrap.</param>
+        /// <param name="settings"><see cref="NetworkManagerAsyncSettings"/> to use.</param>
+        /// <exception cref="ArgumentNullException"/>
+        public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings)
+        {
+            if (connection == null)
+                throw new ArgumentNullException("connection");
+
+            Connection = connection;
+            Settings = settings;
+            CoCCrypto = new CoCCrypto();
+            ReceiveEventPool = new SocketAsyncEventArgsPool(25);
+            SendEventPool = new SocketAsyncEventArgsPool(25);
+            SetAsyncOperationPools();
+
+            StartReceive(ReceiveEventPool.Pop());
+        }
+        #endregion
+
+        #region Properties
         /// <summary>
         /// Gets whether data is available in the socket.
         /// </summary>
@@ -55,12 +78,20 @@ namespace CoCSharp.Networking
         /// Gets or sets the seed for encryption.
         /// </summary>
         public int Seed { get; set; }
+        /// <summary>
+        /// Gets or sets the assiociated <see cref="NetworkManagerAsyncSettings"/> with
+        /// this <see cref="NetworkManagerAsync"/>.
+        /// </summary>
+        public NetworkManagerAsyncSettings Settings { get; set; }
 
         private CoCCrypto CoCCrypto { get; set; }
+        private PacketBufferManager BufferManager { get; set; }
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; } // we are not using this properly. :{
         private static Dictionary<ushort, Type> PacketDictionary { get; set; }
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Sends the specified packet to the socket asynchronously.
         /// </summary>
@@ -117,6 +148,27 @@ namespace CoCSharp.Networking
             CoCCrypto.UpdateCiphers((ulong)seed, key);
         }
 
+        private void SetAsyncOperationPools()
+        {
+            BufferManager = new PacketBufferManager(Settings.ReceiveOperationCount, Settings.SendOperationCount, Settings.BufferSize);
+
+            for (int i = 0; i < ReceiveEventPool.Capacity; i++)
+            {
+                var args = new SocketAsyncEventArgs();
+                args.Completed += AsyncOperationCompleted;
+                BufferManager.SetBuffer(args);
+                PacketToken.Create(args);
+                ReceiveEventPool.Push(args);
+            }
+            for (int i = 0; i < SendEventPool.Capacity; i++)
+            {
+                var args = new SocketAsyncEventArgs();
+                args.Completed += AsyncOperationCompleted;
+                BufferManager.SetBuffer(args);
+                PacketToken.Create(args);
+                SendEventPool.Push(args);
+            }
+        }
 
         private IPacket[] ProcessReceive(SocketAsyncEventArgs args)
         {
@@ -134,25 +186,25 @@ namespace CoCSharp.Networking
             ReadPacket:
 
             // read header
-            if (packetToken.HeaderReceiveOffset != PacketBuffer.HeaderSize) // we do not have the header
+            if (packetToken.HeaderReceiveOffset != PacketExtractor.HeaderSize) // we do not have the header
             {
-                if (PacketBuffer.HeaderSize > bytesToProcess) // we got less that 7 bytes, some parts of the header
+                if (PacketExtractor.HeaderSize > bytesToProcess) // we got less that 7 bytes, some parts of the header
                 {
                     // Console.WriteLine("[Net:ID {0}] Not enough bytes to read header.", packetToken.TokenID);
 
                     Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Header, packetToken.HeaderReceiveOffset, bytesToProcess);
                     packetToken.HeaderReceiveOffset += bytesToProcess;
-                    packetToken.ReceiveOffset = 0;
+                    packetToken.ReceiveOffset = args.Offset;
                     StartReceive(args);
                     return packetList.ToArray();
                 }
                 else // if we got more than enough data for the header
                 {
-                    Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Header, packetToken.HeaderReceiveOffset, PacketBuffer.HeaderSize);
-                    packetToken.HeaderReceiveOffset += PacketBuffer.HeaderSize;
-                    packetToken.ReceiveOffset += PacketBuffer.HeaderSize; // probs here?
-                    bytesToProcess -= PacketBuffer.HeaderSize;
-                    ReadHeader(packetToken);
+                    Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Header, packetToken.HeaderReceiveOffset, PacketExtractor.HeaderSize);
+                    packetToken.HeaderReceiveOffset += PacketExtractor.HeaderSize;
+                    packetToken.ReceiveOffset += PacketExtractor.HeaderSize;
+                    bytesToProcess -= PacketExtractor.HeaderSize;
+                    ProcessToken(packetToken);
                 }
             }
 
@@ -165,7 +217,7 @@ namespace CoCSharp.Networking
 
                     Buffer.BlockCopy(args.Buffer, packetToken.ReceiveOffset, packetToken.Body, packetToken.BodyReceiveOffset, bytesToProcess);
                     packetToken.BodyReceiveOffset += bytesToProcess;
-                    packetToken.ReceiveOffset = 0;
+                    packetToken.ReceiveOffset = args.Offset;
                     StartReceive(args);
                     return packetList.ToArray();
                 }
@@ -205,7 +257,8 @@ namespace CoCSharp.Networking
                 {
                     OnPacketReceived(new PacketReceivedEventArgs(packet, ex));
                     packetToken.Reset();
-                    goto ReadPacket;
+                    if (bytesToProcess != 0)
+                        goto ReadPacket;
                 }
             }
 
@@ -217,13 +270,13 @@ namespace CoCSharp.Networking
             if (bytesToProcess != 0)
                 goto ReadPacket;
 
-            packetToken.ReceiveOffset = 0;
+            packetToken.ReceiveOffset = args.Offset;
             ReceiveEventPool.Push(args);
             StartReceive(ReceiveEventPool.Pop());
             return packetList.ToArray();
         }
 
-        private void ReadHeader(PacketToken token)
+        private static void ProcessToken(PacketToken token)
         {
             token.ID = (ushort)((token.Header[0] << 8) | (token.Header[1]));
             token.Length = (token.Header[2] << 16) | (token.Header[3] << 8) | (token.Header[4]);
@@ -231,16 +284,14 @@ namespace CoCSharp.Networking
             token.Body = new byte[token.Length];
         }
 
-        private void StartReceive(SocketAsyncEventArgs e)
+        private void StartReceive(SocketAsyncEventArgs args)
         {
-            e.Completed += AsyncOperationCompleted;
-            if (!Connection.ReceiveAsync(e))
-                AsyncOperationCompleted(Connection, e);
+            if (!Connection.ReceiveAsync(args))
+                AsyncOperationCompleted(Connection, args);
         }
 
         public void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
-            args.Completed -= AsyncOperationCompleted;
             if (args.SocketError != SocketError.Success)
                 throw new SocketException((int)args.SocketError);
 
@@ -291,5 +342,15 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceChatMessageServerPacket().ID, typeof(AllianceChatMessageServerPacket)); // 24312
             PacketDictionary.Add(new ChatMessageServerPacket().ID, typeof(ChatMessageServerPacket)); // 24715
         }
+        #endregion
+
+        #region Events
+        public event EventHandler<PacketReceivedEventArgs> PacketReceived;
+        protected internal void OnPacketReceived(PacketReceivedEventArgs args)
+        {
+            if (PacketReceived != null)
+                PacketReceived(this, args);
+        }
+        #endregion
     }
 }
