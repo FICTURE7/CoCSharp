@@ -14,9 +14,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Client
 {
     public class CoCClient : ICoCClient
-    {
-        public delegate void PacketHandler(CoCClient client, IPacket packet);
-
+    { 
         public CoCClient()
         {
             Fingerprint = new Fingerprint();
