@@ -1,13 +1,19 @@
 ﻿using CoCSharp.Client.API.Events;
 using CoCSharp.Data;
-using CoCSharp.Logging;
 using CoCSharp.Logic;
-using CoCSharp.Networking;
+using CoCSharp.Networking.Packets;
 using System;
 using System.Net.Sockets;
 
 namespace CoCSharp.Client.API
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="client"></param>
+    /// <param name="packet"></param>
+    public delegate void PacketHandler(ICoCClient client, IPacket packet);
+
     /// <summary>
     /// 
     /// </summary>
@@ -35,6 +41,21 @@ namespace CoCSharp.Client.API
         /// </summary>
         /// <param name="message"></param>
         void SendChatMessage(string message);
+
+        /// <summary>
+        /// Registers the specified <see cref="PacketHandler"/> with the specified <see cref="IPacket"/>
+        /// to this <see cref="ICoCClient"/>.
+        /// </summary>
+        /// <param name="packet">The <see cref="IPacket"/>.</param>
+        /// <param name="handler">The <see cref="PacketHandler"/> delegate used to handle the specified
+        /// <see cref="IPacket"/>.</param>
+        void RegisterPacketHandler(IPacket packet, PacketHandler handler);
+
+        /// <summary>
+        /// Sends the specified <see cref="IPacket"/> to the server.
+        /// </summary>
+        /// <param name="packet">The <see cref="IPacket"/> to send.</param>
+        void QueuePacket(IPacket packet);
 
         /// <summary>
         /// The event raised when a chat message is received.
