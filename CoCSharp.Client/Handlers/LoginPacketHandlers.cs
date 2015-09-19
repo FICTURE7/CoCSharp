@@ -1,4 +1,5 @@
-﻿using CoCSharp.Client.API.Events;
+﻿using CoCSharp.Client.API;
+using CoCSharp.Client.API.Events;
 using CoCSharp.Networking.Packets;
 using System;
 using System.IO;
@@ -7,7 +8,7 @@ namespace CoCSharp.Client.Handlers
 {
     public static class LoginPacketHandlers
     {
-        public static void HandleLoginFailedPacket(CoCClient client, IPacket packet)
+        public static void HandleLoginFailedPacket(ICoCClient client, IPacket packet)
         {
             var lfPacket = packet as LoginFailedPacket;
             Console.WriteLine("Failed to login, reason: {0}", lfPacket.FailureReason);
@@ -25,14 +26,14 @@ namespace CoCSharp.Client.Handlers
             }
         }
 
-        public static void HandleLoginSuccessPacket(CoCClient client, IPacket packet)
+        public static void HandleLoginSuccessPacket(ICoCClient client, IPacket packet)
         {
             var lsPacket = packet as LoginSuccessPacket;
-            client.OnLogin(new LoginEventArgs(lsPacket));
+            ((CoCClient)client).OnLogin(new LoginEventArgs(lsPacket));
             Console.WriteLine("Successfully logged in!\r\n");
         }
 
-        public static void HandleUpdateKeyPacket(CoCClient client, IPacket packet)
+        public static void HandleUpdateKeyPacket(ICoCClient client, IPacket packet)
         {
             Console.WriteLine("Updated ciphers with new server key.");
         }

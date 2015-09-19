@@ -1,4 +1,5 @@
-﻿using CoCSharp.Client.API.Events;
+﻿using CoCSharp.Client.API;
+using CoCSharp.Client.API.Events;
 using CoCSharp.Networking.Packets;
 using System;
 
@@ -6,13 +7,13 @@ namespace CoCSharp.Client.Handlers
 {
     public static class InGamePacketHandlers
     {
-        public static void HandleChatMessageServerPacket(CoCClient client, IPacket packet)
+        public static void HandleChatMessageServerPacket(ICoCClient client, IPacket packet)
         {
             var cmsPacket = packet as ChatMessageServerPacket;
-            client.OnChatMessage(new ChatMessageEventArgs(cmsPacket));
+            ((CoCClient)client).OnChatMessage(new ChatMessageEventArgs(cmsPacket));
         }
 
-        public static void HandleOwnHomeDataPacket(CoCClient client, IPacket packet)
+        public static void HandleOwnHomeDataPacket(ICoCClient client, IPacket packet)
         {
             var ohdPacket = packet as OwnHomeDataPacket;
             client.Home = ohdPacket.Home;
@@ -31,13 +32,13 @@ namespace CoCSharp.Client.Handlers
             Console.WriteLine();
         }
 
-        public static void HandleServerErrorPacket(CoCClient client, IPacket packet)
+        public static void HandleServerErrorPacket(ICoCClient client, IPacket packet)
         {
             var errPacket = packet as ServerErrorPacket;
             Console.WriteLine("Server Error: {0}", errPacket.ErrorMessage);
         }
 
-        public static void RegisterInGamePacketHandler(CoCClient client)
+        public static void RegisterInGamePacketHandler(ICoCClient client)
         {
             client.RegisterPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServerPacket);
             client.RegisterPacketHandler(new OwnHomeDataPacket(), HandleOwnHomeDataPacket);
