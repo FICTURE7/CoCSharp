@@ -14,7 +14,7 @@ namespace CoCSharp.Networking
         #region Constructors
         static NetworkManagerAsync()
         {
-            if (PacketDictionary == null) // incase this called twice.
+            if (PacketDictionary == null) // incase its called twice.
                 InitializePacketDictionary();
         }
 
@@ -29,7 +29,7 @@ namespace CoCSharp.Networking
                 throw new ArgumentNullException("connection");
 
             Connection = connection;
-            Settings = new NetworkManagerAsyncSettings();
+            Settings = new NetworkManagerAsyncSettings(); // default settings
             CoCCrypto = new CoCCrypto();
             ReceiveEventPool = new SocketAsyncEventArgsPool(25);
             SendEventPool = new SocketAsyncEventArgsPool(25);
@@ -49,6 +49,8 @@ namespace CoCSharp.Networking
         {
             if (connection == null)
                 throw new ArgumentNullException("connection");
+            if (settings == null)
+                throw new ArgumentNullException("settings");
 
             Connection = connection;
             Settings = settings;
@@ -69,7 +71,7 @@ namespace CoCSharp.Networking
         /// <summary>
         /// Gets whether the socket is disconnected.
         /// </summary>
-        public bool Disconnected { get; private set; }
+        public bool IsDisconnected { get; private set; }
         /// <summary>
         /// Gets the <see cref="Socket"/> from which packets will be read and written.
         /// </summary>
@@ -135,8 +137,8 @@ namespace CoCSharp.Networking
         public void Disconnect()
         {
             //TODO: Better handling
-
-            Disconnected = true;
+            OnDisconnected(new DisconnectedEventArgs(null));
+            IsDisconnected = true;
             Connection.Close();
         }
 
@@ -178,8 +180,8 @@ namespace CoCSharp.Networking
 
             if (bytesToProcess == 0)
             {
-                //TODO: Fire event
-                Disconnected = true;
+                IsDisconnected = true;
+                OnDisconnected(new DisconnectedEventArgs(args));
                 return null;
             }
 
@@ -293,7 +295,10 @@ namespace CoCSharp.Networking
         public void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
             if (args.SocketError != SocketError.Success)
-                throw new SocketException((int)args.SocketError);
+            {
+                IsDisconnected = true;
+                OnDisconnected(new DisconnectedEventArgs(args));
+            }
 
             switch (args.LastOperation)
             {
@@ -307,6 +312,7 @@ namespace CoCSharp.Networking
                     break;
 
                 case SocketAsyncOperation.Send:
+                    //TODO: Handle large packets.
                     break;
             }
         }
@@ -350,6 +356,13 @@ namespace CoCSharp.Networking
         {
             if (PacketReceived != null)
                 PacketReceived(this, args);
+        }
+
+        public event EventHandler<DisconnectedEventArgs> Disconnected;
+        protected internal void OnDisconnected(DisconnectedEventArgs args)
+        {
+            if (Disconnected != null)
+                Disconnected(this, args);
         }
         #endregion
     }
