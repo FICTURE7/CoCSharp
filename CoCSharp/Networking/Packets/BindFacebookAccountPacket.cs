@@ -4,7 +4,7 @@
     {
         public ushort ID { get { return 0x3779; } }
 
-        private bool Unknown1;
+        public bool Unknown1;
         public string NumericFacebookID;
         public string Base64FacebookToken;
 

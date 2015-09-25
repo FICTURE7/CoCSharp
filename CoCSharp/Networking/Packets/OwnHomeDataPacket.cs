@@ -305,8 +305,8 @@ namespace CoCSharp.Networking.Packets
             writer.WriteInt32(Unknown23);
             writer.WriteInt32(Unknown24);
             writer.WriteInt32(Unknown25);
-            for (int i = 0; i < 16; i++)
-                writer.WriteInt32(0);
+            //for (int i = 0; i < 15; i++)
+            //    writer.WriteInt32(0);
         }
     }
 }

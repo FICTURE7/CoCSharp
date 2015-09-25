@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Data;
+using System.IO;
 
 namespace CoCSharp.Networking.Packets
 {
@@ -47,13 +48,14 @@ namespace CoCSharp.Networking.Packets
         public LoginFailureReason FailureReason;
         public Fingerprint Fingerprint;
         public string HostName;
-        public string RackcdnUrl;
+        public string AssetsRootUrl;
         public string iTunesUrl; // market url
-        private string Unknown1;
-        private string Unknown2;
-        private byte Unknown3;
+        public string Unknown1;
+        public int RemainingTime;
+        public byte Unknown2;
         public byte[] CompressedFingerprintJson;
-        private string Unknown4;
+        public string Unknown3;
+        public string Unknown4;
 
         public void ReadPacket(PacketReader reader)
         {
@@ -62,12 +64,13 @@ namespace CoCSharp.Networking.Packets
             if (fingerprintJson != null)
                 Fingerprint = new Fingerprint(fingerprintJson);
             HostName = reader.ReadString();
-            RackcdnUrl = reader.ReadString();
+            AssetsRootUrl = reader.ReadString();
             iTunesUrl = reader.ReadString();
             Unknown1 = reader.ReadString();
-            Unknown2 = reader.ReadString();
-            Unknown3 = (byte)reader.ReadByte();
+            RemainingTime = reader.ReadInt32();
+            Unknown2 = reader.ReadByte();
             CompressedFingerprintJson = reader.ReadByteArray();
+            Unknown3 = reader.ReadString();
             Unknown4 = reader.ReadString();
         }
 
@@ -76,14 +79,18 @@ namespace CoCSharp.Networking.Packets
             writer.WriteInt32((int)FailureReason);
             if (Fingerprint != null)
                 writer.WriteString(Fingerprint.ToJson());
+            else
+                writer.WriteString(null);
             writer.WriteString(HostName);
-            writer.WriteString(RackcdnUrl);
+            writer.WriteString(AssetsRootUrl);
             writer.WriteString(iTunesUrl);
             writer.WriteString(Unknown1);
-            writer.WriteString(Unknown2);
-            writer.WriteByte(Unknown3);
+            writer.WriteInt32(RemainingTime);
+            writer.WriteByte(Unknown2);
             writer.WriteByteArray(CompressedFingerprintJson);
+            writer.WriteString(Unknown3);
             writer.WriteString(Unknown4);
+            File.WriteAllBytes("dump", ((MemoryStream)writer.BaseStream).ToArray());
         }
     }
 }
