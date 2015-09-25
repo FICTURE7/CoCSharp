@@ -55,7 +55,7 @@ namespace CoCSharp.Client.API
         /// Sends the specified <see cref="IPacket"/> to the server.
         /// </summary>
         /// <param name="packet">The <see cref="IPacket"/> to send.</param>
-        void QueuePacket(IPacket packet);
+        void SendPacket(IPacket packet);
 
         /// <summary>
         /// The event raised when a chat message is received.

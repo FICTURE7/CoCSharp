@@ -66,14 +66,14 @@ namespace CoCSharp.Client
             NetworkManager = new NetworkManagerAsync(e.ConnectSocket);
             NetworkManager.PacketReceived += OnPacketReceived;
             NetworkManager.Seed = new Random().Next();
-            QueuePacket(new LoginRequestPacket()
+            SendPacket(new LoginRequestPacket()
             {
                 UserID = Avatar.ID,
                 UserToken = Avatar.Token,
                 ClientMajorVersion = 7,
                 ClientContentVersion = 12,
                 ClientMinorVersion = 200,
-                FingerprintHash = "5ad93639a41f49ab0e7783f80f9a5ac5cf7491c1",
+                FingerprintHash = "7af2ba412c1716cffe3949f1dcffcea6822560f2",
                 OpenUDID = "563a6f060d8624db",
                 MacAddress = null,
                 DeviceModel = "GT-I9300",
@@ -90,28 +90,15 @@ namespace CoCSharp.Client
             KeepAliveManager.Start();
         }
 
-        private void OnPacketReceived(object sender, PacketReceivedEventArgs e)
-        {
-            if (e.Exception == null)
-            {
-                PacketLogger.LogPacket(e.Packet, PacketDirection.Client);
-                var handler = (PacketHandler)null;
-                if (!PacketHandlers.TryGetValue(e.Packet.ID, out handler))
-                    return;
-                handler(this, e.Packet);
-            }
-            else Console.WriteLine("Failed to read packet: {0}", e.Exception.Message);
-        }
-
         public void SendChatMessage(string message)
         {
-            QueuePacket(new ChatMessageClientPacket()
+            SendPacket(new ChatMessageClientPacket()
             {
                 Message = message
             });
         }
 
-        public void QueuePacket(IPacket packet)
+        public void SendPacket(IPacket packet)
         {
             if (packet == null)
                 throw new ArgumentNullException("packet");
@@ -124,6 +111,7 @@ namespace CoCSharp.Client
 
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
+            //TODO: Add default PacketHandlers, so that people can add there own handlers without interfering.
             if (packet == null)
                 throw new ArgumentNullException("packet");
             if (handler == null)
@@ -132,14 +120,17 @@ namespace CoCSharp.Client
             PacketHandlers.Add(packet.ID, handler);
         }
 
-        private void HandleReceivedPacket(SocketAsyncEventArgs args, IPacket packet)
+        private void OnPacketReceived(object sender, PacketReceivedEventArgs e)
         {
-
-        }
-
-        private void HandleReceicedPacketFailed(SocketAsyncEventArgs args, Exception ex)
-        {
-
+            if (e.Exception == null)
+            {
+                PacketLogger.LogPacket(e.Packet, PacketDirection.Client);
+                var handler = (PacketHandler)null;
+                if (!PacketHandlers.TryGetValue(e.Packet.ID, out handler))
+                    return;
+                handler(this, e.Packet);
+            }
+            else Console.WriteLine("Failed to read packet: {0}", e.Exception.Message);
         }
 
         public event EventHandler<ChatMessageEventArgs> ChatMessage;

@@ -41,11 +41,11 @@ namespace CoCSharp.Client
             {
                 if (DateTime.Now >= NextKeepAlive)
                 {
-                    Client.QueuePacket(new KeepAliveRequestPacket());
+                    Client.SendPacket(new KeepAliveRequestPacket());
                     LastKeepAlive = DateTime.Now;
                     NextKeepAlive = DateTime.Now.AddSeconds(Delay);
                 }
-                Thread.Sleep(Delay - 2); // could get error here if Delay < 2
+                Thread.Sleep(Delay * 999);
             }
         }
     }
