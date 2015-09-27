@@ -54,22 +54,41 @@
         /// <summary>
         /// Called every 100ms.
         /// </summary>
-        public virtual void OnUpdate() { }
+        public virtual void OnUpdate()
+        {
+
+        }
+
         /// <summary>
         /// Called when the plugin is enabled.
         /// </summary>
-        public virtual void OnEnable() { }
+        public virtual void OnEnable()
+        {
+
+        }
+
         /// <summary>
         /// Called when the plugin is disabled.
         /// </summary>
-        public virtual void OnDisable() { }
+        public virtual void OnDisable()
+        {
+
+        }
+
         /// <summary>
         /// Called when the plugin is loaded.
         /// </summary>
-        public virtual void OnLoad() { }
+        public virtual void OnLoad()
+        {
+
+        }
+
         /// <summary>
         /// Called when the plugin is unloaded.
         /// </summary>
-        public virtual void OnUnload() { }
+        public virtual void OnUnload()
+        {
+
+        }
     }
 }

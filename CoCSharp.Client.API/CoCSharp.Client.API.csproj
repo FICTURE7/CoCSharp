@@ -44,6 +44,7 @@
     <Compile Include="Events\ChatMessageEventArgs.cs" />
     <Compile Include="Events\LoginEventArgs.cs" />
     <Compile Include="ICoCClient.cs" />
+    <Compile Include="PacketHandler.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -5,6 +5,6 @@
     /// </summary>
     public abstract class CoCData
     {
-        public int ID { get; set; }
+        public int DataID { get; set; }
     }
 }

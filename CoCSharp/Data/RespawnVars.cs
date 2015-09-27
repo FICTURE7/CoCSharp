@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace CoCSharp.Data
 {
@@ -19,11 +20,17 @@ namespace CoCSharp.Data
         public int ObstacleClearCounter { get; set; }
         [JsonProperty("respawnSeed")]
         public int RespawnSeed { get; set; }
+
         [JsonProperty("secondsFromLastRespawn")]
-        public int SecoundsFromLastRespawn { get; set; }
+        private int m_SecoundsFromLastRespawn = 0;
+        public TimeSpan SecoundsFromLastRespawn { get { return TimeSpan.FromSeconds(m_SecoundsFromLastRespawn); } }
+
         [JsonProperty("time_in_gembox_period")]
-        public int TimeInGemboxPeriod { get; set; }
+        private int m_TimeInGemboxPeriod = 0;
+        public TimeSpan TimeInGemboxPeriod { get { return TimeSpan.FromSeconds(m_TimeInGemboxPeriod); } }
+
         [JsonProperty("time_to_gembox_drop")]
-        public int TimeToGemboxDrop { get; set; }
+        private int m_TimeToGemboxDrop = 0;
+        public TimeSpan TimeToGemboxDrop { get { return TimeSpan.FromSeconds(m_TimeToGemboxDrop); } }
     }
 }

@@ -28,6 +28,7 @@ namespace CoCSharp.Client
 
             Configuration = ClientConfiguration.LoadConfiguration("clientConfig.xml");
             Client = new CoCClient();
+            Client.Login += OnLogin;
             Client.ChatMessage += OnChatMessage;
             Client.Avatar.ID = Configuration.UserID;
             Client.Avatar.Token = Configuration.UserToken;
@@ -37,9 +38,17 @@ namespace CoCSharp.Client
 
             while (true)
             {
-                var message = Console.ReadLine();
-                Client.SendChatMessage(message); //TODO: Handle stuff interms of commands.
+                var command = Console.ReadLine();
+                if (command[0] == '/')
+                    Console.WriteLine("TODO: Handle command.");
+                else
+                    Client.SendChatMessage(command);
             }
+        }
+
+        private static void OnLogin(object sender, LoginEventArgs e)
+        {
+            Console.WriteLine("Successfully logged in!\r\n");
         }
 
         private static void OnChatMessage(object sender, ChatMessageEventArgs e)

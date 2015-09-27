@@ -30,7 +30,6 @@ namespace CoCSharp.Client.Handlers
         {
             var lsPacket = packet as LoginSuccessPacket;
             ((CoCClient)client).OnLogin(new LoginEventArgs(lsPacket));
-            Console.WriteLine("Successfully logged in!\r\n");
         }
 
         public static void HandleUpdateKeyPacket(ICoCClient client, IPacket packet)
@@ -40,9 +39,9 @@ namespace CoCSharp.Client.Handlers
 
         public static void RegisterLoginPacketHandlers(CoCClient client)
         {
-            client.RegisterPacketHandler(new LoginFailedPacket(), HandleLoginFailedPacket);
-            client.RegisterPacketHandler(new LoginSuccessPacket(), HandleLoginSuccessPacket);
-            client.RegisterPacketHandler(new UpdateKeyPacket(), HandleUpdateKeyPacket);
+            client.RegisterDefaultPacketHandler(new LoginFailedPacket(), HandleLoginFailedPacket);
+            client.RegisterDefaultPacketHandler(new LoginSuccessPacket(), HandleLoginSuccessPacket);
+            client.RegisterDefaultPacketHandler(new UpdateKeyPacket(), HandleUpdateKeyPacket);
         }
     }
 }

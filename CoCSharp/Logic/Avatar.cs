@@ -1,7 +1,4 @@
-﻿using CoCSharp.Networking;
-using System;
-
-namespace CoCSharp.Logic
+﻿namespace CoCSharp.Logic
 {
     public class Avatar
     {

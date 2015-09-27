@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 
 namespace CoCSharp.Logic
 {
@@ -29,5 +30,13 @@ namespace CoCSharp.Logic
         /// </summary>
         [JsonProperty("lvl")]
         public int Level { get; set; }
+
+        [JsonProperty("const_t")]
+        private int m_ConstructionTime = 0;
+        public TimeSpan ConstructionTime { get { return TimeSpan.FromSeconds(m_ConstructionTime); } }
+
+        [JsonProperty("const_t_end")]
+        private int m_ConstructionTimeEnd = 0;
+        public DateTime ConstructionTimeEnd { get { return DateTimeConverter.FromUnixTimestamp(m_ConstructionTimeEnd); } }
     }
 }

@@ -14,13 +14,15 @@ using System.Net.Sockets;
 namespace CoCSharp.Client
 {
     public class CoCClient : ICoCClient
-    { 
+    {
+        #region Constructors
         public CoCClient()
         {
             Fingerprint = new Fingerprint();
             Home = new Village();
             Avatar = new Avatar();
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            DefaultPacketHandlers = new Dictionary<ushort, PacketHandler>();
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
             KeepAliveManager = new KeepAliveManager(this);
             PacketLogger = new PacketLogger()
@@ -34,7 +36,9 @@ namespace CoCSharp.Client
             PluginManager.LoadPlugins();
             PluginManager.EnablePlugins();
         }
+        #endregion
 
+        #region Properties
         public bool Connected { get { return Connection.Connected; } }
         public Socket Connection { get; set; }
         public Village Home { get; set; }
@@ -45,8 +49,11 @@ namespace CoCSharp.Client
         private NetworkManagerAsync NetworkManager { get; set; }
         private KeepAliveManager KeepAliveManager { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
+        private Dictionary<ushort, PacketHandler> DefaultPacketHandlers { get; set; }
         private PluginManager PluginManager { get; set; }
+        #endregion
 
+        #region Methods
         public void Connect(IPEndPoint endPoint)
         {
             if (endPoint == null)
@@ -111,7 +118,6 @@ namespace CoCSharp.Client
 
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
-            //TODO: Add default PacketHandlers, so that people can add there own handlers without interfering.
             if (packet == null)
                 throw new ArgumentNullException("packet");
             if (handler == null)
@@ -120,19 +126,35 @@ namespace CoCSharp.Client
             PacketHandlers.Add(packet.ID, handler);
         }
 
+        internal void RegisterDefaultPacketHandler(IPacket packet, PacketHandler handler)
+        {
+            if (packet == null)
+                throw new ArgumentNullException("packet");
+            if (handler == null)
+                throw new ArgumentNullException("handler");
+
+            DefaultPacketHandlers.Add(packet.ID, handler);
+        }
+
         private void OnPacketReceived(object sender, PacketReceivedEventArgs e)
         {
             if (e.Exception == null)
             {
                 PacketLogger.LogPacket(e.Packet, PacketDirection.Client);
+                var defaultHandler = (PacketHandler)null;
                 var handler = (PacketHandler)null;
-                if (!PacketHandlers.TryGetValue(e.Packet.ID, out handler))
-                    return;
-                handler(this, e.Packet);
+
+                if (DefaultPacketHandlers.TryGetValue(e.Packet.ID, out defaultHandler))
+                    defaultHandler(this, e.Packet); // use default handler
+
+                if (PacketHandlers.TryGetValue(e.Packet.ID, out handler))
+                    handler(this, e.Packet); // use custom handler
             }
             else Console.WriteLine("Failed to read packet: {0}", e.Exception.Message);
         }
+        #endregion
 
+        #region Events
         public event EventHandler<ChatMessageEventArgs> ChatMessage;
         protected internal virtual void OnChatMessage(ChatMessageEventArgs e)
         {
@@ -146,5 +168,6 @@ namespace CoCSharp.Client
             if (Login != null)
                 Login(this, e);
         }
+        #endregion
     }
 }

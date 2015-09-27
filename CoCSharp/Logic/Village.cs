@@ -71,6 +71,7 @@ namespace CoCSharp.Logic
             Obstacles = village.Obstacles;
             Traps = village.Traps;
             Decorations = village.Decorations;
+            RespawnVars = village.RespawnVars;
             RawJson = json;
 
             for (int i = 0; i < Buildings.Count; i++)
@@ -109,8 +110,8 @@ namespace CoCSharp.Logic
                 var decompressedLength = binaryReader.ReadInt32();
                 var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
                 var json = ZlibStream.UncompressString(compressedJson);
-                //if (decompressedLength != json.Length)
-                //    throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}.", decompressedLength, json.Length));
+                if (decompressedLength != json.Length)
+                    throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}.", decompressedLength, json.Length));
                 FromJson(json);
             }
         }

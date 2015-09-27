@@ -38,11 +38,11 @@ namespace CoCSharp.Client.Handlers
             Console.WriteLine("Server Error: {0}", errPacket.ErrorMessage);
         }
 
-        public static void RegisterInGamePacketHandler(ICoCClient client)
+        public static void RegisterInGamePacketHandler(CoCClient client)
         {
-            client.RegisterPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServerPacket);
-            client.RegisterPacketHandler(new OwnHomeDataPacket(), HandleOwnHomeDataPacket);
-            client.RegisterPacketHandler(new ServerErrorPacket(), HandleServerErrorPacket);
+            client.RegisterDefaultPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServerPacket);
+            client.RegisterDefaultPacketHandler(new OwnHomeDataPacket(), HandleOwnHomeDataPacket);
+            client.RegisterDefaultPacketHandler(new ServerErrorPacket(), HandleServerErrorPacket);
         }
     }
 }
