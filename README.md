@@ -15,7 +15,8 @@ Clash of Clans library written in C# to handle networking, csv files and more to
   * Includes classes for village objects: Village, Trap, Obstacle, Building etc...
   
 ## Usage
-CoCSharp is trying to implement most the Clash of Clans features and also trying be easy as possible to use.
+CoCSharp is trying to implement most the Clash of Clans features and also trying be easy as possible to use.<br>
+This info is currently out of date, will update soon. :]
 
 ### Networking
 CoCSharp.Networking implements the `SocketAsyncEventArgs` async model.
