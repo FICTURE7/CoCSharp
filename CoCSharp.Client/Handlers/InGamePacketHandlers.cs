@@ -7,6 +7,9 @@ namespace CoCSharp.Client.Handlers
 {
     public static class InGamePacketHandlers
     {
+        public static AllianceListResponsePacket LastClanSearchPacket;
+
+
         public static void HandleChatMessageServerPacket(ICoCClient client, IPacket packet)
         {
             var cmsPacket = packet as ChatMessageServerPacket;
@@ -18,12 +21,12 @@ namespace CoCSharp.Client.Handlers
             var ohdPacket = packet as OwnHomeDataPacket;
             client.Home = ohdPacket.Home;
             client.Avatar.Username = ohdPacket.Avatar.Username;
-            
+
             if (ohdPacket.Avatar.Clan != null)
                 Console.Title = string.Format("[{0}] - {1}", ohdPacket.Avatar.Clan.Name, ohdPacket.Avatar.Username);
             else
                 Console.Title = string.Format("{0}", ohdPacket.Avatar.Username);
-                
+
             Console.WriteLine("Village Info: ");
             Console.WriteLine("\tBuildings count: {0}", ohdPacket.Home.Buildings.Count);
             Console.WriteLine("\tDecorations count: {0}", ohdPacket.Home.Decorations.Count);
@@ -38,7 +41,15 @@ namespace CoCSharp.Client.Handlers
             Console.WriteLine("Server Error: {0}", errPacket.ErrorMessage);
         }
 
-        public static void HandleClanSearchPacket() {
+        public static void HandleClanSearchPacket(ICoCClient client, IPacket packet)
+        {
+            var searchResult = packet as AllianceListResponsePacket;
+            ((CoCClient)client).OnClanSearch(new ClanSearchEventArgs(searchResult));
+        }
+
+        public static AllianceListResponsePacket GetLastClanSearchResult()
+        {
+            return LastClanSearchPacket;
         }
 
 
@@ -47,7 +58,7 @@ namespace CoCSharp.Client.Handlers
             client.RegisterDefaultPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServerPacket);
             client.RegisterDefaultPacketHandler(new OwnHomeDataPacket(), HandleOwnHomeDataPacket);
             client.RegisterDefaultPacketHandler(new ServerErrorPacket(), HandleServerErrorPacket);
-            //client.RegisterDefaultPacketHandler(new AllianceListResponsePacket(), HandleClanSearchPacket)
+            client.RegisterDefaultPacketHandler(new AllianceListResponsePacket(), HandleClanSearchPacket);
         }
     }
 }

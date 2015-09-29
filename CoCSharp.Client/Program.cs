@@ -1,5 +1,7 @@
 ﻿using CoCSharp.Client.API.Events;
+using CoCSharp.Client.Handlers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
 using System.Text;
@@ -54,14 +56,66 @@ namespace CoCSharp.Client
                     context.Response.StatusCode = 200;
                     context.Response.SendChunked = true;
 
+                    var request = context.Request.RawUrl;
+                    var param = "";
+
+                    //get the last index of "/" to see if there is something like an id or so
+                    int index = request.LastIndexOf(@"/");
+
+                    if (index != 0)
+                    {
+                        // there is something behind
+                        param = request.Substring(index + 1);
+                        request = request.Substring(1, index - 1);
+                    }
+                    else
+                    {
+                        // request = request.Substring(1,index);
+                    }
+
+                    byte[] bytes = null;
+                    switch (request)
+                    {
+                        case "clansearch":
+                            if (param != "")
+                            {
+                                Client.DoClanSearch(param);
+                                var result = InGamePacketHandlers.GetLastClanSearchResult();                              
+                                if(result != null)
+                                {
+                                    bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result.Clans));
+
+                                }
+
+                            }
+                            break;
+                        default:
+                            break;
+                    }
 
 
-                    var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Client.Home.RawJson,Formatting.Indented));
-                    context.Response.OutputStream.Write(bytes, 0, bytes.Length);
+
+
+                    if(bytes == null)
+                    {
+                        var b = Encoding.UTF8.GetBytes("null");
+                        context.Response.OutputStream.Write(b, 0, b.Length);
+
+                    }
+                    else
+                    {
+                        context.Response.OutputStream.Write(bytes, 0, bytes.Length);
+
+                    }
+
+
+                    //var bytes = Encoding.UTF8.GetBytes("Request: " + request + ", Prams: " + param);
+
+
                     context.Response.Close();
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // Client disconnected or some other error - ignored for this example
                 }

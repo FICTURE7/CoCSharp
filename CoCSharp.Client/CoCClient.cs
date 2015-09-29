@@ -51,6 +51,11 @@ namespace CoCSharp.Client
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
         private Dictionary<ushort, PacketHandler> DefaultPacketHandlers { get; set; }
         private PluginManager PluginManager { get; set; }
+
+        internal void OnClanSearch(ClanSearchEventArgs clanSearchEventArgs)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Methods
