@@ -1,6 +1,11 @@
 ﻿using CoCSharp.Client.API.Events;
+using CoCSharp.Client.Handlers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
+using System.Text;
+using System.Threading;
 
 namespace CoCSharp.Client
 {
@@ -36,15 +41,103 @@ namespace CoCSharp.Client
             Console.WriteLine("Connecting to {0}:{1}...", address, port);
             Client.Connect(new IPEndPoint(address, port));
 
+            var listener = new HttpListener();
+
+            listener.Prefixes.Add("http://localhost:8080/");
+            listener.Prefixes.Add("http://127.0.0.1:8080/");
+
+            listener.Start();
+
             while (true)
             {
-                var command = Console.ReadLine();
-                if (command[0] == '/')
-                    Console.WriteLine("TODO: Handle command.");
-                else
-                    Client.SendChatMessage(command);
+                try
+                {
+                    var context = listener.GetContext(); //Block until a connection comes in
+                    context.Response.StatusCode = 200;
+                    context.Response.SendChunked = true;
+
+                    var request = context.Request.RawUrl;
+                    var param = "";
+
+                    //get the last index of "/" to see if there is something like an id or so
+                    int index = request.LastIndexOf(@"/");
+
+                    if (index != 0)
+                    {
+                        // there is something behind
+                        param = request.Substring(index + 1);
+                        request = request.Substring(1, index - 1);
+                    }
+                    else
+                    {
+                        // request = request.Substring(1,index);
+                    }
+
+                    byte[] bytes = null;
+                    switch (request)
+                    {
+                        case "clansearch":
+                            if (param != "")
+                            {
+                                Client.DoClanSearch(param);
+                                var result = InGamePacketHandlers.GetLastClanSearchResult();                              
+                                if(result != null)
+                                {
+                                    bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(result.Clans));
+
+                                }
+
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+
+
+
+                    if(bytes == null)
+                    {
+                        var b = Encoding.UTF8.GetBytes("null");
+                        context.Response.OutputStream.Write(b, 0, b.Length);
+
+                    }
+                    else
+                    {
+                        context.Response.OutputStream.Write(bytes, 0, bytes.Length);
+
+                    }
+
+
+                    //var bytes = Encoding.UTF8.GetBytes("Request: " + request + ", Prams: " + param);
+
+
+                    context.Response.Close();
+
+                }
+                catch (Exception ex)
+                {
+                    // Client disconnected or some other error - ignored for this example
+                }
             }
         }
+
+
+        //var command = Console.ReadLine();
+        //if (command[0] == '/')
+        //    Console.WriteLine("TODO: Handle command.");
+        //else
+        //    Client.SendChatMessage(command);
+
+
+
+
+
+
+
+
+
+
 
         private static void OnLogin(object sender, LoginEventArgs e)
         {

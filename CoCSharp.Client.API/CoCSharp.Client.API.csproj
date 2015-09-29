@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\ChatMessageEventArgs.cs" />
+    <Compile Include="Events\ClanSearchEventArgs.cs" />
     <Compile Include="Events\LoginEventArgs.cs" />
     <Compile Include="ICoCClient.cs" />
     <Compile Include="PacketHandler.cs" />

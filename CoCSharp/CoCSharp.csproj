@@ -151,6 +151,8 @@
     <Compile Include="Networking\DisconnectedEventArgs.cs" />
     <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
     <Compile Include="Networking\PacketReceivedEventArgs.cs" />
+    <Compile Include="Networking\Packets\AllianceListResponsePacket.cs" />
+    <Compile Include="Networking\Packets\AllianceSearchRequestPacket.cs" />
     <Compile Include="Networking\Packets\Commands\BuyBuildingCommand.cs" />
     <Compile Include="Networking\Packets\Commands\BuyDecorationCommand.cs" />
     <Compile Include="Networking\Packets\Commands\BuyTrapCommand.cs" />

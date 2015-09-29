@@ -140,6 +140,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceInfoRequestPacket().ID, typeof(AllianceInfoRequestPacket));
             PacketDictionary.Add(new AvatarRankListRequestPacket().ID, typeof(AvatarRankListRequestPacket));
             PacketDictionary.Add(new AvatarLocalRankListRequestPacket().ID, typeof(AvatarLocalRankListRequestPacket));
+            PacketDictionary.Add(new AllianceSearchRequestPacket().ID, typeof(AllianceSearchRequestPacket)); //14324
 
             // Clientbound
             PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
@@ -154,6 +155,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AvatarLocalRankListResponsePacket().ID, typeof(AvatarLocalRankListResponsePacket));
             PacketDictionary.Add(new AllianceJoinRequestFailedPacket().ID, typeof(AllianceJoinRequestFailedPacket));
             PacketDictionary.Add(new AvatarProfileResponsePacket().ID, typeof(AvatarProfileResponsePacket));
+            PacketDictionary.Add(new AllianceListResponsePacket().ID, typeof(AllianceListResponsePacket)); //24310
         }
     }
 }
