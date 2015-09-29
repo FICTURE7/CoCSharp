@@ -105,16 +105,6 @@ namespace CoCSharp.Client
             });
         }
 
-
-        public void DoClanSearch(string clanName)
-        {
-            SendPacket(new AllianceSearchRequestPacket()
-            {
-                SearchString = clanName
-            });
-        }
-
-
         public void SendPacket(IPacket packet)
         {
             if (packet == null)

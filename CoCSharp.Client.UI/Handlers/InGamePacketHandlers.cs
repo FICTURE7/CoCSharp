@@ -38,16 +38,11 @@ namespace CoCSharp.Client.Handlers
             Console.WriteLine("Server Error: {0}", errPacket.ErrorMessage);
         }
 
-        public static void HandleClanSearchPacket() {
-        }
-
-
         public static void RegisterInGamePacketHandler(CoCClient client)
         {
             client.RegisterDefaultPacketHandler(new ChatMessageServerPacket(), HandleChatMessageServerPacket);
             client.RegisterDefaultPacketHandler(new OwnHomeDataPacket(), HandleOwnHomeDataPacket);
             client.RegisterDefaultPacketHandler(new ServerErrorPacket(), HandleServerErrorPacket);
-            //client.RegisterDefaultPacketHandler(new AllianceListResponsePacket(), HandleClanSearchPacket)
         }
     }
 }

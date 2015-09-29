@@ -1,27 +1,33 @@
 ﻿using CoCSharp.Client.API.Events;
-using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace CoCSharp.Client
+namespace CoCSharp.Client.UI
 {
-    public class Program
+    public partial class Form1 : Form
     {
         public static CoCClient Client { get; set; }
         public static ClientConfiguration Configuration { get; set; }
 
-        public static void Main(string[] args)
+        public Form1()
         {
-            //TODO: Implement better command line handling.
-#if DEBUG
-            args = new string[]
+            InitializeComponent();
+
+
+            var args = new string[]
             {
                 "gamea.clashofclans.com",
                 "9339"
             };
-#endif
+
             var port = -1;
             var address = (IPAddress)null;
             if (!TryGetPort(args, out port))
@@ -36,61 +42,26 @@ namespace CoCSharp.Client
             Client.Avatar.ID = Configuration.UserID;
             Client.Avatar.Token = Configuration.UserToken;
 
-            Console.WriteLine("Connecting to {0}:{1}...", address, port);
+            Log(string.Format("Connecting to {0}:{1}...", address, port));
             Client.Connect(new IPEndPoint(address, port));
 
-            var listener = new HttpListener();
+            //while (true)
+            //{
+            //    var command = Console.ReadLine();
+            //    if (command[0] == '/')
+            //        Console.WriteLine("TODO: Handle command.");
+            //    else
+            //        Client.SendChatMessage(command);
+            //}
 
-            listener.Prefixes.Add("http://localhost:8080/");
-            listener.Prefixes.Add("http://127.0.0.1:8080/");
-
-            listener.Start();
-
-            while (true)
-            {
-                try
-                {
-                    var context = listener.GetContext(); //Block until a connection comes in
-                    context.Response.StatusCode = 200;
-                    context.Response.SendChunked = true;
-
-
-
-                    var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Client.Home.RawJson,Formatting.Indented));
-                    context.Response.OutputStream.Write(bytes, 0, bytes.Length);
-                    context.Response.Close();
-
-                }
-                catch (Exception)
-                {
-                    // Client disconnected or some other error - ignored for this example
-                }
-            }
         }
 
-
-        //var command = Console.ReadLine();
-        //if (command[0] == '/')
-        //    Console.WriteLine("TODO: Handle command.");
-        //else
-        //    Client.SendChatMessage(command);
-
-
-
-
-
-
-
-
-
-
-
-        private static void OnLogin(object sender, LoginEventArgs e)
+        private void OnLogin(object sender, LoginEventArgs e)
         {
-            Console.WriteLine("Successfully logged in!\r\n");
+            Log("Successfully logged in!");
         }
 
-        private static void OnChatMessage(object sender, ChatMessageEventArgs e)
+        private void OnChatMessage(object sender, ChatMessageEventArgs e)
         {
             //TODO: Give flexibilty for plugin dev to remove this.
             if (e.ClanName == null) Console.WriteLine("<[Lvl:{0}]{1}>: {2}", e.Packet.Level, e.Username, e.Message);
@@ -105,7 +76,7 @@ namespace CoCSharp.Client
             }
         }
 
-        private static bool TryGetPort(string[] args, out int port)
+        private bool TryGetPort(string[] args, out int port)
         {
             var lport = -1;
             if (int.TryParse(args[1], out lport))
@@ -113,12 +84,12 @@ namespace CoCSharp.Client
                 port = lport;
                 return true;
             }
-            Console.WriteLine("Error: Invalid port number '{0}'", args[1]);
+            Log(string.Format("Error: Invalid port number '{0}'", args[1]));
             port = lport;
             return false;
         }
 
-        private static bool TryGetIPAddress(string[] args, out IPAddress address)
+        private bool TryGetIPAddress(string[] args, out IPAddress address)
         {
             var laddress = (IPAddress)null;
             if (IPAddress.TryParse(args[0], out laddress))
@@ -126,18 +97,18 @@ namespace CoCSharp.Client
                 address = laddress;
                 return true;
             }
-            Console.WriteLine("Trying to resolve Dns...");
+            Log("Trying to resolve Dns...");
             if (TryResolve(args[0], out laddress))
             {
                 address = laddress;
                 return true;
             }
-            Console.WriteLine("Error: Failed to resolve Dns...");
+            Log("Error: Failed to resolve Dns...");
             address = laddress;
             return false;
         }
 
-        private static bool TryResolve(string hostAddr, out IPAddress address)
+        private bool TryResolve(string hostAddr, out IPAddress address)
         {
             try
             {
@@ -150,5 +121,16 @@ namespace CoCSharp.Client
                 return false;
             }
         }
+
+
+        private void Log(string msg)
+        {
+
+            txtLog.Text += msg;
+            txtLog.Text += Environment.NewLine;
+
+
+        }
+
     }
 }

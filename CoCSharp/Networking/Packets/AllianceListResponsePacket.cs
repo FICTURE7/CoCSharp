@@ -24,14 +24,11 @@ namespace CoCSharp.Networking.Packets
             Clans = new List<Clan>();
         }
 
-
         public void ReadPacket(PacketReader reader)
         {
-
             SearchStringLength = reader.ReadInt32();
             SearchString = Encoding.UTF8.GetString(reader.ReadBytes(SearchStringLength), 0, SearchStringLength);
             ClansFound = reader.ReadInt32();
-
 
             for (int i = 0; i < ClansFound - 1; i++)
             {
@@ -54,11 +51,6 @@ namespace CoCSharp.Networking.Packets
                 clan.Level = reader.ReadInt32();
                 Clans.Add(clan);
             }
-
-
-            var data = reader.ReadByteArray();
-
-
         }
 
         public void WritePacket(PacketWriter writer)
