@@ -137,6 +137,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AvatarProfileRequestPacket().ID, typeof(AvatarProfileRequestPacket)); // 14325
             PacketDictionary.Add(new AllianceChatMessageClientPacket().ID, typeof(AllianceChatMessageClientPacket)); // 14315
             PacketDictionary.Add(new ChatMessageClientPacket().ID, typeof(ChatMessageClientPacket)); // 14715
+            PacketDictionary.Add(new AllianceSearchRequestPacket().ID, typeof(AllianceInfoRequestPacket));
             PacketDictionary.Add(new AllianceInfoRequestPacket().ID, typeof(AllianceInfoRequestPacket));
             PacketDictionary.Add(new AvatarRankListRequestPacket().ID, typeof(AvatarRankListRequestPacket));
             PacketDictionary.Add(new AvatarLocalRankListRequestPacket().ID, typeof(AvatarLocalRankListRequestPacket));
@@ -150,6 +151,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceChatMessageServerPacket().ID, typeof(AllianceChatMessageServerPacket)); // 24312
             PacketDictionary.Add(new ChatMessageServerPacket().ID, typeof(ChatMessageServerPacket)); // 24715
             PacketDictionary.Add(new AllianceInfoResponsePacket().ID, typeof(AllianceInfoResponsePacket));
+            PacketDictionary.Add(new AllianceSearchResponsePacket().ID, typeof(AllianceSearchResponsePacket));
             PacketDictionary.Add(new AvatarRankListResponsePacket().ID, typeof(AvatarRankListResponsePacket));
             PacketDictionary.Add(new AvatarLocalRankListResponsePacket().ID, typeof(AvatarLocalRankListResponsePacket));
             PacketDictionary.Add(new AllianceJoinRequestFailedPacket().ID, typeof(AllianceJoinRequestFailedPacket));
