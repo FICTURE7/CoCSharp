@@ -1,8 +1,6 @@
 ﻿using CoCSharp.Logic;
-using Ionic.Zlib;
 using System;
 using System.IO;
-using System.Text;
 
 namespace CoCSharp.Networking.Packets
 {

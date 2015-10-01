@@ -156,7 +156,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AvatarLocalRankListResponsePacket().ID, typeof(AvatarLocalRankListResponsePacket));
             PacketDictionary.Add(new AllianceJoinRequestFailedPacket().ID, typeof(AllianceJoinRequestFailedPacket));
             PacketDictionary.Add(new AvatarProfileResponsePacket().ID, typeof(AvatarProfileResponsePacket));
-            PacketDictionary.Add(new ClanDescriptionPacket().ID, typeof(ClanDescriptionPacket));
+            PacketDictionary.Add(new AllianceDescriptionPacket().ID, typeof(AllianceDescriptionPacket));
         }
     }
 }
