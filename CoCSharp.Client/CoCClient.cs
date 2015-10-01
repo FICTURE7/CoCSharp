@@ -118,6 +118,7 @@ namespace CoCSharp.Client
 
         public void RegisterPacketHandler(IPacket packet, PacketHandler handler)
         {
+            //TODO: Allow multiple handlers for a single packet.
             if (packet == null)
                 throw new ArgumentNullException("packet");
             if (handler == null)

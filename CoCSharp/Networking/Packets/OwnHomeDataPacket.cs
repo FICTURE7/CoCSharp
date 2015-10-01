@@ -128,6 +128,7 @@ namespace CoCSharp.Networking.Packets
             Unknown24 = reader.ReadInt32();
             Unknown25 = reader.ReadInt32();
 
+            //TODO: Implement those things cause we are not actually storing them.
             var count1 = reader.ReadInt32();
             for (int i = 0; i < count1; i++)
             {
