@@ -113,19 +113,20 @@ namespace CoCSharp.Proxy
                             var decryptedPacket = (byte[])null;
                             var packet = Clients[i].Client.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from client
 
-                            if (packet != null) 
-                                HandlePacket(Clients[i], packet);
-
-                            if (rawPacket != null && packet != null)
+                            if (packet != null)
                             {
-                                Clients[i].Server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
-                                PacketLogger.LogPacket(packet, PacketDirection.Server);
-                                PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
+                                HandlePacket(Clients[i], packet);
+                                if (rawPacket != null)
+                                {
+                                    Clients[i].Server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
+                                    PacketLogger.LogPacket(packet, PacketDirection.Server);
+                                    PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
+                                }
                             }
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("[{0}]: Client => {1}", ex.GetType().Name, ex.Message);
+                            ExceptionLogger.LogException(ex);
                             Clients.RemoveAt(i);
                             goto ResetLoop;
                         }
@@ -147,24 +148,26 @@ namespace CoCSharp.Proxy
                             var packet = Clients[i].Server.NetworkManager.ReadPacket(out rawPacket, out decryptedPacket); // receive data from server
 
                             if (packet != null)
-                                HandlePacket(Clients[i], packet);
-
-                            if (rawPacket != null && packet != null)
                             {
-                                Clients[i].Client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
-                                PacketLogger.LogPacket(packet, PacketDirection.Client);
-                                PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
+                                HandlePacket(Clients[i], packet);
+                                if (rawPacket != null)
+                                {
+                                    Clients[i].Client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
+                                    PacketLogger.LogPacket(packet, PacketDirection.Client);
+                                    PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
+                                }
                             }
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("[{0}]: Server => {1}", ex.GetType().Name, ex.Message);
+                            ExceptionLogger.LogException(ex);
                             Clients.RemoveAt(i);
                             goto ResetLoop;
                         }
                     }
 
-                ResetLoop:
+                    continue;
+                    ResetLoop:
                     break;
                 }
                 Thread.Sleep(1);
