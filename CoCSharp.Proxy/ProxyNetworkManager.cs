@@ -82,11 +82,8 @@ namespace CoCSharp.Networking
                 }
                 catch (Exception ex)
                 {
-<<<<<<< HEAD
-=======
                     if (ExceptionLogger != null)
                         ExceptionLogger.LogException(ex);
->>>>>>> upstream/master
                 }
                 return packet;
             }

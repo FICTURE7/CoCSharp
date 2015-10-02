@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoCSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CoCSharp.Client.API\bin\Debug\CoCSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,6 +48,10 @@
     <ProjectReference Include="..\CoCSharp.Client.API\CoCSharp.Client.API.csproj">
       <Project>{f565f4d1-1250-40f5-9523-519c3011bc1a}</Project>
       <Name>CoCSharp.Client.API</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">
+      <Project>{f8756685-cd4b-4c2e-9bee-269a27cbb6b2}</Project>
+      <Name>CoCSharp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
