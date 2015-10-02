@@ -5,7 +5,7 @@
         public ushort ID { get { return 0x5F04; } }
 
         public string ClanDescription;
-        public int Unknown1;
+        public bool Unknown1;
         public int Unknown2;
         public int Unknown3;
         public long Unknown4;
@@ -27,15 +27,13 @@
 
         public void ReadPacket(PacketReader reader)
         {
-            //var descLength = reader.ReadInt32();
             ClanDescription = reader.ReadString();
-            Unknown1 = reader.ReadInt32();
+            Unknown1 = reader.ReadBoolean(); 
             Unknown2 = reader.ReadInt32();
             Unknown3 = reader.ReadInt32();
             Unknown4 = reader.ReadInt64();
             Unknown5 = reader.ReadInt64();
-            reader.BaseStream.Position += 1;
-            ClanName = reader.ReadStringByLenght(PlayerInfoHelper.OwnHomeData.Avatar.Clan.Name.Length);
+            ClanName = reader.ReadString();
             ClanBadge = reader.ReadInt32();
             ClanJoinType = reader.ReadInt32();
             ClanMemberCount = reader.ReadInt32();

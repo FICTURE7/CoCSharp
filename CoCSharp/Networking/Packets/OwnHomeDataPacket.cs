@@ -241,7 +241,6 @@ namespace CoCSharp.Networking.Packets
             Unknown26 = reader.ReadInt32();
             Unknown27 = reader.ReadInt32();
             Unknown28 = reader.ReadInt32();
-            PlayerInfoHelper.OwnHomeData = this;
         }
 
         public void WritePacket(PacketWriter writer)

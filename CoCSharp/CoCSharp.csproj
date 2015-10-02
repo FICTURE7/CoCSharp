@@ -198,6 +198,7 @@
     <Compile Include="Networking\Packets\IPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveRequestPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveResponsePacket.cs" />
+    <Compile Include="Networking\Packets\LastClanWarDataPacket.cs" />
     <Compile Include="Networking\Packets\LoginFailedPacket.cs" />
     <Compile Include="Networking\Packets\OwnHomeDataPacket.cs" />
     <Compile Include="Networking\Packets\LoginRequestPacket.cs" />
@@ -211,7 +212,6 @@
     <Compile Include="Networking\Packets\UnknownPacket.cs" />
     <Compile Include="Networking\Packets\UpdateKeyPacket.cs" />
     <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
-    <Compile Include="PlayerInfoHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
