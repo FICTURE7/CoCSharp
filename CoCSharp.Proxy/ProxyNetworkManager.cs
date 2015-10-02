@@ -1,4 +1,5 @@
-﻿using CoCSharp.Networking.Packets;
+﻿using CoCSharp.Logging;
+using CoCSharp.Networking.Packets;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +22,7 @@ namespace CoCSharp.Networking
             CoCCrypto = new CoCCrypto();
         }
 
+        public ExceptionLogger ExceptionLogger { get; set; }
         public bool DataAvailable { get { return Connection.Available > 0; } }
         public CoCStream CoCStream { get; set; }
 
@@ -78,7 +80,11 @@ namespace CoCSharp.Networking
                 {
                     packet.ReadPacket(dePacketReader);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    if (ExceptionLogger != null)
+                        ExceptionLogger.LogException(ex);
+                }
                 return packet;
             }
             decryptedPacket = null;

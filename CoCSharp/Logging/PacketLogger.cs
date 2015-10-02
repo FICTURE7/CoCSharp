@@ -38,7 +38,13 @@ namespace CoCSharp.Logging
             LogWriter.AutoFlush = true;
         }
 
-        public bool LogPrivateFields { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool LogUnknownFields { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public bool LogConsole { get; set; }
 
         private StreamWriter LogWriter { get; set; }
@@ -75,24 +81,25 @@ namespace CoCSharp.Logging
                     var fieldName = field.Name;
                     var fieldValue = field.GetValue(packet);
 
-                    if (field.IsPrivate && !LogPrivateFields)
+                    if (field.IsPrivate && !LogUnknownFields)
                         continue;
 
                     builder.Indent();
                     builder.AppendFormat("{0}: ", fieldName);
 
                     if (fieldValue == null) builder.Append("null");
-                    else if (fieldValue is string) builder.AppendFormat("{0}{1}{2}", "\"", fieldValue, "\"");
-                    else if (fieldValue is ICommand[])
-                    {
-                        var cmd = fieldValue as ICommand[];
-                        builder.Append(DumpCommandArray(cmd));
-                    }
+                    else if (fieldValue is string) builder.AppendFormat("{0}{1}{0}", "\"", fieldValue);
                     else if (fieldValue is byte[])
                     {
                         var byteArray = fieldValue as byte[];
                         builder.AppendLine();
                         builder.Append(DumpByteArray(byteArray));
+                    }
+                    else if (fieldValue is Array)
+                    {
+                        var array = fieldValue as Array;
+                        builder.AppendLine();
+                        builder.Append(DumpArray(array));
                     }
                     else builder.Append(fieldValue);
                     builder.AppendLine();
@@ -105,7 +112,8 @@ namespace CoCSharp.Logging
             var builderString = builder.ToString();
 
             LogWriter.WriteLine(builderString);
-            if (LogConsole) Console.WriteLine(builderString);
+            if (LogConsole)
+                Console.WriteLine(builderString);
         }
 
         private static string FormatPacketName(string name)
@@ -123,6 +131,19 @@ namespace CoCSharp.Logging
                 }
             }
             return formattedName;
+        }
+
+        public static string DumpArray(Array array)
+        {
+            var builder = new StringBuilder();
+
+            if (array.Length == 0)
+            {
+                builder.Indent("[]");
+                return builder.ToString();
+            }
+
+            return builder.ToString();
         }
 
         private static string DumpByteArray(byte[] bytes)
@@ -147,58 +168,6 @@ namespace CoCSharp.Logging
             }
             builder.AppendLine();
             builder.Indent("]");
-            return builder.ToString();
-        }
-
-        private static string DumpCommandArray(ICommand[] cmds)
-        {
-            var builder = new StringBuilder();
-
-            if (cmds.Length == 0)
-                builder.Append("Empty");
-
-            for (int i = 0; i < cmds.Length; i++)
-            {
-                var cmdType = cmds[i].GetType();
-                var cmdName = cmdType.Name;
-                var cmdFields = cmdType.GetFields();
-
-                builder.Append(cmdName);
-                builder.Indent("[");
-                builder.AppendLine();
-
-                for (int k = 0; k < cmdFields.Length; k++)
-                {
-                    var field = cmdFields[i];
-                    var fieldName = field.Name;
-                    var fieldValue = field.GetValue(cmds[i]);
-
-                    if (field.IsPrivate)
-                        continue;
-
-                    builder.Indent();
-                    builder.AppendFormat("{0}: ", fieldName);
-
-                    if (fieldValue == null) builder.Append("null");
-                    else if (fieldValue is string) builder.AppendFormat("{0}{1}{2}", "\"", fieldValue, "\"");
-                    else if (fieldValue is ICommand[])
-                    {
-                        var cmd = fieldValue as ICommand[];
-                        builder.Append(DumpCommandArray(cmd));
-                    }
-                    else if (fieldValue is byte[])
-                    {
-                        var byteArray = fieldValue as byte[];
-                        builder.AppendLine();
-                        builder.Append(DumpByteArray(byteArray));
-                    }
-                    else builder.Append(fieldValue);
-                    builder.AppendLine();
-                }
-
-                builder.AppendLine();
-                builder.Indent("]");
-            }
             return builder.ToString();
         }
     }

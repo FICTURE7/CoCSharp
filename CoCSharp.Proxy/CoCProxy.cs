@@ -19,6 +19,7 @@ namespace CoCSharp.Proxy
 
         public CoCProxy()
         {
+            ExceptionLogger = new ExceptionLogger();
             PacketLogger = new PacketLogger();
             PacketDumper = new PacketDumper();
             Clients = new List<CoCProxyClient>();
@@ -29,6 +30,7 @@ namespace CoCSharp.Proxy
 
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
+        public ExceptionLogger ExceptionLogger { get; set; }
         public PacketLogger PacketLogger { get; set; }
         public PacketDumper PacketDumper { get; set; }
         public List<CoCProxyClient> Clients { get; set; }
@@ -74,8 +76,10 @@ namespace CoCSharp.Proxy
         private void AcceptClient(IAsyncResult ar)
         {
             var socket = Listener.EndAccept(ar);
+            var client = new CoCProxyClient(socket);
             Console.WriteLine("Accepted new socket: {0}", socket.RemoteEndPoint);
-            Clients.Add(new CoCProxyClient(socket));
+            client.Client.NetworkManager.ExceptionLogger = ExceptionLogger;
+            Clients.Add(client);
             Listener.BeginAccept(AcceptClient, Listener);
         }
 
