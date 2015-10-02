@@ -51,7 +51,6 @@ namespace CoCSharp.Networking.Packets
         public void ReadPacket(PacketReader reader)
         {
             var offset = 0x2A;
-            reader.ReadByte();
             LastVisit = TimeSpan.FromSeconds(reader.ReadInt32());
             Unknown1 = reader.ReadInt32();
             Timestamp = DateTimeConverter.FromUnixTimestamp(reader.ReadInt32());
