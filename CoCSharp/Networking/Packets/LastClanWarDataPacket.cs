@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CoCSharp.Networking.Packets
+﻿namespace CoCSharp.Networking.Packets
 {
     /// <summary>
     /// Under construction
@@ -49,7 +43,6 @@ namespace CoCSharp.Networking.Packets
             Unknown12 = reader.ReadInt32();
             Unknown13 = reader.ReadInt32();
             Unknown14 = reader.ReadInt32();
-
 
             var p = new WarPlayerInfo();
 

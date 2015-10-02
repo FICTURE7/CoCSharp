@@ -12,14 +12,14 @@
         public long ClanID;
         public string ClanName;
         public int ClanBadge;
-        public int ClanJoinType; // not sure about this
-        public int ClanMemberCount; // not sure about this
+        public int ClanJoinType;
+        public int ClanMemberCount;
         public int ClanTrophies;
-        public int ClanMinTrophies; 
-        public int ClanWarsWon; 
-        public int ClanWarsLost; 
+        public int ClanMinTrophies;
+        public int ClanWarsWon;
+        public int ClanWarsLost;
         public int ClanWarsDraw;
-        public int Unknown5; // Unknown8 = Unknown9
+        public int Unknown5;
         public int Unknown6;
         public int Unknown7;
         public int ClanEP;
@@ -28,7 +28,7 @@
         public void ReadPacket(PacketReader reader)
         {
             ClanDescription = reader.ReadString();
-            Unknown1 = reader.ReadInt32(); 
+            Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
             Unknown3 = reader.ReadBoolean();
             if (Unknown3)
@@ -52,7 +52,27 @@
 
         public void WritePacket(PacketWriter writer)
         {
-            
+            writer.WriteString(ClanDescription);
+            writer.WriteInt32(Unknown1);
+            writer.WriteInt32(Unknown2);
+            writer.WriteBoolean(Unknown3);
+            if (Unknown3)
+                writer.WriteInt64(Unknown4);
+            writer.WriteInt64(ClanID);
+            writer.WriteString(ClanName);
+            writer.WriteInt32(ClanBadge);
+            writer.WriteInt32(ClanJoinType);
+            writer.WriteInt32(ClanMemberCount);
+            writer.WriteInt32(ClanTrophies);
+            writer.WriteInt32(ClanMinTrophies);
+            writer.WriteInt32(ClanWarsWon);
+            writer.WriteInt32(ClanWarsLost);
+            writer.WriteInt32(ClanWarsDraw);
+            writer.WriteInt32(Unknown5);
+            writer.WriteInt32(Unknown6);
+            writer.WriteInt32(Unknown7);
+            writer.WriteInt32(ClanEP);
+            writer.WriteInt32(ClanLevel);
         }
     }
 }
