@@ -170,18 +170,6 @@ namespace CoCSharp.Networking
             return Encoding.UTF8.GetString(buffer);
         }
 
-        public string ReadStringByLenght(int length)
-        {
-            if (length == -1)
-                return null;
-            if (length < -1)
-                throw new InvalidPacketException("A string length was incorrect: " + length);
-            if (length > BaseStream.Length - BaseStream.Position)
-                throw new InvalidPacketException(string.Format("A string was larger than remaining bytes. {0} > {1}", length, BaseStream.Length - BaseStream.Position));
-            var buffer = ReadBytesWithEndian(length, false);
-            return Encoding.UTF8.GetString(buffer);
-        }
-
         /// <summary>
         /// Sets the position of the underlying stream.
         /// </summary>

@@ -31,7 +31,6 @@ namespace CoCSharp.Networking.Packets
         public int Unknown14;
         public string player1Name;
 
-
         public void ReadPacket(PacketReader reader)
         {
             Unknown1 = reader.ReadInt32();
@@ -41,7 +40,6 @@ namespace CoCSharp.Networking.Packets
             Unknown5 = reader.ReadBoolean();
             Unknown6 = reader.ReadInt64();
             reader.BaseStream.Position += 1;
-            //ClanName = reader.ReadStringByLenght(PlayerInfoHelper.OwnHomeData.Avatar.Clan.Name.Length);
             Unknown7 = reader.ReadInt32();
             Unknown8 = reader.ReadInt32();
             PlayersInWarCount = reader.ReadInt32();
@@ -81,14 +79,12 @@ namespace CoCSharp.Networking.Packets
             p.Unknown23 = reader.ReadInt32();
             p.Unknown24 = reader.ReadInt32();
             p.Unknown25 = reader.ReadInt32();
-            //p.Unknown26 = reader.ReadInt32();
             p.RequestText = reader.ReadString();
-
         }
 
         public void WritePacket(PacketWriter writer)
         {
-
+            //TODO: Implement
         }
     }
 
@@ -122,6 +118,5 @@ namespace CoCSharp.Networking.Packets
         public int Unknown25;
         public int AllianceCastleUnitCapacity;
         public string RequestText;
-
     }
 }
