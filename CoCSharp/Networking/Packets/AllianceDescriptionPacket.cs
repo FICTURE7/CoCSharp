@@ -7,7 +7,8 @@
         public string ClanDescription;
         public int Unknown1;
         public int Unknown2;
-        public byte Unknown3;
+        public bool Unknown3;
+        public long Unknown4;
         public long ClanID;
         public string ClanName;
         public int ClanBadge;
@@ -18,9 +19,9 @@
         public int ClanWarsWon; 
         public int ClanWarsLost; 
         public int ClanWarsDraw;
-        public int Unknown4; // Unknown8 = Unknown9
-        public int Unknown5;
+        public int Unknown5; // Unknown8 = Unknown9
         public int Unknown6;
+        public int Unknown7;
         public int ClanEP;
         public int ClanLevel;
 
@@ -29,7 +30,9 @@
             ClanDescription = reader.ReadString();
             Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
-            Unknown3 = reader.ReadByte();
+            Unknown3 = reader.ReadBoolean();
+            if (Unknown3)
+                Unknown4 = reader.ReadInt64();
             ClanID = reader.ReadInt64();
             ClanName = reader.ReadString();
             ClanBadge = reader.ReadInt32();
@@ -40,9 +43,9 @@
             ClanWarsWon = reader.ReadInt32();
             ClanWarsLost = reader.ReadInt32();
             ClanWarsDraw = reader.ReadInt32();
-            Unknown4 = reader.ReadInt32();
             Unknown5 = reader.ReadInt32();
             Unknown6 = reader.ReadInt32();
+            Unknown7 = reader.ReadInt32();
             ClanEP = reader.ReadInt32();
             ClanLevel = reader.ReadInt32();
         }
