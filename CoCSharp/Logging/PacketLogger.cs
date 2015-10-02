@@ -63,7 +63,7 @@ namespace CoCSharp.Logging
             builder.Append(DateTime.Now.ToString("[~HH:mm:ss.fff] "));
             builder.Append(prefix);
             builder.Append(FormatPacketName(packetName));
-            builder.AppendFormat(" 0x{0:X2}", packet.ID);
+            builder.AppendFormat(" 0x{0:X2} ({0})", packet.ID);
 
             if (packet is UnknownPacket)
             {

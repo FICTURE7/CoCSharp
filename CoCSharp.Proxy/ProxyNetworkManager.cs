@@ -163,6 +163,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceJoinRequestFailedPacket().ID, typeof(AllianceJoinRequestFailedPacket));
             PacketDictionary.Add(new AvatarProfileResponsePacket().ID, typeof(AvatarProfileResponsePacket));
             PacketDictionary.Add(new AllianceDescriptionPacket().ID, typeof(AllianceDescriptionPacket));
+            PacketDictionary.Add(new LastClanWarDataPacket().ID, typeof(LastClanWarDataPacket));
         }
     }
 }
