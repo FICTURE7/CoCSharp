@@ -28,7 +28,7 @@
         public void ReadPacket(PacketReader reader)
         {
             ClanDescription = reader.ReadString();
-            Unknown1 = reader.ReadInt32();
+            Unknown1 = reader.ReadInt32(); 
             Unknown2 = reader.ReadInt32();
             Unknown3 = reader.ReadBoolean();
             if (Unknown3)

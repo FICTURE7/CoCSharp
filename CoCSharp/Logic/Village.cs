@@ -111,7 +111,8 @@ namespace CoCSharp.Logic
                 var compressedJson = binaryReader.ReadBytes(homeData.Length - 4);
                 var json = ZlibStream.UncompressString(compressedJson);
                 if (decompressedLength != json.Length)
-                    throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}.", decompressedLength, json.Length));
+                    if (decompressedLength - 1 != json.Length) // to prevent for running in error
+                        throw new InvalidDataException(string.Format("Json length is not valid. {0} != {1}.", decompressedLength, json.Length));
                 FromJson(json);
             }
         }
