@@ -50,6 +50,7 @@ namespace CoCSharp.Logging
         private StreamWriter LogWriter { get; set; }
         private BindingFlags BindingFlags { get; set; }
 
+        //TODO: Implement nested arrays.
         public void LogPacket(IPacket packet, PacketDirection direction)
         {
             var builder = new StringBuilder();
@@ -113,7 +114,14 @@ namespace CoCSharp.Logging
 
             LogWriter.WriteLine(builderString);
             if (LogConsole)
+            {
+                Console.Write("[");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write("Packet");
+                Console.ResetColor();
+                Console.Write("] ");
                 Console.WriteLine(builderString);
+            }
         }
 
         private static string FormatPacketName(string name)
