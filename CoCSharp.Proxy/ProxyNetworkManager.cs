@@ -78,7 +78,9 @@ namespace CoCSharp.Networking
                 {
                     packet.ReadPacket(dePacketReader);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                }
                 return packet;
             }
             decryptedPacket = null;

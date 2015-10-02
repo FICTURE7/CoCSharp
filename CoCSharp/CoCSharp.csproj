@@ -211,6 +211,7 @@
     <Compile Include="Networking\Packets\UnknownPacket.cs" />
     <Compile Include="Networking\Packets\UpdateKeyPacket.cs" />
     <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
+    <Compile Include="PlayerInfoHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
