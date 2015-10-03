@@ -162,7 +162,7 @@ Just create a fork and make changes to it, like adding features from Clash of Cl
 Follow the code style else I won't merge your pull request. Make your pull requests focused and readable. 
 You can also contribute by creating issues and reporting bugs, giving ideas for enhancement.
 
-Am not any merging pull requests like a clan search API which completely drifts away from this project. 
+Am not any merging pull requests like a clan search API which completely drifts away from the goal of this project. 
 If you want to make a clan search API, use CoCSharp as a library and go ahead. :]
 
 ### Thanks
