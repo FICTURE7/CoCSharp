@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CoCSharp.Networking.Packets
 {
@@ -34,11 +35,13 @@ namespace CoCSharp.Networking.Packets
                 log.Unknown1 = reader.ReadInt32();
                 log.Unknown2 = reader.ReadInt32();
                 log.Unknown3 = reader.ReadInt32();
-                log.Unknown4 = reader.ReadInt32();
+
+                log.HomeClanPointsGained = reader.ReadInt32();
+
                 log.Unknown5 = reader.ReadInt64();
                 log.Unknown6 = reader.ReadInt32();
                 log.Unknown7 = reader.ReadInt32();
-                log.Unknown8 = reader.ReadInt32(); 
+                log.Unknown8 = reader.ReadInt32(); // time since then?
                 log.Unknown9 = reader.ReadInt32();
                 log.Unknown10 = reader.ReadInt32();
                 log.Unknown11 = reader.ReadByte();
@@ -72,7 +75,9 @@ namespace CoCSharp.Networking.Packets
             public int Unknown1 { get; set; } // number of home clan attacks?
             public int Unknown2 { get; set; } 
             public int Unknown3 { get; set; }
-            public int Unknown4 { get; set; } // points gained?
+
+            public int HomeClanPointsGained { get; set; }
+
             public long Unknown5 { get; set; } // feels like an id
             public int Unknown6 { get; set; }
             public int Unknown7 { get; set; }
