@@ -147,6 +147,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceInfoRequestPacket().ID, typeof(AllianceInfoRequestPacket));
             PacketDictionary.Add(new AvatarRankListRequestPacket().ID, typeof(AvatarRankListRequestPacket));
             PacketDictionary.Add(new AvatarLocalRankListRequestPacket().ID, typeof(AvatarLocalRankListRequestPacket));
+            PacketDictionary.Add(new AllianceWarLogPacket().ID, typeof(AllianceWarLogPacket));
 
             // Clientbound
             PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
