@@ -150,6 +150,7 @@
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\DisconnectedEventArgs.cs" />
     <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
+    <Compile Include="Networking\PacketFactory.cs" />
     <Compile Include="Networking\PacketReceivedEventArgs.cs" />
     <Compile Include="Networking\Packets\AllianceSearchRequestPacket.cs" />
     <Compile Include="Networking\Packets\AllianceSearchResponsePacket.cs" />

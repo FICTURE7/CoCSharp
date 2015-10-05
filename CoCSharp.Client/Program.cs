@@ -1,4 +1,6 @@
 ﻿using CoCSharp.Client.API.Events;
+using CoCSharp.Networking;
+using CoCSharp.Networking.Packets;
 using System;
 using System.Net;
 
@@ -63,6 +65,7 @@ namespace CoCSharp.Client
                 Console.ResetColor();
                 Console.Write("][Lvl:{0}]", e.Packet.Level);
                 Console.WriteLine("{0}>: {1}", e.Username, e.Message);
+                
             }
         }
 

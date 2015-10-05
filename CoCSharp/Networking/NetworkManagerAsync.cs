@@ -232,7 +232,7 @@ namespace CoCSharp.Networking
                 }
             }
 
-            var packet = CreatePacketInstance(packetToken.ID);
+            var packet = PacketFactory.Create(packetToken.ID);
             var packetDeData = (byte[])packetToken.Body.Clone();
             CoCCrypto.Decrypt(packetDeData);
 
