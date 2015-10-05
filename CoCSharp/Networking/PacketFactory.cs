@@ -1,10 +1,12 @@
 ﻿using CoCSharp.Networking.Packets;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CoCSharp.Networking
 {
+    /// <summary>
+    /// Provides methods to create packet instances.
+    /// </summary>
     public static class PacketFactory
     {
         static PacketFactory()
@@ -29,6 +31,11 @@ namespace CoCSharp.Networking
 
         private static Dictionary<ushort, Type> m_PacketDictionary = new Dictionary<ushort, Type>();
 
+        /// <summary>
+        /// Creates a new <see cref="IPacket"/> instance with the specified packet id.
+        /// </summary>
+        /// <param name="id">ID of packet.</param>
+        /// <returns>Instance of <see cref="IPacket"/> created.</returns>
         public static IPacket Create(ushort id)
         {
             var packetType = (Type)null;
@@ -37,6 +44,11 @@ namespace CoCSharp.Networking
             return (IPacket)Activator.CreateInstance(packetType);
         }
 
+        /// <summary>
+        /// Creates a new <see cref="IPacket"/> instance with the specified packet type.
+        /// </summary>
+        /// <typeparam name="T">Type of the <see cref="IPacket"/> to create.</typeparam>
+        /// <returns>Instance of <see cref="IPacket"/> created.</returns>
         public static T Create<T>() where T : IPacket
         {
             var packetType = typeof(T);
