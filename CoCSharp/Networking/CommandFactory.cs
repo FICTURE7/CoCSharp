@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CoCSharp.Networking.Packets
+namespace CoCSharp.Networking
 {
     public static class CommandFactory
     {

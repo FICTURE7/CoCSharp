@@ -156,6 +156,7 @@
     <Compile Include="Networking\Packets\AllianceSearchResponsePacket.cs" />
     <Compile Include="Networking\Packets\AllianceDescriptionPacket.cs" />
     <Compile Include="Networking\Packets\AllianceWarLogPacket.cs" />
+    <Compile Include="Networking\CommandFactory.cs" />
     <Compile Include="Networking\Packets\Commands\BoostBuildingCommand.cs" />
     <Compile Include="Networking\Packets\Commands\BuyBuildingCommand.cs" />
     <Compile Include="Networking\Packets\Commands\BuyDecorationCommand.cs" />
@@ -171,7 +172,7 @@
     <Compile Include="Networking\Packets\Commands\ClearObstacleCommand.cs" />
     <Compile Include="Networking\Packets\Commands\CollectResourcesCommand.cs" />
     <Compile Include="Networking\Packets\Commands\FreeWorkerCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\ICommand.cs" />
+    <Compile Include="Networking\Packets\ICommand.cs" />
     <Compile Include="Networking\Packets\Commands\LoadTurrentCommand.cs" />
     <Compile Include="Networking\Packets\Commands\MissionProgressCommand.cs" />
     <Compile Include="Networking\Packets\Commands\MoveBuildingCommand.cs" />
