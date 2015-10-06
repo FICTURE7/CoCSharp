@@ -9,7 +9,7 @@ namespace CoCSharp.Data.Csv
     /// Provides methods to serialize and deserialize CsvTables to object array.
     /// Mainly designed for Clash of Clans.
     /// </summary>
-    public class CsvSerializer
+    public sealed class CsvSerializer
     {
         /// <summary>
         /// Deserializes the specified <see cref="CsvTable"/> with the specified <see cref="Type"/>.

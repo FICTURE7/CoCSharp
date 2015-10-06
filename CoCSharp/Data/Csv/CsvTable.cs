@@ -11,7 +11,7 @@ namespace CoCSharp.Data.Csv
     /// Represents a Comma Seperated Values(CSV) file as a datatable. 
     /// Mainly designed for the Clash of Clans CSV file format.
     /// </summary>
-    public class CsvTable
+    public sealed class CsvTable
     {
         /// <summary>
         /// Initalizes a new instance of the <see cref="CsvTable"/> class.

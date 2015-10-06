@@ -1,11 +1,13 @@
 ﻿namespace CoCSharp.Networking.Packets.Commands
 {
+    // rename to SpeedUpTrainUnitCommand?
+
     public class SpeedUpTrainingCommand : ICommand
     {
         public int ID { get { return 0x201; } }
 
         public int BuildingID;
-        private int Unknown1;
+        public int Unknown1;
 
         public void ReadCommand(PacketReader reader)
         {

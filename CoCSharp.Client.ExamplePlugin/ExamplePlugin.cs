@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Client.API;
 using CoCSharp.Client.API.Events;
-using CoCSharp.Networking.Packets;
 using System;
 using System.Collections.Generic;
 

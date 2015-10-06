@@ -5,7 +5,7 @@
         public int ID { get { return 0x202; } }
 
         public int ObstacleID;
-        private int Unknown1;
+        public int Unknown1;
 
         public void ReadCommand(PacketReader reader)
         {

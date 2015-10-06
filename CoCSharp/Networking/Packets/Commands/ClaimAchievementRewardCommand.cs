@@ -1,21 +1,21 @@
 ﻿namespace CoCSharp.Networking.Packets.Commands
 {
-    public class ClearObstacleCommand : ICommand
+    public class ClaimAchievementRewardCommand : ICommand
     {
-        public int ID { get { return 0x1FB; } }
+        public int ID { get { return 0x20B; } }
 
-        public int ObstacleID;
+        public int AchievementID;
         public int Unknown1;
 
         public void ReadCommand(PacketReader reader)
         {
-            ObstacleID = reader.ReadInt32();
+            AchievementID = reader.ReadInt32();
             Unknown1 = reader.ReadInt32();
         }
 
         public void WriteCommand(PacketWriter writer)
         {
-            writer.WriteInt32(ObstacleID);
+            writer.WriteInt32(AchievementID);
             writer.WriteInt32(Unknown1);
         }
     }

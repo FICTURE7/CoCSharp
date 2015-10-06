@@ -12,12 +12,6 @@ namespace CoCSharp.Networking
     public class NetworkManagerAsync
     {
         #region Constructors
-        static NetworkManagerAsync()
-        {
-            if (PacketDictionary == null) // incase its called twice.
-                InitializePacketDictionary();
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class.
         /// </summary>
@@ -90,7 +84,6 @@ namespace CoCSharp.Networking
         private PacketBufferManager BufferManager { get; set; }
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; } // we are not using this properly. :{
-        private static Dictionary<ushort, Type> PacketDictionary { get; set; }
         #endregion
 
         #region Methods
@@ -315,38 +308,6 @@ namespace CoCSharp.Networking
                     //TODO: Handle large packets.
                     break;
             }
-        }
-
-        private static IPacket CreatePacketInstance(ushort id)
-        {
-            var packetType = (Type)null;
-            if (!PacketDictionary.TryGetValue(id, out packetType))
-                return new UnknownPacket();
-            return (IPacket)Activator.CreateInstance(packetType); // creates an instance for that packetid
-        }
-
-        private static void InitializePacketDictionary()
-        {
-            PacketDictionary = new Dictionary<ushort, Type>();
-
-            // Serverbound
-            PacketDictionary.Add(new LoginRequestPacket().ID, typeof(LoginRequestPacket)); // 10101
-            PacketDictionary.Add(new KeepAliveRequestPacket().ID, typeof(KeepAliveRequestPacket)); // 10108
-            PacketDictionary.Add(new SetDeviceTokenPacket().ID, typeof(SetDeviceTokenPacket)); // 10113
-            PacketDictionary.Add(new ChangeAvatarNamePacket().ID, typeof(ChangeAvatarNamePacket)); // 10212
-            PacketDictionary.Add(new BindFacebookAccountPacket().ID, typeof(BindFacebookAccountPacket)); // 14201
-            PacketDictionary.Add(new AllianceChatMessageClientPacket().ID, typeof(AllianceChatMessageClientPacket)); // 14315
-            PacketDictionary.Add(new AvatarProfileRequestPacket().ID, typeof(AvatarProfileRequestPacket)); // 14325
-            PacketDictionary.Add(new ChatMessageClientPacket().ID, typeof(ChatMessageClientPacket)); // 14715
-
-            // Clientbound
-            PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
-            PacketDictionary.Add(new LoginFailedPacket().ID, typeof(LoginFailedPacket)); // 20103
-            PacketDictionary.Add(new LoginSuccessPacket().ID, typeof(LoginSuccessPacket)); // 20104
-            PacketDictionary.Add(new KeepAliveResponsePacket().ID, typeof(KeepAliveResponsePacket)); // 20108
-            PacketDictionary.Add(new OwnHomeDataPacket().ID, typeof(OwnHomeDataPacket)); // 24101
-            PacketDictionary.Add(new AllianceChatMessageServerPacket().ID, typeof(AllianceChatMessageServerPacket)); // 24312
-            PacketDictionary.Add(new ChatMessageServerPacket().ID, typeof(ChatMessageServerPacket)); // 24715
         }
         #endregion
 

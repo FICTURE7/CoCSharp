@@ -5,7 +5,7 @@
         public int ID { get { return 0x1F8; } }
 
         public int BuildingID;
-        private int Unknown1;
+        public int Unknown1;
 
         public void ReadCommand(PacketReader reader)
         {

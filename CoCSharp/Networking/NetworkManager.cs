@@ -6,7 +6,7 @@ namespace CoCSharp.Networking
     {
         public NetworkManager()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Use NetworkManagerAsync instead.");
         }
     }
 }

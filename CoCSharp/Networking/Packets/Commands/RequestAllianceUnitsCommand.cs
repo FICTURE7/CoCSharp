@@ -4,7 +4,7 @@
     {
         public int ID { get { return 0x1FF; } }
 
-        private int Unknown1;
+        public int Unknown1;
         public bool HashRequestMessage;
         public string Message;
 

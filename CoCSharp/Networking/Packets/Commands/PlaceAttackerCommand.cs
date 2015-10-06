@@ -1,19 +1,19 @@
 ﻿namespace CoCSharp.Networking.Packets.Commands
 {
-    public class MoveBuildingCommand : ICommand
+    public class PlaceAttackerCommand : ICommand
     {
-        public int ID { get { return 0x1F5; } }
+        public int ID { get { return 0x258; } }
 
         public int X;
         public int Y;
-        public int BuildingID;
+        public int UnitID;
         public int Unknown1;
 
         public void ReadCommand(PacketReader reader)
         {
             X = reader.ReadInt32();
             Y = reader.ReadInt32();
-            BuildingID = reader.ReadInt32();
+            UnitID = reader.ReadInt32();
             Unknown1 = reader.ReadInt32();
         }
 
@@ -21,8 +21,8 @@
         {
             writer.WriteInt32(X);
             writer.WriteInt32(Y);
-            writer.WriteInt32(BuildingID);
-            writer.Write(Unknown1);
+            writer.WriteInt32(UnitID);
+            writer.WriteInt32(Unknown1);
         }
     }
 }

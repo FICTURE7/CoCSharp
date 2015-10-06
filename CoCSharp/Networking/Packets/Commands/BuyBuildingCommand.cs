@@ -7,7 +7,7 @@
         public int X;
         public int Y;
         public int BuildingID;
-        private int Unknown1;
+        public int Unknown1;
 
         public void ReadCommand(PacketReader reader)
         {

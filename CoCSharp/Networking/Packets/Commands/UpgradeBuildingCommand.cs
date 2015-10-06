@@ -5,8 +5,8 @@
         public int ID { get { return 0x1F6; } }
 
         public int BuildingID;
-        private byte Unknown1;
-        private int Unknown2;
+        public byte Unknown1;
+        public int Unknown2;
 
         public void ReadCommand(PacketReader reader)
         {
