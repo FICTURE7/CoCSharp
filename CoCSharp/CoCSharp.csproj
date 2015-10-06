@@ -172,7 +172,7 @@
     <Compile Include="Networking\Packets\Commands\ClearObstacleCommand.cs" />
     <Compile Include="Networking\Packets\Commands\CollectResourcesCommand.cs" />
     <Compile Include="Networking\Packets\Commands\FreeWorkerCommand.cs" />
-    <Compile Include="Networking\Packets\ICommand.cs" />
+    <Compile Include="Networking\Packets\Commands\ICommand.cs" />
     <Compile Include="Networking\Packets\Commands\LoadTurrentCommand.cs" />
     <Compile Include="Networking\Packets\Commands\MissionProgressCommand.cs" />
     <Compile Include="Networking\Packets\Commands\MoveBuildingCommand.cs" />
