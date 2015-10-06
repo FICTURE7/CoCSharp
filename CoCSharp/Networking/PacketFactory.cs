@@ -43,16 +43,5 @@ namespace CoCSharp.Networking
                 return new UnknownPacket();
             return (IPacket)Activator.CreateInstance(packetType);
         }
-
-        /// <summary>
-        /// Creates a new <see cref="IPacket"/> instance with the specified packet type.
-        /// </summary>
-        /// <typeparam name="T">Type of the <see cref="IPacket"/> to create.</typeparam>
-        /// <returns>Instance of <see cref="IPacket"/> created.</returns>
-        public static T Create<T>() where T : IPacket
-        {
-            var packetType = typeof(T);
-            return (T)Activator.CreateInstance(packetType);
-        }
     }
 }
