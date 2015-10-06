@@ -11,6 +11,8 @@ namespace CoCSharp.Networking
     {
         static PacketFactory()
         {
+            // Populates m_PacketDictionary with packet ids and types
+
             m_PacketDictionary.Add(new LoginRequestPacket().ID, typeof(LoginRequestPacket)); // 10101
             m_PacketDictionary.Add(new KeepAliveRequestPacket().ID, typeof(KeepAliveRequestPacket)); // 10108
             m_PacketDictionary.Add(new SetDeviceTokenPacket().ID, typeof(SetDeviceTokenPacket)); // 10113
@@ -32,7 +34,7 @@ namespace CoCSharp.Networking
         private static Dictionary<ushort, Type> m_PacketDictionary = new Dictionary<ushort, Type>();
 
         /// <summary>
-        /// Creates a new <see cref="IPacket"/> instance with the specified packet id.
+        /// Creates a new <see cref="IPacket"/> instance with the specified packet ID.
         /// </summary>
         /// <param name="id">ID of packet.</param>
         /// <returns>Instance of <see cref="IPacket"/> created.</returns>
@@ -42,6 +44,24 @@ namespace CoCSharp.Networking
             if (!m_PacketDictionary.TryGetValue(id, out packetType))
                 return new UnknownPacket();
             return (IPacket)Activator.CreateInstance(packetType);
+        }
+
+        /// <summary>
+        /// Tries to creates a new <see cref="IPacket"/> instance with the specified packet ID.
+        /// </summary>
+        /// <param name="id">The ID of the packet to create the instance.</param>
+        /// <param name="packet">The instance <see cref="IPacket"/> created, returns null if failed to create the instance.</param>
+        /// <returns><see cref="true"/> if the instance was created successfully.</returns>
+        public static bool TryCreate(ushort id, out IPacket packet)
+        {
+            var packetType = (Type)null;
+            if (!m_PacketDictionary.TryGetValue(id, out packetType))
+            {
+                packet = null;
+                return false;
+            }
+            packet = (IPacket)Activator.CreateInstance(packetType);
+            return true;
         }
     }
 }

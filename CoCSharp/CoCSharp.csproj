@@ -212,7 +212,7 @@
     <Compile Include="Networking\Packets\ChangeAvatarNamePacket.cs" />
     <Compile Include="Networking\Packets\ChatMessageClientPacket.cs" />
     <Compile Include="Networking\Packets\ChatMessageServerPacket.cs" />
-    <Compile Include="Networking\Packets\ClientCommandPacket.cs" />
+    <Compile Include="Networking\Packets\CommandPacket.cs" />
     <Compile Include="Networking\Packets\IPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveRequestPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveResponsePacket.cs" />

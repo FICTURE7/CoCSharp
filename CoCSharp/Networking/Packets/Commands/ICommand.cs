@@ -1,7 +1,7 @@
 ﻿namespace CoCSharp.Networking.Packets.Commands
 {
     /// <summary>
-    /// Represents a command in <see cref="ClientCommandPacket"/>.
+    /// Represents a command in <see cref="CommandPacket"/>.
     /// </summary>
     public interface ICommand
     {
