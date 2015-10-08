@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Provides methods to create packet instances.
+    /// Provides methods to create <see cref="IPacket"/> instances.
     /// </summary>
     public static class PacketFactory
     {

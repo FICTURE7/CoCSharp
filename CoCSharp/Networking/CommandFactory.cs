@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace CoCSharp.Networking
 {
+    /// <summary>
+    /// Provides methods to create <see cref="ICommand"/> instances.
+    /// </summary>
     public static class CommandFactory
     {
         static CommandFactory()
@@ -47,8 +50,13 @@ namespace CoCSharp.Networking
             m_CommandDictionary.Add(new UpgradeUnitCommand().ID, typeof(UpgradeUnitCommand));
         }
 
-        private static Dictionary<int, Type> m_CommandDictionary;
+        private static Dictionary<int, Type> m_CommandDictionary = new Dictionary<int, Type>();
 
+        /// <summary>
+        /// Creates a new <see cref="ICommand"/> instance with the specified command ID.
+        /// </summary>
+        /// <param name="id">ID of command.</param>
+        /// <returns>Instance of <see cref="ICommand"/> created.</returns>
         public static ICommand Create(int id)
         {
             var commandType = (Type)null;
@@ -57,6 +65,12 @@ namespace CoCSharp.Networking
             return (ICommand)Activator.CreateInstance(commandType);
         }
 
+        /// <summary>
+        /// Tries to creates a new <see cref="ICommand"/> instance with the specified command ID.
+        /// </summary>
+        /// <param name="id">The ID of the command to create the instance.</param>
+        /// <param name="command">The instance <see cref="ICommand"/> created, returns null if failed to create the instance.</param>
+        /// <returns><see cref="true"/> if the instance was created successfully.</returns>
         public static bool TryCreate(int id, out ICommand command)
         {
             var commandType = (Type)null;
