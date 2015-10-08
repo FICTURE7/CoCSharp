@@ -9,8 +9,6 @@ namespace CoCSharp.Networking
     /// </summary>
     public class PacketExtractor
     {
-        //TODO: Rename to PacketExtrator.
-
         /// <summary>
         /// Header size in bytes of the Clash of Clans packet structure.
         /// </summary>
