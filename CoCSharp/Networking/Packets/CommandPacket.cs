@@ -21,7 +21,7 @@ namespace CoCSharp.Networking.Packets
                 var command = (ICommand)null;
                 var id = reader.ReadInt32();
                 if (!CommandFactory.TryCreate(id, out command))
-                    break; // break because we dont want to mess the stream
+                    break; // break because we dont want to mess the stream and causes exceptions
                 command.ReadCommand(reader);
                 Commands[i] = command;
             }
