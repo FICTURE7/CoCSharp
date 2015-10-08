@@ -2,8 +2,6 @@
 {
     public class FreeWorkerCommand : ICommand
     {
-        //TODO: Implement EmbeddedCommands
-
         public int ID { get { return 0x209; } }
 
         public int TimeLeft;
@@ -12,15 +10,18 @@
         public void ReadCommand(PacketReader reader)
         {
             TimeLeft = reader.ReadInt32();
-            //if (reader.ReadBoolean())
-            //      read the thing
+            if (reader.ReadBoolean())
+            {
+                var id = reader.ReadInt32();
+                CommandFactory.TryCreate(id, out EmbeddedCommand);
+            }
         }
 
         public void WriteCommand(PacketWriter writer)
         {
             writer.WriteInt32(TimeLeft);
-            //if(EmbeddedCommand!= null)
-            //    writer the thing
+            if (EmbeddedCommand != null)
+                EmbeddedCommand.WriteCommand(writer);
         }
     }
 }

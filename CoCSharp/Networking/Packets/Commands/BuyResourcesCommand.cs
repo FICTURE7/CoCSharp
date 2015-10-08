@@ -2,8 +2,6 @@
 {
     public class BuyResourcesCommand : ICommand
     {
-        //TODO: Implement EmbeddedCommands
-
         public int ID { get { return 0x206; } }
 
         public int ResourceID;
@@ -15,8 +13,11 @@
         {
             ResourceID = reader.ReadInt32();
             Amount = reader.ReadInt32();
-            //if (reader.ReadBoolean())
-            //    EmbeddedCommand = read the command
+            if (reader.ReadBoolean())
+            {
+                var id = reader.ReadInt32();
+                CommandFactory.TryCreate(id, out EmbeddedCommand);
+            }
             Unknown1 = reader.ReadInt32();
         }
 
@@ -24,8 +25,8 @@
         {
             writer.WriteInt32(ResourceID);
             writer.WriteInt32(Amount);
-            //if(EmbeddedCommand != null)
-            //    write the command
+            if (EmbeddedCommand != null)
+                EmbeddedCommand.WriteCommand(writer);
             writer.WriteInt32(Unknown1);
         }
     }
