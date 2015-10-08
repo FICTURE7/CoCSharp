@@ -11,7 +11,7 @@ namespace CoCSharp.Proxy
         public static CoCProxy Proxy { get; set; }
         public static ProxyConfiguration Configuration { get; set; }
 
-        public static void m(string[] args)
+        public static void Main(string[] args)
         {
             Console.Title = "CoC# Proxy";
             Console.WriteLine("Starting proxy...");
@@ -30,22 +30,6 @@ namespace CoCSharp.Proxy
 
             Console.WriteLine("CoC# is running on *:{0}", Configuration.ProxyPort);
             Thread.Sleep(-1);
-        }
-
-        private static CoCCrypto m_Crypto = new CoCCrypto();
-        public static void Main()
-        {
-            var bytes = new byte[512];
-            m_Crypto.Encrypt(bytes);
-
-            var str = string.Empty;
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                str += bytes[i].ToString("X2") + " ";
-                if (i % 32 == 31)
-                    str += "\r";
-            }
-            Console.WriteLine(str);
         }
     }
 }
