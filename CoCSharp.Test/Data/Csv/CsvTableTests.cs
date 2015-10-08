@@ -1,7 +1,6 @@
 ﻿using CoCSharp.Data.Csv;
 using NUnit.Framework;
 using System;
-using System.IO;
 using System.Text;
 
 namespace CoCSharp.Test.Csv.Data
@@ -15,6 +14,7 @@ namespace CoCSharp.Test.Csv.Data
             // causes error on travis-ci
             //var table = new CsvTable("Resources/characters.csv");
             //PrintTable(table);
+            Console.WriteLine("Running empty test!");
         }
 
         private void PrintTable(CsvTable table)

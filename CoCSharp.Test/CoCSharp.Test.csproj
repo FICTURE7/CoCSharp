@@ -47,7 +47,9 @@
     <Compile Include="Data\Csv\CsvSerializerTests.cs" />
     <Compile Include="Data\Csv\CsvTableTests.cs" />
     <Compile Include="Data\FingerprintTests.cs" />
+    <Compile Include="Networking\CoCCryptoTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -58,9 +60,7 @@
       <Name>CoCSharp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -25,6 +25,7 @@ namespace CoCSharp.Test.Csv.Data
             //    var data = (CoCData)obj;
             //    Console.WriteLine(data.ID);
             //}
+            Console.WriteLine("Running empty test!");
         }
     }
 }

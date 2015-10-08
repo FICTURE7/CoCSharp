@@ -13,7 +13,8 @@ namespace CoCSharp.Networking
         private const string InitialNonce = "nonce";
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CoCCrypto"/> class.
+        /// Initializes a new instance of the <see cref="CoCCrypto"/> class with
+        /// the default key and nonce.
         /// </summary>
         public CoCCrypto()
         {
@@ -25,7 +26,7 @@ namespace CoCSharp.Networking
         /// the specified key.
         /// </summary>
         /// <param name="key"></param>
-        /// <exception cref="System.ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"/>
         public CoCCrypto(string key)
         {
             if (key == null)
@@ -41,7 +42,7 @@ namespace CoCSharp.Networking
         /// Encrypts the provided bytes.
         /// </summary>
         /// <param name="data">Bytes to encrypt.</param>
-        /// <exception cref="System.ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"/>
         public void Encrypt(byte[] data)
         {
             if (data == null)
@@ -55,7 +56,7 @@ namespace CoCSharp.Networking
         /// Decrypts the provided bytes.
         /// </summary>
         /// <param name="data">Bytes to decrypt.</param>
-        /// <exception cref="System.ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"/>
         public void Decrypt(byte[] data)
         {
             if (data == null)
@@ -70,7 +71,7 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="clientSeed">Client seed.</param>
         /// <param name="serverNonce">Server random nonce.</param>
-        /// <exception cref="System.ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"/>
         public void UpdateCiphers(ulong clientSeed, byte[] serverNonce)
         {
             if (serverNonce == null)
