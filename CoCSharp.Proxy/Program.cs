@@ -1,5 +1,4 @@
-﻿using CoCSharp.Networking;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -21,8 +20,6 @@ namespace CoCSharp.Proxy
                 File.Delete("packets.log");
 
             Proxy = new CoCProxy();
-            // Proxy.PacketLogger.LogPrivateFields = Configuration.LogPrivatePacketFields;
-            // Proxy.PacketDumper.Active = Configuration.LogRawPacket;
             Proxy.ServerAddress = Configuration.ServerAddress;
             Proxy.ServerPort = Configuration.ServerPort;
 
