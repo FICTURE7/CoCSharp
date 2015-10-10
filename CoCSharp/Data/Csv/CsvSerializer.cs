@@ -71,6 +71,19 @@ namespace CoCSharp.Data.Csv
         }
 
         /// <summary>
+        /// Deserializes the specified <see cref="CsvTable"/> with the specified <see cref="Type"/>.
+        /// </summary>
+        /// <typeparam name="T">Type with which the <see cref="CsvTable"/> will be deserialized.</typeparam>
+        /// <param name="table"><see cref="CsvTable"/> from which the data is deserialize.</param>
+        /// <returns>Returns the deserialized object array as the specified type.</returns>
+        public static T[] Deserialize<T>(CsvTable table)
+        {
+            var tType = typeof(T);
+            var objs = Deserialize(table, tType);
+            return Array.ConvertAll(objs, obj => (T)obj);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="objArray"></param>

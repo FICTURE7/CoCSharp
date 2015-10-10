@@ -37,6 +37,7 @@ namespace CoCSharp.Data.Csv
         /// the specified .csv file if compressed, then reads file and parses it.
         /// </summary>
         /// <param name="path">Path to the .csv file.</param>
+        /// <param name="compressed">Whether the .csv file is compressed or not.</param>
         public CsvTable(string path, bool compressed)
         {
             Table = new DataTable();
