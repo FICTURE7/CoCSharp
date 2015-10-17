@@ -14,8 +14,8 @@ namespace CoCSharp.Networking
         /// the specified base <see cref="Stream"/>.
         /// </summary>
         /// <param name="baseStream">The base stream.</param>
-        public PacketWriter(Stream stream)
-            : base(stream)
+        public PacketWriter(Stream baseStream)
+            : base(baseStream)
         {
             // Space
         }
