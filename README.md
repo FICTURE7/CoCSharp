@@ -180,3 +180,5 @@ Massive thank you to those [guys](https://github.com/FICTURE7/CoCSharp/blob/mast
 
 ## Licensing
 CoCSharp is licensed under the permissive [MIT License](http://mit-license.org/).
+
+CoCSharp is not officially affiliated with Supercell.
