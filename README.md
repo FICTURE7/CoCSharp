@@ -3,7 +3,9 @@ CoC# <a href="https://travis-ci.org/FICTURE7/CoCSharp"><img src="https://travis-
 </h1>
 
 Clash of Clans library written in C# to handle networking, csv files and more to come. 
-It was written based off of [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/).
+It was written based off of [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/)
+and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrapowa/ucs) 
+which is now open source.
 
 ## What can it do?
 * CoCSharp.Data: CSV file structures and other data structures.
