@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Networking;
-using CoCSharp.Networking.Packets.Commands;
 using CoCSharp.Networking.Packets;
 using System;
 using System.IO;
@@ -11,6 +10,7 @@ namespace CoCSharp.Logging
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("Use PacketLog and LogBuilder instead.")]
     public class PacketLogger
     {
         /// <summary>

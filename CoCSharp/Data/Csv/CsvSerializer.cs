@@ -93,6 +93,7 @@ namespace CoCSharp.Data.Csv
             throw new NotImplementedException();
         }
 
+        //TODO: Clean those 2 bad bois here.
         private static string GetPropertyAttributeName(PropertyInfo property)
         {
             var propertyAttribute = (CsvPropertyAttribute)property.GetCustomAttributes(typeof(CsvPropertyAttribute), false)

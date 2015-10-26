@@ -19,7 +19,7 @@ namespace CoCSharp.Networking
             set
             {
                 if (value <= PacketExtractor.HeaderSize)
-                    throw new Exception("BufferSize cannot be less or equal to header size (7)");
+                    throw new Exception("BufferSize cannot be less or equal to header size (7).");
                 m_BufferSize = value;
             }
         }
@@ -34,7 +34,7 @@ namespace CoCSharp.Networking
             set
             {
                 if (value <= 0)
-                    throw new Exception("ReceiveOperationCount cannot be less or equal to 0");
+                    throw new Exception("ReceiveOperationCount cannot be less or equal to 0.");
                 m_ReceiveOpCount = value;
             }
         }
@@ -49,7 +49,7 @@ namespace CoCSharp.Networking
             set
             {
                 if (value <= 0)
-                    throw new Exception("SendOperationCount cannot be less or equal to 0");
+                    throw new Exception("SendOperationCount cannot be less or equal to 0.");
                 m_SendOpCount = value;
             }
         }

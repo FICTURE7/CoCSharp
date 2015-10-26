@@ -1,5 +1,4 @@
-﻿using CoCSharp.Logging;
-using System.Net;
+﻿using System.Net;
 
 namespace CoCSharp
 {
@@ -21,8 +20,7 @@ namespace CoCSharp
         /// <summary>
         /// Logs data with the specified parameters and log category.
         /// </summary>
-        /// <param name="category">Log category to log tge data with.</param>
         /// <param name="parameters">The parameters to log the packet with.</param>
-        void Log(LogCategory category, params object[] parameters);
+        void Log(params object[] parameters);
     }
 }

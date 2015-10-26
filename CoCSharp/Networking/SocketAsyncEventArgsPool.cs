@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Networking
 {
-    internal class SocketAsyncEventArgsPool
+    internal sealed class SocketAsyncEventArgsPool
     {
         private object m_ObjLock = new object();
 

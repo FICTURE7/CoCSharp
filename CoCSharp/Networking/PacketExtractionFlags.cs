@@ -9,17 +9,19 @@ namespace CoCSharp.Networking
     public enum PacketExtractionFlags : byte
     {
         /// <summary>
-        /// Will extract the header.
+        /// Instructs the <see cref="PacketExtractor"/> to extract the header.
         /// </summary>
         Header = 2,
 
         /// <summary>
-        /// Will extract the body.
+        /// Instructs the <see cref="PacketExtractor"/> to extract the body.
         /// </summary>
         Body = 4,
 
         /// <summary>
-        /// Will remove the specified PacketExtractionFlags from <see cref="PacketExtractor"/>.
+        /// Instructs the <see cref="PacketExtractor"/> to remove 
+        /// the specified PacketExtractionFlags from <see cref="PacketExtractor.Buffer"/> 
+        /// byte array.
         /// </summary>
         Remove = 8
     };

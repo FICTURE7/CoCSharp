@@ -21,6 +21,8 @@ namespace CoCSharp.Proxy
         {
             ExceptionLogger = new ExceptionLogger();
             PacketLogger = new PacketLogger();
+            //PacketLogger.LogConsole = false;
+            //PacketLog = new PacketLog("packetss.log");
             PacketDumper = new PacketDumper();
             Clients = new List<CoCProxyClient>();
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
@@ -32,6 +34,7 @@ namespace CoCSharp.Proxy
         public int ServerPort { get; set; }
         public ExceptionLogger ExceptionLogger { get; set; }
         public PacketLogger PacketLogger { get; set; }
+        public PacketLog PacketLog { get; set; }
         public PacketDumper PacketDumper { get; set; }
         public List<CoCProxyClient> Clients { get; set; }
         public Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
@@ -121,6 +124,8 @@ namespace CoCSharp.Proxy
                                     Clients[i].Server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
                                     PacketLogger.LogPacket(packet, PacketDirection.Server);
                                     PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
+                                    //PacketLog.LogData(packet, PacketDirection.Server);
+                                    //PacketLog.Save();
                                 }
                             }
                         }
@@ -155,6 +160,8 @@ namespace CoCSharp.Proxy
                                     Clients[i].Client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
                                     PacketLogger.LogPacket(packet, PacketDirection.Client);
                                     PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
+                                    //PacketLog.LogData(packet, PacketDirection.Client);
+                                    //PacketLog.Save();
                                 }
                             }
                         }

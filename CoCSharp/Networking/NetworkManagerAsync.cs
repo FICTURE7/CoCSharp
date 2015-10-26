@@ -81,7 +81,7 @@ namespace CoCSharp.Networking
         public NetworkManagerAsyncSettings Settings { get; set; }
 
         private CoCCrypto CoCCrypto { get; set; }
-        private PacketBufferManager BufferManager { get; set; }
+        private PacketBufferManager BufferManager { get; set; } // we are not using this properly.
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; } // we are not using this properly. :{
         #endregion
@@ -91,7 +91,7 @@ namespace CoCSharp.Networking
         /// Sends the specified packet to the socket asynchronously.
         /// </summary>
         /// <param name="packet">The <see cref="IPacket"/> that will be sent.</param>
-        /// <exception cref="System.ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"/>
         public void SendPacket(IPacket packet)
         {
             if (packet == null)
@@ -285,7 +285,7 @@ namespace CoCSharp.Networking
                 AsyncOperationCompleted(Connection, args);
         }
 
-        public void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
+        private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
             if (args.SocketError != SocketError.Success)
             {
@@ -312,14 +312,28 @@ namespace CoCSharp.Networking
         #endregion
 
         #region Events
+        /// <summary>
+        /// The event raised when a packet was received.
+        /// </summary>
         public event EventHandler<PacketReceivedEventArgs> PacketReceived;
+        /// <summary>
+        /// Use this methods to fire up <see cref="PacketReceived"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected internal void OnPacketReceived(PacketReceivedEventArgs args)
         {
             if (PacketReceived != null)
                 PacketReceived(this, args);
         }
 
+        /// <summary>
+        /// The event raised when the socket was disconnected.
+        /// </summary>
         public event EventHandler<DisconnectedEventArgs> Disconnected;
+        /// <summary>
+        /// Use this methods to fire up <see cref="Disconnected"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected internal void OnDisconnected(DisconnectedEventArgs args)
         {
             if (Disconnected != null)

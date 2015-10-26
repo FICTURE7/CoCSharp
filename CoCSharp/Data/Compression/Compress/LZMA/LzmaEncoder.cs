@@ -1351,11 +1351,11 @@ namespace SevenZip.Compression.LZMA
         }
 
 
-        static string[] kMatchFinderIDs = 
-		{
-			"BT2",
-			"BT4",
-		};
+        static string[] kMatchFinderIDs =
+        {
+            "BT2",
+            "BT4",
+        };
 
         static int FindMatchFinder(string s)
         {
