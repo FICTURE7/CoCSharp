@@ -5,10 +5,11 @@ using System.Text;
 namespace CoCSharp.Logging
 {
     /// <summary>
-    /// Provides methods to create <see cref="Log"/> object.
+    /// Provides methods to build a <see cref="Log"/> object.
     /// </summary>
     public sealed class LogBuilder
     {
+        //TODO: Use Environment.NewLine instead of "\r\n".
         /// <summary>
         /// Initializes a new instance of the <see cref="LogBuilder"/> class.
         /// </summary>
@@ -29,20 +30,21 @@ namespace CoCSharp.Logging
 
         /// <summary>
         /// Gets the name of the current block.
+        /// Returns null if no blocks is opened.
         /// </summary>
         public string CurrentBlock
         {
-            get
-            {
-                return m_CurrentBlockIndex == -1 ? null : m_Blocks[m_CurrentBlockIndex];
-            }
+            get { return m_CurrentBlockIndex == -1 ? null : m_Blocks[m_CurrentBlockIndex]; }
         }
 
-        private int m_IndentDepth = 0;
-        private string m_Indent = string.Empty;
+        private string m_CurrentIndent = string.Empty;
+        private int m_CurrentIndentDepth = 0;
         private int m_CurrentBlockIndex = -1;
         private StringBuilder m_StringBuilder = new StringBuilder();
         private List<string> m_Blocks = new List<string>();
+
+        private const string Indent = "    ";
+        private const LoggingFlags DefaultFlags = LoggingFlags.Fields | LoggingFlags.Unknowns;
 
         /// <summary>
         /// Opens a new block to this instance with the
@@ -55,10 +57,11 @@ namespace CoCSharp.Logging
             m_CurrentBlockIndex++;
             m_Blocks.Add(name);
 
-            m_StringBuilder.AppendFormat("{0} {1}\r\n" + m_Indent, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
+            var firstIndent = m_CurrentIndentDepth != 0 ? Indent : m_CurrentIndent;
+            var format = firstIndent + "{0} {1}\r\n" + m_CurrentIndent + "{{\r\n" + m_CurrentIndent;
+            m_StringBuilder.AppendFormat(format, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
             IncrementIndentation();
-            m_StringBuilder.Append("{\r\n" + m_Indent);
-
+            //var debug = m_StringBuilder.ToString();
             return this;
         }
 
@@ -71,24 +74,25 @@ namespace CoCSharp.Logging
             if (m_CurrentBlockIndex < 0)
                 throw new InvalidOperationException("No blocks to close, call 'OpenBlock' first.");
 
-            m_Blocks.RemoveAt(m_CurrentBlockIndex);
+            m_Blocks.RemoveAt(m_CurrentBlockIndex); // remove block from list.
             m_CurrentBlockIndex--;
             DecrementIndentation();
 
             var stringFormat = m_CurrentBlockIndex == -1 ? "\r\n{0}}}\r\n\r\n" : "\r\n{0}}}"; // check if last block
-            m_StringBuilder.AppendFormat(stringFormat, m_Indent);
-
+            m_StringBuilder.AppendFormat(stringFormat, m_CurrentIndent);
+            //var debug = m_StringBuilder.ToString();
             return this;
         }
 
         /// <summary>
-        /// Opens and closes an empty block. Just for formatting sake.
+        /// Opens and closes an empty block.
         /// </summary>
         /// <param name="name">The name of the block.</param>
         /// <returns>A reference to this instace.</returns>
         public LogBuilder EmptyBlock(string name)
         {
-            m_StringBuilder.AppendFormat("{0} {1} {{ }}\r\n\r\n" + m_Indent, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
+            m_StringBuilder.AppendFormat("{0} {1} {{ }}\r\n\r\n" + m_CurrentIndent, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
+            //var debug = m_StringBuilder.ToString();
             return this;
         }
 
@@ -96,10 +100,25 @@ namespace CoCSharp.Logging
         /// Appends an <see cref="object"/> to this instance in
         /// a formatted way.
         /// </summary>
+        /// <param name="obj">Object to append.</param>
         /// <returns>A reference to this instance.</returns>
         public LogBuilder AppendObject(object obj)
         {
-            m_StringBuilder.Append(DumpObject(obj));
+            m_StringBuilder.Append(DumpObject(obj, DefaultFlags));
+            //var debug = m_StringBuilder.ToString();
+            return this;
+        }
+
+        /// <summary>
+        /// Appends an <see cref="object"/> to this instance in
+        /// a formatted way.
+        /// </summary>
+        /// <param name="obj">Object to append.</param>
+        /// <param name="flags"><see cref="LoggingFlags"/> to instruct the <see cref="LogBuilder"/>.</param>
+        /// <returns>A reference to this instance.</returns>
+        public LogBuilder AppendObject(object obj, LoggingFlags flags)
+        {
+            m_StringBuilder.Append(DumpObject(obj, flags));
             //var debug = m_StringBuilder.ToString();
             return this;
         }
@@ -113,177 +132,130 @@ namespace CoCSharp.Logging
             return m_StringBuilder.ToString();
         }
 
-        private string DumpObject(object obj)
+        private string DumpObject(object obj, LoggingFlags flags)
         {
-            var strBuilder = new StringBuilder();
             var objType = obj.GetType();
-            var objName = objType.Name;
             var objFields = objType.GetFields();
             var objProperties = objType.GetProperties();
+            var objLog = string.Empty;
 
-            for (int i = 0; i < objProperties.Length; i++) // dump each property
+            if (flags.HasFlag(LoggingFlags.Properties))
             {
-                var property = objProperties[i];
-                var propertyName = property.Name;
-                var propertyValue = property.GetValue(obj);
-                var propertyString = propertyName + ": "; // using this to reduce number of 'Append's
+                //TODO: Remove this dirty code repetition.
+                for (int i = 0; i < objProperties.Length; i++)
+                {
+                    var property = objProperties[i];
+                    var propertyName = property.Name;
 
-                // dump properties according to there Type (could use a delegate for this)
-                if (propertyValue == null)
-                {
-                    propertyString += "null";
-                }
-                else if (propertyValue is string)
-                {
-                    var str = propertyValue as string;
-                    propertyString += "\"" + str + "\"";
-                }
-                else if (propertyValue is int ||
-                         propertyValue is uint ||
-                         propertyValue is long ||
-                         propertyValue is ulong ||
-                         propertyValue is float)
-                {
-                    propertyString += propertyValue.ToString();
-                }
-                else if (propertyValue is byte[])
-                {
-                    var dumpByteArray = DumpByteArray((byte[])propertyValue);
-                    propertyString += dumpByteArray;
-                }
-                else if (propertyValue is Array)
-                {
-                    var dumpArray = DumpArray((Array)propertyValue);
-                    propertyString += dumpArray;
-                }
-                else // if no dumping method was found then
-                {
-                    try // tries to dump 'propertyValue' properties and fields which was inside 'obj'
-                    {
-                        IncrementIndentation();
+                    if (flags.HasFlag(LoggingFlags.Unknowns)) // check if we loggin unknowns
+                        if (propertyName.StartsWith("Unknown"))
+                            continue;
 
-                        strBuilder.Append("[\r\n" + m_Indent);
-                        propertyString += DumpObject(propertyValue);
+                    var propertyValue = property.GetValue(obj);
+                    propertyValue = DumpObjectValue(propertyValue);
 
-                        DecrementIndentation();
-                        strBuilder.Append(propertyString + m_Indent + "]");
-                        //var debug = strBuilder.ToString();
-                        continue; // for indentation sake
-                    }
-                    catch // failed, then dump 'propertyValue' itself
-                    {
-                        propertyString += propertyValue.ToString();
-                    }
+                    objLog += m_CurrentIndent + propertyName + ": " + propertyValue;
+                    if (i != objProperties.Length - 1)
+                        objLog += "\r\n";
                 }
-
-                if (i == objProperties.Length - 1) // dont add an unnecessary indent at the end
-                    strBuilder.Append(propertyString + "\r\n");
-                else
-                    strBuilder.Append(propertyString + "\r\n" + m_Indent);
-
-                //var debug = strBuilder.ToString();
             }
-            return strBuilder.ToString();
+
+            if (flags.HasFlag(LoggingFlags.Fields))
+            {
+                for (int i = 0; i < objFields.Length; i++)
+                {
+                    var field = objFields[i];
+                    var fieldName = field.Name;
+
+                    if (flags.HasFlag(LoggingFlags.Unknowns)) // check if we loggin unknowns
+                        if (fieldName.StartsWith("Unknown"))
+                            continue;
+
+                    var fieldValue = field.GetValue(obj);
+                    fieldValue = DumpObjectValue(fieldValue);
+
+                    objLog += m_CurrentIndent + fieldName + ": " + fieldValue;
+                    if (i != objFields.Length - 1)
+                        objLog += "\r\n";
+                }
+            }
+            //var debug = m_StringBuilder.ToString();
+            return objLog;
         }
 
         private string DumpArray(Array array)
         {
-            var strBuilder = new StringBuilder();
-            var count = 0; // number of iteration
             if (array.Length == 0)
-            {
-                strBuilder.Append("[]");
-                return strBuilder.ToString();
-            }
+                return "[]";
 
-            strBuilder.Append("\r\n" + m_Indent + "[\r\n");
+            var strBuilder = new StringBuilder();
+            var count = 0;
+            strBuilder.Append("\r\n" + m_CurrentIndent + "[\r\n");
             IncrementIndentation();
-            strBuilder.Append(m_Indent);
+
             foreach (var obj in array)
             {
-                try // tries to dump object properties and fields inside of array
-                {
-                    var dump = DumpObject(obj); 
-                    strBuilder.Append(dump);
-                }
-                catch // failed, then dump 'obj' itself
-                {
-                    var str = string.Empty;
-
-                    // dump properties according to there Type (could use a delegate for this)
-                    if (obj == null)
-                    {
-                        str += "null";
-                    }
-                    else if (obj is string)
-                    {
-                        var strValue = obj as string;
-                        str += "\"" + strValue + "\"";
-                    }
-                    else if (obj is byte[])
-                    {
-                        var dumpByteArray = DumpByteArray((byte[])obj);
-                        str += dumpByteArray;
-                    }
-                    else if (obj is Array)
-                    {
-                        var dumpArray = DumpArray((Array)obj);
-                        str += dumpArray;
-                    }
-                    else // if no dumping method was found then dump 'obj' itself
-                    {
-                        str += obj.ToString();
-                    }
-
-                    if (count == array.Length - 1) // dont add an unnecessary indent at the end
-                        strBuilder.Append(str + "\r\n"); 
-                    else
-                        strBuilder.Append(str + "\r\n" + m_Indent);
-                }
+                var objValue = DumpObjectValue(obj);
+                strBuilder.Append(m_CurrentIndent + objValue);
+                if (count != array.Length - 1)
+                    strBuilder.Append("\r\n");
                 count++;
             }
-            DecrementIndentation();
-            strBuilder.Append(m_Indent + "]");
 
-            //var debug = strBuilder.ToString();
+            DecrementIndentation();
+            strBuilder.Append("\r\n" + m_CurrentIndent + "]");
+            var debug = strBuilder.ToString();
             return strBuilder.ToString();
+        }
+
+        private object DumpObjectValue(object obj)
+        {
+            var value = obj;
+            if (obj == null)
+                value = "null";
+            else if (obj is string)
+                value = "\"" + obj + "\"";
+            else if (obj is byte[])
+                value = DumpByteArray((byte[])obj);
+            else if (obj is Array)
+                value = DumpArray((Array)obj);
+            return value;
         }
 
         private string DumpByteArray(byte[] bytes)
         {
-            var strBuilder = new StringBuilder();
             if (bytes.Length == 0)
-            {
-                strBuilder.Append("[]");
-                return strBuilder.ToString();
-            }
+                return "[]";
 
-            strBuilder.Append("\r\n" + m_Indent + "[");
+            var strBuilder = new StringBuilder();
+            strBuilder.Append("\r\n" + m_CurrentIndent + "[");
             IncrementIndentation();
+
             for (int i = 0; i < bytes.Length; i++)
             {
                 if (i % 32 == 0) // add new lines every 32 bytes
-                    strBuilder.Append("\r\n" + m_Indent);
+                    strBuilder.Append("\r\n" + m_CurrentIndent);
                 strBuilder.Append(bytes[i].ToString("X2") + " ");
             }
+
             DecrementIndentation();
-            strBuilder.Append("\r\n" + m_Indent + "]");
+            strBuilder.Append("\r\n" + m_CurrentIndent + "]");
             return strBuilder.ToString();
         }
 
         private void IncrementIndentation()
         {
-            m_Indent += "    ";
-            m_IndentDepth++;
+            m_CurrentIndent += Indent;
+            m_CurrentIndentDepth++;
         }
 
         private void DecrementIndentation()
         {
-            if (m_IndentDepth == 0)
+            if (m_CurrentIndentDepth == 0)
                 return;
 
-            m_Indent = m_Indent.Remove(m_Indent.Length - 4);
-            m_IndentDepth--;
+            m_CurrentIndent = m_CurrentIndent.Remove(m_CurrentIndent.Length - 4);
+            m_CurrentIndentDepth--;
         }
     }
 }
