@@ -27,7 +27,7 @@ namespace CoCSharp.Client
                 return;
             if (!TryGetIPAddress(args, out address))
                 return;
-            
+
             Configuration = ClientConfiguration.LoadConfiguration("clientConfig.xml");
             Client = new CoCClient();
             Client.Login += OnLogin;
@@ -44,13 +44,7 @@ namespace CoCSharp.Client
                 if (command[0] == '/')
                     Console.WriteLine("TODO: Handle command.");
                 else
-                //Client.SendChatMessage(command);
-                {
-                    Client.SendPacket(new AllianceChatMessageClientPacket()
-                    {
-                        Message = command
-                    });
-                }
+                    Client.SendChatMessage(command);
             }
         }
 
@@ -71,7 +65,7 @@ namespace CoCSharp.Client
                 Console.ResetColor();
                 Console.Write("][Lvl:{0}]", e.Packet.Level);
                 Console.WriteLine("{0}>: {1}", e.Username, e.Message);
-                
+
             }
         }
 
