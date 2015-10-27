@@ -80,7 +80,7 @@ namespace CoCSharp.Client
                 ClientMajorVersion = 7,
                 ClientContentVersion = 12,
                 ClientMinorVersion = 200,
-                FingerprintHash = "7af2ba412c1716cffe3949f1dcffcea6822560f2",
+                FingerprintHash = "cfca700da04e065d5b9a5f7de970d5747cc3f5d4",
                 OpenUDID = "563a6f060d8624db",
                 MacAddress = null,
                 DeviceModel = "GT-I9300",
