@@ -25,9 +25,9 @@ namespace CoCSharp.Client
             DefaultPacketHandlers = new Dictionary<ushort, PacketHandler>();
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
             KeepAliveManager = new KeepAliveManager(this);
-            PacketLogger = new PacketLogger()
+            PacketLog = new PacketLog("packets.log")
             {
-                LogConsole = false
+                AutoSave = true
             };
             PluginManager = new PluginManager(this);
 
@@ -45,7 +45,7 @@ namespace CoCSharp.Client
         public Avatar Avatar { get; set; }
         public Fingerprint Fingerprint { get; set; }
 
-        private PacketLogger PacketLogger { get; set; }
+        private PacketLog PacketLog { get; set; }
         private NetworkManagerAsync NetworkManager { get; set; }
         private KeepAliveManager KeepAliveManager { get; set; }
         private Dictionary<ushort, PacketHandler> PacketHandlers { get; set; }
@@ -112,7 +112,7 @@ namespace CoCSharp.Client
             if (NetworkManager == null)
                 throw new InvalidOperationException("Tried to send a packet before NetworkManager was initialized or before socket was connected.");
 
-            PacketLogger.LogPacket(packet, PacketDirection.Server);
+            PacketLog.LogData(packet, PacketDirection.Server);
             NetworkManager.SendPacket(packet);
         }
 
@@ -141,7 +141,7 @@ namespace CoCSharp.Client
         {
             if (e.Exception == null)
             {
-                PacketLogger.LogPacket(e.Packet, PacketDirection.Client);
+                PacketLog.LogData(e.Packet, PacketDirection.Client);
                 var defaultHandler = (PacketHandler)null;
                 var handler = (PacketHandler)null;
 

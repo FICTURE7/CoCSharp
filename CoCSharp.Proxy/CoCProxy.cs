@@ -19,10 +19,9 @@ namespace CoCSharp.Proxy
 
         public CoCProxy()
         {
-            ExceptionLogger = new ExceptionLogger();
-            PacketLogger = new PacketLogger();
-            //PacketLogger.LogConsole = false;
-            //PacketLog = new PacketLog("packetss.log");
+            ExceptionLog = new ExceptionLog("exceptions");
+            PacketLog = new PacketLog("packets.log");
+            PacketLog.AutoSave = true;
             PacketDumper = new PacketDumper();
             Clients = new List<CoCProxyClient>();
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
@@ -32,8 +31,7 @@ namespace CoCSharp.Proxy
 
         public string ServerAddress { get; set; }
         public int ServerPort { get; set; }
-        public ExceptionLogger ExceptionLogger { get; set; }
-        public PacketLogger PacketLogger { get; set; }
+        public ExceptionLog ExceptionLog { get; set; }
         public PacketLog PacketLog { get; set; }
         public PacketDumper PacketDumper { get; set; }
         public List<CoCProxyClient> Clients { get; set; }
@@ -81,7 +79,7 @@ namespace CoCSharp.Proxy
             var socket = Listener.EndAccept(ar);
             var client = new CoCProxyClient(socket);
             Console.WriteLine("Accepted new socket: {0}", socket.RemoteEndPoint);
-            client.Client.NetworkManager.ExceptionLogger = ExceptionLogger;
+            client.Client.NetworkManager.ExceptionLog = ExceptionLog;
             Clients.Add(client);
             Listener.BeginAccept(AcceptClient, Listener);
         }
@@ -122,16 +120,14 @@ namespace CoCSharp.Proxy
                                 if (rawPacket != null)
                                 {
                                     Clients[i].Server.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to server
-                                    PacketLogger.LogPacket(packet, PacketDirection.Server);
                                     PacketDumper.LogPacket(packet, PacketDirection.Server, decryptedPacket);
-                                    //PacketLog.LogData(packet, PacketDirection.Server);
-                                    //PacketLog.Save();
+                                    PacketLog.LogData(packet, PacketDirection.Server);
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            ExceptionLogger.LogException(ex);
+                            ExceptionLog.LogData(ex);
                             Clients.RemoveAt(i);
                             goto ResetLoop;
                         }
@@ -158,16 +154,14 @@ namespace CoCSharp.Proxy
                                 if (rawPacket != null)
                                 {
                                     Clients[i].Client.NetworkManager.CoCStream.Write(rawPacket, 0, rawPacket.Length); // sends data back to client
-                                    PacketLogger.LogPacket(packet, PacketDirection.Client);
                                     PacketDumper.LogPacket(packet, PacketDirection.Client, decryptedPacket);
-                                    //PacketLog.LogData(packet, PacketDirection.Client);
-                                    //PacketLog.Save();
+                                    PacketLog.LogData(packet, PacketDirection.Client);
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            ExceptionLogger.LogException(ex);
+                            ExceptionLog.LogData(ex);
                             Clients.RemoveAt(i);
                             goto ResetLoop;
                         }

@@ -29,7 +29,7 @@ namespace CoCSharp.Proxy.Handlers
             var lrPacket = packet as LoginRequestPacket;
 
             client.Start(new TcpClient(proxyServer.ServerAddress, proxyServer.ServerPort).Client);
-            client.Server.NetworkManager.ExceptionLogger = proxyServer.ExceptionLogger;
+            client.Server.NetworkManager.ExceptionLog = proxyServer.ExceptionLog;
             client.Client.Seed = lrPacket.Seed;
             client.Client.UserID = lrPacket.UserID;
             client.Client.UserToken = lrPacket.UserToken;

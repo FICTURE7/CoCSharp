@@ -19,7 +19,7 @@ namespace CoCSharp.Logging
             if (logName == null)
                 throw new ArgumentNullException(logName);
             Name = logName;
-            Path = logName + ".log";
+            Path = !logName.EndsWith(".log") == true ? logName + ".log" : logName;
             LogBuilder = new LogBuilder();
         }
 
@@ -28,16 +28,16 @@ namespace CoCSharp.Logging
         /// with the specified log name and path.
         /// </summary>
         /// <param name="logName">Name of log.</param>
-        /// <param name="path">Path of log.</param>
+        /// <param name="logPath">Path of log.</param>
         /// <exception cref="ArgumentNullException"/>
-        public Log(string logName, string path)
+        public Log(string logName, string logPath)
         {
             if (logName == null)
                 throw new ArgumentNullException(logName);
-            if (path == null)
-                throw new ArgumentNullException(path);
+            if (logPath == null)
+                throw new ArgumentNullException(logPath);
             Name = logName;
-            Path = path;
+            Path = logPath;
             LogBuilder = new LogBuilder();
         }
 
@@ -56,7 +56,7 @@ namespace CoCSharp.Logging
         public virtual bool AutoSave { get; set; }
 
         /// <summary>
-        /// Gets or sets the log as a string.
+        /// Gets or sets the log as a <see cref="string"/>.
         /// </summary>
         protected string LogString
         {
@@ -70,13 +70,13 @@ namespace CoCSharp.Logging
         protected LogBuilder LogBuilder { get; set; }
 
         /// <summary>
-        /// 
+        /// Logs data with the specified parameters.
         /// </summary>
-        /// <param name="parameters"></param>
+        /// <param name="parameters">The parameters needed to log the data.</param>
         public abstract void LogData(params object[] parameters);
 
         /// <summary>
-        /// 
+        /// Saves the <see cref="Log"/> instance at <see cref="Path"/>.
         /// </summary>
         public virtual void Save()
         {

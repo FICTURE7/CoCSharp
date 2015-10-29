@@ -8,7 +8,7 @@ namespace CoCSharp.Logging
     /// to the log.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public class LoggableAttribute : Attribute
+    public sealed class LoggableAttribute : Attribute
     {
         //TODO: Start using this bad boi.
 
@@ -19,7 +19,7 @@ namespace CoCSharp.Logging
         /// </summary>
         public LoggableAttribute()
         {
-            Flags = LoggingFlags.Fields | LoggingFlags.Unknowns;
+            Flags = LoggingFlags.Default;
         }
 
         /// <summary>

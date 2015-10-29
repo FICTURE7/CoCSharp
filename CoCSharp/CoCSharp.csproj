@@ -135,14 +135,13 @@
     <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ICoCServer.cs" />
-    <Compile Include="Logging\ExceptionLogger.cs" />
+    <Compile Include="Logging\ExceptionLog.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogBuilder.cs" />
     <Compile Include="Logging\LoggableAttribute.cs" />
     <Compile Include="Logging\LoggingFlags.cs" />
     <Compile Include="Logging\PacketDumper.cs" />
     <Compile Include="Logging\PacketLog.cs" />
-    <Compile Include="Logging\PacketLogger.cs" />
     <Compile Include="Logic\Avatar.cs" />
     <Compile Include="Logic\Building.cs" />
     <Compile Include="Logic\Clan.cs" />

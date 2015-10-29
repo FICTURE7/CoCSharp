@@ -5,7 +5,7 @@ using CoCSharp.Networking;
 namespace CoCSharp.Logging
 {
     /// <summary>
-    /// 
+    /// Represents a <see cref="Log"/> that logs <see cref="IPacket"/>.
     /// </summary>
     public sealed class PacketLog : Log
     {
@@ -13,9 +13,9 @@ namespace CoCSharp.Logging
         /// Initializes a new instance of the <see cref="PacketLog"/> class
         /// with the specified log name.
         /// </summary>
-        /// <param name="name">Name of log. The log name will be used as the <see cref="Log.Path"/>.</param>
-        public PacketLog(string name) 
-            : base(name)
+        /// <param name="logName">Name of log. The log name will be used as the <see cref="Log.Path"/>.</param>
+        public PacketLog(string logName)
+            : base(logName)
         {
             // Space        
         }
@@ -24,24 +24,25 @@ namespace CoCSharp.Logging
         /// Initializes a new instance of the <see cref="PacketLog"/> class
         /// with the specified log name and path.
         /// </summary>
-        /// <param name="name">Name of log.</param>
-        /// <param name="path">Path of log.</param>
-        public PacketLog(string name, string path)
-            : base(name, path)
+        /// <param name="logName">Name of log.</param>
+        /// <param name="logPath">Path of log.</param>
+        public PacketLog(string logName, string logPath)
+            : base(logName, logPath)
         {
             // Space
         }
 
         /// <summary>
-        /// 
+        /// Logs data with the specified parameters in this
+        /// order(IPacket packet, PacketDirection direction)
         /// </summary>
-        /// <param name="parameters"></param>
+        /// <param name="parameters">The parameters needed to log the data.</param>
         public override void LogData(params object[] parameters)
         {
             if (!(parameters[0] is IPacket))
-                throw new ArgumentException("parameters[0] must an IPacket type.");
+                throw new ArgumentException("parameters[0] must be a type of an IPacket.");
             if (!(parameters[1] is PacketDirection))
-                throw new ArgumentException("parameters[1] must a PacketDirection type.");
+                throw new ArgumentException("parameters[1] must be a type of a PacketDirection.");
 
             var packet = (IPacket)parameters[0];
             var direction = (PacketDirection)parameters[1];
@@ -62,8 +63,8 @@ namespace CoCSharp.Logging
                 LogBuilder.AppendObject(packet);
                 LogBuilder.CloseBlock();
             }
-            if (AutoSave)
-                Save();
+
+            if (AutoSave) Save(); // check if autosaving
         }
 
         private static string FormatPacketName(string name)

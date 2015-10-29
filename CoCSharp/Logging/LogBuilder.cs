@@ -15,7 +15,7 @@ namespace CoCSharp.Logging
         /// </summary>
         public LogBuilder()
         {
-            // Space
+            Flags = LoggingFlags.Default;
         }
 
         /// <summary>
@@ -23,7 +23,8 @@ namespace CoCSharp.Logging
         /// the specified log <see cref="string"/>.
         /// </summary>
         /// <param name="log"></param>
-        public LogBuilder(string log)
+        public LogBuilder(string log) 
+            : this()
         {
             m_StringBuilder.Append(log);
         }
@@ -34,33 +35,45 @@ namespace CoCSharp.Logging
         /// </summary>
         public string CurrentBlock
         {
-            get { return m_CurrentBlockIndex == -1 ? null : m_Blocks[m_CurrentBlockIndex]; }
+            get { return m_CurrentBlockIndex == -1 ? null : m_BlockNames[m_CurrentBlockIndex]; }
         }
+
+        /// <summary>
+        /// Gets or sets the <see cref="LoggingFlags"/> used
+        /// to append objects to the log using <see cref="AppendObject(object)"/>.
+        /// </summary>
+        public LoggingFlags Flags { get; set; }
 
         private string m_CurrentIndent = string.Empty;
         private int m_CurrentIndentDepth = 0;
         private int m_CurrentBlockIndex = -1;
         private StringBuilder m_StringBuilder = new StringBuilder();
-        private List<string> m_Blocks = new List<string>();
+        private string m_BlockString = string.Empty;
+        private List<string> m_BlockNames = new List<string>();
 
-        private const string Indent = "    ";
-        private const LoggingFlags DefaultFlags = LoggingFlags.Fields | LoggingFlags.Unknowns;
+        private const string Indent = "    "; // make customizable?
 
         /// <summary>
-        /// Opens a new block to this instance with the
+        /// Opens a new block in this instance with the
         /// specified name.
         /// </summary>
         /// <param name="name">The name of the block.</param>
         /// <returns>A reference to this instance.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public LogBuilder OpenBlock(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException("name");
             m_CurrentBlockIndex++;
-            m_Blocks.Add(name);
+            m_BlockNames.Add(name);
 
             var firstIndent = m_CurrentIndentDepth != 0 ? Indent : m_CurrentIndent;
             var format = firstIndent + "{0} {1}\r\n" + m_CurrentIndent + "{{\r\n" + m_CurrentIndent;
-            m_StringBuilder.AppendFormat(format, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
+            var log = string.Format(format, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
+            m_StringBuilder.Append(log);
             IncrementIndentation();
+
+            m_BlockString += log;
             //var debug = m_StringBuilder.ToString();
             return this;
         }
@@ -69,17 +82,23 @@ namespace CoCSharp.Logging
         /// Closes the latest opened block in this instance.
         /// </summary>
         /// <returns>A reference to this instance.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public LogBuilder CloseBlock()
         {
             if (m_CurrentBlockIndex < 0)
                 throw new InvalidOperationException("No blocks to close, call 'OpenBlock' first.");
 
-            m_Blocks.RemoveAt(m_CurrentBlockIndex); // remove block from list.
+            m_BlockNames.RemoveAt(m_CurrentBlockIndex); // remove block from list.
             m_CurrentBlockIndex--;
             DecrementIndentation();
 
-            var stringFormat = m_CurrentBlockIndex == -1 ? "\r\n{0}}}\r\n\r\n" : "\r\n{0}}}"; // check if last block
-            m_StringBuilder.AppendFormat(stringFormat, m_CurrentIndent);
+            var format = m_CurrentBlockIndex == -1 ? "\r\n{0}}}\r\n\r\n" : "\r\n{0}}}"; // check if last block
+            var log = string.Format(format, m_CurrentIndent);
+            m_StringBuilder.Append(log);
+
+            if (Flags.HasFlag(LoggingFlags.Console))
+                Console.Write(m_BlockString + log);
+            m_BlockString = string.Empty;
             //var debug = m_StringBuilder.ToString();
             return this;
         }
@@ -89,36 +108,53 @@ namespace CoCSharp.Logging
         /// </summary>
         /// <param name="name">The name of the block.</param>
         /// <returns>A reference to this instace.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public LogBuilder EmptyBlock(string name)
         {
-            m_StringBuilder.AppendFormat("{0} {1} {{ }}\r\n\r\n" + m_CurrentIndent, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
+            if (name == null)
+                throw new ArgumentNullException("name");
+
+            var format = "{0} {1} {{ }}\r\n\r\n" + m_CurrentIndent;
+            var log = string.Format(format, DateTime.Now.ToString("[~HH:mm:ss.fff]"), name);
+            m_StringBuilder.Append(log);
+
+            if (Flags.HasFlag(LoggingFlags.Console))
+                Console.Write(log);
+            m_BlockString = string.Empty;
             //var debug = m_StringBuilder.ToString();
             return this;
         }
 
         /// <summary>
         /// Appends an <see cref="object"/> to this instance in
-        /// a formatted way.
+        /// a formatted way using <see cref="LoggingFlags.Default"/> as
+        /// <see cref="LoggingFlags"/>.
         /// </summary>
         /// <param name="obj">Object to append.</param>
         /// <returns>A reference to this instance.</returns>
+        /// <exception cref="NotSupportedException"></exception>
         public LogBuilder AppendObject(object obj)
         {
-            m_StringBuilder.Append(DumpObject(obj, DefaultFlags));
-            //var debug = m_StringBuilder.ToString();
-            return this;
+            return AppendObject(obj, Flags);
         }
 
         /// <summary>
         /// Appends an <see cref="object"/> to this instance in
-        /// a formatted way.
+        /// a formatted way with the specified <see cref="LoggingFlags"/>.
         /// </summary>
         /// <param name="obj">Object to append.</param>
         /// <param name="flags"><see cref="LoggingFlags"/> to instruct the <see cref="LogBuilder"/>.</param>
         /// <returns>A reference to this instance.</returns>
+        /// <exception cref="NotSupportedException"></exception>
         public LogBuilder AppendObject(object obj, LoggingFlags flags)
         {
-            m_StringBuilder.Append(DumpObject(obj, flags));
+            if (obj == null)
+                throw new NotSupportedException("Does not support logging of 'null' root objects yet.");
+
+            var dump = DumpObject(obj, flags);
+            m_StringBuilder.Append(dump);
+
+            m_BlockString += dump;
             //var debug = m_StringBuilder.ToString();
             return this;
         }
@@ -147,7 +183,7 @@ namespace CoCSharp.Logging
                     var property = objProperties[i];
                     var propertyName = property.Name;
 
-                    if (flags.HasFlag(LoggingFlags.Unknowns)) // check if we loggin unknowns
+                    if (!flags.HasFlag(LoggingFlags.Unknowns)) // check if we loggin unknowns
                         if (propertyName.StartsWith("Unknown"))
                             continue;
 
@@ -162,12 +198,13 @@ namespace CoCSharp.Logging
 
             if (flags.HasFlag(LoggingFlags.Fields))
             {
+                //TODO: Remove this dirty code repetition.
                 for (int i = 0; i < objFields.Length; i++)
                 {
                     var field = objFields[i];
                     var fieldName = field.Name;
 
-                    if (flags.HasFlag(LoggingFlags.Unknowns)) // check if we loggin unknowns
+                    if (!flags.HasFlag(LoggingFlags.Unknowns)) // check if we loggin unknowns
                         if (fieldName.StartsWith("Unknown"))
                             continue;
 
@@ -181,6 +218,21 @@ namespace CoCSharp.Logging
             }
             //var debug = m_StringBuilder.ToString();
             return objLog;
+        }
+
+        private object DumpObjectValue(object obj)
+        {
+            var value = obj;
+            if (obj == null)
+                value = "null";
+            else if (obj is string)
+                value = "\"" + obj + "\"";
+            else if (obj is byte[])
+                value = DumpByteArray((byte[])obj);
+            else if (obj is Array)
+                value = DumpArray((Array)obj);
+
+            return value;
         }
 
         private string DumpArray(Array array)
@@ -206,20 +258,6 @@ namespace CoCSharp.Logging
             strBuilder.Append("\r\n" + m_CurrentIndent + "]");
             var debug = strBuilder.ToString();
             return strBuilder.ToString();
-        }
-
-        private object DumpObjectValue(object obj)
-        {
-            var value = obj;
-            if (obj == null)
-                value = "null";
-            else if (obj is string)
-                value = "\"" + obj + "\"";
-            else if (obj is byte[])
-                value = DumpByteArray((byte[])obj);
-            else if (obj is Array)
-                value = DumpArray((Array)obj);
-            return value;
         }
 
         private string DumpByteArray(byte[] bytes)
@@ -254,7 +292,7 @@ namespace CoCSharp.Logging
             if (m_CurrentIndentDepth == 0)
                 return;
 
-            m_CurrentIndent = m_CurrentIndent.Remove(m_CurrentIndent.Length - 4);
+            m_CurrentIndent = m_CurrentIndent.Remove(m_CurrentIndent.Length - Indent.Length);
             m_CurrentIndentDepth--;
         }
     }

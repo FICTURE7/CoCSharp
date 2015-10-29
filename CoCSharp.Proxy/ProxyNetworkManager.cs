@@ -22,7 +22,7 @@ namespace CoCSharp.Networking
             CoCCrypto = new CoCCrypto();
         }
 
-        public ExceptionLogger ExceptionLogger { get; set; }
+        public ExceptionLog ExceptionLog { get; set; }
         public bool DataAvailable { get { return Connection.Available > 0; } }
         public CoCStream CoCStream { get; set; }
 
@@ -82,8 +82,8 @@ namespace CoCSharp.Networking
                 }
                 catch (Exception ex)
                 {
-                    if (ExceptionLogger != null)
-                        ExceptionLogger.LogException(ex);
+                    if (ExceptionLog != null)
+                        ExceptionLog.LogData(ex);
                 }
                 return packet;
             }

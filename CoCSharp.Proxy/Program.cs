@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Logging;
+using System;
 using System.IO;
 using System.Net;
 using System.Threading;
