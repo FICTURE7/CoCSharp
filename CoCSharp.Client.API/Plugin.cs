@@ -21,18 +21,18 @@
             get
             {
                 if (!m_Loaded)
-                    throw new PluginException("OnLoad() was not called.");
+                    throw new PluginException("You can access the 'Client' property after 'OnLoad()' was called.");
                 return m_Client;
             }
             set
             {
-                if (!m_Loaded)
+                if (!m_Loaded) // loaded only once by the PluginManager class.
                 {
                     m_Client = value;
                     m_Loaded = true;
                 }
                 else
-                    throw new PluginException("Cannot set Client property.");
+                    throw new PluginException("You can modify the 'Client' property.");
             }
         }
         private ICoCClient m_Client = null;
@@ -56,7 +56,7 @@
         /// </summary>
         public virtual void OnUpdate()
         {
-
+            // Space
         }
 
         /// <summary>
@@ -64,7 +64,7 @@
         /// </summary>
         public virtual void OnEnable()
         {
-
+            // Space
         }
 
         /// <summary>
@@ -72,7 +72,7 @@
         /// </summary>
         public virtual void OnDisable()
         {
-
+            // Space
         }
 
         /// <summary>
@@ -80,7 +80,7 @@
         /// </summary>
         public virtual void OnLoad()
         {
-
+            // Space
         }
 
         /// <summary>
@@ -88,7 +88,7 @@
         /// </summary>
         public virtual void OnUnload()
         {
-
+            // Space
         }
     }
 }
