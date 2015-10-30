@@ -165,6 +165,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AvatarProfileResponsePacket().ID, typeof(AvatarProfileResponsePacket));
             PacketDictionary.Add(new AllianceDescriptionPacket().ID, typeof(AllianceDescriptionPacket));
             PacketDictionary.Add(new LastClanWarDataPacket().ID, typeof(LastClanWarDataPacket));
+            PacketDictionary.Add(new FriendListPacket().ID, typeof(FriendListPacket));
         }
     }
 }

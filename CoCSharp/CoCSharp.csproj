@@ -218,6 +218,7 @@
     <Compile Include="Networking\Packets\ChatMessageClientPacket.cs" />
     <Compile Include="Networking\Packets\ChatMessageServerPacket.cs" />
     <Compile Include="Networking\Packets\CommandPacket.cs" />
+    <Compile Include="Networking\Packets\FriendListPacket.cs" />
     <Compile Include="Networking\Packets\IPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveRequestPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveResponsePacket.cs" />
@@ -260,6 +261,11 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties DocumentXCommentEditorState="&lt;HtmlEditState&gt;&#xA;  &lt;Attributes /&gt;&#xA;&lt;/HtmlEditState&gt;" />
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
