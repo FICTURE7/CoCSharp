@@ -153,6 +153,7 @@
     <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\DisconnectedEventArgs.cs" />
+    <Compile Include="Networking\FacebookFriendsRequestPacket.cs" />
     <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
     <Compile Include="Networking\PacketFactory.cs" />
     <Compile Include="Networking\PacketReceivedEventArgs.cs" />
@@ -218,7 +219,7 @@
     <Compile Include="Networking\Packets\ChatMessageClientPacket.cs" />
     <Compile Include="Networking\Packets\ChatMessageServerPacket.cs" />
     <Compile Include="Networking\Packets\CommandPacket.cs" />
-    <Compile Include="Networking\Packets\FriendListPacket.cs" />
+    <Compile Include="Networking\Packets\FriendListResponsePacket.cs" />
     <Compile Include="Networking\Packets\IPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveRequestPacket.cs" />
     <Compile Include="Networking\Packets\KeepAliveResponsePacket.cs" />

@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CoCSharp.Networking.Packets
 {
-    public class FriendListPacket : IPacket
+    public class FriendListResponsePacket : IPacket
     {
         public ushort ID { get { return 0x4E89; } }
         public int Unknown1;
