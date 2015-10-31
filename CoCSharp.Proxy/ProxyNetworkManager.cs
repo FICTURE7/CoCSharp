@@ -150,6 +150,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceWarLogPacket().ID, typeof(AllianceWarLogPacket));
             PacketDictionary.Add(new FacebookFriendsRequestPacket().ID, typeof(FacebookFriendsRequestPacket));
             PacketDictionary.Add(new LeagueMemberListRequestPacket().ID, typeof(LeagueMemberListRequestPacket));
+            PacketDictionary.Add(new AllianceRankingListRequestPacket().ID, typeof(AllianceRankingListRequestPacket));
 
             // Clientbound
             PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
@@ -169,6 +170,10 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new LastClanWarDataPacket().ID, typeof(LastClanWarDataPacket));
             PacketDictionary.Add(new FriendListResponsePacket().ID, typeof(FriendListResponsePacket));
             PacketDictionary.Add(new LeagueMemberListResponsePacket().ID, typeof(LeagueMemberListResponsePacket));
+            PacketDictionary.Add(new AllianceRankingListResponsePacket().ID, typeof(AllianceRankingListResponsePacket));
+            PacketDictionary.Add(new AllianceRankingListLocalResponsePacket().ID, typeof(AllianceRankingListResponsePacket));
+
+
         }
     }
 }
