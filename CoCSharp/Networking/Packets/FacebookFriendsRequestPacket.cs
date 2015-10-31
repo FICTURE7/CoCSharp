@@ -1,13 +1,9 @@
-﻿using CoCSharp.Networking.Packets;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-
-namespace CoCSharp.Networking
+namespace CoCSharp.Networking.Packets
 {
     public class FacebookFriendsRequestPacket : IPacket
     {
-
         public List<string> FacebookIDs;
 
         public ushort ID { get { return 0x2911; } }
