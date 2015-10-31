@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace CoCSharp.Networking
+namespace CoCSharp.Networking.Packets
 {
     public class FacebookFriendsRequestPacket : IPacket
     {
