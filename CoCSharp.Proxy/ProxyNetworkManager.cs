@@ -132,6 +132,7 @@ namespace CoCSharp.Networking
 
         private static void InitializePacketDictionary()
         {
+            // TODO: Start using PacketFactory instead of this.
             PacketDictionary = new Dictionary<ushort, Type>();
 
             // Serverbound
@@ -149,6 +150,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AvatarLocalRankListRequestPacket().ID, typeof(AvatarLocalRankListRequestPacket));
             PacketDictionary.Add(new AllianceWarLogPacket().ID, typeof(AllianceWarLogPacket));
             PacketDictionary.Add(new FacebookFriendsRequestPacket().ID, typeof(FacebookFriendsRequestPacket));
+            PacketDictionary.Add(new VisitHomeRequestPacket().ID, typeof(VisitHomeRequestPacket));
 
             // Clientbound
             PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
@@ -167,6 +169,7 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceDescriptionPacket().ID, typeof(AllianceDescriptionPacket));
             PacketDictionary.Add(new LastClanWarDataPacket().ID, typeof(LastClanWarDataPacket));
             PacketDictionary.Add(new FriendListResponsePacket().ID, typeof(FriendListResponsePacket));
+            PacketDictionary.Add(new VisitHomeResponsePacket().ID, typeof(VisitHomeResponsePacket));
         }
     }
 }

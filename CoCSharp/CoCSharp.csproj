@@ -153,7 +153,7 @@
     <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\DisconnectedEventArgs.cs" />
-    <Compile Include="Networking\FacebookFriendsRequestPacket.cs" />
+    <Compile Include="Networking\Packets\FacebookFriendsRequestPacket.cs" />
     <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
     <Compile Include="Networking\PacketFactory.cs" />
     <Compile Include="Networking\PacketReceivedEventArgs.cs" />
@@ -230,6 +230,8 @@
     <Compile Include="Networking\PacketReader.cs" />
     <Compile Include="Networking\Packets\LoginSuccessPacket.cs" />
     <Compile Include="Networking\PacketBufferManager.cs" />
+    <Compile Include="Networking\Packets\VisitHomeRequestPacket.cs" />
+    <Compile Include="Networking\Packets\VisitHomeResponsePacket.cs" />
     <Compile Include="Networking\PacketToken.cs" />
     <Compile Include="Networking\Packets\ServerErrorPacket.cs" />
     <Compile Include="Networking\Packets\SetDeviceTokenPacket.cs" />
