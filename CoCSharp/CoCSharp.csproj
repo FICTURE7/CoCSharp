@@ -154,6 +154,12 @@
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\DisconnectedEventArgs.cs" />
     <Compile Include="Networking\Packets\FacebookFriendsRequestPacket.cs" />
+    <Compile Include="Networking\Packets\AllianceRankingListLocalResponsePacket.cs" />
+    <Compile Include="Networking\Packets\AllianceRankingListRequestPacket.cs" />
+    <Compile Include="Networking\Packets\AllianceRankingListResponsePacket.cs" />
+    <Compile Include="Networking\Packets\FacebookFriendsRequestPacket.cs" />
+    <Compile Include="Networking\Packets\LeagueMemberListRequestPacket.cs" />
+    <Compile Include="Networking\Packets\LeagueMemberListResponsePacket.cs" />
     <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
     <Compile Include="Networking\PacketFactory.cs" />
     <Compile Include="Networking\PacketReceivedEventArgs.cs" />

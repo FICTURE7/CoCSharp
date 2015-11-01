@@ -150,7 +150,12 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AvatarLocalRankListRequestPacket().ID, typeof(AvatarLocalRankListRequestPacket));
             PacketDictionary.Add(new AllianceWarLogPacket().ID, typeof(AllianceWarLogPacket));
             PacketDictionary.Add(new FacebookFriendsRequestPacket().ID, typeof(FacebookFriendsRequestPacket));
+<<<<<<< HEAD
             PacketDictionary.Add(new VisitHomeRequestPacket().ID, typeof(VisitHomeRequestPacket));
+=======
+            PacketDictionary.Add(new LeagueMemberListRequestPacket().ID, typeof(LeagueMemberListRequestPacket));
+            PacketDictionary.Add(new AllianceRankingListRequestPacket().ID, typeof(AllianceRankingListRequestPacket));
+>>>>>>> b5b81f4eb525bda49c4a73156bf6eb9d7a8db1d6
 
             // Clientbound
             PacketDictionary.Add(new UpdateKeyPacket().ID, typeof(UpdateKeyPacket)); // 20000
@@ -169,7 +174,15 @@ namespace CoCSharp.Networking
             PacketDictionary.Add(new AllianceDescriptionPacket().ID, typeof(AllianceDescriptionPacket));
             PacketDictionary.Add(new LastClanWarDataPacket().ID, typeof(LastClanWarDataPacket));
             PacketDictionary.Add(new FriendListResponsePacket().ID, typeof(FriendListResponsePacket));
+<<<<<<< HEAD
             PacketDictionary.Add(new VisitHomeResponsePacket().ID, typeof(VisitHomeResponsePacket));
+=======
+            PacketDictionary.Add(new LeagueMemberListResponsePacket().ID, typeof(LeagueMemberListResponsePacket));
+            PacketDictionary.Add(new AllianceRankingListResponsePacket().ID, typeof(AllianceRankingListResponsePacket));
+            PacketDictionary.Add(new AllianceRankingListLocalResponsePacket().ID, typeof(AllianceRankingListResponsePacket));
+
+
+>>>>>>> b5b81f4eb525bda49c4a73156bf6eb9d7a8db1d6
         }
     }
 }

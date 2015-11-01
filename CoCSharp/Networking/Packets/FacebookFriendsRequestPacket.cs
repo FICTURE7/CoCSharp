@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+
 namespace CoCSharp.Networking.Packets
 {
     public class FacebookFriendsRequestPacket : IPacket
