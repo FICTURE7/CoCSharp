@@ -153,7 +153,6 @@
     <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\DisconnectedEventArgs.cs" />
-    <Compile Include="Networking\Packets\FacebookFriendsRequestPacket.cs" />
     <Compile Include="Networking\Packets\AllianceRankingListLocalResponsePacket.cs" />
     <Compile Include="Networking\Packets\AllianceRankingListRequestPacket.cs" />
     <Compile Include="Networking\Packets\AllianceRankingListResponsePacket.cs" />
