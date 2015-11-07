@@ -27,7 +27,8 @@ namespace CoCSharp.Client
             KeepAliveManager = new KeepAliveManager(this);
             PacketLog = new PacketLog("packets.log")
             {
-                AutoSave = true
+                AutoSave = true,
+                LogConsole = false
             };
             PluginManager = new PluginManager(this);
 
@@ -80,7 +81,7 @@ namespace CoCSharp.Client
                 ClientMajorVersion = 7,
                 ClientContentVersion = 12,
                 ClientMinorVersion = 200,
-                FingerprintHash = "cfca700da04e065d5b9a5f7de970d5747cc3f5d4",
+                FingerprintHash = "8771aa1095195c4217bd625d66e120d91e8d15b0",
                 OpenUDID = "563a6f060d8624db",
                 MacAddress = null,
                 DeviceModel = "GT-I9300",
