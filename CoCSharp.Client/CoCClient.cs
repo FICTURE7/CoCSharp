@@ -13,12 +13,15 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Client
 {
-    public class CoCClient : ICoCClient
+    public class CoCClient : ICoCClient, IDisposable
     {
-        #region Constructors
+        private bool m_Disposed = false;
+
+        #region Constructors & Destructors
         public CoCClient()
         {
-            Fingerprint = new Fingerprint();
+            Fingerprint = new Fingerprint(); // not used
+
             Home = new Village();
             Avatar = new Avatar();
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
@@ -36,6 +39,11 @@ namespace CoCSharp.Client
             InGamePacketHandlers.RegisterInGamePacketHandler(this);
             PluginManager.LoadPlugins();
             PluginManager.EnablePlugins();
+        }
+
+        ~CoCClient()
+        {
+            Dispose(false);
         }
         #endregion
 
@@ -169,6 +177,30 @@ namespace CoCSharp.Client
         {
             if (Login != null)
                 Login(this, e);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (m_Disposed)
+                return;
+
+            if (disposing)
+            {
+                KeepAliveManager.Dispose();
+                NetworkManager.Dispose();
+                PluginManager.Dispose();
+
+                PacketHandlers.Clear();
+                DefaultPacketHandlers.Clear();
+            }
+
+            m_Disposed = true;
         }
         #endregion
     }

@@ -1,9 +1,11 @@
-﻿namespace CoCSharp.Client.API
+﻿using System;
+
+namespace CoCSharp.Client.API
 {
     /// <summary>
     /// The base class that every plugin should inherit from.
     /// </summary>
-    public abstract class Plugin
+    public abstract class Plugin : IDisposable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Plugin"/> class.
@@ -11,6 +13,11 @@
         public Plugin()
         {
             // Space
+        }
+
+        ~Plugin()
+        {
+            Dispose(false);
         }
 
         /// <summary>
@@ -89,6 +96,25 @@
         public virtual void OnUnload()
         {
             // Space
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Dispose()
+        {
+            //TODO: Document
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            //TODO: Document
         }
     }
 }

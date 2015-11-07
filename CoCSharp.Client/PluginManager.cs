@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace CoCSharp.Client
 {
-    public class PluginManager
+    public class PluginManager : IDisposable
     {
+        //TODO: Better handling of exceptions.
         private const string PluginFolder = "plugins";
+        private bool m_Disposed = false;
 
         public PluginManager(ICoCClient client)
         {
@@ -25,6 +27,11 @@ namespace CoCSharp.Client
             m_PluginTasks = new List<PluginTasks>();
             m_UpdaterThread = new Thread(UpdatePlugins);
             m_UpdaterThread.Name = "PluginThread";
+        }
+
+        ~PluginManager()
+        {
+            Dispose(false);
         }
 
         public bool PluginsEnabled { get; set; }
@@ -125,19 +132,50 @@ namespace CoCSharp.Client
 
         private void UpdatePlugins()
         {
-            while (PluginsEnabled)
+            try
             {
-                for (int i = 0; i < m_PluginTasks.Count; i++)
+                while (PluginsEnabled)
                 {
-                    var pluginTasks = m_PluginTasks[i];
-                    pluginTasks.DoUpdate();
+                    for (int i = 0; i < m_PluginTasks.Count; i++)
+                    {
+                        var pluginTasks = m_PluginTasks[i];
+                        pluginTasks.DoUpdate();
+                    }
+                    Thread.Sleep(100);
                 }
-                Thread.Sleep(100);
+            }
+            catch (ThreadAbortException)
+            {
+                // aborting
             }
         }
 
-        private class PluginTasks
+        public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (m_Disposed)
+                return;
+
+            if (disposing)
+            {
+                m_UpdaterThread.Abort();
+                for (int i = 0; i < m_PluginTasks.Count; i++)
+                    m_PluginTasks[i].Dispose();
+                m_PluginTasks.Clear();
+            }
+
+            m_Disposed = true;
+        }
+
+        private sealed class PluginTasks : IDisposable
+        {
+            private bool m_Disposed = false;
+
             public PluginTasks(Plugin plugin)
             {
                 Plugin = plugin;
@@ -146,6 +184,11 @@ namespace CoCSharp.Client
                 m_UnloadTask = new Task(new Action(Plugin.OnUnload));
                 m_EnableTask = new Task(new Action(Plugin.OnEnable));
                 m_DisableTask = new Task(new Action(Plugin.OnDisable));
+            }
+
+            ~PluginTasks()
+            {
+                Dispose(false);
             }
 
             public Plugin Plugin { get; set; }
@@ -194,6 +237,31 @@ namespace CoCSharp.Client
                         task.Start();
                         break;
                 }
+            }
+
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            private void Dispose(bool disposing)
+            {
+                if (m_Disposed)
+                    return;
+
+                if (disposing)
+                {
+                    // Wait for the task to end maybe?
+                    m_DisableTask.Dispose();
+                    m_EnableTask.Dispose();
+                    m_LoadTask.Dispose();
+                    m_UnloadTask.Dispose();
+                    m_UpdateTask.Dispose();
+                    Plugin.Dispose();
+                }
+
+                m_Disposed = true;
             }
         }
     }

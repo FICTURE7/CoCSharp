@@ -9,9 +9,11 @@ namespace CoCSharp.Networking
     /// <summary>
     /// Implements methods to read and write <see cref="IPacket"/>s to <see cref="Socket"/>.
     /// </summary>
-    public class NetworkManagerAsync
+    public class NetworkManagerAsync : IDisposable
     {
-        #region Constructors
+        private bool m_Disposed = false;
+
+        #region Constructors & Destructors
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class.
         /// </summary>
@@ -55,6 +57,14 @@ namespace CoCSharp.Networking
 
             StartReceive(ReceiveEventPool.Pop());
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ~NetworkManagerAsync()
+        {
+            Dispose(false);
+        }
         #endregion
 
         #region Properties
@@ -81,7 +91,7 @@ namespace CoCSharp.Networking
         public NetworkManagerAsyncSettings Settings { get; set; }
 
         private CoCCrypto CoCCrypto { get; set; }
-        private PacketBufferManager BufferManager { get; set; } // we are not using this properly.
+        private PacketBufferManager BufferManager { get; set; } // we are not using this properly. :{
         private SocketAsyncEventArgsPool ReceiveEventPool { get; set; }
         private SocketAsyncEventArgsPool SendEventPool { get; set; } // we are not using this properly. :{
         #endregion
@@ -307,6 +317,10 @@ namespace CoCSharp.Networking
                 case SocketAsyncOperation.Send:
                     //TODO: Handle large packets.
                     break;
+
+                case SocketAsyncOperation.Disconnect:
+                    //TODO: Handle disconnect ops.
+                    break;
             }
         }
         #endregion
@@ -338,6 +352,29 @@ namespace CoCSharp.Networking
         {
             if (Disconnected != null)
                 Disconnected(this, args);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (m_Disposed)
+                return;
+
+            if (disposing)
+            {
+                Connection.Close();
+                ReceiveEventPool.Dispose();
+                SendEventPool.Dispose();
+            }
+            m_Disposed = true;
         }
         #endregion
     }

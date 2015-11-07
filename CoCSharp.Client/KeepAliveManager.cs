@@ -4,8 +4,10 @@ using System.Threading;
 
 namespace CoCSharp.Client
 {
-    public class KeepAliveManager
+    public class KeepAliveManager : IDisposable
     {
+        private bool m_Disposed = false;
+
         public KeepAliveManager(CoCClient client)
         {
             Delay = 5;
@@ -13,6 +15,11 @@ namespace CoCSharp.Client
             NextKeepAlive = DateTime.Now;
             LastKeepAlive = DateTime.MaxValue;
             KeepAliveThread = new Thread(UpdateKeepAlives);
+        }
+
+        ~KeepAliveManager()
+        {
+            Dispose(false);
         }
 
         public int Delay { get; set; }
@@ -37,16 +44,40 @@ namespace CoCSharp.Client
 
         private void UpdateKeepAlives()
         {
-            while (Running)
+            try
             {
-                if (DateTime.Now >= NextKeepAlive)
+                while (Running)
                 {
-                    Client.SendPacket(new KeepAliveRequestPacket());
-                    LastKeepAlive = DateTime.Now;
-                    NextKeepAlive = DateTime.Now.AddSeconds(Delay);
+                    if (DateTime.Now >= NextKeepAlive)
+                    {
+                        Client.SendPacket(new KeepAliveRequestPacket());
+                        LastKeepAlive = DateTime.Now;
+                        NextKeepAlive = DateTime.Now.AddSeconds(Delay);
+                    }
+                    Thread.Sleep(Delay * 999);
                 }
-                Thread.Sleep(Delay * 999);
             }
+            catch (ThreadAbortException)
+            {
+                // aborting
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (m_Disposed)
+                return;
+
+            if (disposing)
+                Stop();
+
+            m_Disposed = true;
         }
     }
 }

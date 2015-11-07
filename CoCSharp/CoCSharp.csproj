@@ -133,7 +133,6 @@
     <Compile Include="Data\TrapData.cs" />
     <Compile Include="Data\WarData.cs" />
     <Compile Include="DateTimeConverter.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="ICoCServer.cs" />
     <Compile Include="Logging\ExceptionLog.cs" />
     <Compile Include="Logging\Log.cs" />

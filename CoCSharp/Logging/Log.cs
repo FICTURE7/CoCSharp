@@ -54,6 +54,19 @@ namespace CoCSharp.Logging
         /// save everytime after <see cref="LogData(object[])"/> is called.
         /// </summary>
         public virtual bool AutoSave { get; set; }
+        /// <summary>
+        /// Gets or sets whether the <see cref="LogBuilder"/> is going to
+        /// log each block of logs to the console.
+        /// </summary>
+        public bool LogConsole
+        {
+            get { return LogBuilder.Flags.HasFlag(LoggingFlags.Console); }
+            set
+            {
+                LogBuilder.Flags = value == true ? LogBuilder.Flags | LoggingFlags.Console : 
+                                                   LogBuilder.Flags & ~LoggingFlags.Console;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the log as a <see cref="string"/>.
@@ -78,9 +91,17 @@ namespace CoCSharp.Logging
         /// <summary>
         /// Saves the <see cref="Log"/> instance at <see cref="Path"/>.
         /// </summary>
-        public virtual void Save()
+        public void Save()
         {
             File.WriteAllText(Path, LogString);
+        }
+
+        /// <summary>
+        /// Saves the <see cref="Log"/> instance at the specified path.
+        /// </summary>
+        public void Save(string path)
+        {
+            File.WriteAllText(path, LogString);
         }
 
         /// <summary>

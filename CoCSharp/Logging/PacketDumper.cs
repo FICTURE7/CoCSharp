@@ -33,6 +33,7 @@ namespace CoCSharp.Logging
                 Directory.CreateDirectory(loggingDirectory);
 
             //TODO: Compress old logs into a zip file.
+            
         }
 
         public bool Active { get; set; }
