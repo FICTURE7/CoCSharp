@@ -113,8 +113,8 @@ namespace CoCSharp.Networking.Packets
             Avatar.Trophies = reader.ReadInt32();
             Avatar.AttacksWon = reader.ReadInt32();
             Avatar.AttacksLost = reader.ReadInt32();
-            Avatar.DefencesWon = reader.ReadInt32();
-            Avatar.DefencesLost = reader.ReadInt32();
+            Avatar.DefensesWon = reader.ReadInt32();
+            Avatar.DefensesLost = reader.ReadInt32();
             Unknown16 = reader.ReadInt32();
             Unknown17 = reader.ReadInt32();
             Unknown18 = reader.ReadInt32();
@@ -291,8 +291,8 @@ namespace CoCSharp.Networking.Packets
             writer.WriteInt32(Avatar.Trophies);
             writer.WriteInt32(Avatar.AttacksWon);
             writer.WriteInt32(Avatar.AttacksLost);
-            writer.WriteInt32(Avatar.DefencesWon);
-            writer.WriteInt32(Avatar.DefencesLost);
+            writer.WriteInt32(Avatar.DefensesWon);
+            writer.WriteInt32(Avatar.DefensesLost);
             writer.WriteInt32(Unknown16);
             writer.WriteInt32(Unknown17);
             writer.WriteInt32(Unknown18);

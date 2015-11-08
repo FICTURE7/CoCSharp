@@ -26,8 +26,8 @@ namespace CoCSharp.Networking.Packets
         private int Gems1;
         private int Unknown6;
         private int Unknown5;
-        private int DefenceLost;
-        private int DefenceWon;
+        private int DefenseLost;
+        private int DefenseWon;
         private int AttackLost;
         private int AttackWon;
         private int Trophies;
@@ -73,8 +73,8 @@ namespace CoCSharp.Networking.Packets
             Trophies = reader.ReadInt32();
             AttackWon = reader.ReadInt32();
             AttackLost = reader.ReadInt32(); // randomized
-            DefenceWon = reader.ReadInt32();
-            DefenceLost = reader.ReadInt32(); // randomized
+            DefenseWon = reader.ReadInt32();
+            DefenseLost = reader.ReadInt32(); // randomized
         }
 
         public void WritePacket(PacketWriter writer)

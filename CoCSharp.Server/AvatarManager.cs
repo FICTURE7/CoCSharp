@@ -36,8 +36,8 @@ namespace CoCSharp.Server
                     Gems = 0,
                     AttacksWon = 0,
                     AttacksLost = 0,
-                    DefencesWon = 0,
-                    DefencesLost = 0,
+                    DefensesWon = 0,
+                    DefensesLost = 0,
                     Clan = null
                 };
                 NextPlayerID++;
