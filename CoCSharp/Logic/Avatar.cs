@@ -27,8 +27,8 @@
         public int Gems { get; set; }
         public int AttacksWon { get; set; }
         public int AttacksLost { get; set; }
-        public int DefencesWon { get; set; }
-        public int DefencesLost { get; set; }
+        public int DefensesWon { get; set; }
+        public int DefensesLost { get; set; }
         public string Token { get; set; }
         public string Username { get; set; }
         public Clan Clan { get; set; }

@@ -24,8 +24,8 @@ namespace CoCSharp.Networking.Packets
                 memberInfo.Level = reader.ReadInt32();
                 memberInfo.AttacksWon = reader.ReadInt32();
                 memberInfo.AttacksLost = reader.ReadInt32();
-                memberInfo.DefencesWon = reader.ReadInt32();
-                memberInfo.DefencesLost = reader.ReadInt32();
+                memberInfo.DefensesWon = reader.ReadInt32();
+                memberInfo.DefensesLost = reader.ReadInt32();
                 memberInfo.Unknown3 = reader.ReadInt32();
                 memberInfo.CountryCode = reader.ReadString();
                 memberInfo.Unknown4 = reader.ReadInt64();
@@ -55,8 +55,8 @@ namespace CoCSharp.Networking.Packets
                 writer.WriteInt32(memberInfo.Level);
                 writer.WriteInt32(memberInfo.AttacksWon);
                 writer.WriteInt32(memberInfo.AttacksLost);
-                writer.WriteInt32(memberInfo.DefencesWon);
-                writer.WriteInt32(memberInfo.DefencesLost);
+                writer.WriteInt32(memberInfo.DefensesWon);
+                writer.WriteInt32(memberInfo.DefensesLost);
                 writer.WriteInt32(memberInfo.Unknown3);
                 writer.WriteString(memberInfo.CountryCode);
                 writer.WriteInt64(memberInfo.Unknown4);
@@ -81,8 +81,8 @@ namespace CoCSharp.Networking.Packets
             public int Level;
             public int AttacksWon;
             public int AttacksLost;
-            public int DefencesWon;
-            public int DefencesLost;
+            public int DefensesWon;
+            public int DefensesLost;
             public int Unknown3;
             public string CountryCode;
             public long Unknown4; // userId?
