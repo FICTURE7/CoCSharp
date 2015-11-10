@@ -9,13 +9,13 @@ namespace CoCSharp.Networking.Packets
     public class AllianceRankingListLocalResponsePacket: AllianceRankingListResponsePacket
     {
 
-        public ushort ID { get { return 0x5F52; } }
+        public new ushort ID { get { return 0x5F52; } }
 
-        public void ReadPacket(PacketReader reader)
+        public new void ReadPacket(PacketReader reader)
         {
             base.ReadPacket(reader);
         }
-        public void WritePacket(PacketWriter writer)
+        public new void WritePacket(PacketWriter writer)
         {
             base.WritePacket(writer);
         }
