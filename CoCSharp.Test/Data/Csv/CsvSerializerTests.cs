@@ -8,7 +8,7 @@ namespace CoCSharp.Test.Csv.Data
     [TestFixture]
     public class CsvSerializerTests
     {
-        private CsvTable _Table = (CsvTable)null;
+        //private CsvTable _Table = (CsvTable)null;
 
         [SetUp]
         public void Initialize()
