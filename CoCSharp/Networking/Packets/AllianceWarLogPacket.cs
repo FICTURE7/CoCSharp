@@ -28,22 +28,22 @@ namespace CoCSharp.Networking.Packets
                 log.HomeClanStarsWon = reader.ReadInt32();
                 log.EnemyClanStarsWon = reader.ReadInt32();
 
-                log.HomeClanPercentage = (float)reader.ReadInt32() / 10;
-                log.EnemyClanPercentage = (float)reader.ReadInt32() / 10;
+                log.HomeClanPercentage = (float)reader.ReadInt32() / 20;
+                log.EnemyClanPercentage = (float)reader.ReadInt32() / 20;
 
                 log.Unknown1 = reader.ReadInt32();
                 log.Unknown2 = reader.ReadInt32();
-                log.Unknown3 = reader.ReadInt32();
+                log.HomeAttacksUsed = reader.ReadInt32();
 
                 log.HomeClanPointsGained = reader.ReadInt32();
 
-                log.Unknown4 = reader.ReadInt64();
+                log.Unknown3 = reader.ReadInt64();
+                log.WarSize = reader.ReadInt32();
+                log.WarResult = reader.ReadInt32();
+                log.Unknown4 = reader.ReadInt32(); // time since then?
                 log.Unknown5 = reader.ReadInt32();
                 log.Unknown6 = reader.ReadInt32();
-                log.Unknown7 = reader.ReadInt32(); // time since then?
-                log.Unknown8 = reader.ReadInt32();
-                log.Unknown9 = reader.ReadInt32();
-                log.Unknown10 = reader.ReadByte();
+                log.Unknown7 = reader.ReadByte();
                 WarEntries.Add(log);
             }
         }
@@ -67,22 +67,22 @@ namespace CoCSharp.Networking.Packets
                 writer.WriteInt32(log.HomeClanStarsWon);
                 writer.WriteInt32(log.EnemyClanStarsWon);
 
-                writer.WriteInt32((int)log.HomeClanPercentage * 10); // TODO: Find a more consistent solution.
-                writer.WriteInt32((int)log.EnemyClanPercentage * 10);
+                writer.WriteInt32((int)log.HomeClanPercentage * 20); // TODO: Find a more consistent solution.
+                writer.WriteInt32((int)log.EnemyClanPercentage * 20);
 
                 writer.WriteInt32(log.Unknown1);
                 writer.WriteInt32(log.Unknown2);
-                writer.WriteInt32(log.Unknown3);
+                writer.WriteInt32(log.HomeAttacksUsed);
 
                 writer.WriteInt32(log.HomeClanPointsGained);
 
-                writer.WriteInt64(log.Unknown4);
+                writer.WriteInt64(log.Unknown3);
+                writer.WriteInt32(log.WarSize);
+                writer.WriteInt32(log.WarResult);
+                writer.WriteInt32(log.Unknown4);
                 writer.WriteInt32(log.Unknown5);
                 writer.WriteInt32(log.Unknown6);
-                writer.WriteInt32(log.Unknown7);
-                writer.WriteInt32(log.Unknown8);
-                writer.WriteInt32(log.Unknown9);
-                writer.WriteByte(log.Unknown10);
+                writer.WriteByte(log.Unknown7);
             }
         }
 
@@ -101,22 +101,22 @@ namespace CoCSharp.Networking.Packets
             public int HomeClanStarsWon { get; set; }
             public int EnemyClanStarsWon { get; set; }
 
-            public float HomeClanPercentage { get; set; } // readint / 10 (to 2 decimal place)
-            public float EnemyClanPercentage { get; set; } // readint / 10
+            public float HomeClanPercentage { get; set; } // readint / 20 (to 2 decimal place)
+            public float EnemyClanPercentage { get; set; } // readint / 20
 
-            public int Unknown1 { get; set; } // number of home clan attacks?
-            public int Unknown2 { get; set; } 
-            public int Unknown3 { get; set; }
+            public int Unknown1 { get; set; }
+            public int Unknown2 { get; set; }
+            public int HomeAttacksUsed { get; set; }
 
             public int HomeClanPointsGained { get; set; }
 
-            public long Unknown4 { get; set; } // feels like an id
+            public long Unknown3 { get; set; } // feels like an id
+            public int WarSize { get; set; }
+            public int WarResult { get; set; } // 0 = lose, 1 = win
+            public int Unknown4 { get; set; }
             public int Unknown5 { get; set; }
             public int Unknown6 { get; set; }
-            public int Unknown7 { get; set; }
-            public int Unknown8 { get; set; } 
-            public int Unknown9 { get; set; }
-            public byte Unknown10 { get; set; }
+            public byte Unknown7 { get; set; }
         }
     }
 }
