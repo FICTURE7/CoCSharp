@@ -23,10 +23,14 @@ namespace CoCSharp.Networking.Packets
         public int Unknown5;
         public string Description;
         public int Unknown6;
-        public byte Unknown7;
+        public int Unknown7;
         public int Unknown8;
         public int Unknown9;
+        public int Unknown10;
+        public int Unknown11;
+        public byte Unknown12;
         public List<AllianceMemberInfo> Members;
+        private byte LegacyMembersCount;
 
         public void ReadPacket(PacketReader reader)
         {
@@ -39,19 +43,29 @@ namespace CoCSharp.Networking.Packets
             RequiedTrophies = reader.ReadInt32();
             WarsWon = reader.ReadInt32();
             Unknown3 = reader.ReadInt32();
-            Level = reader.ReadInt32();
-            Sheild = reader.ReadInt32();
-            WarFrequency = reader.ReadInt32();
             Unknown4 = reader.ReadInt32();
-            ClanPerksPoints = reader.ReadInt32();
             Unknown5 = reader.ReadInt32();
-            Description = reader.ReadString();
             Unknown6 = reader.ReadInt32();
-            Unknown7 = reader.ReadByte();
+            Unknown7 = reader.ReadInt32();
+            ClanPerksPoints = reader.ReadInt32();
+            Level = reader.ReadInt32();
+            Description = reader.ReadString();
+            Unknown8 = reader.ReadInt32();
+            Unknown9 = reader.ReadInt32();
 
-            var count = reader.ReadInt32();
+            LegacyMembersCount = reader.ReadByte();
+
+            // It appears this is some legacy data, only some clans don't have this data.
+            // It seemed to trend towards old clans, newer clans didn't have an issue.
+            if (LegacyMembersCount != MembersCount)
+            {
+                Unknown10 = reader.ReadInt32();
+                Unknown11 = reader.ReadInt32();
+            }
+
             Members = new List<AllianceMemberInfo>();
-            for (int i = 0; i < count; i++)
+
+            for (int i = 0; i < MembersCount; i++)
             {
                 var allianceMember = new AllianceMemberInfo();
                 allianceMember.UserID = reader.ReadInt64();
@@ -65,10 +79,11 @@ namespace CoCSharp.Networking.Packets
                 allianceMember.Rank = reader.ReadInt32();
                 allianceMember.PreviousRank = reader.ReadInt32();
                 allianceMember.NewMember = reader.ReadByte();
-                allianceMember.ClanWarPreference = reader.ReadInt32();
-                allianceMember.ClanWarPreference1 = reader.ReadInt32();
                 allianceMember.Unknown1 = reader.ReadByte();
-                allianceMember.UserID1 = reader.ReadInt64();
+                allianceMember.Unknown2 = reader.ReadInt32();
+                allianceMember.Unknown3 = reader.ReadInt32();
+                allianceMember.Unknown4 = reader.ReadInt32();
+                allianceMember.Unknown5 = reader.ReadInt32();
                 Members.Add(allianceMember);
             }
         }
@@ -132,8 +147,12 @@ namespace CoCSharp.Networking.Packets
             public byte NewMember;
             public int ClanWarPreference;
             public int ClanWarPreference1;
-            public byte Unknown1;
+            public int Unknown1;
             public long UserID1;
+            internal int Unknown2;
+            internal int Unknown3;
+            internal int Unknown4;
+            internal int Unknown5;
         }
     }
 }
