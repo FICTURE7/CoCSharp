@@ -26,7 +26,7 @@ namespace CoCSharp.Proxy
             Clients = new List<CoCProxyClient>();
             PacketHandlers = new Dictionary<ushort, PacketHandler>();
 
-            ProxyPacketHandlers.RegisterHanlders(this);
+            ProxyPacketHandlers.RegisterHandlers(this);
         }
 
         public string ServerAddress { get; set; }
