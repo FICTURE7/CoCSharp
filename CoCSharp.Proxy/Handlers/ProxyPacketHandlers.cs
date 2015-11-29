@@ -44,7 +44,7 @@ namespace CoCSharp.Proxy.Handlers
             client.Client.Home = ohPacket.Home;
         }
 
-        public static void RegisterHanlders(CoCProxy proxyServer)
+        public static void RegisterHandlers(CoCProxy proxyServer)
         {
             proxyServer.RegisterPacketHandler(new UpdateKeyPacket(), HandleUpdateKeyPacket);
             proxyServer.RegisterPacketHandler(new LoginRequestPacket(), HandleLoginRequestPacket);
