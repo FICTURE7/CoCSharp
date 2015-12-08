@@ -83,7 +83,7 @@ namespace CoCSharp.Networking
         }
 
         /// <summary>
-        /// Generates a random byte array of atleast 20 bytes long.
+        /// Generates a random byte array of random length atleast 20 bytes long.
         /// </summary>
         /// <returns>The random byte array.</returns>
         public static byte[] CreateRandomByteArray()
@@ -104,7 +104,8 @@ namespace CoCSharp.Networking
 
             for (int k = 0; k < key.Length; k++)
             {
-                Encryptor.PRGA(); // skip bytes
+                // skip bytes
+                Encryptor.PRGA(); 
                 Decryptor.PRGA();
             }
         }
@@ -277,3 +278,5 @@ namespace CoCSharp.Networking
         }
     }
 }
+
+

@@ -1,35 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F8756685-CD4B-4C2E-9BEE-269A27CBB6B2}</ProjectGuid>
+    <ProjectGuid>{7481E33E-B214-421B-8F9B-A812958395DD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CoCSharp</RootNamespace>
     <AssemblyName>CoCSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -37,12 +21,10 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>bin\Debug\CoCSharp.XML</DocumentationFile>
-    <LangVersion>6</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -50,223 +32,28 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ionic.ZLib, Version=2.0.0.14, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MarkerMetro.Unity.Ionic.Zlib.2.0.0.14\lib\net35\Ionic.ZLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\AchievementData.cs" />
-    <Compile Include="Data\AllianceBadgeData.cs" />
-    <Compile Include="Data\AllianceBadgeLayerData.cs" />
-    <Compile Include="Data\AllianceLevelData.cs" />
-    <Compile Include="Data\AlliancePortalData.cs" />
-    <Compile Include="Data\BillingPackageData.cs" />
-    <Compile Include="Data\BuildingData.cs" />
-    <Compile Include="Data\CharacterData.cs" />
-    <Compile Include="Data\ClientGlobalData.cs" />
-    <Compile Include="Data\Compression\Common\CommandLineParser.cs" />
-    <Compile Include="Data\Compression\Common\CRC.cs" />
-    <Compile Include="Data\Compression\Common\InBuffer.cs" />
-    <Compile Include="Data\Compression\Common\OutBuffer.cs" />
-    <Compile Include="Data\Compression\Compress\LZMA\LzmaBase.cs" />
-    <Compile Include="Data\Compression\Compress\LZMA\LzmaDecoder.cs" />
-    <Compile Include="Data\Compression\Compress\LZMA\LzmaEncoder.cs" />
-    <Compile Include="Data\Compression\Compress\LZ\IMatchFinder.cs" />
-    <Compile Include="Data\Compression\Compress\LZ\LzBinTree.cs" />
-    <Compile Include="Data\Compression\Compress\LZ\LzInWindow.cs" />
-    <Compile Include="Data\Compression\Compress\LZ\LzOutWindow.cs" />
-    <Compile Include="Data\Compression\Compress\RangeCoder\RangeCoder.cs" />
-    <Compile Include="Data\Compression\Compress\RangeCoder\RangeCoderBit.cs" />
-    <Compile Include="Data\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
-    <Compile Include="Data\Compression\ICoder.cs" />
-    <Compile Include="Data\Compression\LzmaUtils.cs" />
-    <Compile Include="Data\BuildingClassData.cs" />
-    <Compile Include="Data\CreditData.cs" />
-    <Compile Include="Data\Csv\CsvException.cs" />
-    <Compile Include="Data\Csv\CsvSerializerSettings.cs" />
-    <Compile Include="Data\Csv\CsvIgnoreAttribute.cs" />
-    <Compile Include="Data\Csv\CsvPropertyAttribute.cs" />
-    <Compile Include="Data\Csv\CsvSerializer.cs" />
-    <Compile Include="Data\Csv\CsvTable.cs" />
-    <Compile Include="Data\DecorationData.cs" />
-    <Compile Include="Data\EffectData.cs" />
-    <Compile Include="Data\FaqData.cs" />
-    <Compile Include="Data\Fingerprint.cs" />
-    <Compile Include="Data\CoCData.cs" />
-    <Compile Include="Data\GlobalData.cs" />
-    <Compile Include="Data\HeroData.cs" />
-    <Compile Include="Data\HintData.cs" />
-    <Compile Include="Data\LeagueData.cs" />
-    <Compile Include="Data\LevelData.cs" />
-    <Compile Include="Data\LocaleData.cs" />
-    <Compile Include="Data\MissionData.cs" />
-    <Compile Include="Data\NewsData.cs" />
-    <Compile Include="Data\NpcData.cs" />
-    <Compile Include="Data\ObstacleData.cs" />
-    <Compile Include="Data\ParticleEmitterData.cs" />
-    <Compile Include="Data\ProjectileData.cs" />
-    <Compile Include="Data\RegionData.cs" />
-    <Compile Include="Data\ResourceData.cs" />
-    <Compile Include="Data\ResourcePackData.cs" />
-    <Compile Include="Data\RespawnVars.cs" />
-    <Compile Include="Data\SheildData.cs" />
-    <Compile Include="Data\SpellData.cs" />
-    <Compile Include="Data\TextsData.cs" />
-    <Compile Include="Data\TextsPatchData.cs" />
-    <Compile Include="Data\TownHallLevelData.cs" />
-    <Compile Include="Data\TrapData.cs" />
-    <Compile Include="Data\WarData.cs" />
-    <Compile Include="DateTimeConverter.cs" />
-    <Compile Include="ICoCServer.cs" />
-    <Compile Include="Logging\ExceptionLog.cs" />
-    <Compile Include="Logging\Log.cs" />
-    <Compile Include="Logging\LogBuilder.cs" />
-    <Compile Include="Logging\LoggableAttribute.cs" />
-    <Compile Include="Logging\LoggingFlags.cs" />
-    <Compile Include="Logging\PacketDumper.cs" />
-    <Compile Include="Logging\PacketLog.cs" />
-    <Compile Include="Logic\Avatar.cs" />
-    <Compile Include="Logic\Building.cs" />
-    <Compile Include="Logic\Clan.cs" />
-    <Compile Include="Logic\Decoration.cs" />
-    <Compile Include="Logic\Obstacle.cs" />
-    <Compile Include="Logic\Trap.cs" />
-    <Compile Include="Logic\Village.cs" />
-    <Compile Include="Logic\VillageObject.cs" />
-    <Compile Include="MathHelper.cs" />
-    <Compile Include="Networking\CoCCrypto.cs" />
-    <Compile Include="Networking\DisconnectedEventArgs.cs" />
-    <Compile Include="Networking\Packets\AllianceRankingListLocalResponsePacket.cs" />
-    <Compile Include="Networking\Packets\AllianceRankingListRequestPacket.cs" />
-    <Compile Include="Networking\Packets\AllianceRankingListResponsePacket.cs" />
-    <Compile Include="Networking\Packets\FacebookFriendsRequestPacket.cs" />
-    <Compile Include="Networking\Packets\LeagueMemberListRequestPacket.cs" />
-    <Compile Include="Networking\Packets\LeagueMemberListResponsePacket.cs" />
-    <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
-    <Compile Include="Networking\PacketFactory.cs" />
-    <Compile Include="Networking\PacketReceivedEventArgs.cs" />
-    <Compile Include="Networking\Packets\AllianceSearchRequestPacket.cs" />
-    <Compile Include="Networking\Packets\AllianceSearchResponsePacket.cs" />
-    <Compile Include="Networking\Packets\AllianceDescriptionPacket.cs" />
-    <Compile Include="Networking\Packets\AllianceWarLogPacket.cs" />
-    <Compile Include="Networking\CommandFactory.cs" />
-    <Compile Include="Networking\Packets\Commands\BoostBuildingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\BuyBuildingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\BuyDecorationCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\BuyResourcesCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\BuyShieldCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\BuyTrapCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\CancelConstructionCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\CancelHeroUpgradeCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\CancelUnitProductionCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\CancelUpgradeUnitCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\CastSpellCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\ClaimAchievementRewardCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\ClearObstacleCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\CollectResourcesCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\FreeWorkerCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\ICommand.cs" />
-    <Compile Include="Networking\Packets\Commands\LoadTurrentCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\MissionProgressCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\MoveBuildingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\PlaceAttackerCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\RequestAllianceUnitsCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\SellBuildingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\SpeedUpClearingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\SpeedUpConstructionCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\SpeedUpHeroHealthCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\SpeedUpUpgradeHeroCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\SpeedUpTrainingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\SpeedUpUpgradeUnitCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\ToggleAttackModeCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\ToggleHeroSleepCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\TrainUnitCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\UnlockBuildingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\UpgradeBuildingCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\UpgradeHeroCommand.cs" />
-    <Compile Include="Networking\Packets\Commands\UpgradeUnitCommand.cs" />
-    <Compile Include="Networking\InvalidPacketException.cs" />
-    <Compile Include="Networking\NetworkManager.cs" />
+    <Compile Include="Networking\InvalidMessageException.cs" />
+    <Compile Include="Networking\Message.cs" />
+    <Compile Include="Networking\MessageFactory.cs" />
+    <Compile Include="Networking\MessageFactorySuppressAttribute.cs" />
+    <Compile Include="Networking\MessageReader.cs" />
+    <Compile Include="Networking\Messages\KeepAliveRequestMessage.cs" />
+    <Compile Include="Networking\Messages\KeepAliveResponseMessage.cs" />
+    <Compile Include="Networking\MessageWriter.cs" />
     <Compile Include="Networking\NetworkManagerAsync.cs" />
-    <Compile Include="Networking\PacketExtractor.cs" />
-    <Compile Include="Networking\PacketDirection.cs" />
-    <Compile Include="Networking\PacketExtractionFlags.cs" />
-    <Compile Include="Networking\Packets\AllianceChatMessageClientPacket.cs" />
-    <Compile Include="Networking\Packets\AllianceChatMessageServerPacket.cs" />
-    <Compile Include="Networking\Packets\AllianceInfoResponsePacket.cs" />
-    <Compile Include="Networking\Packets\AllianceInfoRequestPacket.cs" />
-    <Compile Include="Networking\Packets\AllianceJoinRequestFailedPacket.cs" />
-    <Compile Include="Networking\Packets\AvatarLocalRankListRequestPacket.cs" />
-    <Compile Include="Networking\Packets\AvatarLocalRankListResponsePacket.cs" />
-    <Compile Include="Networking\Packets\AvatarProfileRequestPacket.cs" />
-    <Compile Include="Networking\Packets\AvatarProfileResponsePacket.cs" />
-    <Compile Include="Networking\Packets\AvatarRankListRequestPacket.cs" />
-    <Compile Include="Networking\Packets\AvatarRankListResponsePacket.cs" />
-    <Compile Include="Networking\Packets\BindFacebookAccountPacket.cs" />
-    <Compile Include="Networking\Packets\ChangeAvatarNamePacket.cs" />
-    <Compile Include="Networking\Packets\ChatMessageClientPacket.cs" />
-    <Compile Include="Networking\Packets\ChatMessageServerPacket.cs" />
-    <Compile Include="Networking\Packets\CommandPacket.cs" />
-    <Compile Include="Networking\Packets\FriendListResponsePacket.cs" />
-    <Compile Include="Networking\Packets\IPacket.cs" />
-    <Compile Include="Networking\Packets\KeepAliveRequestPacket.cs" />
-    <Compile Include="Networking\Packets\KeepAliveResponsePacket.cs" />
-    <Compile Include="Networking\Packets\LastClanWarDataPacket.cs" />
-    <Compile Include="Networking\Packets\LoginFailedPacket.cs" />
-    <Compile Include="Networking\Packets\OwnHomeDataPacket.cs" />
-    <Compile Include="Networking\Packets\LoginRequestPacket.cs" />
-    <Compile Include="Networking\PacketReader.cs" />
-    <Compile Include="Networking\Packets\LoginSuccessPacket.cs" />
-    <Compile Include="Networking\PacketBufferManager.cs" />
-    <Compile Include="Networking\Packets\VisitHomeRequestPacket.cs" />
-    <Compile Include="Networking\Packets\VisitHomeResponsePacket.cs" />
-    <Compile Include="Networking\PacketToken.cs" />
-    <Compile Include="Networking\Packets\ServerErrorPacket.cs" />
-    <Compile Include="Networking\Packets\SetDeviceTokenPacket.cs" />
-    <Compile Include="Networking\PacketWriter.cs" />
-    <Compile Include="Networking\Packets\UnknownPacket.cs" />
-    <Compile Include="Networking\Packets\UpdateKeyPacket.cs" />
-    <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <Folder Include="Csv\" />
+    <Folder Include="Data\" />
+    <Folder Include="Networking\Messages\Commands\" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

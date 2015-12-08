@@ -1,33 +1,21 @@
-﻿using CoCSharp.Logging;
+﻿using CoCSharp.Networking;
 using System;
 using System.IO;
-using System.Net;
-using System.Threading;
 
 namespace CoCSharp.Proxy
 {
     public class Program
     {
-        public static CoCProxy Proxy { get; set; }
-        public static ProxyConfiguration Configuration { get; set; }
-
         public static void Main(string[] args)
         {
             Console.Title = "CoC# Proxy";
-            Console.WriteLine("Starting proxy...");
 
-            Configuration = ProxyConfiguration.LoadConfiguration("proxyConfig.xml");
-            if (Configuration.DeleteLogOnStartup)
-                File.Delete("packets.log");
+            var lel = new MemoryStream();
+            var writer = new MessageWriter();
 
-            Proxy = new CoCProxy();
-            Proxy.ServerAddress = Configuration.ServerAddress;
-            Proxy.ServerPort = Configuration.ServerPort;
+            var instance = MessageFactory.Create(0);
 
-            Proxy.Start(new IPEndPoint(IPAddress.Any, Configuration.ProxyPort));
-
-            Console.WriteLine("CoC# is running on *:{0}", Configuration.ProxyPort);
-            Thread.Sleep(-1);
+            Console.ReadLine();
         }
     }
 }
