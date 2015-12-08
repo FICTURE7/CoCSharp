@@ -1,6 +1,8 @@
 <h1> 
 CoC# <a href="https://travis-ci.org/FICTURE7/CoCSharp"><img src="https://travis-ci.org/FICTURE7/CoCSharp.svg?branch=rewrite" alt="Build Status"></a>
 </h1>
+This is the `rewrite` branch where am doing what the branch's name is telling. I decided to rewrite
+CoCSharp because some stuff could have been done better.
 
 Clash of Clans library written in C# to handle networking, csv files and more to come. 
 It was written based off of [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/)
@@ -18,116 +20,6 @@ which is now open source.
 * CoCSharp.Networking: Clash of Clans network protocol implementaion.
   * Includes classes for reading and writing packets.
   * Includes some classes containing packet definition. Such as: AllianceWarLogPacket, OwnHomeDataPacket etc...
-  
-## Usage
-CoCSharp is trying to implement most the Clash of Clans features and also trying be easy as possible to use.
-Here are some examples. 
-
-### Networking
-CoCSharp.Networking implements the `SocketAsyncEventArgs` async model.
-
-Example to write and read packets async.
-```c#
-// creates a new Socket
-var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-
-// connects to the official clash of clans server
-socket.Connect("gamea.clashofclans.com", 9339);
-
-// creates a new NetworkManagerAsync
-// the PacketReceived event is raised when a packet is recieved
-// here we are using it to write the packet name and packet id to the console
-var networkManagerAsync = new NetworkManagerAsync(socket);
-networkManagerAsync.PacketReceived += (object sender, PacketReceivedEventArgs e) =>
-{
-    if (e.Exception != null)
-    {
-        // e.Exception != null if there was no exception while 
-        // receiving the packet
-        Console.WriteLine("Recieved {0}:{1}", e.Packet.GetType().Name, e.Packet.ID);
-    }
-    else
-    {
-        // else there was an exception while
-        // receiving the packet
-        Console.WriteLine("Failed to receive packet: {0}", e.Exception);
-    }
-};
-
-
-// sends a LoginRequestPacket to the server
-// if the server accepts the login request, it will
-// send an UpdateKeyPacket which contains the server random
-// which will then be scrambled and the RC4 streams updated with.
-// the UpdateKeyPacket is handled automatically by the NetworkManagerAsync.
-// there is no need to update the keys.
-networkManagerAsync.SendPacket(new LoginRequestPacket()
-{
-    UserID = 0,
-    UserToken = null,
-    ClientMajorVersion = 7,
-    ClientContentVersion = 12,
-    ClientMinorVersion = 200,
-    FingerprintHash = "7af2ba412c1716cffe3949f1dcffcea6822560f2",
-    OpenUDID = "563a6f060d8624db",
-    MacAddress = null,
-    DeviceModel = "GT-I9300",
-    LocaleKey = 2000000,
-    Language = "en",
-    AdvertisingGUID = "",
-    OSVersion = "4.0.4",
-    IsAdvertisingTrackingEnabled = false,
-    AndroidDeviceID = "563a6f060d8624db",
-    FacebookDistributionID = "",
-    VendorGUID = "",
-    Seed = 1329685020 // should be random
-});
-
-```
-
-### Logging
-If you would like to log packets in a more fancy way use this instead
-```c#
-// creates a new instance of the PacketLogger that will log
-// packets to the console and to the file "packets.log"
-var packetLogger = new PacketLogger("packets.log")
-{
-    LogConsole = true
-    // set to false if you dont want logs in the console
-    // it is true by default, you could do that
-    // var packetLogger = PacketLogger("log_filename.log")
-    // simply
-};
-
-// creates a new instance of the ExceptionLogger that will log
-// exceptions to the console and to the file "exceptions.log"
-var exceptionLogger = new ExceptionLogger("exceptions.log");
-
-var networkManagerAsync = new NetworkManagerAsync(socket);
-networkManagerAsync.PacketReceived += (object sender, PacketReceivedEventArgs e) =>
-{
-    if (e.Exception != null)
-    {
-        packetLogger.LogPacket(e.Packet, PacketDirection.Client);
-    }
-    else
-    {
-        exceptionLogger.LogException(e.Exception);
-    }
-};
-```
-and you should see logs in your console.
-
-
-### CSV Files
-Example to read a compressed `buildings.csv` file.
-```c#
-// loads the .csv file
-var table = new CsvTable("buildings.csv", true);
-
-// deserializes the CsvTable into an object array of the specified type.
-var buildingsData = CsvSerializer.Deserialize(table, typeof(BuildingData));
-```
 
 ## Compiling
 The simplest way to compile CoCSharp is to use Visual Studio and pressing `F6` to build the solution or you could 
