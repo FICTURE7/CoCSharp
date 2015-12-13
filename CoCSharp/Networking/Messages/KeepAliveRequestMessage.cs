@@ -1,7 +1,7 @@
 ﻿namespace CoCSharp.Networking.Messages
 {
     /// <summary>
-    /// Message that is sent by the client to server. The server
+    /// Empty message that is sent by the client to the server. The server
     /// must reply with a <see cref="KeepAliveResponseMessage"/>.
     /// </summary>
     public class KeepAliveRequestMessage : Message

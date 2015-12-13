@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using CoCSharp.Networking.Messages;
 
 namespace CoCSharp.Networking
 {
@@ -27,7 +28,7 @@ namespace CoCSharp.Networking
 
                     var instance = (Message)Activator.CreateInstance(type);
                     if (MessageDictionary.ContainsKey(instance.ID))
-                        throw new MessageException("A Message type with the same ID was already added to the dictionary.", instance);
+                        throw new MessageException("A Message type with the same ID: " + instance.ID + " was already added to the dictionary.", instance);
 
                     MessageDictionary.Add(instance.ID, type);
                 }
@@ -52,7 +53,7 @@ namespace CoCSharp.Networking
         {
             var type = (Type)null;
             if (!MessageDictionary.TryGetValue(id, out type))
-                return null;
+                return new UnknownMessage() { ID = id };
             return (Message)Activator.CreateInstance(type);
         }
 

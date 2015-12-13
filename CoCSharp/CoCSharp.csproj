@@ -38,15 +38,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MathHelper.cs" />
+    <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\InvalidMessageException.cs" />
     <Compile Include="Networking\Message.cs" />
+    <Compile Include="Networking\MessageBufferManager.cs" />
+    <Compile Include="Networking\MessageException.cs" />
     <Compile Include="Networking\MessageFactory.cs" />
     <Compile Include="Networking\MessageFactorySuppressAttribute.cs" />
     <Compile Include="Networking\MessageReader.cs" />
+    <Compile Include="Networking\MessageReceivedEventArgs.cs" />
+    <Compile Include="Networking\Messages\EncryptionMessage.cs" />
     <Compile Include="Networking\Messages\KeepAliveRequestMessage.cs" />
     <Compile Include="Networking\Messages\KeepAliveResponseMessage.cs" />
+    <Compile Include="Networking\Messages\LoginRequestMessage.cs" />
+    <Compile Include="Networking\Messages\NewClientEncryptionMessage.cs" />
+    <Compile Include="Networking\Messages\UnknownMessage.cs" />
+    <Compile Include="Networking\MessageToken.cs" />
     <Compile Include="Networking\MessageWriter.cs" />
     <Compile Include="Networking\NetworkManagerAsync.cs" />
+    <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

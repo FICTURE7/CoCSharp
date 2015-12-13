@@ -34,12 +34,12 @@
         /// <summary>
         /// Gets the ID of the <see cref="Message"/>.
         /// </summary>
-        public abstract ushort ID { get; }
+        public virtual ushort ID { get; set; }
 
         /// <summary>
         /// Gets the version of the <see cref="Message"/>.
         /// </summary>
-        public virtual ushort Version { get { return 0; } }
+        public virtual ushort Version { get; set; }
 
         /// <summary>
         /// Reads the <see cref="Message"/> from the specified <see cref="MessageReader"/>.

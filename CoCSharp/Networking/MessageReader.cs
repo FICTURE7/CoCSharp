@@ -101,6 +101,7 @@ namespace CoCSharp.Networking
         /// by the length of the string and the length of the prefix which is 4 bytes long.
         /// </summary>
         /// <returns>A string read from the current stream.</returns>
+        /// <exception cref="InvalidMessageException">String length is invalid.</exception>
         public override string ReadString()
         {
             var length = ReadInt32();
@@ -117,6 +118,7 @@ namespace CoCSharp.Networking
         /// by the length of the byte array and the length of the prefix which is 4 bytes long.
         /// </summary>
         /// <returns>A byte array read from the current stream.</returns>
+        /// <exception cref="InvalidMessageException">Byte array length is invalid.</exception>
         public byte[] ReadBytes()
         {
             var length = ReadInt32();

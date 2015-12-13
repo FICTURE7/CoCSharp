@@ -6,6 +6,8 @@ namespace CoCSharp.Networking
     /// Implements methods to encrypt and decrypt network traffic of the Clash of Clans protocol.
     /// Ported from Clash of Clans Documentation Project(https://github.com/clanner/cocdp/blob/master/cocutils.py)
     /// to C#.
+    /// 
+    /// Note: This is outdated.
     /// </summary>
     public class CoCCrypto
     {
@@ -26,7 +28,7 @@ namespace CoCSharp.Networking
         /// the specified key.
         /// </summary>
         /// <param name="key"></param>
-        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"><paramref name="key"/> is null.</exception>
         public CoCCrypto(string key)
         {
             if (key == null)
@@ -42,7 +44,7 @@ namespace CoCSharp.Networking
         /// Encrypts the provided bytes.
         /// </summary>
         /// <param name="data">Bytes to encrypt.</param>
-        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
         public void Encrypt(byte[] data)
         {
             if (data == null)
@@ -56,7 +58,7 @@ namespace CoCSharp.Networking
         /// Decrypts the provided bytes.
         /// </summary>
         /// <param name="data">Bytes to decrypt.</param>
-        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
         public void Decrypt(byte[] data)
         {
             if (data == null)
@@ -71,13 +73,13 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="clientSeed">Client seed.</param>
         /// <param name="serverNonce">Server random nonce.</param>
-        /// <exception cref="ArgumentNullException"/>
-        public void UpdateCiphers(ulong clientSeed, byte[] serverNonce)
+        /// <exception cref="ArgumentNullException"><paramref name="serverNonce"/> is null.</exception>
+        public void UpdateCiphers(int clientSeed, byte[] serverNonce)
         {
             if (serverNonce == null)
                 throw new ArgumentNullException("serverNonce");
 
-            var newNonce = ScrambleNonce(clientSeed, serverNonce);
+            var newNonce = ScrambleNonce((ulong)clientSeed, serverNonce);
             var key = InitialKey + newNonce;
             InitializeCiphers(key);
         }
