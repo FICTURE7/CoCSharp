@@ -4,6 +4,5 @@ mono:
     - latest
 install:
     - nuget restore CoCSharp.sln
-    - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
     - xbuild CoCSharp.sln
