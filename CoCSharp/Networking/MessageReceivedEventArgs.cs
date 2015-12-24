@@ -29,15 +29,9 @@ namespace CoCSharp.Networking
         public Exception Exception { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="Networking.Message"/> body raw bytes that was received from 
-        /// the network.
+        /// Gets or sets the <see cref="Networking.Message"/> raw bytes that was received from
+        /// the network. This includes the header and the body encrypted.
         /// </summary>
-        public byte[] MessageBody { get; set; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="Networking.Message"/> header raw bytes that was received from
-        /// the network.
-        /// </summary>
-        public byte[] MessageHeader { get; set; }
+        public byte[] MessageData { get; set; }
     }
 }

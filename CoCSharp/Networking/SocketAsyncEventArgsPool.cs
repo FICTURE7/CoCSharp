@@ -7,18 +7,18 @@ namespace CoCSharp.Networking
     /// <summary>
     /// Provides methods to manage <see cref="SocketAsyncEventArgs"/> in pools.
     /// </summary>
-    public class SocketAsyncEventArgsPool : IDisposable
+    internal class SocketAsyncEventArgsPool : IDisposable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SocketAsyncEventArgsPool"/> with
         /// the specified capacity.
         /// </summary>
         /// <param name="capacity">The capacity of the pool.</param>
-        /// <exception cref="ArgumentException"><paramref name="capacity"/> is less that 1.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less that 1.</exception>
         public SocketAsyncEventArgsPool(int capacity)
         {
             if (capacity < 1)
-                throw new ArgumentException("capacity cannot be less that 1.");
+                throw new ArgumentOutOfRangeException("capacity cannot be less that 1.");
 
             Capacity = capacity;
             _objLock = new object();
@@ -86,7 +86,6 @@ namespace CoCSharp.Networking
                         args.Dispose();
                     }
                 }
-
                 _disposed = true;
             }
         }

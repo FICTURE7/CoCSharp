@@ -4,15 +4,17 @@ namespace CoCSharp.Networking
 {
     internal class MessageToken
     {
-        private static int _tokenID = 0;
+        private static int _nextTokenID = 0;
         public MessageToken()
         {
             Header = new byte[Message.HeaderSize];
-            TokenID = _tokenID;
-            _tokenID++;
+            TokenID = _nextTokenID;
+            _nextTokenID++;
         }
 
         public int TokenID { get; set; }
+        public SocketAsyncEventArgs Args { get; set; }
+
         public ushort ID { get; set; }
         public int Length { get; set; }
         public ushort Version { get; set; }
@@ -41,7 +43,10 @@ namespace CoCSharp.Networking
 
         public static void Create(SocketAsyncEventArgs args)
         {
-            args.UserToken = new MessageToken();
+            var token = new MessageToken();
+            token.Args = args;
+            token.Offset = args.Offset;
+            args.UserToken = token;
         }
     }
 }

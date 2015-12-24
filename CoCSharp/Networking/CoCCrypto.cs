@@ -6,9 +6,8 @@ namespace CoCSharp.Networking
     /// Implements methods to encrypt and decrypt network traffic of the Clash of Clans protocol.
     /// Ported from Clash of Clans Documentation Project(https://github.com/clanner/cocdp/blob/master/cocutils.py)
     /// to C#.
-    /// 
-    /// Note: This is outdated.
     /// </summary>
+    [Obsolete("Does not support the latest 8.0 update.")]
     public class CoCCrypto
     {
         private const string InitialKey = "fhsd6f86f67rt8fw78fw789we78r9789wer6re";

@@ -1,18 +1,16 @@
 ﻿using CoCSharp.Networking;
-using System;
-using System.IO;
 using System.Net.Sockets;
 
 namespace CoCSharp.Proxy
 {
     public class CoCProxyClient
     {
-        public CoCProxyClient(Socket client, Socket server)
+        public CoCProxyClient(Socket client, Socket server, NetworkManagerAsyncSettings settings)
         {
-            Client = new NetworkManagerAsync(client);
+            Client = new NetworkManagerAsync(client, settings);
             Client.MessageReceived += ClientReceived;
 
-            Server = new NetworkManagerAsync(server);
+            Server = new NetworkManagerAsync(server, settings);
             Server.MessageReceived += ServerReceived;
         }
 
@@ -21,22 +19,12 @@ namespace CoCSharp.Proxy
 
         private void ServerReceived(object sender, MessageReceivedEventArgs e)
         {
-            //TODO: Make into e.MessageBytes instead.
-
-            var fullmessage = new byte[e.MessageBody.Length + e.MessageHeader.Length];
-            Buffer.BlockCopy(e.MessageHeader, 0, fullmessage, 0, e.MessageHeader.Length);
-            Buffer.BlockCopy(e.MessageBody, 0, fullmessage, e.MessageHeader.Length, e.MessageBody.Length);
-
-            Client.Connection.Send(fullmessage);
+            Client.Connection.Send(e.MessageData);
         }
 
         private void ClientReceived(object sender, MessageReceivedEventArgs e)
         {
-            var fullmessage = new byte[e.MessageBody.Length + e.MessageHeader.Length];
-            Buffer.BlockCopy(e.MessageHeader, 0, fullmessage, 0, e.MessageHeader.Length);
-            Buffer.BlockCopy(e.MessageBody, 0, fullmessage, e.MessageHeader.Length, e.MessageBody.Length);
-
-            Server.Connection.Send(fullmessage);
+            Server.Connection.Send(e.MessageData);
         }
     }
 }

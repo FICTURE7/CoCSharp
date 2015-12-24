@@ -15,20 +15,39 @@ namespace CoCSharp.Networking
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
         /// with the specified <see cref="Socket"/>.
         /// </summary>
-        /// <param name="connection"></param>
+        /// <param name="connection"><see cref="Socket"/> instance.</param>
         /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
-        public NetworkManagerAsync(Socket connection)
+        public NetworkManagerAsync(Socket connection) : this(connection, NetworkManagerAsyncSettings.DefaultSettings)
+        {
+            // Space
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
+        /// with the specified <see cref="Socket"/> and <see cref="NetworkManagerAsyncSettings"/>.
+        /// </summary>
+        /// <param name="connection"><see cref="Socket"/> instance.</param>
+        /// <param name="settings">
+        /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
+        /// object management.
+        /// </param>
+        public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings)
         {
             if (connection == null)
                 throw new ArgumentNullException("connection");
+            if (settings == null)
+                throw new ArgumentNullException("settings");
 
             Connection = connection;
-            _seed = 0;
-            _receivePool = new SocketAsyncEventArgsPool(5);
-            _sendPool = new SocketAsyncEventArgsPool(5);
-            _crypto = new CoCCrypto();
+            Settings = settings;
 
-            SetPools();
+            _crypto = new CoCCrypto();
+            _receivePool = Settings.ReceivePool;
+            _sendPool = Settings.SendPool;
+            _seed = 0;
+
+            _newClientEncryptionMessage = new NewClientEncryptionMessage();
+            _newServerEncryptionMessage = new NewServerEncryptionMessage();
 
             StartReceive(_receivePool.Pop());
         }
@@ -39,11 +58,20 @@ namespace CoCSharp.Networking
         private SocketAsyncEventArgsPool _sendPool;
         private CoCCrypto _crypto;
 
+        private readonly NewClientEncryptionMessage _newClientEncryptionMessage;
+        private readonly NewServerEncryptionMessage _newServerEncryptionMessage;
+
         /// <summary>
         /// Gets the <see cref="Socket"/> that is used to send and receive
         /// data.
         /// </summary>
         public Socket Connection { get; private set; }
+
+        /// <summary>
+        /// Gets the <see cref="NetworkManagerAsyncSettings"/> being used the
+        /// current <see cref="NetworkManagerAsync"/>.
+        /// </summary>
+        public NetworkManagerAsyncSettings Settings { get; private set; }
 
         /// <summary>
         /// Gets the seed that is used for encryption.
@@ -61,6 +89,7 @@ namespace CoCSharp.Networking
 
         private void StartReceive(SocketAsyncEventArgs args)
         {
+            args.Completed += AsyncOperationCompleted;
             if (!Connection.ReceiveAsync(args))
                 AsyncOperationCompleted(Connection, args);
         }
@@ -83,7 +112,7 @@ namespace CoCSharp.Networking
                         token.Offset += bytesToProcess;
                         token.HeaderOffset += bytesToProcess;
                         bytesToProcess = 0;
-                        token.Offset = 0;
+                        token.Offset = args.Offset;
 
                         StartReceive(args);
                         return;
@@ -109,7 +138,7 @@ namespace CoCSharp.Networking
                         token.Offset += bytesToProcess;
                         token.BodyOffset += bytesToProcess;
                         bytesToProcess = 0;
-                        token.Offset = 0;
+                        token.Offset = args.Offset;
 
                         StartReceive(args);
                         return;
@@ -126,8 +155,12 @@ namespace CoCSharp.Networking
                 var message = MessageFactory.Create(token.ID);
                 var messageEnData = token.Body;
                 var messageDeData = (byte[])token.Body.Clone();
+                var messageFull = new byte[token.Length + Message.HeaderSize];
 
-                if (!(message is NewClientEncryptionMessage))
+                Buffer.BlockCopy(token.Header, 0, messageFull, 0, Message.HeaderSize);
+                Buffer.BlockCopy(token.Body, 0, messageFull, Message.HeaderSize, token.Length);
+
+                if (message.ID != _newServerEncryptionMessage.ID && message.ID != _newClientEncryptionMessage.ID)
                     _crypto.Decrypt(messageDeData);
 
                 if (message is UnknownMessage)
@@ -141,8 +174,7 @@ namespace CoCSharp.Networking
                     OnMessageReceived(new MessageReceivedEventArgs()
                     {
                         Message = message,
-                        MessageBody = messageEnData,
-                        MessageHeader = token.Header
+                        MessageData = messageFull,
                     });
                     token.Reset();
                     continue;
@@ -150,6 +182,7 @@ namespace CoCSharp.Networking
 
                 using (var reader = new MessageReader(new MemoryStream(messageDeData)))
                 {
+                    var ex = (Exception)null;
                     try
                     {
                         message.ReadMessage(reader);
@@ -163,24 +196,18 @@ namespace CoCSharp.Networking
                             var loginRequestMessage = (LoginRequestMessage)message;
                             _seed = loginRequestMessage.Seed;
                         }
-
-                        OnMessageReceived(new MessageReceivedEventArgs()
-                        {
-                            Message = message,
-                            MessageBody = messageEnData,
-                            MessageHeader = token.Header
-                        });
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
-                        OnMessageReceived(new MessageReceivedEventArgs()
-                        {
-                            Message = message,
-                            MessageBody = messageEnData,
-                            MessageHeader = token.Header,
-                            Exception = ex
-                        });
+                        ex = exception;
                     }
+
+                    OnMessageReceived(new MessageReceivedEventArgs()
+                    {
+                        Message = message,
+                        MessageData = messageFull,
+                        Exception = ex
+                    });
 
                     //TODO: Better handling.
                     if (reader.BaseStream.Position < reader.BaseStream.Length)
@@ -188,7 +215,8 @@ namespace CoCSharp.Networking
                 }
                 token.Reset();
             }
-            token.Offset = 0;
+
+            token.Offset = args.Offset;
             _receivePool.Push(args);
             StartReceive(_receivePool.Pop());
         }
@@ -203,6 +231,13 @@ namespace CoCSharp.Networking
 
         private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
+            args.Completed -= AsyncOperationCompleted;
+            if (args.SocketError == SocketError.OperationAborted || _disposed)
+            {
+                _receivePool.Push(args);
+                return; // gently stop any operations
+            }
+
             if (args.SocketError != SocketError.Success)
                 throw new SocketException((int)args.SocketError); // disconnected event
 
@@ -213,31 +248,9 @@ namespace CoCSharp.Networking
                     break;
 
                 default:
-                    throw new Exception("wut");
+                    throw new Exception("IMPOSSIBRU!");
             }
         }
-
-        private void SetPools()
-        {
-            for (int i = 0; i < _receivePool.Capacity; i++)
-            {
-                var args = new SocketAsyncEventArgs();
-                args.Completed += AsyncOperationCompleted;
-                args.SetBuffer(new byte[65535], 0, 65535);
-                MessageToken.Create(args);
-                _receivePool.Push(args);
-            }
-
-            for (int i = 0; i < _sendPool.Capacity; i++)
-            {
-                var args = new SocketAsyncEventArgs();
-                args.Completed += AsyncOperationCompleted;
-                args.SetBuffer(new byte[65535], 0, 65535);
-                MessageToken.Create(args);
-                _sendPool.Push(args);
-            }
-        }
-
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="NetworkManagerAsync"/> class.
         /// </summary>
@@ -246,17 +259,26 @@ namespace CoCSharp.Networking
             Dispose(true);
         }
 
+        /// <summary>
+        /// Releases all unmanged resources and optionally releases managed resources
+        /// used by the current instance of the <see cref="NetworkManagerAsync"/> class.
+        /// </summary>
+        /// <param name="disposing">Releases managed resources if set to true.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
                 if (disposing)
                 {
-                    Connection.Dispose();
-                    _receivePool.Dispose();
-                    _sendPool.Dispose();
-                }
+                    try
+                    {
+                        Connection.Shutdown(SocketShutdown.Both);
+                    }
+                    catch { }
 
+                    Connection.Close();
+                    //Settings.Dipose();
+                }
                 _disposed = true;
             }
         }

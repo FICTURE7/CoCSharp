@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateTimeConverter.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\InvalidMessageException.cs" />
@@ -53,16 +54,20 @@
     <Compile Include="Networking\Messages\KeepAliveResponseMessage.cs" />
     <Compile Include="Networking\Messages\LoginRequestMessage.cs" />
     <Compile Include="Networking\Messages\NewClientEncryptionMessage.cs" />
+    <Compile Include="Networking\Messages\NewServerEncryptionMessage.cs" />
     <Compile Include="Networking\Messages\UnknownMessage.cs" />
     <Compile Include="Networking\MessageToken.cs" />
     <Compile Include="Networking\MessageWriter.cs" />
     <Compile Include="Networking\NetworkManagerAsync.cs" />
+    <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
+    <Compile Include="Networking\NetworkManagerAsyncStatistics.cs" />
     <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Csv\" />
     <Folder Include="Data\" />
+    <Folder Include="Logic\" />
     <Folder Include="Networking\Messages\Commands\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
