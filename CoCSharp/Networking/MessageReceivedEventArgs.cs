@@ -3,7 +3,7 @@
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Provides data for message received event.
+    /// Provides arguments data for message received event.
     /// </summary>
     public class MessageReceivedEventArgs : EventArgs
     {
@@ -27,6 +27,11 @@ namespace CoCSharp.Networking
         /// error occured during reading.
         /// </summary>
         public Exception Exception { get; set; }
+
+        /// <summary>
+        /// Gets or sets whether the <see cref="Message"/> received was fully read.
+        /// </summary>
+        public bool MessageFullyRead { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="Networking.Message"/> raw bytes that was received from

@@ -2,14 +2,12 @@
 
 namespace CoCSharp.Networking
 {
-    internal class MessageToken
+    internal class MessageReceiveToken
     {
-        private static int _nextTokenID = 0;
-        public MessageToken()
+        public MessageReceiveToken()
         {
             Header = new byte[Message.HeaderSize];
-            TokenID = _nextTokenID;
-            _nextTokenID++;
+            TokenID = NetworkManagerAsyncStatistics.NextTokenID;
         }
 
         public int TokenID { get; set; }
@@ -43,7 +41,7 @@ namespace CoCSharp.Networking
 
         public static void Create(SocketAsyncEventArgs args)
         {
-            var token = new MessageToken();
+            var token = new MessageReceiveToken();
             token.Args = args;
             token.Offset = args.Offset;
             args.UserToken = token;

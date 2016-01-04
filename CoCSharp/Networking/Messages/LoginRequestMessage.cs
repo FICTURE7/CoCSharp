@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CoCSharp.Networking.Messages
+﻿namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// Message that is sent by the client to the server to request
@@ -116,10 +114,10 @@ namespace CoCSharp.Networking.Messages
         public override ushort ID { get { return 10101; } }
 
         /// <summary>
-        /// Reads the <see cref="Message"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="LoginRequestMessage"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="Message"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="LoginRequestMessage"/>.
         /// </param>
         public override void ReadMessage(MessageReader reader)
         {
@@ -151,14 +149,37 @@ namespace CoCSharp.Networking.Messages
         }
 
         /// <summary>
-        /// Writes the <see cref="Message"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="LoginRequestMessage"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="Message"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="LoginRequestMessage"/>.
         /// </param>
         public override void WriteMessage(MessageWriter writer)
         {
-            
+            writer.Write(UserID);
+            writer.Write(UserToken);
+            writer.Write(ClientMajorVersion);
+            writer.Write(ClientContentVersion);
+            writer.Write(ClientMinorVersion);
+            writer.Write(FingerprintHash);
+
+            writer.Write(Unknown1);
+
+            writer.Write(OpenUDID);
+            writer.Write(MacAddress);
+            writer.Write(DeviceModel);
+            writer.Write(LocaleKey);
+            writer.Write(AdvertisingGUID);
+            writer.Write(OSVersion);
+
+            writer.Write(Unknown2);
+            writer.Write(Unknown3);
+
+            writer.Write(AndroidDeviceID);
+            writer.Write(FacebookDistributionID);
+            writer.Write(IsAdvertisingTrackingEnabled);
+            writer.Write(VendorGUID);
+            writer.Write(Seed);
         }
     }
 }

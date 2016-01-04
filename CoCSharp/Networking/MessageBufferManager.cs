@@ -13,11 +13,11 @@ namespace CoCSharp.Networking
             _buffer = new byte[(receiveCount + sendCount) * bufferSize];
         }
 
-        private int _receiveCount;
-        private int _sendCount;
+        private readonly int _receiveCount;
+        private readonly int _sendCount;
         private int _bufferIndex;
-        private int _bufferSize;
-        private byte[] _buffer;
+        private readonly int _bufferSize;
+        private readonly byte[] _buffer;
 
         public void SetBuffer(SocketAsyncEventArgs args)
         {

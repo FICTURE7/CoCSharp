@@ -5,9 +5,10 @@ namespace CoCSharp.Networking
 {
     /// <summary>
     /// Provides settings for the <see cref="NetworkManagerAsync"/> class. It is recommended to use
-    /// this for better management of <see cref="SocketAsyncEventArgs"/> objects.
+    /// this for better management of <see cref="SocketAsyncEventArgs"/> objects. This class cannot
+    /// be inherited.
     /// </summary>
-    public class NetworkManagerAsyncSettings : IDisposable
+    public sealed class NetworkManagerAsyncSettings : IDisposable
     {
         /// <summary>
         /// Initailizes a new instance of the <see cref="NetworkManagerAsync"/> class
@@ -41,8 +42,13 @@ namespace CoCSharp.Networking
         /// <param name="receiveCount">Number of receive operation <see cref="SocketAsyncEventArgs"/> objects.</param>
         /// <param name="sendCount">Number of send operation <see cref="SocketAsyncEventArgs"/> objects.</param>
         /// <param name="bufferSize">Buffer size of each <see cref="SocketAsyncEventArgs"/> object.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="bufferSize"/> less than 1.</exception>
         public NetworkManagerAsyncSettings(int receiveCount, int sendCount, int bufferSize)
         {
+            if (bufferSize < 1)
+                throw new ArgumentOutOfRangeException("Argument bufferSize cannot be less than 1.");
+
+            BufferSize = bufferSize;
             ReceivePool = new SocketAsyncEventArgsPool(receiveCount);
             SendPool = new SocketAsyncEventArgsPool(sendCount);
             _bufferManager = new MessageBufferManager(receiveCount, sendCount, bufferSize);
@@ -51,7 +57,7 @@ namespace CoCSharp.Networking
             {
                 var args = new SocketAsyncEventArgs();
                 _bufferManager.SetBuffer(args);
-                MessageToken.Create(args);
+                MessageReceiveToken.Create(args);
                 ReceivePool.Push(args);
             }
 
@@ -59,7 +65,7 @@ namespace CoCSharp.Networking
             {
                 var args = new SocketAsyncEventArgs();
                 _bufferManager.SetBuffer(args);
-                MessageToken.Create(args);
+                MessageSendToken.Create(args);
                 SendPool.Push(args);
             }
         }
@@ -84,11 +90,16 @@ namespace CoCSharp.Networking
         /// </summary>
         public int SendCount { get { return ReceivePool.Capacity; } }
 
-        private bool _disposed;
-        private MessageBufferManager _bufferManager;
+        /// <summary>
+        /// Gets the buffer size of each <see cref="SocketAsyncEventArgs"/> object.
+        /// </summary>
+        public int BufferSize { get; private set; }
 
-        internal SocketAsyncEventArgsPool ReceivePool;
-        internal SocketAsyncEventArgsPool SendPool;
+        private bool _disposed;
+        private readonly MessageBufferManager _bufferManager;
+
+        internal readonly SocketAsyncEventArgsPool ReceivePool;
+        internal readonly SocketAsyncEventArgsPool SendPool;
 
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="NetworkManagerAsyncSettings"/> class.
@@ -98,12 +109,7 @@ namespace CoCSharp.Networking
             Dispose(true);
         }
 
-        /// <summary>
-        /// Releases all unmanaged resources and optionally managed resources used by the current instance of the
-        /// <see cref="NetworkManagerAsyncSettings"/> class.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!_disposed)
             {

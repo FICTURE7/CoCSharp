@@ -20,7 +20,7 @@ namespace CoCSharp.Networking
             for (int i = 0; i < types.Length; i++)
             {
                 var type = types[i];
-                if (type.IsSubclassOf(_messageType))
+                if (type.IsSubclassOf(s_messageType))
                 {
                     var suppressAttribute = type.GetCustomAttributes<MessageFactorySuppressAttribute>().FirstOrDefault();
                     if (suppressAttribute != null && suppressAttribute.Suppress)
@@ -35,7 +35,7 @@ namespace CoCSharp.Networking
             }
         }
 
-        private static readonly Type _messageType = typeof(Message); // reduce num of calls to typeof
+        private static readonly Type s_messageType = typeof(Message); // reduce num of calls to typeof
 
         /// <summary>
         /// Gets the dictionary that associates <see cref="Message"/> types with

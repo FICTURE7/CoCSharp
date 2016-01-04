@@ -33,7 +33,7 @@ namespace CoCSharp.Proxy
             Console.WriteLine("Accepted new client: {0}", client.RemoteEndPoint);
 
             var server = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            server.Connect("gamea.clashofclans.com", 9339);
+            server.Connect("5.196.200.170", 9339);
             Console.WriteLine("Created new connection to gamea.clashofclans.com");
 
             var connection = new CoCProxyClient(client, server, Settings);

@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Networking;
+using System;
 using System.Net.Sockets;
 
 namespace CoCSharp.Proxy
@@ -19,11 +20,15 @@ namespace CoCSharp.Proxy
 
         private void ServerReceived(object sender, MessageReceivedEventArgs e)
         {
+            if (!e.MessageFullyRead)
+                Console.WriteLine("Warning: Did not fully read " + e.Message.GetType().Name);
             Client.Connection.Send(e.MessageData);
         }
 
         private void ClientReceived(object sender, MessageReceivedEventArgs e)
         {
+            if (!e.MessageFullyRead)
+                Console.WriteLine("Warning: Did not fully read " + e.Message.GetType().Name);
             Server.Connection.Send(e.MessageData);
         }
     }

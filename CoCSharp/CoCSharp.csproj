@@ -33,13 +33,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.ZLib, Version=2.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MarkerMetro.Unity.Ionic.Zlib.2.0.0.14\lib\net35\Ionic.ZLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\AvatarData.cs" />
+    <Compile Include="Data\ClanData.cs" />
+    <Compile Include="Data\VillageData.cs" />
     <Compile Include="DateTimeConverter.cs" />
-    <Compile Include="MathHelper.cs" />
+    <Compile Include="Logic\Avatar.cs" />
+    <Compile Include="Logic\Village.cs" />
+    <Compile Include="Networking\Messages\LoginSuccessMessage.cs" />
+    <Compile Include="Networking\Messages\OwnHomeDataMessage.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\InvalidMessageException.cs" />
     <Compile Include="Networking\Message.cs" />
@@ -49,6 +64,7 @@
     <Compile Include="Networking\MessageFactorySuppressAttribute.cs" />
     <Compile Include="Networking\MessageReader.cs" />
     <Compile Include="Networking\MessageReceivedEventArgs.cs" />
+    <Compile Include="Networking\MessageSendToken.cs" />
     <Compile Include="Networking\Messages\EncryptionMessage.cs" />
     <Compile Include="Networking\Messages\KeepAliveRequestMessage.cs" />
     <Compile Include="Networking\Messages\KeepAliveResponseMessage.cs" />
@@ -56,7 +72,7 @@
     <Compile Include="Networking\Messages\NewClientEncryptionMessage.cs" />
     <Compile Include="Networking\Messages\NewServerEncryptionMessage.cs" />
     <Compile Include="Networking\Messages\UnknownMessage.cs" />
-    <Compile Include="Networking\MessageToken.cs" />
+    <Compile Include="Networking\MessageReceiveToken.cs" />
     <Compile Include="Networking\MessageWriter.cs" />
     <Compile Include="Networking\NetworkManagerAsync.cs" />
     <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
@@ -66,9 +82,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Csv\" />
-    <Folder Include="Data\" />
-    <Folder Include="Logic\" />
     <Folder Include="Networking\Messages\Commands\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

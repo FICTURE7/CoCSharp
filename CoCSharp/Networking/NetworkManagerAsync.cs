@@ -31,6 +31,8 @@ namespace CoCSharp.Networking
         /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
         /// object management.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
         public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings)
         {
             if (connection == null)
@@ -40,11 +42,11 @@ namespace CoCSharp.Networking
 
             Connection = connection;
             Settings = settings;
+            Statistics = new NetworkManagerAsyncStatistics();
 
             _crypto = new CoCCrypto();
             _receivePool = Settings.ReceivePool;
             _sendPool = Settings.SendPool;
-            _seed = 0;
 
             _newClientEncryptionMessage = new NewClientEncryptionMessage();
             _newServerEncryptionMessage = new NewServerEncryptionMessage();
@@ -54,9 +56,9 @@ namespace CoCSharp.Networking
 
         private int _seed;
         private bool _disposed;
-        private SocketAsyncEventArgsPool _receivePool;
-        private SocketAsyncEventArgsPool _sendPool;
-        private CoCCrypto _crypto;
+        private readonly CoCCrypto _crypto;
+        private readonly SocketAsyncEventArgsPool _receivePool;
+        private readonly SocketAsyncEventArgsPool _sendPool;
 
         private readonly NewClientEncryptionMessage _newClientEncryptionMessage;
         private readonly NewServerEncryptionMessage _newServerEncryptionMessage;
@@ -74,17 +76,106 @@ namespace CoCSharp.Networking
         public NetworkManagerAsyncSettings Settings { get; private set; }
 
         /// <summary>
+        /// Gets the <see cref="NetworkManagerAsyncStatistics"/> associated with
+        /// the current <see cref="NetworkManagerAsync"/>.
+        /// </summary>
+        public NetworkManagerAsyncStatistics Statistics { get; private set; }
+
+        /// <summary>
         /// Gets the seed that is used for encryption.
         /// </summary>
         public int Seed { get { return _seed; } }
 
+        /// <summary>
+        /// Sends the specified message using the <see cref="Connection"/> socket.
+        /// </summary>
+        /// <param name="message"><see cref="Message"/> to send.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is null.</exception>
+        /// <exception cref="InvalidMessageException"><paramref name="message"/> length greater than <see cref="Message.MaxSize"/>.</exception>
         public void SendMessage(Message message)
         {
-            throw new NotImplementedException();
+            if (message == null)
+                throw new ArgumentNullException("message");
 
-            var length = 0;
-            if (length > Message.MaxSize)
-                throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
+            using (var deMessageWriter = new MessageWriter(new MemoryStream()))
+            {
+                message.WriteMessage(deMessageWriter);
+                var body = ((MemoryStream)deMessageWriter.BaseStream).ToArray();
+                _crypto.Encrypt(body);
+
+                if (message is LoginRequestMessage)
+                    _seed = ((LoginRequestMessage)message).Seed;
+                else if (message is EncryptionMessage)
+                    _crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
+
+                if (body.Length > Message.MaxSize)
+                    throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
+
+                using (var enMessageWriter = new MessageWriter(new MemoryStream()))
+                {
+                    var len = BitConverter.GetBytes(body.Length);
+                    if (BitConverter.IsLittleEndian)
+                        Array.Reverse(len);
+
+                    enMessageWriter.Write(message.ID);
+                    enMessageWriter.Write(len, 1, 3); // message len
+                    enMessageWriter.Write(message.Version);
+                    enMessageWriter.Write(body); // encrypted body
+
+                    var messageData = ((MemoryStream)enMessageWriter.BaseStream).ToArray();
+                    var args = _sendPool.Pop();
+                    var token = args.UserToken as MessageSendToken;
+                    token.ID = message.ID;
+                    token.Length = body.Length;
+                    token.Version = message.Version;
+                    token.Body = messageData;
+
+                    StartSend(args);
+                }
+            }
+        }
+
+        private void StartSend(SocketAsyncEventArgs args)
+        {
+            args.Completed += AsyncOperationCompleted;
+            var token = args.UserToken as MessageSendToken;
+
+            if (token.SendRemaining > 0) // if still have bytes to send
+            {
+                if (token.Body.Length > Settings.BufferSize) // if message larger than buffer size
+                {
+                    Buffer.BlockCopy(token.Body, token.SendOffset, args.Buffer, args.Offset, Settings.BufferSize);
+                }
+                else // else resize buffer count
+                {
+                    Buffer.BlockCopy(token.Body, token.SendOffset, args.Buffer, args.Offset, token.SendRemaining);
+                    args.SetBuffer(args.Offset, token.SendRemaining);
+                }
+            }
+
+            if (!Connection.SendAsync(args))
+                ProcessSend(args);
+        }
+
+        private void ProcessSend(SocketAsyncEventArgs args)
+        {
+            var bytesToProcess = args.BytesTransferred;
+            var token = args.UserToken as MessageSendToken;
+
+            Statistics.TotalByteReceived += args.BytesTransferred;
+
+            token.SendOffset += bytesToProcess;
+            if (token.SendRemaining > 0) // if still have bytes to send
+            {
+                StartSend(args); // reuse same op
+                return;
+            }
+            else // else reset and push back the args
+            {
+                token.Reset();
+                args.SetBuffer(args.Offset, Settings.BufferSize); // just in case
+                _sendPool.Push(args);
+            }
         }
 
         private void StartReceive(SocketAsyncEventArgs args)
@@ -97,7 +188,9 @@ namespace CoCSharp.Networking
         private void ProcessReceive(SocketAsyncEventArgs args)
         {
             var bytesToProcess = args.BytesTransferred;
-            var token = (MessageToken)args.UserToken;
+            var token = args.UserToken as MessageReceiveToken;
+
+            Statistics.TotalByteReceived += args.BytesTransferred;
 
             while (bytesToProcess != 0)
             {
@@ -114,7 +207,7 @@ namespace CoCSharp.Networking
                         bytesToProcess = 0;
                         token.Offset = args.Offset;
 
-                        StartReceive(args);
+                        StartReceive(args); // reuse same op
                         return;
                     }
                     else
@@ -123,7 +216,7 @@ namespace CoCSharp.Networking
                         bytesToProcess -= token.HeaderRemaining;
                         token.Offset += token.HeaderRemaining;
                         token.HeaderOffset += token.HeaderRemaining;
-                        ProcessToken(token);
+                        ProcessReceiveToken(token);
                     }
                 }
 
@@ -153,49 +246,45 @@ namespace CoCSharp.Networking
                 }
 
                 var message = MessageFactory.Create(token.ID);
-                var messageEnData = token.Body;
-                var messageDeData = (byte[])token.Body.Clone();
-                var messageFull = new byte[token.Length + Message.HeaderSize];
+                var messageEnBody = token.Body;
+                var messageDeBody = (byte[])token.Body.Clone();
+                var messageData = new byte[token.Length + Message.HeaderSize];
 
-                Buffer.BlockCopy(token.Header, 0, messageFull, 0, Message.HeaderSize);
-                Buffer.BlockCopy(token.Body, 0, messageFull, Message.HeaderSize, token.Length);
+                Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
+                Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
                 if (message.ID != _newServerEncryptionMessage.ID && message.ID != _newClientEncryptionMessage.ID)
-                    _crypto.Decrypt(messageDeData);
+                    _crypto.Decrypt(messageDeBody);
 
                 if (message is UnknownMessage)
                 {
                     var unknownMessage = (UnknownMessage)message;
                     unknownMessage.Length = token.Length;
                     unknownMessage.Version = token.Version;
-                    unknownMessage.DecryptedBytes = messageDeData;
-                    unknownMessage.EncryptedBytes = messageEnData;
+                    unknownMessage.DecryptedBytes = messageDeBody;
+                    unknownMessage.EncryptedBytes = messageEnBody;
 
                     OnMessageReceived(new MessageReceivedEventArgs()
                     {
                         Message = message,
-                        MessageData = messageFull,
+                        MessageData = messageData,
+                        MessageFullyRead = true
                     });
                     token.Reset();
                     continue;
                 }
 
-                using (var reader = new MessageReader(new MemoryStream(messageDeData)))
+                using (var reader = new MessageReader(new MemoryStream(messageDeBody)))
                 {
                     var ex = (Exception)null;
                     try
                     {
                         message.ReadMessage(reader);
-                        if (message is EncryptionMessage) // outdated
-                        {
-                            var encryptionMessage = (EncryptionMessage)message;
-                            _crypto.UpdateCiphers(_seed, encryptionMessage.ServerRandom);
-                        }
-                        else if (message is LoginRequestMessage) // cant be read
-                        {
-                            var loginRequestMessage = (LoginRequestMessage)message;
-                            _seed = loginRequestMessage.Seed;
-                        }
+
+                        if (message is LoginRequestMessage)
+                            _seed = ((LoginRequestMessage)message).Seed;
+                        else if (message is EncryptionMessage)
+                            _crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
                     }
                     catch (Exception exception)
                     {
@@ -205,13 +294,10 @@ namespace CoCSharp.Networking
                     OnMessageReceived(new MessageReceivedEventArgs()
                     {
                         Message = message,
-                        MessageData = messageFull,
+                        MessageData = messageData,
+                        MessageFullyRead = reader.BaseStream.Position == reader.BaseStream.Length,
                         Exception = ex
                     });
-
-                    //TODO: Better handling.
-                    if (reader.BaseStream.Position < reader.BaseStream.Length)
-                        Console.WriteLine("Warning: Did not fully read {0}.", message.GetType().Name);
                 }
                 token.Reset();
             }
@@ -221,7 +307,7 @@ namespace CoCSharp.Networking
             StartReceive(_receivePool.Pop());
         }
 
-        private void ProcessToken(MessageToken token)
+        private void ProcessReceiveToken(MessageReceiveToken token)
         {
             token.ID = (ushort)((token.Header[0] << 8) | (token.Header[1]));
             token.Length = (token.Header[2] << 16) | (token.Header[3] << 8) | (token.Header[4]);
@@ -239,7 +325,7 @@ namespace CoCSharp.Networking
             }
 
             if (args.SocketError != SocketError.Success)
-                throw new SocketException((int)args.SocketError); // disconnected event
+                throw new SocketException((int)args.SocketError); //TODO: Better handling, DisconnectedEventArgs
 
             switch (args.LastOperation)
             {
@@ -247,10 +333,15 @@ namespace CoCSharp.Networking
                     ProcessReceive(args);
                     break;
 
+                case SocketAsyncOperation.Send:
+                    ProcessSend(args);
+                    break;
+
                 default:
                     throw new Exception("IMPOSSIBRU!");
             }
         }
+
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="NetworkManagerAsync"/> class.
         /// </summary>

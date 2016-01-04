@@ -7,7 +7,7 @@ namespace CoCSharp.Networking
     /// Ported from Clash of Clans Documentation Project(https://github.com/clanner/cocdp/blob/master/cocutils.py)
     /// to C#.
     /// </summary>
-    [Obsolete("Does not support the latest 8.0 update.")]
+    [Obsolete("Does not support the latest 8.x.x update.")]
     public class CoCCrypto
     {
         private const string InitialKey = "fhsd6f86f67rt8fw78fw789we78r9789wer6re";
@@ -89,8 +89,8 @@ namespace CoCSharp.Networking
         /// <returns>The random byte array.</returns>
         public static byte[] CreateRandomByteArray()
         {
-            var buffer = new byte[MathHelper.Random.Next(20)];
-            MathHelper.Random.NextBytes(buffer);
+            var buffer = new byte[Utils.Random.Next(15, 25)];
+            Utils.Random.NextBytes(buffer);
             return buffer;
         }
 
