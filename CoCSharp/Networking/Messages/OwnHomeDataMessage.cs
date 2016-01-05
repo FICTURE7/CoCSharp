@@ -22,7 +22,6 @@ namespace CoCSharp.Networking.Messages
         /// </summary>
         public override ushort ID { get { return 24101; } }
 
-        #region Fields
         /// <summary>
         /// Time sinced last visited.
         /// </summary>
@@ -38,10 +37,9 @@ namespace CoCSharp.Networking.Messages
         /// </summary>
         public DateTime Timestamp;
         /// <summary>
-        /// Data of the avatar of the client.
+        /// Own avatar data.
         /// </summary>
         public AvatarData OwnAvatarData;
-        #endregion
 
         /// <summary>
         /// Reads the <see cref="OwnHomeDataMessage"/> from the specified <see cref="MessageReader"/>.
@@ -52,7 +50,7 @@ namespace CoCSharp.Networking.Messages
         public override void ReadMessage(MessageReader reader)
         {
             LastVisit = TimeSpan.FromSeconds(reader.ReadInt32());
-            Unknown1 = reader.ReadInt32();
+            Unknown1 = reader.ReadInt32(); // -1
             Timestamp = DateTimeConverter.FromUnixTimestamp(reader.ReadInt32());
 
             OwnAvatarData = new AvatarData();
@@ -71,7 +69,7 @@ namespace CoCSharp.Networking.Messages
                 throw new NullReferenceException("OwnAvatarData was null.");
 
             writer.Write((int)LastVisit.TotalSeconds);
-            writer.Write(Unknown1);
+            writer.Write(Unknown1); // -1
             writer.Write((int)DateTimeConverter.ToUnixTimestamp(Timestamp));
 
             OwnAvatarData.Write(writer);

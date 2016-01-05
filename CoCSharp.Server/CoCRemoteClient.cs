@@ -1,19 +1,22 @@
 ﻿using CoCSharp.Networking;
 using System.Net.Sockets;
 using CoCSharp.Server.Handlers;
+using CoCSharp.Logic;
 
 namespace CoCSharp.Server
 {
     public class CoCRemoteClient
     {
-        public CoCRemoteClient(CoCServer server, Socket connection)
+        public CoCRemoteClient(CoCServer server, Socket connection, NetworkManagerAsyncSettings settings)
         {
             _server = server;
             Connection = connection;
-            NetworkManager = new NetworkManagerAsync(connection);
+            Avatar = new Avatar();
+            NetworkManager = new NetworkManagerAsync(connection, settings);
             NetworkManager.MessageReceived += OnMessageReceived;
         }
 
+        public Avatar Avatar { get; set; }
         public Socket Connection { get; private set; }
         public NetworkManagerAsync NetworkManager { get; private set; }
 

@@ -32,12 +32,12 @@
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="Message"/>.
+        /// Gets or sets the ID of the <see cref="Message"/>.
         /// </summary>
         public virtual ushort ID { get; set; }
 
         /// <summary>
-        /// Gets the version of the <see cref="Message"/>.
+        /// Gets or sets the version of the <see cref="Message"/>.
         /// </summary>
         public virtual ushort Version { get; set; }
 

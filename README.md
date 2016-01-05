@@ -29,7 +29,7 @@ Run the following commands to build CoCSharp with mono.
 
 Clone the project using git.
 ```
-git clone --branch=master git://github.com/FICTURE7/CoCSharp.git
+git clone --branch=rewrite git://github.com/FICTURE7/CoCSharp.git
 ```
 Then you will have to restore the nuget packages, to get the dependencies.
 ```

@@ -51,7 +51,22 @@
     <Compile Include="Data\VillageData.cs" />
     <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Logic\Avatar.cs" />
+    <Compile Include="Logic\Building.cs" />
+    <Compile Include="Logic\Clan.cs" />
+    <Compile Include="Logic\Decoration.cs" />
+    <Compile Include="Logic\Obstacle.cs" />
+    <Compile Include="Logic\Trap.cs" />
     <Compile Include="Logic\Village.cs" />
+    <Compile Include="Logic\VillageObject.cs" />
+    <Compile Include="Networking\Command.cs" />
+    <Compile Include="Networking\CommandException.cs" />
+    <Compile Include="Networking\CommandFactory.cs" />
+    <Compile Include="Networking\CommandFactorySuppressAttribute.cs" />
+    <Compile Include="Networking\InvalidCommandException.cs" />
+    <Compile Include="Networking\Messages\ChatMessageClientMessage.cs" />
+    <Compile Include="Networking\Messages\ChatMessageServerMessage.cs" />
+    <Compile Include="Networking\Messages\CommandMessage.cs" />
+    <Compile Include="Networking\Messages\Commands\MoveBuildingCommand.cs" />
     <Compile Include="Networking\Messages\LoginSuccessMessage.cs" />
     <Compile Include="Networking\Messages\OwnHomeDataMessage.cs" />
     <Compile Include="Utils.cs" />
@@ -82,7 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Csv\" />
-    <Folder Include="Networking\Messages\Commands\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

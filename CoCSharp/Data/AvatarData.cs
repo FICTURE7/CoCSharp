@@ -13,6 +13,7 @@ namespace CoCSharp.Data
     /// </summary>
     public class AvatarData
     {
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="AvatarData"/> class.
         /// </summary>
@@ -20,6 +21,137 @@ namespace CoCSharp.Data
         {
             // Space
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AvatarData"/> class from
+        /// the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="avatar"><see cref="Avatar"/> from which the data will be set.</param>
+        public AvatarData(Avatar avatar)
+        {
+            OwnVillageData = new VillageData()
+            {
+                UserID = avatar.ID,
+                ShieldDuration = avatar.ShieldDuration,
+                Unknown2 = 1200,
+                Unknown3 = 60,
+                Compressed = true,
+                Home = avatar.Home,
+            };
+
+            UserID = avatar.ID;
+            UserID2 = avatar.ID; //TODO: Might be something different.
+
+            if (avatar.Alliance != null)
+            {
+                OwnClanData = new ClanData()
+                {
+                    ID = avatar.Alliance.ID,
+                    Name = avatar.Alliance.Name,
+                    Badge = avatar.Alliance.Badge,
+                    Role = avatar.Alliance.Role,
+                    Level = avatar.Alliance.Level
+                };
+            }
+
+            League = avatar.League;
+            Name = avatar.Name;
+
+            Unknown12 = -1;
+
+            Experience = avatar.Experience;
+            Level = avatar.Level;
+            Gems = avatar.Gems;
+            FreeGems = avatar.FreeGems;
+
+            Unknown13 = 1200;
+            Unknown14 = 60;
+
+            Trophies = avatar.Trophies;
+
+            Unknown22 = 1;
+            Unknown23 = 946720861000;
+
+            IsNamed = avatar.IsNamed;
+
+            Unknown27 = 1;
+
+            ResourceTotalCapacity = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            ResourceUsedCapacity = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            Units = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            Spells = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            UnitsUpgradeLevel = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            SpellsUpgradeLevel = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            HeroesUpgradeLevel = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            HeroesHealth = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            HeroesState = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            Tutorial = new AvatarData.SingleDataSlotList()
+            {
+                List = new List<AvatarData.SingleDataSlot>()
+            };
+
+            Acheivement = new AvatarData.SingleDataSlotList()
+            {
+                List = new List<AvatarData.SingleDataSlot>()
+            };
+
+            AcheivementProgress = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            NpcStars = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            NpcGold = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+
+            NpcElixir = new AvatarData.DataSlotList()
+            {
+                List = new List<AvatarData.DataSlot>()
+            };
+        }
+        #endregion
 
         #region Fields
         /// <summary>
@@ -105,13 +237,13 @@ namespace CoCSharp.Data
         /// </summary>
         public int TownHallLevel;
         /// <summary>
-        /// Username of avatar.
+        /// Name of avatar.
         /// </summary>
-        public string Username;
+        public string Name;
         /// <summary>
         /// Unknown integer 12.
         /// </summary>
-        public int Unknown12; // 0xFF
+        public int Unknown12; // -1
         /// <summary>
         /// Level of avatar.
         /// </summary>
@@ -143,21 +275,21 @@ namespace CoCSharp.Data
         public int Trophies;
 
         /// <summary>
-        /// Unknown integer 15.
+        /// Number of attacks won.
         /// </summary>
         public int AttacksWon; // 0
         /// <summary>
-        /// Unknown integer 16.
+        /// Number of attacks lost.
         /// </summary>
         public int AttacksLost; // 0
         /// <summary>
-        /// Unknown integer 17.
+        /// Number of defenses won.
         /// </summary>
-        public int DefenseWon; // 0
+        public int DefensesWon; // 0
         /// <summary>
-        /// Unknown integer 18.
+        /// Number of defenses lost.
         /// </summary> 
-        public int DefenseLost; // 0
+        public int DefensesLost; // 0
         /// <summary>
         /// Unknown integer 19.
         /// </summary>
@@ -181,7 +313,7 @@ namespace CoCSharp.Data
         /// <summary>
         /// Avatar name is set.
         /// </summary>
-        public bool Named;
+        public bool IsNamed;
         /// <summary>
         /// Unknown integer 24.
         /// </summary>
@@ -268,6 +400,7 @@ namespace CoCSharp.Data
         public int Unknown28;
         #endregion
 
+        #region Methods
         /// <summary>
         /// Reads the <see cref="AvatarData"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
@@ -276,6 +409,7 @@ namespace CoCSharp.Data
         /// </param>
         public void Read(MessageReader reader)
         {
+            //TODO: Implement read.
             OwnVillageData = new VillageData();
             OwnVillageData.Read(reader);
 
@@ -309,7 +443,7 @@ namespace CoCSharp.Data
             AllianceCastleTotalCapacity = reader.ReadInt32();
             AllianceCastleUsedCapacity = reader.ReadInt32();
             TownHallLevel = reader.ReadInt32();
-            Username = reader.ReadString();
+            Name = reader.ReadString();
 
             Unknown12 = reader.ReadInt32();
 
@@ -325,8 +459,8 @@ namespace CoCSharp.Data
 
             AttacksWon = reader.ReadInt32();
             AttacksLost = reader.ReadInt32();
-            DefenseWon = reader.ReadInt32();
-            DefenseLost = reader.ReadInt32();
+            DefensesWon = reader.ReadInt32();
+            DefensesLost = reader.ReadInt32();
             Unknown19 = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
             Unknown21 = reader.ReadInt32();
@@ -376,7 +510,7 @@ namespace CoCSharp.Data
             writer.Write(AllianceCastleTotalCapacity);
             writer.Write(AllianceCastleUsedCapacity);
             writer.Write(TownHallLevel);
-            writer.Write(Username);
+            writer.Write(Name);
 
             writer.Write(Unknown12);
 
@@ -392,8 +526,8 @@ namespace CoCSharp.Data
 
             writer.Write(AttacksWon);
             writer.Write(AttacksLost);
-            writer.Write(DefenseWon);
-            writer.Write(DefenseLost);
+            writer.Write(DefensesWon);
+            writer.Write(DefensesLost);
 
             writer.Write(Unknown19);
             writer.Write(Unknown20);
@@ -402,7 +536,7 @@ namespace CoCSharp.Data
             writer.Write(Unknown22); // if Unknown22 then read?
             writer.Write(Unknown23);
 
-            writer.Write(Named);
+            writer.Write(IsNamed);
 
             writer.Write(Unknown24);
             writer.Write(Unknown25);
@@ -427,9 +561,10 @@ namespace CoCSharp.Data
 
             writer.Write(Unknown28);
         }
+        #endregion
 
         //TODO: Make this piece of shit fancier.
-#pragma warning disable CS1591 
+#pragma warning disable CS1591
         public class DataSlot
         {
             public DataSlot(int id, int amount)
@@ -480,7 +615,6 @@ namespace CoCSharp.Data
                 writer.Write(ID);
             }
         }
-
         public class SingleDataSlotList
         {
             public SingleDataSlotList()
@@ -519,7 +653,6 @@ namespace CoCSharp.Data
                 writer.Write(Level);
             }
         }
-
         public class UnitDataSlotList
         {
             public UnitDataSlotList()

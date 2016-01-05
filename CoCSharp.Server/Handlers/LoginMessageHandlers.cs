@@ -3,8 +3,6 @@ using CoCSharp.Logic;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Messages;
 using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace CoCSharp.Server.Handlers
 {
@@ -40,161 +38,52 @@ namespace CoCSharp.Server.Handlers
                 CountryCode = "EU"
             };
 
-            if (lrMessage.UserID == 0 && lrMessage.UserToken == null)
+            var avatar = (Avatar)null;
+            if (lrMessage.UserID == 0 && lrMessage.UserToken == null) // new account
             {
-                lsMessage.UserID = new Random().Next();
-                lsMessage.UserID1 = lsMessage.UserID;
-                lsMessage.UserToken = "sup"; //TODO: Implement usertoken gen
+                avatar = server.AvatarManager.CreateNewAvatar();
+                Console.WriteLine("Created new avatar with Token {0}, ID {1}", avatar.Token, avatar.ID);
+
+                lsMessage.UserID = avatar.ID;
+                lsMessage.UserID1 = avatar.ID;
+                lsMessage.UserToken = avatar.Token;
             }
             else
             {
-                lsMessage.UserID = lrMessage.UserID;
-                lsMessage.UserID1 = lrMessage.UserID;
-                lsMessage.UserToken = lrMessage.UserToken;
+                if (!server.AvatarManager.Avatars.TryGetValue(lrMessage.UserToken, out avatar)) // unknown token and id
+                {
+                    avatar = server.AvatarManager.CreateNewAvatar(lrMessage.UserToken, lrMessage.UserID);
+                    Console.WriteLine("Unknown avatar, Created new avatar with Token {0}, ID {1}", avatar.Token, avatar.ID);
+                }
+                else Console.WriteLine("Avatar with Token {0}, ID {1} logged in.", avatar.Token, avatar.ID);
+
+                lsMessage.UserID = avatar.ID;
+                lsMessage.UserID1 = avatar.ID;
+                lsMessage.UserToken = avatar.Token;
             }
 
-            var avaData = new AvatarData()
+            server.AvatarManager.SaveAvatar(avatar);
+            client.Avatar = avatar;
+
+            var avatarData = new AvatarData(avatar)
             {
-                OwnVillageData = new VillageData()
-                {
-                    Unknown1 = 0,
-                    UserID = lsMessage.UserID,
-                    ShieldDuration = TimeSpan.FromSeconds(100),
-                    Unknown2 = 1200,
-                    Unknown3 = 60,
-                    Compressed = true,
-                    Home = Village.FromJson(File.ReadAllText("ownhome.txt")),
-                    Unknown4 = 0
-                },
-                UserID = lsMessage.UserID,
-                UserID2 = lsMessage.UserID,
-                OwnClanData = new ClanData()
-                {
-                    ID = 1,
-                    Badge = 0,
-                    Name = "CoC#.Server",
-                    Level = 5,
-                    Role = 1,
-                    Unknown1 = 0
-                },
-                League = 0,
+                TownHallLevel = 5,
                 AllianceCastleLevel = 1,
                 AllianceCastleTotalCapacity = 10,
                 AllianceCastleUsedCapacity = 0,
-                TownHallLevel = 3,
-                Username = "FICTURE7",
-
-                Unknown12 = -1,
-
-                Experience = 700,
-                Level = 14,
-                Gems = 999999,
-                FreeGems = 999999,
-
-                Unknown13 = 1200,
-                Unknown14 = 60,
-
-                Trophies = 600,
-
-                Unknown22 = 1,
-                Unknown23 = 946720861000,
-
-                Named = true,
-
-                Unknown24 = 0,
-                Unknown25 = 0,
-                Unknown26 = 0,
-                Unknown27 = 1,
-
-                ResourceTotalCapacity = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                ResourceUsedCapacity = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                Units = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                Spells = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                UnitsUpgradeLevel = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                SpellsUpgradeLevel = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                HeroesUpgradeLevel = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                HeroesHealth = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                HeroesState = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                Tutorial = new AvatarData.SingleDataSlotList()
-                {
-                    List = new List<AvatarData.SingleDataSlot>()
-                },
-
-                Acheivement = new AvatarData.SingleDataSlotList()
-                {
-                    List = new List<AvatarData.SingleDataSlot>()
-                },
-
-                AcheivementProgress = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                NpcStars = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                NpcGold = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                NpcElixir = new AvatarData.DataSlotList()
-                {
-                    List = new List<AvatarData.DataSlot>()
-                },
-
-                Unknown28 = 0
             };
 
             var ohdMessage = new OwnHomeDataMessage()
             {
                 LastVisit = TimeSpan.FromSeconds(100),
                 Unknown1 = -1,
-                Timestamp = DateTime.Now,
-                OwnAvatarData = avaData
+                Timestamp = DateTime.UtcNow,
+                OwnAvatarData = avatarData
             };
 
             client.NetworkManager.SendMessage(encryptionMessage);
-            client.NetworkManager.SendMessage(lsMessage);
-            client.NetworkManager.SendMessage(ohdMessage);
+            client.NetworkManager.SendMessage(lsMessage); // LoginSuccessMessage
+            client.NetworkManager.SendMessage(ohdMessage); // OwnHomeDataMessage
         }
 
         public static void RegisterLoginMessageHandlers(CoCServer server)

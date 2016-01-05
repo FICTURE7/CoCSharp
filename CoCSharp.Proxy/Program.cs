@@ -11,7 +11,7 @@ namespace CoCSharp.Proxy
 
         public static void Main(string[] args)
         {
-            Console.Title = "CoC# Proxy";
+            Console.Title = "CoC# - Proxy";
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -21,8 +21,8 @@ namespace CoCSharp.Proxy
 
             stopwatch.Stop();
 
-            Console.WriteLine("Running({0}ms) on *:9339", stopwatch.Elapsed.TotalMilliseconds);
-            Thread.Sleep(-1);
+            Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
+            Thread.Sleep(Timeout.Infinite);
         }
     }
 }

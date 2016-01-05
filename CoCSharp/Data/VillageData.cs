@@ -61,31 +61,30 @@ namespace CoCSharp.Data
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="VillageData"/>.
         /// </param>
+        /// <exception cref="NotImplementedException">Compressed set to false.</exception>
+        /// <exception cref="InvalidMessageException">Home data array is null.</exception>
         public void Read(MessageReader reader)
         {
-            Unknown1 = reader.ReadInt32();
+            if (!Compressed)
+                throw new NotImplementedException("Uncompressed Village definition is not implemented.");
+
+            Unknown1 = reader.ReadInt32(); // 0
             UserID = reader.ReadInt64();
             ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt32());
-            Unknown2 = reader.ReadInt32();
-            Unknown3 = reader.ReadInt32();
+            Unknown2 = reader.ReadInt32(); // 1200
+            Unknown3 = reader.ReadInt32(); // 60
             Compressed = reader.ReadBoolean();
-            if (Compressed)
-            {
-                var homeData = reader.ReadBytes();
-                if (homeData == null)
-                    throw new InvalidMessageException("No data was provided about Village.");
 
-                using (var br = new BinaryReader(new MemoryStream(homeData))) // little endian
-                {
-                    var decompressedLength = br.ReadInt32();
-                    var compressedHome = br.ReadBytes(homeData.Length - 4); // -4 to remove the decompressedLength bytes read
-                    var homeJson = ZlibStream.UncompressString(compressedHome);
-                    Home = Village.FromJson(homeJson);
-                }
-            }
-            else
+            var homeData = reader.ReadBytes();
+            if (homeData == null)
+                throw new InvalidMessageException("No data was provided about Village.");
+
+            using (var br = new BinaryReader(new MemoryStream(homeData))) // little endian
             {
-                throw new NotImplementedException("Uncompressed Village definition is not implemented.");
+                var decompressedLength = br.ReadInt32();
+                var compressedHome = br.ReadBytes(homeData.Length - 4); // -4 to remove the decompressedLength bytes read
+                var homeJson = ZlibStream.UncompressString(compressedHome);
+                Home = Village.FromJson(homeJson);
             }
 
             Unknown4 = reader.ReadInt32();
@@ -97,16 +96,17 @@ namespace CoCSharp.Data
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="VillageData"/>.
         /// </param>
+        /// <exception cref="NotImplementedException">Compressed set to false.</exception>
         public void Write(MessageWriter writer)
         {
             if (!Compressed) // quit early just not to mess up the stream
                 throw new NotImplementedException("Uncompressed Village definition is not implemented.");
 
-            writer.Write(Unknown1);
+            writer.Write(Unknown1); // 0
             writer.Write(UserID);
             writer.Write((int)ShieldDuration.TotalSeconds);
-            writer.Write(Unknown2);
-            writer.Write(Unknown3);
+            writer.Write(Unknown2); // 1200
+            writer.Write(Unknown3); // 60
             writer.Write(Compressed);
 
             using (var bw = new BinaryWriter(new MemoryStream()))

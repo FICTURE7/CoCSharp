@@ -59,11 +59,11 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Tries to create a new instance of a <see cref="Message"/> with the specified
-        /// message ID. Returns true if the instance was created successfully.
+        /// message ID. Returns <c>true</c> if the instance was created successfully.
         /// </summary>
         /// <param name="id">The message ID.</param>
         /// <param name="message">The instance of the <see cref="Message"/>.</param>
-        /// <returns>Returns true if the instance was created successfully.</returns>
+        /// <returns>Returns <c>true</c> if the instance was created successfully.</returns>
         public static bool TryCreate(ushort id, out Message message)
         {
             var type = (Type)null;

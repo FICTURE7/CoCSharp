@@ -21,7 +21,9 @@ namespace CoCSharp.Networking
         /// Initializes a new instance of the <see cref="InvalidMessageException"/> class with
         /// the specified <see cref="Message"/> instance that caused the error.
         /// </summary>
-        /// <param name="messageInstance"></param>
+        /// <param name="messageInstance">
+        /// The <see cref="Message"/> instance that caused the error.
+        /// </param>
         public InvalidMessageException(Message messageInstance) : base(messageInstance)
         {
             // Space
@@ -31,7 +33,9 @@ namespace CoCSharp.Networking
         /// Initializes a new instance of the <see cref="InvalidMessageException"/> class with a 
         /// specified error message.
         /// </summary>
-        /// <param name="message">The message that describes the error.</param>
+        /// <param name="message">
+        /// The <see cref="Message"/> that describes the error.
+        /// </param>
         public InvalidMessageException(string message) : base(message)
         {
             // Space
