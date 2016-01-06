@@ -173,7 +173,7 @@ If you want to make a clan search API, use CoCSharp as a library and go ahead. :
 Massive thank you to those [guys](https://github.com/FICTURE7/CoCSharp/blob/master/CONTRIBUTORS) who helped with the project! :]
 
 <h2>Projects Using CoC#</h2>
-* [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Server): *(Work in progress)*
+* [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/rewrite/CoCSharp.Server):
   * Server that can't do much at the moment.
 * [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Client):
   * Simple client that can read chat message and send keep alive requests.
