@@ -9,6 +9,8 @@ namespace CoCSharp.Server.Core
 {
     public class AvatarManager
     {
+        //TODO: Improve this thing.
+
         private const string ValidTokenChar = "abcdefghijklmnopqrstuvwxyz1234567890";
         private const int ValidTokenLength = 40;
 
@@ -32,7 +34,7 @@ namespace CoCSharp.Server.Core
             avatar.Token = token;
             avatar.ID = id;
             avatar.Level = 10; // bypass tut
-            avatar.Home = Village.FromJson(File.ReadAllText("Content\\DefaultVillage.json"));
+            avatar.Home = Village.FromJson(File.ReadAllText("Content\\default_village.json"));
             avatar.Name = "Patrik"; // :]
 
             Avatars.Add(avatar.Token, avatar);
@@ -132,6 +134,10 @@ namespace CoCSharp.Server.Core
                     else if (property.PropertyType == typeof(TimeSpan))
                     {
                         value = TimeSpan.Parse(saveValues[1]);
+                    }
+                    else if (property.PropertyType == typeof(DateTime))
+                    {
+                        value = DateTime.Parse(saveValues[1]);
                     }
                     else if (property.PropertyType == typeof(int))
                     {

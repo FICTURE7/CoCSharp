@@ -46,8 +46,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Csv\Compression\Common\CommandLineParser.cs" />
+    <Compile Include="Csv\Compression\Common\CRC.cs" />
+    <Compile Include="Csv\Compression\Common\InBuffer.cs" />
+    <Compile Include="Csv\Compression\Common\OutBuffer.cs" />
+    <Compile Include="Csv\Compression\Compress\LZMA\LzmaBase.cs" />
+    <Compile Include="Csv\Compression\Compress\LZMA\LzmaDecoder.cs" />
+    <Compile Include="Csv\Compression\Compress\LZMA\LzmaEncoder.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\IMatchFinder.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\LzBinTree.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\LzInWindow.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\LzOutWindow.cs" />
+    <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoder.cs" />
+    <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoderBit.cs" />
+    <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
+    <Compile Include="Csv\Compression\ICoder.cs" />
+    <Compile Include="Csv\Compression\LzmaUtils.cs" />
+    <Compile Include="Csv\CsvAttributeHelper.cs" />
+    <Compile Include="Csv\CsvException.cs" />
+    <Compile Include="Csv\CsvIgnoreAttribute.cs" />
+    <Compile Include="Csv\CsvAliasAttribute.cs" />
+    <Compile Include="Csv\CsvSerializer.cs" />
+    <Compile Include="Csv\CsvTable.cs" />
     <Compile Include="Data\AvatarData.cs" />
+    <Compile Include="Data\BuildingData.cs" />
     <Compile Include="Data\ClanData.cs" />
+    <Compile Include="Csv\CsvData.cs" />
+    <Compile Include="Data\MoveVillageObjectData.cs" />
     <Compile Include="Data\VillageData.cs" />
     <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Logic\Avatar.cs" />
@@ -66,9 +91,15 @@
     <Compile Include="Networking\Messages\ChatMessageClientMessage.cs" />
     <Compile Include="Networking\Messages\ChatMessageServerMessage.cs" />
     <Compile Include="Networking\Messages\CommandMessage.cs" />
-    <Compile Include="Networking\Messages\Commands\MoveBuildingCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\BuyBuildingCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\ClearObstacleCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\MoveMultipleVillageObjectCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\MoveVillageObjectCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\UpgradeBuildingCommand.cs" />
     <Compile Include="Networking\Messages\LoginSuccessMessage.cs" />
     <Compile Include="Networking\Messages\OwnHomeDataMessage.cs" />
+    <Compile Include="Networking\MessageToken.cs" />
+    <Compile Include="TokenUtils.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Networking\CoCCrypto.cs" />
     <Compile Include="Networking\InvalidMessageException.cs" />
@@ -79,7 +110,6 @@
     <Compile Include="Networking\MessageFactorySuppressAttribute.cs" />
     <Compile Include="Networking\MessageReader.cs" />
     <Compile Include="Networking\MessageReceivedEventArgs.cs" />
-    <Compile Include="Networking\MessageSendToken.cs" />
     <Compile Include="Networking\Messages\EncryptionMessage.cs" />
     <Compile Include="Networking\Messages\KeepAliveRequestMessage.cs" />
     <Compile Include="Networking\Messages\KeepAliveResponseMessage.cs" />
@@ -87,7 +117,6 @@
     <Compile Include="Networking\Messages\NewClientEncryptionMessage.cs" />
     <Compile Include="Networking\Messages\NewServerEncryptionMessage.cs" />
     <Compile Include="Networking\Messages\UnknownMessage.cs" />
-    <Compile Include="Networking\MessageReceiveToken.cs" />
     <Compile Include="Networking\MessageWriter.cs" />
     <Compile Include="Networking\NetworkManagerAsync.cs" />
     <Compile Include="Networking\NetworkManagerAsyncSettings.cs" />
@@ -95,9 +124,7 @@
     <Compile Include="Networking\SocketAsyncEventArgsPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Csv\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

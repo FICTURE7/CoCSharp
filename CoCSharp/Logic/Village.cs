@@ -81,41 +81,6 @@ namespace CoCSharp.Logic
         public string DeserializedJson { get; set; }
 
         /// <summary>
-        /// Determines if the specified coordinates is legal. Returns <c>true</c>
-        /// if its valid.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <returns><c>true</c> if coordinate is valid.</returns>
-        public static bool IsCoordinatesLegal(int x, int y)
-        {
-            if (x > MaxX)
-                return false; // exit asap, small optimization
-            if (y > MaxY)
-                return false;
-
-            if (x < MinX)
-                return false;
-            if (y < MinY)
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Returns a <see cref="Village"/> that will be deserialize from the specified
-        /// JSON string.
-        /// </summary>
-        /// <param name="value">JSON string that represents the <see cref="Village"/>.</param>
-        /// <returns>A <see cref="Village"/> that is deserialized from the specified JSON string.</returns>
-        public static Village FromJson(string value)
-        {
-            var village = JsonConvert.DeserializeObject<Village>(value);
-            village.DeserializedJson = value;
-            return village;
-        }
-
-        /// <summary>
         /// Returns a JSON formatted string that represents the current <see cref="Village"/>.
         /// </summary>
         /// <returns>A JSON formatted string that represents the current <see cref="Village"/>.</returns>
@@ -132,6 +97,41 @@ namespace CoCSharp.Logic
         public string ToJson(bool indent)
         {
             return indent == true ? JsonConvert.SerializeObject(this, Formatting.Indented) : JsonConvert.SerializeObject(this);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="Village"/> that will be deserialize from the specified
+        /// JSON string.
+        /// </summary>
+        /// <param name="value">JSON string that represents the <see cref="Village"/>.</param>
+        /// <returns>A <see cref="Village"/> that is deserialized from the specified JSON string.</returns>
+        public static Village FromJson(string value)
+        {
+            var village = JsonConvert.DeserializeObject<Village>(value);
+            village.DeserializedJson = value;
+            return village;
+        }
+
+        /// <summary>
+        /// Determines if the specified coordinates is legal. Returns <c>true</c>
+        /// if its valid.
+        /// </summary>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        /// <returns>Returns <c>true</c> if coordinate is valid.</returns>
+        public static bool IsCoordinatesLegal(int x, int y)
+        {
+            if (x > MaxX)
+                return false; // exit asap, small optimization
+            if (y > MaxY)
+                return false;
+
+            if (x < MinX)
+                return false;
+            if (y < MinY)
+                return false;
+
+            return true;
         }
     }
 }

@@ -348,13 +348,14 @@ namespace CoCSharp.Networking
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
         /// Releases all unmanged resources and optionally releases managed resources
         /// used by the current instance of the <see cref="NetworkManagerAsync"/> class.
         /// </summary>
-        /// <param name="disposing">Releases managed resources if set to true.</param>
+        /// <param name="disposing">Releases managed resources if set to <c>true</c>.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)

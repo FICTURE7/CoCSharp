@@ -17,14 +17,19 @@ namespace CoCSharp.Server
             _acceptPool = new SocketAsyncEventArgsPool(100);
 
             AvatarManager = new AvatarManager();
+            DataManager = new DataManager();
             Clients = new List<CoCRemoteClient>();
             MessageHandlers = new Dictionary<ushort, MessageHandler>();
+            CommandHandlers = new Dictionary<int, CommandHandler>();
 
             LoginMessageHandlers.RegisterLoginMessageHandlers(this);
             InGameMessageHandlers.RegisterInGameMessageHandlers(this);
+            BuildingCommandHandlers.RegisterBuildingCommandHandlers(this);
         }
 
         public AvatarManager AvatarManager { get; private set; }
+        public DataManager DataManager { get; private set; }
+        public Dictionary<int, CommandHandler> CommandHandlers { get; private set; }
         public Dictionary<ushort, MessageHandler> MessageHandlers { get; private set; }
         public List<CoCRemoteClient> Clients { get; private set; }
 
@@ -42,6 +47,11 @@ namespace CoCSharp.Server
         public void RegisterMessageHandler(Message message, MessageHandler handler)
         {
             MessageHandlers.Add(message.ID, handler);
+        }
+
+        public void RegisterCommandHandler(Command command, CommandHandler handler)
+        {
+            CommandHandlers.Add(command.ID, handler);
         }
 
         private void StartAccept()

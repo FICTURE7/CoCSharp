@@ -6,6 +6,11 @@ namespace CoCSharp
     {
         private static readonly DateTime UnixTime = new DateTime(1970, 1, 1);
 
+        public static int UtcNow
+        {
+            get { return (int)ToUnixTimestamp(DateTime.UtcNow); }
+        }
+
         public static DateTime FromUnixTimestamp(double unixTimestamp)
         {
             return UnixTime.AddSeconds(unixTimestamp);

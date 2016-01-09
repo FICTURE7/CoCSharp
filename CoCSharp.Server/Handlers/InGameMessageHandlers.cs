@@ -1,7 +1,5 @@
 ﻿using CoCSharp.Networking;
 using CoCSharp.Networking.Messages;
-using CoCSharp.Networking.Messages.Commands;
-using System;
 
 namespace CoCSharp.Server.Handlers
 {
@@ -20,16 +18,14 @@ namespace CoCSharp.Server.Handlers
                 for (int i = 0; i < cmdMessage.Commands.Length; i++)
                 {
                     var cmd = cmdMessage.Commands[i];
-                    if (cmd is MoveBuildingCommand)
-                    {
-                        var mbCmd = cmd as MoveBuildingCommand;
-                        Console.WriteLine("Moving building {0} to {1}, {2}", mbCmd.BuildingID, mbCmd.X, mbCmd.Y);
-                        var index = mbCmd.BuildingID - 500000000;
-                        client.Avatar.Home.Buildings[index].X = mbCmd.X;
-                        client.Avatar.Home.Buildings[index].Y = mbCmd.Y;
-                        server.AvatarManager.SaveAvatar(client.Avatar);
-                    }
+                    if (cmd == null)
+                        continue;
+
+                    var handler = (CommandHandler)null;
+                    if (server.CommandHandlers.TryGetValue(cmd.ID, out handler))
+                        handler(server, client, cmd);
                 }
+                server.AvatarManager.SaveAvatar(client.Avatar);
             }
         }
 
@@ -37,12 +33,14 @@ namespace CoCSharp.Server.Handlers
         {
             var cmcMessage = message as ChatMessageClientMessage;
             var cmsMessage = new ChatMessageServerMessage();
+
+            //TODO: Set alliance and all that jazz.
+
             cmsMessage.Name = client.Avatar.Name;
             cmsMessage.Message = cmcMessage.Message;
 
-            //TODO: Send to all users
-
-            client.NetworkManager.SendMessage(cmsMessage);
+            for (int i = 0; i < server.Clients.Count; i++)
+                server.Clients[i].NetworkManager.SendMessage(cmsMessage);
         }
 
         public static void RegisterInGameMessageHandlers(CoCServer server)

@@ -13,6 +13,7 @@ namespace CoCSharp.Networking
     {
         static MessageFactory()
         {
+            s_messageType = typeof(Message);
             MessageDictionary = new Dictionary<ushort, Type>();
 
             var assembly = Assembly.GetExecutingAssembly();
@@ -35,7 +36,7 @@ namespace CoCSharp.Networking
             }
         }
 
-        private static readonly Type s_messageType = typeof(Message); // reduce num of calls to typeof
+        private static readonly Type s_messageType;
 
         /// <summary>
         /// Gets the dictionary that associates <see cref="Message"/> types with

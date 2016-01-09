@@ -12,6 +12,7 @@ namespace CoCSharp.Networking
     {
         static CommandFactory()
         {
+            s_commandType = typeof(Command);
             CommandDictionary = new Dictionary<int, Type>();
 
             var assembly = Assembly.GetExecutingAssembly();
@@ -27,14 +28,14 @@ namespace CoCSharp.Networking
 
                     var instance = (Command)Activator.CreateInstance(type);
                     if (CommandDictionary.ContainsKey(instance.ID))
-                        throw new CommandException("A Command type with the same ID: " + instance.ID + " was already added to the dictionary.", instance); 
+                        throw new CommandException("A Command type with the same ID: " + instance.ID + " was already added to the dictionary.", instance);
 
                     CommandDictionary.Add(instance.ID, type);
                 }
             }
         }
 
-        private static readonly Type s_commandType = typeof(Command); // reduce num of calls to typeof
+        private static readonly Type s_commandType;
 
         /// <summary>
         /// Gets the dictionary that associates <see cref="Command"/> types with

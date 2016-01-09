@@ -29,7 +29,7 @@ namespace CoCSharp.Logic
         /// Gets or sets the data ID of the <see cref="VillageObject"/>.
         /// </summary>
         [JsonProperty("data")]
-        public int DataID { get; set; }
+        public int DataID { get; set; } //TODO: Hide this thing
 
         /// <summary>
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.

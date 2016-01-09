@@ -47,6 +47,8 @@
     <Compile Include="CoCRemoteClient.cs" />
     <Compile Include="CoCServer.cs" />
     <Compile Include="Core\AvatarManager.cs" />
+    <Compile Include="Core\DataManager.cs" />
+    <Compile Include="Handlers\BuildingCommandHandlers.cs" />
     <Compile Include="Handlers\InGameMessageHandlers.cs" />
     <Compile Include="Handlers\LoginMessageHandlers.cs" />
     <Compile Include="Program.cs" />
@@ -64,7 +66,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\DefaultVillage.json">
+    <None Include="Content\buildings.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\default_village.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

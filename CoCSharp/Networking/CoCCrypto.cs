@@ -87,7 +87,7 @@ namespace CoCSharp.Networking
         /// Generates a random byte array of random length between 15 and 25 bytes long.
         /// </summary>
         /// <returns>The random byte array.</returns>
-        public static byte[] CreateRandomByteArray()
+        public static byte[] GenerateNonce()
         {
             var buffer = new byte[Utils.Random.Next(15, 25)];
             Utils.Random.NextBytes(buffer);

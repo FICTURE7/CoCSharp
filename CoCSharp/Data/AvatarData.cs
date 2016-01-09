@@ -6,6 +6,7 @@ using System.Collections.Generic;
 namespace CoCSharp.Data
 {
     //TODO: Make this piece of shit fancier.
+    //TODO: Find a better name for AvatarData, ClanData, VillageData and MoveVillageObjectData.
 
     /// <summary>
     /// Represents an <see cref="Avatar"/>'s data sent in the

@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using CoCSharp.Server.Handlers;
 using CoCSharp.Logic;
+using System;
 
 namespace CoCSharp.Server
 {
@@ -24,6 +25,9 @@ namespace CoCSharp.Server
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
+            if (e.Exception != null)
+                Console.WriteLine("Exception occured: {0}", e.Exception.ToString());
+
             var handler = (MessageHandler)null;
             if (_server.MessageHandlers.TryGetValue(e.Message.ID, out handler))
                 handler(_server, this, e.Message);
