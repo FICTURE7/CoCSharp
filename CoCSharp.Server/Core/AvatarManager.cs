@@ -9,7 +9,7 @@ namespace CoCSharp.Server.Core
 {
     public class AvatarManager
     {
-        //TODO: Improve this thing.
+        //TODO: Improve saving system to save resources progess and all that jazz.
 
         private const string ValidTokenChar = "abcdefghijklmnopqrstuvwxyz1234567890";
         private const int ValidTokenLength = 40;

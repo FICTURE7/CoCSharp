@@ -1,13 +1,10 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Data.Slots;
+using CoCSharp.Logic;
 using CoCSharp.Networking;
 using System;
-using System.Collections.Generic;
 
 namespace CoCSharp.Data
 {
-    //TODO: Make this piece of shit fancier.
-    //TODO: Find a better name for AvatarData, ClanData, VillageData and MoveVillageObjectData.
-
     /// <summary>
     /// Represents an <see cref="Avatar"/>'s data sent in the
     /// networking protocol.
@@ -77,80 +74,21 @@ namespace CoCSharp.Data
 
             Unknown27 = 1;
 
-            ResourceTotalCapacity = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            ResourceUsedCapacity = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            Units = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            Spells = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            UnitsUpgradeLevel = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            SpellsUpgradeLevel = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            HeroesUpgradeLevel = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            HeroesHealth = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            HeroesState = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            Tutorial = new AvatarData.SingleDataSlotList()
-            {
-                List = new List<AvatarData.SingleDataSlot>()
-            };
-
-            Acheivement = new AvatarData.SingleDataSlotList()
-            {
-                List = new List<AvatarData.SingleDataSlot>()
-            };
-
-            AcheivementProgress = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            NpcStars = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            NpcGold = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
-
-            NpcElixir = new AvatarData.DataSlotList()
-            {
-                List = new List<AvatarData.DataSlot>()
-            };
+            ResourcesCapacity = new ResourceCapacitySlot[0];
+            ResourcesAmount = new ResourceAmountSlot[0];
+            Units = new UnitSlot[0];
+            Spells = new SpellSlot[0];
+            UnitUpgrades = new UnitUpgradeSlot[0];
+            SpellUpgrades = new SpellUpgradeSlot[0];
+            HeroUpgrades = new HeroUpgradeSlot[0];
+            HeroHealths = new HeroHealthSlot[0];
+            HeroStates = new HeroStateSlot[0];
+            TutorialProgess = new TutorialProgressSlot[0];
+            Acheivements = new AchievementSlot[0];
+            AcheivementProgress = new AchievementProgessSlot[0];
+            NpcStars = new NpcStarSlot[0];
+            NpcGold = new NpcGoldSlot[0];
+            NpcElixir = new NpcElixirSlot[0];
         }
         #endregion
 
@@ -332,69 +270,69 @@ namespace CoCSharp.Data
         /// </summary>
         public int Unknown27;
         /// <summary>
-        /// Resource total capacity.
+        /// Resources capacity.
         /// </summary>
-        public DataSlotList ResourceTotalCapacity;
+        public ResourceCapacitySlot[] ResourcesCapacity;
         /// <summary>
-        /// Resource used capacity.
+        /// Resources amount.
         /// </summary>
-        public DataSlotList ResourceUsedCapacity;
+        public ResourceAmountSlot[] ResourcesAmount;
         /// <summary>
         /// Units.
         /// </summary>
-        public DataSlotList Units;
+        public UnitSlot[] Units;
         /// <summary>
         /// Spells.
         /// </summary>
-        public DataSlotList Spells;
+        public SpellSlot[] Spells;
         /// <summary>
-        /// Units upgrade level.
+        /// Unit upgrades level.
         /// </summary>
-        public DataSlotList UnitsUpgradeLevel;
+        public UnitUpgradeSlot[] UnitUpgrades;
         /// <summary>
-        /// Spells upgrade level.
+        /// Spell upgrades level.
         /// </summary>
-        public DataSlotList SpellsUpgradeLevel;
+        public SpellUpgradeSlot[] SpellUpgrades;
         /// <summary>
-        /// Heroes upgrade level.
+        /// Hero upgrades level.
         /// </summary>
-        public DataSlotList HeroesUpgradeLevel;
+        public HeroUpgradeSlot[] HeroUpgrades;
         /// <summary>
-        /// Heroes health.
+        /// Hero healths.
         /// </summary>
-        public DataSlotList HeroesHealth;
+        public HeroHealthSlot[] HeroHealths;
         /// <summary>
-        /// Heroes state.
+        /// Hero states.
         /// </summary>
-        public DataSlotList HeroesState;
+        public HeroStateSlot[] HeroStates;
         /// <summary>
-        /// AllianceUnits
+        /// Alliance units
         /// </summary>
-        public UnitDataSlotList AllianceUnits;
+        public AllianceUnitSlot[] AllianceUnits;
         /// <summary>
-        /// Tutorial state.
+        /// Tutorial progress.
         /// </summary>
-        public SingleDataSlotList Tutorial;
+        public TutorialProgressSlot[] TutorialProgess;
         /// <summary>
-        /// Acheivement state.
+        /// Acheivements state.
         /// </summary>
-        public SingleDataSlotList Acheivement;
+        public AchievementSlot[] Acheivements;
         /// <summary>
         /// Acheivement progress.
         /// </summary>
-        public DataSlotList AcheivementProgress;
+        public AchievementProgessSlot[] AcheivementProgress;
         /// <summary>
         /// Npc stars.
         /// </summary>
-        public DataSlotList NpcStars;
+        public NpcStarSlot[] NpcStars;
         /// <summary>
         /// Npc gold.
         /// </summary>
-        public DataSlotList NpcGold;
+        public NpcGoldSlot[] NpcGold;
         /// <summary>
         /// Npc elixir.
         /// </summary>
-        public DataSlotList NpcElixir;
+        public NpcElixirSlot[] NpcElixir;
         /// <summary>
         /// Unknown integer 28.
         /// </summary>
@@ -410,7 +348,6 @@ namespace CoCSharp.Data
         /// </param>
         public void Read(MessageReader reader)
         {
-            //TODO: Implement read.
             OwnVillageData = new VillageData();
             OwnVillageData.Read(reader);
 
@@ -466,6 +403,32 @@ namespace CoCSharp.Data
             Unknown20 = reader.ReadInt32();
             Unknown21 = reader.ReadInt32();
             Unknown22 = reader.ReadByte();
+            Unknown23 = reader.ReadInt64();
+
+            IsNamed = reader.ReadBoolean();
+
+            Unknown24 = reader.ReadInt32();
+            Unknown25 = reader.ReadInt32();
+            Unknown26 = reader.ReadInt32();
+            Unknown27 = reader.ReadInt32();
+
+            ResourcesCapacity = Slot.ReadSlotArray<ResourceCapacitySlot>(reader);
+            ResourcesAmount = Slot.ReadSlotArray<ResourceAmountSlot>(reader);
+            Units = Slot.ReadSlotArray<UnitSlot>(reader);
+            Spells = Slot.ReadSlotArray<SpellSlot>(reader);
+            UnitUpgrades = Slot.ReadSlotArray<UnitUpgradeSlot>(reader);
+            SpellUpgrades = Slot.ReadSlotArray<SpellUpgradeSlot>(reader);
+            HeroUpgrades = Slot.ReadSlotArray<HeroUpgradeSlot>(reader);
+            HeroHealths = Slot.ReadSlotArray<HeroHealthSlot>(reader);
+            HeroStates = Slot.ReadSlotArray<HeroStateSlot>(reader);
+            TutorialProgess = Slot.ReadSlotArray<TutorialProgressSlot>(reader);
+            Acheivements = Slot.ReadSlotArray<AchievementSlot>(reader);
+            AcheivementProgress = Slot.ReadSlotArray<AchievementProgessSlot>(reader);
+            NpcStars = Slot.ReadSlotArray<NpcStarSlot>(reader);
+            NpcGold = Slot.ReadSlotArray<NpcGoldSlot>(reader);
+            NpcElixir = Slot.ReadSlotArray<NpcElixirSlot>(reader);
+
+            Unknown28 = reader.ReadInt32();
         }
 
         /// <summary>
@@ -544,134 +507,24 @@ namespace CoCSharp.Data
             writer.Write(Unknown26);
             writer.Write(Unknown27);
 
-            ResourceTotalCapacity.Write(writer);
-            ResourceUsedCapacity.Write(writer);
-            Units.Write(writer);
-            Spells.Write(writer);
-            UnitsUpgradeLevel.Write(writer);
-            SpellsUpgradeLevel.Write(writer);
-            HeroesUpgradeLevel.Write(writer);
-            HeroesHealth.Write(writer);
-            HeroesState.Write(writer);
-            Tutorial.Write(writer);
-            Acheivement.Write(writer);
-            AcheivementProgress.Write(writer);
-            NpcStars.Write(writer);
-            NpcGold.Write(writer);
-            NpcElixir.Write(writer);
+            Slot.WriteSlotArray(writer, ResourcesCapacity);
+            Slot.WriteSlotArray(writer, ResourcesAmount);
+            Slot.WriteSlotArray(writer, Units);
+            Slot.WriteSlotArray(writer, Spells);
+            Slot.WriteSlotArray(writer, UnitUpgrades);
+            Slot.WriteSlotArray(writer, SpellUpgrades);
+            Slot.WriteSlotArray(writer, HeroUpgrades);
+            Slot.WriteSlotArray(writer, HeroHealths);
+            Slot.WriteSlotArray(writer, HeroStates);
+            Slot.WriteSlotArray(writer, TutorialProgess);
+            Slot.WriteSlotArray(writer, Acheivements);
+            Slot.WriteSlotArray(writer, AcheivementProgress);
+            Slot.WriteSlotArray(writer, NpcStars);
+            Slot.WriteSlotArray(writer, NpcGold);
+            Slot.WriteSlotArray(writer, NpcElixir);
 
             writer.Write(Unknown28);
         }
         #endregion
-
-        //TODO: Make this piece of shit fancier.
-#pragma warning disable CS1591
-        public class DataSlot
-        {
-            public DataSlot(int id, int amount)
-            {
-                ID = id;
-                Amount = amount;
-            }
-
-            public int ID;
-            public int Amount;
-
-            public void Write(MessageWriter writer)
-            {
-                writer.Write(ID);
-                writer.Write(Amount);
-            }
-        }
-        public class DataSlotList
-        {
-            public DataSlotList()
-            {
-                List = new List<DataSlot>();
-            }
-
-            public List<DataSlot> List;
-
-            public void Write(MessageWriter writer)
-            {
-                writer.Write(List.Count);
-                for (int i = 0; i < List.Count; i++)
-                {
-                    List[i].Write(writer);
-                }
-            }
-        }
-
-        public class SingleDataSlot
-        {
-            public SingleDataSlot(int id)
-            {
-                ID = id;
-            }
-
-            public int ID;
-
-            public void Write(MessageWriter writer)
-            {
-                writer.Write(ID);
-            }
-        }
-        public class SingleDataSlotList
-        {
-            public SingleDataSlotList()
-            {
-                List = new List<SingleDataSlot>();
-            }
-
-            public List<SingleDataSlot> List;
-
-            public void Write(MessageWriter writer)
-            {
-                writer.Write(List.Count);
-                for (int i = 0; i < List.Count; i++)
-                {
-                    List[i].Write(writer);
-                }
-            }
-        }
-
-        public class UnitDataSlot
-        {
-            public UnitDataSlot(int id, int amount)
-            {
-                ID = id;
-                Amount = amount;
-            }
-
-            public int ID;
-            public int Amount;
-            public int Level;
-
-            public void Write(MessageWriter writer)
-            {
-                writer.Write(ID);
-                writer.Write(Amount);
-                writer.Write(Level);
-            }
-        }
-        public class UnitDataSlotList
-        {
-            public UnitDataSlotList()
-            {
-                List = new List<UnitDataSlot>();
-            }
-
-            public List<UnitDataSlot> List;
-
-            public void Write(MessageWriter writer)
-            {
-                writer.Write(List.Count);
-                for (int i = 0; i < List.Count; i++)
-                {
-                    List[i].Write(writer);
-                }
-            }
-        }
-#pragma warning restore CS1591
     }
 }

@@ -91,9 +91,8 @@ namespace CoCSharp.Csv
         /// <param name="table"><see cref="CsvTable"/> from which the data will be deserialize.</param>
         /// <returns>Returns the deserialized object array as the specified type <c>T</c>.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="table"/> is null.</exception>
-        /// <exception cref="ArgumentNullException"><c>T</c> is null.</exception>
         /// <exception cref="ArgumentException"><c>T</c> is not a subclass of CoCData.</exception>
-        public static T[] Deserialize<T>(CsvTable table)
+        public static T[] Deserialize<T>(CsvTable table) where T : CsvData
         {
             var tType = typeof(T);
             var objs = Deserialize(table, tType);

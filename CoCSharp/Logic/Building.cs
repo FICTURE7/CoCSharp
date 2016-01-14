@@ -47,15 +47,10 @@ namespace CoCSharp.Logic
         public int Level { get; set; }
 
         /// <summary>
-        /// Gets whether the <see cref="Building"/> is constructed.
-        /// </summary>
-        public bool IsConstructed { get { return Level > -1; } } //TODO: I dont like this.
-
-        /// <summary>
         /// Gets whether the <see cref="Building"/> is in construction.
         /// That is upgrading and constructing.
         /// </summary>
-        public bool IsConstructing { get { return ConstructionTime.TotalSeconds > 0; } }
+        public bool IsConstructing { get { return ConstructionDurationSecounds > 0; } }
 
         /// <summary>
         /// Gets or sets whether the <see cref="Building"/> is locked.
@@ -65,51 +60,53 @@ namespace CoCSharp.Logic
         public bool Locked { get; set; }
 
         /// <summary>
-        /// Gets or sets the amount of time needed for the construction to finish.
+        /// Gets the duration of the construction.
         /// </summary>
-        public TimeSpan ConstructionTime
+        public TimeSpan ConstructionDuration
         {
             get
             {
-                return TimeSpan.FromSeconds(ConstructionTimeEndSecounds - DateTimeConverter.UtcNow);
-            }
-            set
-            {
-                ConstructionTimeEndSecounds = DateTimeConverter.UtcNow + (int)value.TotalSeconds;
+                if (ConstructionEndSecounds <= 0)
+                    return TimeSpan.FromSeconds(0);
+
+                return TimeSpan.FromSeconds(ConstructionEndSecounds - DateTimeConverter.UtcNow);
             }
         }
         [JsonProperty("const_t", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private int ConstructionTimeSecounds 
+        private int ConstructionDurationSecounds 
         {
             get
             {
-                var endTime = ConstructionTimeEndSecounds - DateTimeConverter.UtcNow;
-                if (endTime <= 0)
+                var endTime = ConstructionEndSecounds - DateTimeConverter.UtcNow;
+                if (endTime <= 0) // exceeded construction end time
                 {
-                    ConstructionTimeEndSecounds = 0;
+                    ConstructionEndSecounds = 0;
                     return 0;
                 }
-
                 return endTime;
             } 
         } 
 
         /// <summary>
-        /// Gets or sets the date that the construction will finish.
+        /// Gets or sets the date that the construction will finish in UTC time. Returns <see cref="DateTime.MinValue"/>
+        /// if not in construction.
         /// </summary>
-        public DateTime ConstructionTimeEnd
+        public DateTime ConstructionEnd // might wanna use a nullable type.
         {
             get
             {
-                return DateTimeConverter.FromUnixTimestamp(ConstructionTimeEndSecounds);
+                if (ConstructionEndSecounds <= 0) // exceeded construction end time
+                    return DateTime.MinValue;
+
+                return DateTimeConverter.FromUnixTimestamp(ConstructionEndSecounds);
             }
             set
             {
-                ConstructionTimeEndSecounds = (int)DateTimeConverter.ToUnixTimestamp(value);
+                ConstructionEndSecounds = (int)DateTimeConverter.ToUnixTimestamp(value);
             }
         }
         [JsonProperty("const_t_end", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private int ConstructionTimeEndSecounds { get; set; }
+        private int ConstructionEndSecounds { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="BuildingData"/> of the <see cref="Building"/>.
@@ -125,10 +122,22 @@ namespace CoCSharp.Logic
             if (Data == null)
                 throw new InvalidOperationException("Building.Data cannot be null.");
 
-            if (!IsConstructed)
+            if (!IsConstructing)
             {
-                ConstructionTimeEnd = DateTime.UtcNow.Add(Data.BuildTime);
+                //Console.WriteLine("Construction of {0} started.", Data.Name);
+                var constEnd = DateTime.UtcNow.Add(Data.BuildTime);
+                ConstructionEnd = constEnd;
+                LogicScheduler.ScheduleLogic(ConstructFinished, constEnd);
             }
+        }
+
+        private void ConstructFinished()
+        {
+            var args = new ConstructionFinishEventArgs() { Building = this, EndTime = ConstructionEnd };
+            Level++;
+            ConstructionEndSecounds = 0;
+            OnConstructionFinished(args);
+            //Console.WriteLine("Construction of {0} ended.", Data.Name);
         }
 
         /// <summary>
@@ -136,8 +145,32 @@ namespace CoCSharp.Logic
         /// </summary>
         public void EndConstruct()
         {
-            //TODO: Implement.
-            throw new NotImplementedException();
+            if (!IsConstructing)
+                throw new InvalidOperationException("Building is not in construction.");
+
+            ConstructEnded();
+            //Console.WriteLine("Construction endded because someone wanted it.");
+        }
+
+        private void ConstructEnded()
+        {
+            var args = new ConstructionFinishEventArgs() { Building = this, EndTime = DateTime.UtcNow, WasEnded = true };
+            ConstructionEndSecounds = 0;
+            OnConstructionFinished(args);
+        }
+
+        /// <summary>
+        /// The event raised when the <see cref="Building"/> construction is finished.
+        /// </summary>
+        public event EventHandler<ConstructionFinishEventArgs> ConstructionFinished;
+        /// <summary>
+        /// Use this method to trigger the <see cref="ConstructionFinished"/> event/
+        /// </summary>
+        /// <param name="e">The arguments</param>
+        protected virtual void OnConstructionFinished(ConstructionFinishEventArgs e)
+        {
+            if (ConstructionFinished != null)
+                ConstructionFinished(this, e);
         }
 
         #region ID Handling

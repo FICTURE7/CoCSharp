@@ -36,11 +36,6 @@ namespace CoCSharp.Logic
         public long ID { get; set; }
 
         /// <summary>
-        /// Gets or sets the last time an update was made.
-        /// </summary>
-        public DateTime LastUpdate { get; set; } //TODO: Find a more universal way.
-
-        /// <summary>
         /// Gets or sets the shield duration of the <see cref="Avatar"/>.
         /// </summary>
         public TimeSpan ShieldDuration { get; set; }

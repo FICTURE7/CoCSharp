@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Data;
+using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Messages;
@@ -71,6 +72,16 @@ namespace CoCSharp.Server.Handlers
                 AllianceCastleLevel = 1,
                 AllianceCastleTotalCapacity = 10,
                 AllianceCastleUsedCapacity = 0,
+                ResourcesCapacity = new ResourceCapacitySlot[] 
+                {
+                    new ResourceCapacitySlot(3000001, 1000),
+                    new ResourceCapacitySlot(3000002, 1000)
+                },
+                ResourcesAmount = new ResourceAmountSlot[] 
+                {
+                    new ResourceAmountSlot(3000001, 100),
+                    new ResourceAmountSlot(3000002, 200)
+                }
             };
 
             var ohdMessage = new OwnHomeDataMessage()
