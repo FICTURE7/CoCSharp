@@ -4,16 +4,57 @@ using System;
 namespace CoCSharp.Data
 {
     /// <summary>
-    /// Defines data from buildings.csv.
+    /// Defines data from the buildings.csv file.
     /// </summary>
     public class BuildingData : CsvData
     {
+        static BuildingData()
+        {
+            _instance = new BuildingData();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildingData"/> class.
         /// </summary>
         public BuildingData()
         {
             // Space
+        }
+
+        /// <summary>
+        /// Determines if the specified data ID is valid for a <see cref="BuildingData"/> data ID.
+        /// </summary>
+        /// <param name="id">Data ID to validate.</param>
+        /// <returns>Returns <c>true</c> if the data ID specified is valid.</returns>
+        public static bool CheckDataID(int id)
+        {
+            return !(id < _instance.BaseDataID || id > 2000000); // Locales
+        }
+
+        /// <summary>
+        /// Converts the specified data ID to a data index.
+        /// </summary>
+        /// <param name="dataID">Data ID to convert.</param>
+        /// <returns>Returns data index converted.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="dataID"/> is no the range of <see cref="BaseDataID"/> &lt; id &lt; 2000000.
+        /// </exception>
+        public static int ToDataIndex(int dataID)
+        {
+            if (!CheckDataID(dataID))
+                throw new ArgumentOutOfRangeException("Data ID must be in the range of " + _instance.BaseDataID + " < id < 2000000");
+
+            return dataID;
+        }
+
+        private static BuildingData _instance;
+
+        /// <summary>
+        /// Gets the base data ID of the <see cref="BuildingData"/>.
+        /// </summary>
+        public override int BaseDataID
+        {
+            get { return 1000000; }
         }
 
         /// <summary>
@@ -65,7 +106,7 @@ namespace CoCSharp.Data
         [CsvIgnore]
         public TimeSpan BuildTime
         {
-            get { return new TimeSpan(BuildTimeD, BuildTimeH, BuildTimeM, BuildTimeS);  }
+            get { return new TimeSpan(BuildTimeD, BuildTimeH, BuildTimeM, BuildTimeS); }
             set
             {
                 BuildTimeD = value.Days;
@@ -148,7 +189,7 @@ namespace CoCSharp.Data
         /// </summary>
         public int ResourcePerHour { get; set; }
         /// <summary>
-        /// Gets or sets Resource max
+        /// Gets or sets Resource max.
         /// </summary>
         public int ResourceMax { get; set; }
         /// <summary>

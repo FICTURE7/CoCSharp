@@ -11,51 +11,57 @@ namespace CoCSharp.Server.Core
     {
         //TODO: Improve saving system to save resources progess and all that jazz.
 
-        private const string ValidTokenChar = "abcdefghijklmnopqrstuvwxyz1234567890";
-        private const int ValidTokenLength = 40;
-
         public AvatarManager()
         {
-            Avatars = new Dictionary<string, Avatar>();
-            LoadAllAvatars();
+            LoadedAvatar = new Dictionary<string, Avatar>();
+            //LoadAllAvatars();
         }
 
-        public Dictionary<string, Avatar> Avatars { get; set; } // usertoken to avatar
+        public Dictionary<string, Avatar> LoadedAvatar { get; set; } // usertoken to avatar
 
         public Avatar CreateNewAvatar()
         {
-            return CreateNewAvatar(GenerateUserToken(), GenerateUserID());
+            var token = TokenUtils.GenerateToken();
+            while (LoadedAvatar.ContainsKey(token))
+                token = TokenUtils.GenerateToken();
+
+            var userID = Utils.Random.Next();
+            while (!CheckAvatarID(userID))
+                userID = Utils.Random.Next();
+
+            return CreateNewAvatar(token, userID);
         }
 
         public Avatar CreateNewAvatar(string token, long id)
         {
+            var vilPath = Path.Combine(CoCServerPaths.Content, "default_village.json");
             var avatar = new Avatar();
-            avatar.ShieldDuration = TimeSpan.FromDays(3);
+            avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
             avatar.ID = id;
             avatar.Level = 10; // bypass tut
-            avatar.Home = Village.FromJson(File.ReadAllText("Content\\default_village.json"));
+            avatar.Home = Village.FromJson(File.ReadAllText(vilPath));
             avatar.Name = "Patrik"; // :]
 
-            Avatars.Add(avatar.Token, avatar);
+            LoadedAvatar.Add(avatar.Token, avatar);
             return avatar;
         }
 
         public void SaveAllAvatars()
         {
-            var avatars = Avatars.Values.ToArray();
+            var avatars = LoadedAvatar.Values.ToArray();
             for (int i = 0; i < avatars.Length; i++)
                 SaveAvatar(avatars[i]);
         }
 
         public void SaveAvatar(Avatar avatar)
         {
-            var path = Path.Combine("Avatars", avatar.Token);
+            var path = Path.Combine(CoCServerPaths.Avatars, avatar.Token);
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
             var village = avatar.Home.ToJson(true);
-            File.WriteAllText(Path.Combine(path, "Village.json"), village);
+            File.WriteAllText(Path.Combine(path, "village.json"), village);
 
             var builder = new StringBuilder();
 
@@ -73,7 +79,7 @@ namespace CoCSharp.Server.Core
                 if (value == null)
                     value = "null";
 
-                builder.AppendFormat("{0} = {1}\n", name, value);
+                builder.AppendFormat("{0}={1}\n", name, value);
             }
 
             var savePath = Path.Combine(path, avatar.Name + ".txt");
@@ -82,9 +88,9 @@ namespace CoCSharp.Server.Core
 
         public void LoadAllAvatars()
         {
-            if (!Directory.Exists("Avatars"))
+            if (!Directory.Exists(CoCServerPaths.Avatars))
             {
-                Directory.CreateDirectory("Avatars");
+                Directory.CreateDirectory(CoCServerPaths.Avatars);
                 return; // exit early cause the file didnt exist
             }
 
@@ -103,7 +109,7 @@ namespace CoCSharp.Server.Core
                 for (int j = 0; j < files.Length; j++)
                 {
                     var file = files[j];
-                    if (Path.GetFileName(file) == "Village.json")
+                    if (Path.GetFileName(file) == "village.json")
                         homePath = file;
                     else if (Path.GetExtension(file) == ".txt")
                         dataPath = file;
@@ -124,6 +130,9 @@ namespace CoCSharp.Server.Core
                 for (int j = 0; j < saveProperties.Length; j++)
                 {
                     var saveValues = ParseSaveProperty(saveProperties[j]);
+                    if (saveValues[0] == "ShieldDuration")
+                        continue;
+
                     var property = type.GetProperty(saveValues[0]);
                     var value = (object)saveValues[1];
 
@@ -155,7 +164,7 @@ namespace CoCSharp.Server.Core
                     property.SetValue(avatar, value);
                 }
 
-                Avatars.Add(avatar.Token, avatar);
+                LoadedAvatar.Add(avatar.Token, avatar);
             }
         }
 
@@ -169,21 +178,14 @@ namespace CoCSharp.Server.Core
             return saveValues;
         }
 
-        private long GenerateUserID()
+        private bool CheckAvatarID(int id)
         {
-            return Utils.Random.Next();
-        }
-
-        private string GenerateUserToken()
-        {
-            var token = string.Empty;
-            for (int i = 0; i < ValidTokenLength; i++)
-                token += ValidTokenChar[Utils.Random.Next(ValidTokenChar.Length - 1)];
-
-            if (Avatars.ContainsKey(token)) // chances are slim but possible ;]
-                token = GenerateUserToken();
-
-            return token;
+            foreach (var avatar in LoadedAvatar.Values)
+            {
+                if (avatar.ID == id)
+                    return false;
+            }
+            return true;
         }
     }
 }

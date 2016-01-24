@@ -1,5 +1,7 @@
 ﻿using CoCSharp.Networking;
+using CoCSharp.Networking.Messages;
 using System;
+using System.IO;
 using System.Net.Sockets;
 
 namespace CoCSharp.Proxy
@@ -22,14 +24,30 @@ namespace CoCSharp.Proxy
         {
             if (!e.MessageFullyRead)
                 Console.WriteLine("Warning: Did not fully read " + e.Message.GetType().Name);
-            Client.Connection.Send(e.MessageData);
+
+            var message = e.Message;
+            if ((message is NewServerEncryptionMessage || message is NewClientEncryptionMessage))
+                Client.Connection.Send(e.MessageData);
+            else
+            {
+                
+            }
+            
+            Console.WriteLine("S < C, {0}", e.Message.ID);
+            File.WriteAllBytes("messages\\[C2S] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageData);
         }
 
         private void ClientReceived(object sender, MessageReceivedEventArgs e)
         {
             if (!e.MessageFullyRead)
                 Console.WriteLine("Warning: Did not fully read " + e.Message.GetType().Name);
-            Server.Connection.Send(e.MessageData);
+
+            var message = e.Message;
+            if ((message is NewServerEncryptionMessage || message is NewClientEncryptionMessage))
+                Server.Connection.Send(e.MessageData);
+
+            Console.WriteLine("S > C, {0}", e.Message.ID);
+            File.WriteAllBytes("messages\\[S2C] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageData);
         }
     }
 }

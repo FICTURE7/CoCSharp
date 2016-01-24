@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoCSharp.Networking
+namespace CoCSharp.Networking.Cryptography
 {
     /// <summary>
     /// Implements methods to encrypt and decrypt network traffic of the Clash of Clans protocol.

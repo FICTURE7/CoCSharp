@@ -14,7 +14,7 @@ namespace CoCSharp.Csv
         private static readonly Type s_csvAliasType;
         private static readonly Type s_csvIgnoreType;
 
-        public static string GetPropertyName(PropertyInfo property)
+        public static string GetPropertyAlias(PropertyInfo property)
         {
             var attributes = (CsvAliasAttribute[])property.GetCustomAttributes(s_csvAliasType, false);
             if (attributes.Length == 0)

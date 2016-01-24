@@ -41,6 +41,12 @@ namespace CoCSharp.Data
         /// <param name="slots"><see cref="Slot"/> array to write.</param>
         public static void WriteSlotArray(MessageWriter writer, Slot[] slots)
         {
+            if (slots == null)
+            {
+                writer.Write(0);
+                return;
+            }
+
             var count = slots.Length;
             writer.Write(count);
             for (int i = 0; i < count; i++)

@@ -5,6 +5,8 @@
     /// </summary>
     public static class TokenUtils
     {
+        //TODO: Implement AuthCredentials class.
+
         private const string TokenCharacters = "abcdefghijklmnopqrstuvwxyz1234567890";
         private const int TokenLength = 40;
 
@@ -36,7 +38,6 @@
             var token = string.Empty;
             for (int i = 0; i < TokenLength; i++)
                 token += TokenCharacters[Utils.Random.Next(TokenCharacters.Length - 1)];
-
             return token;
         }
     }

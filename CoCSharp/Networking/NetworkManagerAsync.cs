@@ -1,4 +1,5 @@
-﻿using CoCSharp.Networking.Messages;
+﻿using CoCSharp.Networking.Cryptography;
+using CoCSharp.Networking.Messages;
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -44,24 +45,17 @@ namespace CoCSharp.Networking
             Settings = settings;
             Statistics = new NetworkManagerAsyncStatistics();
 
-            _crypto = new CoCCrypto();
+            _crypto = new Crypto8();
             _receivePool = Settings.ReceivePool;
             _sendPool = Settings.SendPool;
-
-            _newClientEncryptionMessage = new NewClientEncryptionMessage();
-            _newServerEncryptionMessage = new NewServerEncryptionMessage();
 
             StartReceive(_receivePool.Pop());
         }
 
-        private int _seed;
         private bool _disposed;
-        private readonly CoCCrypto _crypto;
+        private readonly Crypto8 _crypto;
         private readonly SocketAsyncEventArgsPool _receivePool;
         private readonly SocketAsyncEventArgsPool _sendPool;
-
-        private readonly NewClientEncryptionMessage _newClientEncryptionMessage;
-        private readonly NewServerEncryptionMessage _newServerEncryptionMessage;
 
         /// <summary>
         /// Gets the <see cref="Socket"/> that is used to send and receive
@@ -82,11 +76,6 @@ namespace CoCSharp.Networking
         public NetworkManagerAsyncStatistics Statistics { get; private set; }
 
         /// <summary>
-        /// Gets the seed that is used for encryption.
-        /// </summary>
-        public int Seed { get { return _seed; } }
-
-        /// <summary>
         /// Sends the specified message using the <see cref="Connection"/> socket.
         /// </summary>
         /// <param name="message"><see cref="Message"/> to send.</param>
@@ -101,12 +90,12 @@ namespace CoCSharp.Networking
             {
                 message.WriteMessage(deMessageWriter);
                 var body = ((MemoryStream)deMessageWriter.BaseStream).ToArray();
-                _crypto.Encrypt(body);
+                _crypto.Encrypt(ref body);
 
-                if (message is LoginRequestMessage)
-                    _seed = ((LoginRequestMessage)message).Seed;
-                else if (message is EncryptionMessage)
-                    _crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
+                //if (message is LoginRequestMessage)
+                //    _seed = ((LoginRequestMessage)message).Seed;
+                //else if (message is EncryptionMessage)
+                //    _crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
 
                 if (body.Length > Message.MaxSize)
                     throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
@@ -133,6 +122,11 @@ namespace CoCSharp.Networking
                     StartSend(args);
                 }
             }
+        }
+
+        public void UpdateKey(byte[] publicKey)
+        {
+            _crypto.UpdateKey(publicKey);
         }
 
         private void StartSend(SocketAsyncEventArgs args)
@@ -246,15 +240,37 @@ namespace CoCSharp.Networking
                 }
 
                 var message = MessageFactory.Create(token.ID);
-                var messageEnBody = token.Body;
-                var messageDeBody = (byte[])token.Body.Clone();
+                var messageEnBody = (byte[])null;
+                var messageDeBody = (byte[])null;
+
+                if (message is LoginRequestMessage) // pre decryption
+                {
+                    var publicKey = new byte[CoCKeyPair.KeyLength]; // copy key from message
+                    Buffer.BlockCopy(token.Body, 0, publicKey, 0, CoCKeyPair.KeyLength);
+
+                    _crypto.UpdateKey(publicKey);
+
+                    messageEnBody = new byte[token.Length - CoCKeyPair.KeyLength]; // copy remaining bytes
+                    Buffer.BlockCopy(token.Body, CoCKeyPair.KeyLength, messageEnBody, 0, token.Length - CoCKeyPair.KeyLength);
+
+                    messageDeBody = (byte[])messageEnBody.Clone(); // cloning cuz we dont want a reference
+                }
+                else
+                {
+                    messageEnBody = token.Body;
+                    messageDeBody = (byte[])token.Body.Clone();
+                }
+
                 var messageData = new byte[token.Length + Message.HeaderSize];
 
                 Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
-                if (message.ID != _newServerEncryptionMessage.ID && message.ID != _newClientEncryptionMessage.ID)
-                    _crypto.Decrypt(messageDeBody);
+                if (!(message is NewServerEncryptionMessage || message is NewClientEncryptionMessage))
+                {
+                    _crypto.Decrypt(ref messageDeBody);
+                    File.WriteAllBytes("lel", messageDeBody);
+                }
 
                 if (message is UnknownMessage)
                 {
@@ -281,10 +297,17 @@ namespace CoCSharp.Networking
                     {
                         message.ReadMessage(reader);
 
-                        if (message is LoginRequestMessage)
-                            _seed = ((LoginRequestMessage)message).Seed;
-                        else if (message is EncryptionMessage)
-                            _crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
+                        //if (message is LoginRequestMessage)
+                        //    _seed = ((LoginRequestMessage)message).Seed;
+                        //else if (message is EncryptionMessage)
+                        //{
+                        //    if (((EncryptionMessage)message).ScramblerVersion != 1)
+                        //        throw new NotSupportedException("CoCSharp only supports scrambler version 1.");
+
+                        //    //_crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
+                        //}
+
+
                     }
                     catch (Exception exception)
                     {
@@ -338,7 +361,7 @@ namespace CoCSharp.Networking
                     break;
 
                 default:
-                    throw new Exception("IMPOSSIBRU!");
+                    throw new InvalidOperationException("IMPOSSIBRU!");
             }
         }
 

@@ -26,20 +26,22 @@
         /// <summary>
         /// Unknown integer 3.
         /// </summary>
-        public int Unknown3;
+        public int MajorVersion;
+
         /// <summary>
         /// Unknown integer 4.
         /// </summary>
         public int Unknown4;
+
         /// <summary>
         /// Unknown integer 5.
         /// </summary>
-        public int Unknown5;
+        public int MinorVersion;
         /// <summary>
-        /// String that is probably needed for the new encryption
-        /// schema.
+        /// Hash string.
         /// </summary>
-        public string TheString;
+        public string Hash;
+
         /// <summary>
         /// Unknown integer 6.
         /// </summary>
@@ -64,10 +66,10 @@
         {
             Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
-            Unknown3 = reader.ReadInt32();
+            MajorVersion = reader.ReadInt32();
             Unknown4 = reader.ReadInt32();
-            Unknown5 = reader.ReadInt32();
-            TheString = reader.ReadString();
+            MinorVersion = reader.ReadInt32();
+            Hash = reader.ReadString();
             Unknown6 = reader.ReadInt32();
             Unknown7 = reader.ReadInt32();
         }
@@ -82,10 +84,10 @@
         {
             writer.Write(Unknown1);
             writer.Write(Unknown2);
-            writer.Write(Unknown3);
+            writer.Write(MajorVersion);
             writer.Write(Unknown4);
-            writer.Write(Unknown5);
-            writer.Write(TheString);
+            writer.Write(MinorVersion);
+            writer.Write(Hash);
             writer.Write(Unknown6);
             writer.Write(Unknown7);
         }

@@ -9,14 +9,14 @@ namespace CoCSharp.Server.Core
         public DataManager()
         {
             var buildingTable = new CsvTable("Content\\buildings.csv");
-            BuildingsData = CsvSerializer.Deserialize<BuildingData>(buildingTable);
+            BuildingsData = CsvConvert.Deserialize<BuildingData>(buildingTable);
         }
 
         public BuildingData[] BuildingsData { get; set; }
 
         public BuildingData[] FindBuilding(int id)
         {
-            return BuildingsData.Where(bd => bd.DataID == id).ToArray();
+            return BuildingsData.Where(bd => bd.DataIndex == id).ToArray();
         }
 
         public BuildingData FindBuilding(int id, int level)

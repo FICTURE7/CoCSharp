@@ -14,7 +14,15 @@ namespace CoCSharp.Data
         {
             // Space
         }
-        
+
+        /// <summary>
+        /// Gets the base data ID of the <see cref="BuildingData"/>.
+        /// </summary>
+        public override int BaseDataID
+        {
+            get { return 3000000; }
+        }
+
         /// <summary>
         /// Gets or sets the Name.
         /// </summary>

@@ -15,9 +15,9 @@
         }
 
         /// <summary>
-        /// Nonce used for encryption.
+        /// Session key used for encryption.
         /// </summary>
-        public byte[] Nonce;
+        public byte[] SessionKey;
 
         /// <summary>
         /// Gets the ID of the <see cref="NewServerEncryptionMessage"/>.
@@ -32,7 +32,7 @@
         /// </param>
         public override void ReadMessage(MessageReader reader)
         {
-            Nonce = reader.ReadBytes();
+            SessionKey = reader.ReadBytes();
         }
 
         /// <summary>
@@ -43,7 +43,7 @@
         /// </param>
         public override void WriteMessage(MessageWriter writer)
         {
-            writer.Write(Nonce, true);
+            writer.Write(SessionKey, true);
         }
     }
 }

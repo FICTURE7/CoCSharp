@@ -2,6 +2,7 @@
 using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using CoCSharp.Networking;
+using CoCSharp.Networking.Cryptography;
 using CoCSharp.Networking.Messages;
 using System;
 
@@ -29,11 +30,11 @@ namespace CoCSharp.Server.Handlers
                 RevisionVersion = 19,
                 ServerEnvironment = "prod",
                 LoginCount = 0,
-                PlayTime = new TimeSpan(0, 0, 0),
+                PlayTime = new TimeSpan(0, 0, 0), //TODO: Implement saving of playtime.
                 Unknown1 = 0,
-                FacebookAppID = "297484437009394",
-                DateLastPlayed = DateTime.Now,
-                DateJoined = DateTime.Now,
+                FacebookAppID = "297484437009394", //TODO: Implement this into CoCSharp itself.
+                DateLastPlayed = DateTime.Now, //TODO: Implement saving of date last played.
+                DateJoined = DateTime.Now, //TODO: Implement saving of date joined.
                 Unknown2 = 0,
                 GooglePlusID = null,
                 CountryCode = "EU"
@@ -51,7 +52,7 @@ namespace CoCSharp.Server.Handlers
             }
             else
             {
-                if (!server.AvatarManager.Avatars.TryGetValue(lrMessage.UserToken, out avatar)) // unknown token and id
+                if (!server.AvatarManager.LoadedAvatar.TryGetValue(lrMessage.UserToken, out avatar)) // unknown token and id
                 {
                     avatar = server.AvatarManager.CreateNewAvatar(lrMessage.UserToken, lrMessage.UserID);
                     Console.WriteLine("Unknown avatar, Created new avatar with Token {0}, ID {1}", avatar.Token, avatar.ID);
@@ -72,11 +73,13 @@ namespace CoCSharp.Server.Handlers
                 AllianceCastleLevel = 1,
                 AllianceCastleTotalCapacity = 10,
                 AllianceCastleUsedCapacity = 0,
+
                 ResourcesCapacity = new ResourceCapacitySlot[] 
                 {
                     new ResourceCapacitySlot(3000001, 1000),
                     new ResourceCapacitySlot(3000002, 1000)
                 },
+
                 ResourcesAmount = new ResourceAmountSlot[] 
                 {
                     new ResourceAmountSlot(3000001, 100),

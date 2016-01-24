@@ -497,7 +497,7 @@ namespace CoCSharp.Data
             writer.Write(Unknown20);
             writer.Write(Unknown21);
 
-            writer.Write(Unknown22); // if Unknown22 then read?
+            writer.Write(Unknown22); // if Unknown22 then read Unknown23?
             writer.Write(Unknown23);
 
             writer.Write(IsNamed);

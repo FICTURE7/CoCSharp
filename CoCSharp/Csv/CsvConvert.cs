@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace CoCSharp.Csv
@@ -9,16 +8,16 @@ namespace CoCSharp.Csv
     /// Provides methods to serialize and deserialize CsvTables to object array.
     /// Mainly designed for Clash of Clans.
     /// </summary>
-    public static class CsvSerializer
+    public static class CsvConvert
     {
-        static CsvSerializer()
+        static CsvConvert()
         {
             s_csvDataType = typeof(CsvData);
-            s_dataIDProperty = s_csvDataType.GetProperty("DataID");
+            s_dataIndexProperty = s_csvDataType.GetProperty("DataIndex");
         }
 
         private static readonly Type s_csvDataType;
-        private static readonly PropertyInfo s_dataIDProperty;
+        private static readonly PropertyInfo s_dataIndexProperty;
 
         /// <summary>
         /// Deserializes the specified <see cref="CsvTable"/> with the specified <see cref="Type"/>.
@@ -36,13 +35,13 @@ namespace CoCSharp.Csv
             if (type == null)
                 throw new ArgumentNullException("type");
             if (!type.IsSubclassOf(s_csvDataType))
-                throw new ArgumentException("type is not a subclass of CoCData.");
+                throw new ArgumentException("type is not a subclass of CsvData.");
 
             var rows = table.Rows;
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             var parentObj = (object)null;
             var objList = new List<object>();
-            var id = -1;
+            var index = -1;
 
             for (int i = 0; i < rows.Count; i++)
             {
@@ -51,31 +50,36 @@ namespace CoCSharp.Csv
                 for (int j = 0; j < properties.Length; j++) // set property value loop
                 {
                     var property = properties[j];
-                    //if (property.DeclaringType != type) 
-                    if (property.Name == s_dataIDProperty.Name) // check if DataID
+
+                    if (property.Name == s_dataIndexProperty.Name && property.DeclaringType == s_csvDataType) // check if DataIndex
                     {
-                        property.SetMethod.Invoke(childObj, new object[] { id });
+                        property.SetMethod.Invoke(childObj, new object[] { index });
                         continue;
                     }
 
-                    if (CsvAttributeHelper.IsIgnored(property))
-                        continue; // ignore CsvIgnoreAttribute
+                    if (CsvAttributeHelper.IsIgnored(property)) // ignore CsvIgnoreAttribute is there
+                        continue;
 
-                    var propertyName = CsvAttributeHelper.GetPropertyName(property);
+                    var propertyName = CsvAttributeHelper.GetPropertyAlias(property);
+                    if (!table.Columns.Contains(propertyName))
+                        continue; // ignore if does not contian column
+
                     var value = rows[i][propertyName];
-                    var parameters = new object[] { value };
+                    var parameters = (object[])null;
 
                     if (parentObj != null && value == DBNull.Value) // get data from parent
                         parameters = new object[] { property.GetMethod.Invoke(parentObj, null) };
                     else if (value == DBNull.Value)
                         continue; // keep default value
+                    else
+                        parameters = new object[] { value };
 
                     var isParent = property.Name == "Name" && value != DBNull.Value;
                     property.SetMethod.Invoke(childObj, parameters);
 
                     if (isParent)
                     {
-                        id++;
+                        index++;
                         parentObj = childObj;
                     }
                 }

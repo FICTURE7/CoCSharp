@@ -10,20 +10,19 @@ and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrap
 which is now open source.
 
 ## What can it do?
-* CoCSharp.Data: CSV file structures and other data structures.
+* CoCSharp.Csv: Clash of Clans format CSV reader.
   * Includes classes for reading CSV files.
-  * Includes classes for all CSV file data. Such as: BuildingData, TrapData, ObstacleData etc...
-* CoCSharp.Logging: *(Needs to be improved)*
+* CoCSharp.Logging: *(Needs to implemented)*
   * Includes classes to log and dump packet.
-* CoCSharp.Logic: Village object strutures. *(Needs to be improved)*
+* CoCSharp.Logic: Village object strutures and logic. *(Needs to be improved)*
   * Includes classes for village objects: Village, Trap, Obstacle, Building etc...
 * CoCSharp.Networking: Clash of Clans network protocol implementaion.
-  * Includes classes for reading and writing packets.
-  * Includes some classes containing packet definition. Such as: AllianceWarLogPacket, OwnHomeDataPacket etc...
+  * Includes classes for reading and writing messages.
+  * Includes some classes containing packet definition.
 
 ## Compiling
-The simplest way to compile CoCSharp is to use Visual Studio and pressing `F6` to build the solution or you could 
-use the latest version of mono to compile CoCSharp.
+The simplest way to compile CoCSharp is to open the solution in Visual Studio and pressing `F6` to build the entire
+solution or you could use the latest version of mono to compile CoCSharp.
 
 Run the following commands to build CoCSharp with mono.
 
@@ -54,9 +53,10 @@ mono --version
 ## Contributing
 Just create a fork and make changes to it, like adding features from Clash of Clans and fixing bugs. 
 Follow the code style else I won't merge your pull request. Make your pull requests focused and readable. 
-You can also contribute by creating issues and reporting bugs, giving ideas for enhancement.
+You can also contribute by creating issues and reporting bugs, giving ideas for enhancement and by finding issues
+in the documentation.
 
-You can also contribute by just giving a star or forking us, also by spreading the word about this project. ^^
+You can also contribute by just giving a star or forking us, also by spreading the word about the project. ^^
 
 Am not any merging pull requests like a clan search API which completely drifts away from the goal of this project. 
 If you want to make a clan search API, use CoCSharp as a library and go ahead. :]
@@ -66,8 +66,8 @@ Massive thank you to those [guys](https://github.com/FICTURE7/CoCSharp/blob/mast
 
 <h2>Projects Using CoC#</h2>
 * [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Server): *(Work in progress)*
-  * Server that can't do much at the moment.
-* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Client):
+  * Server that can save villages and buy actions. Yey!
+* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Client): *(Not available)*
   * Simple client that can read chat message and send keep alive requests.
 * [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/master/CoCSharp.Proxy):
   * Proxy that logs parsed and raw decrypted/encrypted packets.

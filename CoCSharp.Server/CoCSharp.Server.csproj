@@ -47,7 +47,10 @@
     <Compile Include="CoCRemoteClient.cs" />
     <Compile Include="CoCServer.cs" />
     <Compile Include="Core\AvatarManager.cs" />
+    <Compile Include="Core\AvatarSave.cs" />
     <Compile Include="Core\DataManager.cs" />
+    <Compile Include="CoCServerPaths.cs" />
+    <Compile Include="Core\SaveFile.cs" />
     <Compile Include="Handlers\BuildingCommandHandlers.cs" />
     <Compile Include="Handlers\InGameMessageHandlers.cs" />
     <Compile Include="Handlers\LoginMessageHandlers.cs" />

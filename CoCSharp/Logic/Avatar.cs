@@ -36,9 +36,20 @@ namespace CoCSharp.Logic
         public long ID { get; set; }
 
         /// <summary>
-        /// Gets or sets the shield duration of the <see cref="Avatar"/>.
+        /// Gets the shield duration of the <see cref="Avatar"/>.
         /// </summary>
-        public TimeSpan ShieldDuration { get; set; }
+        public TimeSpan ShieldDuration
+        {
+            get
+            {
+                return TimeSpan.FromSeconds(DateTimeConverter.ToUnixTimestamp(ShieldEndTime) - DateTimeConverter.UtcNow);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the shield UTC end time of the <see cref="Avatar"/>.
+        /// </summary>
+        public DateTime ShieldEndTime { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="Village"/> associated with this
