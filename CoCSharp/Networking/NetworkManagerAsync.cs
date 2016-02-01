@@ -12,6 +12,8 @@ namespace CoCSharp.Networking
     /// </summary>
     public class NetworkManagerAsync : IDisposable
     {
+        //TODO: Remake the constructors for better handling of encryption.
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
         /// with the specified <see cref="Socket"/>.
@@ -44,8 +46,8 @@ namespace CoCSharp.Networking
             Connection = connection;
             Settings = settings;
             Statistics = new NetworkManagerAsyncStatistics();
+            Crypto = new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair); //TODO: intiate as server
 
-            _crypto = new Crypto8();
             _receivePool = Settings.ReceivePool;
             _sendPool = Settings.SendPool;
 
@@ -53,7 +55,6 @@ namespace CoCSharp.Networking
         }
 
         private bool _disposed;
-        private readonly Crypto8 _crypto;
         private readonly SocketAsyncEventArgsPool _receivePool;
         private readonly SocketAsyncEventArgsPool _sendPool;
 
@@ -76,6 +77,12 @@ namespace CoCSharp.Networking
         public NetworkManagerAsyncStatistics Statistics { get; private set; }
 
         /// <summary>
+        /// Gets the <see cref="Crypto8"/> being used with
+        /// the current <see cref="NetworkManagerAsync"/>.
+        /// </summary>
+        public Crypto8 Crypto { get; set; } //TODO: Get only.
+
+        /// <summary>
         /// Sends the specified message using the <see cref="Connection"/> socket.
         /// </summary>
         /// <param name="message"><see cref="Message"/> to send.</param>
@@ -83,6 +90,7 @@ namespace CoCSharp.Networking
         /// <exception cref="InvalidMessageException"><paramref name="message"/> length greater than <see cref="Message.MaxSize"/>.</exception>
         public void SendMessage(Message message)
         {
+            //TODO: Custom write for LoginRequestMessage.
             if (message == null)
                 throw new ArgumentNullException("message");
 
@@ -90,12 +98,7 @@ namespace CoCSharp.Networking
             {
                 message.WriteMessage(deMessageWriter);
                 var body = ((MemoryStream)deMessageWriter.BaseStream).ToArray();
-                _crypto.Encrypt(ref body);
-
-                //if (message is LoginRequestMessage)
-                //    _seed = ((LoginRequestMessage)message).Seed;
-                //else if (message is EncryptionMessage)
-                //    _crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
+                Crypto.Encrypt(ref body);
 
                 if (body.Length > Message.MaxSize)
                     throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
@@ -122,11 +125,6 @@ namespace CoCSharp.Networking
                     StartSend(args);
                 }
             }
-        }
-
-        public void UpdateKey(byte[] publicKey)
-        {
-            _crypto.UpdateKey(publicKey);
         }
 
         private void StartSend(SocketAsyncEventArgs args)
@@ -243,34 +241,32 @@ namespace CoCSharp.Networking
                 var messageEnBody = (byte[])null;
                 var messageDeBody = (byte[])null;
 
-                if (message is LoginRequestMessage) // pre decryption
+                // after encryption (was added after encryption)
+                if (message is LoginRequestMessage) // we're the server
                 {
-                    var publicKey = new byte[CoCKeyPair.KeyLength]; // copy key from message
+                    var publicKey = new byte[CoCKeyPair.KeyLength]; // copy clientKey(pk) from raw message, token.Body[:32]
                     Buffer.BlockCopy(token.Body, 0, publicKey, 0, CoCKeyPair.KeyLength);
 
-                    _crypto.UpdateKey(publicKey);
+                    messageEnBody = new byte[token.Length - CoCKeyPair.KeyLength]; // copy remaining bytes token.Body[32:]
+                    Buffer.BlockCopy(token.Body, CoCKeyPair.KeyLength, messageEnBody, 0, messageEnBody.Length);
 
-                    messageEnBody = new byte[token.Length - CoCKeyPair.KeyLength]; // copy remaining bytes
-                    Buffer.BlockCopy(token.Body, CoCKeyPair.KeyLength, messageEnBody, 0, token.Length - CoCKeyPair.KeyLength);
-
-                    messageDeBody = (byte[])messageEnBody.Clone(); // cloning cuz we dont want a reference
+                    var lrMessage = message as LoginRequestMessage;
+                    lrMessage.PublicKey = publicKey;
+                    Crypto.UpdateSharedKey(publicKey); // update with clientKey(pk), _cryptoState = InitialKey
                 }
                 else
                 {
                     messageEnBody = token.Body;
-                    messageDeBody = (byte[])token.Body.Clone();
                 }
 
-                var messageData = new byte[token.Length + Message.HeaderSize];
+                messageDeBody = (byte[])messageEnBody.Clone(); // cloning cuz we dont want a reference
 
+                var messageData = new byte[token.Length + Message.HeaderSize]; // full message data
                 Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
                 if (!(message is NewServerEncryptionMessage || message is NewClientEncryptionMessage))
-                {
-                    _crypto.Decrypt(ref messageDeBody);
-                    File.WriteAllBytes("lel", messageDeBody);
-                }
+                    Crypto.Decrypt(ref messageDeBody);
 
                 if (message is UnknownMessage)
                 {
@@ -284,6 +280,7 @@ namespace CoCSharp.Networking
                     {
                         Message = message,
                         MessageData = messageData,
+                        MessageBody = messageDeBody,
                         MessageFullyRead = true
                     });
                     token.Reset();
@@ -292,34 +289,31 @@ namespace CoCSharp.Networking
 
                 using (var reader = new MessageReader(new MemoryStream(messageDeBody)))
                 {
-                    var ex = (Exception)null;
-                    try
+                    var exception = (Exception)null;
+
+                    try { message.ReadMessage(reader); }
+                    catch (Exception ex) { exception = ex; }
+
+                    // before encryption (was added before encryption)
+                    if (message is LoginRequestMessage) // we're the server
                     {
-                        message.ReadMessage(reader);
-
-                        //if (message is LoginRequestMessage)
-                        //    _seed = ((LoginRequestMessage)message).Seed;
-                        //else if (message is EncryptionMessage)
-                        //{
-                        //    if (((EncryptionMessage)message).ScramblerVersion != 1)
-                        //        throw new NotSupportedException("CoCSharp only supports scrambler version 1.");
-
-                        //    //_crypto.UpdateCiphers(_seed, ((EncryptionMessage)message).ServerRandom);
-                        //}
-
-
+                        var lrMessage = message as LoginRequestMessage;
+                        Crypto.UpdateDecryptNonce(lrMessage.Nonce); // _cryptoState = BlakeNonce
                     }
-                    catch (Exception exception)
+                    else if (message is LoginSuccessMessage) // we're the client
                     {
-                        ex = exception;
+                        var lsMessage = message as LoginSuccessMessage;
+                        Crypto.UpdateDecryptNonce(lsMessage.Nonce); // update with rnonce, decryptnonce = rnonce
+                        Crypto.UpdateSharedKey(lsMessage.PublicKey); // update crypto with k
                     }
 
                     OnMessageReceived(new MessageReceivedEventArgs()
                     {
                         Message = message,
                         MessageData = messageData,
+                        MessageBody = messageDeBody,
                         MessageFullyRead = reader.BaseStream.Position == reader.BaseStream.Length,
-                        Exception = ex
+                        Exception = exception
                     });
                 }
                 token.Reset();

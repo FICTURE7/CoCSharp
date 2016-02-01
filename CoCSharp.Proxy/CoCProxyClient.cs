@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Networking;
+using CoCSharp.Networking.Cryptography;
 using CoCSharp.Networking.Messages;
 using System;
 using System.IO;
@@ -10,44 +11,113 @@ namespace CoCSharp.Proxy
     {
         public CoCProxyClient(Socket client, Socket server, NetworkManagerAsyncSettings settings)
         {
-            Client = new NetworkManagerAsync(client, settings);
-            Client.MessageReceived += ClientReceived;
+            // client connection is initiated with standard keys because we are acting as the server
+            ClientConnection = new NetworkManagerAsync(client, settings);
+            ClientConnection.MessageReceived += ClientReceived;
 
-            Server = new NetworkManagerAsync(server, settings);
-            Server.MessageReceived += ServerReceived;
+            var publicKeyS = Utils.BytesToString(ClientConnection.Crypto.KeyPair.PublicKey);
+            var privateKeyS = Utils.BytesToString(ClientConnection.Crypto.KeyPair.PrivateKey);
+            Console.WriteLine("Acting as server with standard \n\tpublickey: {0} \n\tprivatekey: {1}", publicKeyS, privateKeyS);
+
+            // server connection is initiated with generated keys because we are acting as the client
+            ServerConnection = new NetworkManagerAsync(server, settings);
+            ServerConnection.Crypto = new Crypto8(MessageDirection.Server);
+            ServerConnection.Crypto.UpdateSharedKey(Crypto8.SupercellPublicKey); // use supercell's public key
+            ServerConnection.MessageReceived += ServerReceived;
+
+            var publicKeyC = Utils.BytesToString(ServerConnection.Crypto.KeyPair.PublicKey);
+            var privateKeyC = Utils.BytesToString(ServerConnection.Crypto.KeyPair.PrivateKey);
+            Console.WriteLine("Acting as client with generated \n\tpublickey: {0} \n\tprivatekey: {1}", publicKeyC, privateKeyC);
         }
 
-        public NetworkManagerAsync Client { get; private set; }
-        public NetworkManagerAsync Server { get; private set; }
+        public NetworkManagerAsync ClientConnection { get; private set; } // connection to client
+        public NetworkManagerAsync ServerConnection { get; private set; } // connection to server
 
-        private void ServerReceived(object sender, MessageReceivedEventArgs e)
-        {
-            if (!e.MessageFullyRead)
-                Console.WriteLine("Warning: Did not fully read " + e.Message.GetType().Name);
-
-            var message = e.Message;
-            if ((message is NewServerEncryptionMessage || message is NewClientEncryptionMessage))
-                Client.Connection.Send(e.MessageData);
-            else
-            {
-                
-            }
-            
-            Console.WriteLine("S < C, {0}", e.Message.ID);
-            File.WriteAllBytes("messages\\[C2S] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageData);
-        }
+        private byte[] _snonce;
+        private byte[] _rnonce;
 
         private void ClientReceived(object sender, MessageReceivedEventArgs e)
         {
-            if (!e.MessageFullyRead)
-                Console.WriteLine("Warning: Did not fully read " + e.Message.GetType().Name);
+            // C -> P -> S
 
+            Console.WriteLine("[S < C] => ID:{0} Name:{1}", e.Message.ID, e.Message.GetType().Name);
             var message = e.Message;
-            if ((message is NewServerEncryptionMessage || message is NewClientEncryptionMessage))
-                Server.Connection.Send(e.MessageData);
+            var messageBytes = (byte[])null;
+            if (message is NewClientEncryptionMessage)
+                messageBytes = e.MessageData;
+            else if (message is LoginRequestMessage)
+            {
+                var lrMessage = e.Message as LoginRequestMessage;
+                var rpkStr = Utils.BytesToString(lrMessage.PublicKey);
+                var opkStr = Utils.BytesToString(ServerConnection.Crypto.KeyPair.PublicKey);
 
-            Console.WriteLine("S > C, {0}", e.Message.ID);
-            File.WriteAllBytes("messages\\[S2C] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageData);
+                Console.WriteLine("[S] Decrypted LoginRequestMessage with pk {0}", rpkStr);
+                _snonce = (byte[])lrMessage.Nonce.Clone();
+                messageBytes = new byte[e.MessageData.Length];
+
+                var body = e.MessageBody;
+                ServerConnection.Crypto.Encrypt(ref body);
+
+                Console.WriteLine("[C] Encrypted LoginRequestMessage with our pk {0}", opkStr);
+                Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // header
+                Buffer.BlockCopy(ServerConnection.Crypto.KeyPair.PublicKey, 0, messageBytes, Message.HeaderSize, CoCKeyPair.KeyLength); // gen public key
+                Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize + CoCKeyPair.KeyLength, body.Length); // body
+
+                ServerConnection.Crypto.UpdateDecryptNonce(_snonce);
+                ServerConnection.Crypto.UpdateEncryptNonce(_snonce);
+            }
+            else
+            {
+                messageBytes = new byte[e.MessageData.Length];
+
+                var body = e.MessageBody;
+                ServerConnection.Crypto.Encrypt(ref body);
+
+                Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // header
+                Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize, body.Length); // body
+            }
+
+            File.WriteAllBytes("messages\\[C2S] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, messageBytes);
+            ServerConnection.Connection.Send(messageBytes);
+        }
+
+        private void ServerReceived(object sender, MessageReceivedEventArgs e)
+        {
+            // C <- P <- S
+
+            Console.WriteLine("[S > C] => ID:{0} Name:{1}", e.Message.ID, e.Message.GetType().Name);
+            var message = e.Message;
+            var messageBytes = (byte[])null;
+            if (message is NewServerEncryptionMessage)
+                messageBytes = e.MessageData;
+            else if (message is LoginSuccessMessage)
+            {
+                var lsMessage = e.Message as LoginSuccessMessage;
+                _rnonce = (byte[])lsMessage.Nonce.Clone();
+                messageBytes = new byte[e.MessageData.Length];
+
+                var body = e.MessageBody;
+                ClientConnection.Crypto.Encrypt(ref body);
+
+                Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // header
+                Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize, body.Length); // body
+
+                ClientConnection.Crypto.UpdateEncryptNonce(_rnonce);
+                ClientConnection.Crypto.UpdateSharedKey(lsMessage.PublicKey);
+            }
+            else
+            {
+                messageBytes = new byte[e.MessageData.Length];
+
+                var body = e.MessageBody;
+                ClientConnection.Crypto.Encrypt(ref body);
+
+                Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // header
+                Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize, body.Length); // body
+            }
+
+            File.WriteAllBytes("messages\\[C2S] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, messageBytes);
+            ClientConnection.Connection.Send(messageBytes);
         }
     }
 }

@@ -56,5 +56,16 @@
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="Message"/>.
         /// </param>
         public abstract void WriteMessage(MessageWriter writer);
+
+        /// <summary>
+        /// Gets the <see cref="MessageDirection"/> of a <see cref="Message"/> based on its
+        /// message ID.
+        /// </summary>
+        /// <param name="message"><see cref="Message"/> to get its direction.</param>
+        /// <returns><see cref="MessageDirection"/> of the specified <see cref="Message"/>.</returns>
+        public static MessageDirection GetMessageDirection(Message message)
+        {
+            return message.ID >= 20000 ? MessageDirection.Client : MessageDirection.Server;
+        }
     }
 }

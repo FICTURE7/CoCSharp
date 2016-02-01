@@ -34,6 +34,12 @@ namespace CoCSharp.Networking
         public bool MessageFullyRead { get; set; }
 
         /// <summary>
+        /// Gets or sets the <see cref="Networking.Message"/> bytes body that was decrypted
+        /// from the network.
+        /// </summary>
+        public byte[] MessageBody { get; set; } //TODO: Improve structure.
+
+        /// <summary>
         /// Gets or sets the <see cref="Networking.Message"/> raw bytes that was received from
         /// the network. This includes the header and the body encrypted.
         /// </summary>

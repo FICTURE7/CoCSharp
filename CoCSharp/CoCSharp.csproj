@@ -49,18 +49,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.HashFunction.Blake2, Version=1.8.2.2, Culture=neutral, PublicKeyToken=80c9288e394c1322, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.HashFunction.Blake2.1.8.2.2\lib\net45\System.Data.HashFunction.Blake2.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.HashFunction.Core, Version=1.8.2.2, Culture=neutral, PublicKeyToken=80c9288e394c1322, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.HashFunction.Core.1.8.2.2\lib\net45\System.Data.HashFunction.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.HashFunction.Interfaces, Version=1.0.0.2, Culture=neutral, PublicKeyToken=80c9288e394c1322, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.HashFunction.Interfaces.1.0.0.2\lib\net45\System.Data.HashFunction.Interfaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +117,7 @@
     <Compile Include="Networking\Cryptography\Crypto7.cs" />
     <Compile Include="Networking\Cryptography\Crypto8.cs" />
     <Compile Include="Networking\InvalidCommandException.cs" />
+    <Compile Include="Networking\MessageDirection.cs" />
     <Compile Include="Networking\Messages\ChatMessageClientMessage.cs" />
     <Compile Include="Networking\Messages\ChatMessageServerMessage.cs" />
     <Compile Include="Networking\Messages\CommandMessage.cs" />

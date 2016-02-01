@@ -16,7 +16,7 @@ namespace CoCSharp.Server.Handlers
         {
             var encryptionMessage = new EncryptionMessage()
             {
-                ServerRandom = CoCCrypto.GenerateNonce(),
+                ServerRandom = Crypto7.GenerateNonce(),
                 ScramblerVersion = 1
             };
 

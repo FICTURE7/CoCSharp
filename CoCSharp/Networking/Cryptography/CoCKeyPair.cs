@@ -4,9 +4,11 @@ using System;
 namespace CoCSharp.Networking.Cryptography
 {
     /// <summary>
-    /// Represents a public and private key pair. Wrapper around <see cref="KeyPair"/> of
-    /// libsodium.
+    /// Represents a public and private key pair.
     /// </summary>
+    /// <remarks>
+    /// Wrapper around <see cref="KeyPair"/> of libsodium.
+    /// </remarks>
     public class CoCKeyPair
     {
         /// <summary>
@@ -34,12 +36,12 @@ namespace CoCSharp.Networking.Cryptography
             if (publicKey == null)
                 throw new ArgumentNullException("publicKey");
             if (publicKey.Length != PublicKeyBox.PublicKeyBytes)
-                throw new ArgumentOutOfRangeException("Length of publicKey must be 32 bytes long.");
+                throw new ArgumentOutOfRangeException("publicKey", "must be 32 bytes in length.");
 
             if (privateKey == null)
                 throw new ArgumentNullException("privateKey");
             if (privateKey.Length != PublicKeyBox.SecretKeyBytes)
-                throw new ArgumentOutOfRangeException("Length of privateKey must be 32 bytes long.");
+                throw new ArgumentOutOfRangeException("privateKey", "must be 32 bytes in length.");
 
             _keyPair = new KeyPair(publicKey, privateKey);
         }
