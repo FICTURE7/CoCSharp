@@ -12,7 +12,7 @@ namespace CoCSharp.Networking
     /// </summary>
     public class NetworkManagerAsync : IDisposable
     {
-        //TODO: Remake the constructors for better handling of encryption.
+        //TODO: Change constructors for improved initializing with crypto8 and stuff.
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
@@ -298,12 +298,13 @@ namespace CoCSharp.Networking
                     if (message is LoginRequestMessage) // we're the server
                     {
                         var lrMessage = message as LoginRequestMessage;
-                        Crypto.UpdateDecryptNonce(lrMessage.Nonce); // _cryptoState = BlakeNonce
+                        Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Decrypt); // update with snonce, decryptnonce = snonce
+                        Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Blake);
                     }
                     else if (message is LoginSuccessMessage) // we're the client
                     {
                         var lsMessage = message as LoginSuccessMessage;
-                        Crypto.UpdateDecryptNonce(lsMessage.Nonce); // update with rnonce, decryptnonce = rnonce
+                        Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
                         Crypto.UpdateSharedKey(lsMessage.PublicKey); // update crypto with k
                     }
 
@@ -355,7 +356,7 @@ namespace CoCSharp.Networking
                     break;
 
                 default:
-                    throw new InvalidOperationException("IMPOSSIBRU!");
+                    throw new InvalidOperationException("IMPOSSIBRU! Unexpected SocketAsyncOperation: " + args.LastOperation);
             }
         }
 

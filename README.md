@@ -6,7 +6,7 @@ CoCSharp because some stuff could have been done better.
 
 Clash of Clans library written in C# to handle networking, csv files and more to come. 
 It was written based off of [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/)
-and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrapowa/ucs) 
+and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrapowa/UCS) 
 which is now open source.
 
 ## What can it do?
@@ -23,6 +23,10 @@ which is now open source.
 ## Compiling
 The simplest way to compile CoCSharp is to open the solution in Visual Studio and pressing `F6` to build the entire
 solution or you could use the latest version of mono to compile CoCSharp.
+
+NOTE: You currently can't compile CoCSharp with the current CoCSharp.sln file with `xbuild` because of
+`Baseclass.Contrib.Nuget.Output`. If you want to compile it with `xbuild`, have a look at
+issue [#56](https://github.com/FICTURE7/CoCSharp/issues/56).
 
 Run the following commands to build CoCSharp with mono.
 

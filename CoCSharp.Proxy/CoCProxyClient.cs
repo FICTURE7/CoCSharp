@@ -51,20 +51,20 @@ namespace CoCSharp.Proxy
                 var rpkStr = Utils.BytesToString(lrMessage.PublicKey);
                 var opkStr = Utils.BytesToString(ServerConnection.Crypto.KeyPair.PublicKey);
 
-                Console.WriteLine("[S] Decrypted LoginRequestMessage with pk {0}", rpkStr);
+                Console.WriteLine("        => Decrypted LoginRequestMessage with pk {0}", rpkStr);
                 _snonce = (byte[])lrMessage.Nonce.Clone();
                 messageBytes = new byte[e.MessageData.Length];
 
                 var body = e.MessageBody;
                 ServerConnection.Crypto.Encrypt(ref body);
 
-                Console.WriteLine("[C] Encrypted LoginRequestMessage with our pk {0}", opkStr);
+                Console.WriteLine("        => Encrypted LoginRequestMessage with our pk {0}", opkStr);
                 Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // header
                 Buffer.BlockCopy(ServerConnection.Crypto.KeyPair.PublicKey, 0, messageBytes, Message.HeaderSize, CoCKeyPair.KeyLength); // gen public key
                 Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize + CoCKeyPair.KeyLength, body.Length); // body
 
-                ServerConnection.Crypto.UpdateDecryptNonce(_snonce);
-                ServerConnection.Crypto.UpdateEncryptNonce(_snonce);
+                ServerConnection.Crypto.UpdateNonce(_snonce, UpdateNonceType.Blake);
+                ServerConnection.Crypto.UpdateNonce(_snonce, UpdateNonceType.Encrypt); // set _snonce for crypto to use for later encryption
             }
             else
             {
@@ -102,8 +102,8 @@ namespace CoCSharp.Proxy
                 Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // header
                 Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize, body.Length); // body
 
-                ClientConnection.Crypto.UpdateEncryptNonce(_rnonce);
-                ClientConnection.Crypto.UpdateSharedKey(lsMessage.PublicKey);
+                ClientConnection.Crypto.UpdateNonce(_rnonce, UpdateNonceType.Encrypt);
+                ClientConnection.Crypto.UpdateSharedKey(lsMessage.PublicKey); // 'k'
             }
             else
             {

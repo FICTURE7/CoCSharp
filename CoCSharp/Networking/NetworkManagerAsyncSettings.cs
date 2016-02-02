@@ -46,7 +46,7 @@ namespace CoCSharp.Networking
         public NetworkManagerAsyncSettings(int receiveCount, int sendCount, int bufferSize)
         {
             if (bufferSize < 1)
-                throw new ArgumentOutOfRangeException("Argument bufferSize cannot be less than 1.");
+                throw new ArgumentOutOfRangeException("bufferSize", "Argument bufferSize cannot be less than 1.");
 
             BufferSize = bufferSize;
             ReceivePool = new SocketAsyncEventArgsPool(receiveCount);

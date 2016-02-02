@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Networking
+﻿using System;
+
+namespace CoCSharp.Networking
 {
     /// <summary>
     /// Represents a Clash of Clans message.
@@ -58,7 +60,7 @@
         public abstract void WriteMessage(MessageWriter writer);
 
         /// <summary>
-        /// Gets the <see cref="MessageDirection"/> of a <see cref="Message"/> based on its
+        /// Gets the <see cref="MessageDirection"/> of the specified <see cref="Message"/> based on its
         /// message ID.
         /// </summary>
         /// <param name="message"><see cref="Message"/> to get its direction.</param>
@@ -66,6 +68,18 @@
         public static MessageDirection GetMessageDirection(Message message)
         {
             return message.ID >= 20000 ? MessageDirection.Client : MessageDirection.Server;
+        }
+
+        /// <summary>
+        /// Gets the <see cref="MessageDirection"/> of the specified <see cref="Message"/> type based on its
+        /// message ID.
+        /// </summary>
+        /// <typeparam name="T">Type of <see cref="Message"/> to get its direction.</typeparam>
+        /// <returns><see cref="MessageDirection"/> of the specified <see cref="Message"/> type.</returns>
+        public static MessageDirection GetMessageDirection<T>() where T : Message
+        {
+            var tType = typeof(T);
+            return GetMessageDirection((Message)Activator.CreateInstance(tType));
         }
     }
 }

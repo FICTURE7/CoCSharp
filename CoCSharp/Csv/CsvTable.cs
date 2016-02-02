@@ -95,6 +95,7 @@ namespace CoCSharp.Csv
         /// <param name="compressed">Whether the .csv file is compressed or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
+        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
         public void Load(string path, bool compressed)
         {
             if (path == null)
@@ -110,8 +111,11 @@ namespace CoCSharp.Csv
         /// <param name="bytes"><see cref="Byte"/> array of the .csv file.</param>
         /// <exception cref="ArgumentNullException"><paramref name="bytes"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
+        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
         public void Load(byte[] bytes)
         {
+            if (_disposed)
+                throw new ObjectDisposedException(null, "Cannot access CsvTable object because it was disposed.");
             if (bytes == null)
                 throw new ArgumentNullException("bytes");
 
@@ -169,6 +173,7 @@ namespace CoCSharp.Csv
         /// <param name="compressed">Whether the .csv file is compressed or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="bytes"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
+        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
         public void Load(byte[] bytes, bool compressed)
         {
             if (bytes == null)
@@ -192,6 +197,7 @@ namespace CoCSharp.Csv
         /// </summary>
         /// <param name="path">Path of the .csv to save to.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
+        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
         public void Save(string path)
         {
             if (path == null)
@@ -207,8 +213,11 @@ namespace CoCSharp.Csv
         /// <param name="path">Path of the .csv to save to.</param>
         /// <param name="compressed">Whether to compress the file or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
+        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
         public void Save(string path, bool compressed)
         {
+            if (_disposed)
+                throw new ObjectDisposedException(null, "Cannot access CsvTable object because it was disposed.");
             if (path == null)
                 throw new ArgumentNullException("path");
 
@@ -251,7 +260,6 @@ namespace CoCSharp.Csv
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>

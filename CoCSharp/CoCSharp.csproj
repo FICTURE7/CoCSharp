@@ -116,6 +116,7 @@
     <Compile Include="Networking\Cryptography\CoCKeyPair.cs" />
     <Compile Include="Networking\Cryptography\Crypto7.cs" />
     <Compile Include="Networking\Cryptography\Crypto8.cs" />
+    <Compile Include="Networking\Cryptography\UpdateNonceType.cs" />
     <Compile Include="Networking\InvalidCommandException.cs" />
     <Compile Include="Networking\MessageDirection.cs" />
     <Compile Include="Networking\Messages\ChatMessageClientMessage.cs" />

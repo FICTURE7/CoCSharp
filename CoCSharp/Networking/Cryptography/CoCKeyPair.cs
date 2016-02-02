@@ -9,7 +9,7 @@ namespace CoCSharp.Networking.Cryptography
     /// <remarks>
     /// Wrapper around <see cref="KeyPair"/> of libsodium.
     /// </remarks>
-    public class CoCKeyPair
+    public class CoCKeyPair : IDisposable
     {
         /// <summary>
         /// Represents the length of a key in bytes. This field is constant.
@@ -20,6 +20,8 @@ namespace CoCSharp.Networking.Cryptography
         /// Represents the length of a nonce in bytes. This field is constant.
         /// </summary>
         public const int NonceLength = 24;
+
+        private bool _disposed = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CoCKeyPair"/> class with the
@@ -36,12 +38,12 @@ namespace CoCSharp.Networking.Cryptography
             if (publicKey == null)
                 throw new ArgumentNullException("publicKey");
             if (publicKey.Length != PublicKeyBox.PublicKeyBytes)
-                throw new ArgumentOutOfRangeException("publicKey", "must be 32 bytes in length.");
+                throw new ArgumentOutOfRangeException("publicKey", "publicKey must be 32 bytes in length.");
 
             if (privateKey == null)
                 throw new ArgumentNullException("privateKey");
             if (privateKey.Length != PublicKeyBox.SecretKeyBytes)
-                throw new ArgumentOutOfRangeException("privateKey", "must be 32 bytes in length.");
+                throw new ArgumentOutOfRangeException("privateKey", "publicKey must be 32 bytes in length.");
 
             _keyPair = new KeyPair(publicKey, privateKey);
         }
@@ -53,7 +55,13 @@ namespace CoCSharp.Networking.Cryptography
         /// </summary>
         public byte[] PublicKey
         {
-            get { return _keyPair.PublicKey; }
+            get
+            {
+                if (_disposed)
+                    throw new ObjectDisposedException(null, "Cannot access CoCKeyPair object because it was disposed.");
+
+                return _keyPair.PublicKey;
+            }
         }
 
         /// <summary>
@@ -61,7 +69,25 @@ namespace CoCSharp.Networking.Cryptography
         /// </summary>
         public byte[] PrivateKey
         {
-            get { return _keyPair.PrivateKey; }
+            get
+            {
+                if (_disposed)
+                    throw new ObjectDisposedException(null, "Cannot access CoCKeyPair object because it was disposed.");
+
+                return _keyPair.PrivateKey;
+            }
+        }
+
+        /// <summary>
+        /// Releases all the resources used by the <see cref="CoCKeyPair"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            _keyPair.Dispose();
+            _disposed = true;
         }
     }
 }

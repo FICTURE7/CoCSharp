@@ -104,8 +104,8 @@ namespace CoCSharp.Networking.Cryptography
             get { return _direction; }
         }
 
-        private CoCKeyPair _keyPair;
-        private MessageDirection _direction;
+        private readonly CoCKeyPair _keyPair;
+        private readonly MessageDirection _direction;
 
         private byte[] _sharedKey; // other end public key (can be client or server)
         private byte[] _blake2bNonce; // generated with (clientKey, serverKey) or (snonce, clientKey, serverKey)
@@ -186,7 +186,7 @@ namespace CoCSharp.Networking.Cryptography
             if (publicKey == null)
                 throw new ArgumentNullException("publicKey");
             if (publicKey.Length != CoCKeyPair.KeyLength)
-                throw new ArgumentOutOfRangeException("publicKey", "must be 32 bytes in length.");
+                throw new ArgumentOutOfRangeException("publicKey", "publicKey must be 32 bytes in length.");
 
             if (_cryptoState == CryptoState.SecoundKey)
                 throw new InvalidOperationException();
@@ -201,58 +201,57 @@ namespace CoCSharp.Networking.Cryptography
             }
             else
             {
-                // if we already have the nonce then the publickey is k
                 _cryptoState = CryptoState.SecoundKey;
             }
 
             _sharedKey = publicKey;
         }
 
-        public void UpdateDecryptNonce()
-        {
-            UpdateDecryptNonce(GenerateNonce());
-        }
-
         /// <summary>
-        /// Updates the <see cref="Crypto8"/> nonce according to the <see cref="MessageDirection"/>.
+        /// Updates the specified <see cref="UpdateNonceType"/> with the specified nonce.
         /// </summary>
-        /// <param name="nonce">Nonce which will be used for encryption. It can be either rnonce or snonce</param>
+        /// <param name="nonce">Nonce to use for the update.</param>
+        /// <param name="nonceType">Nonce type to update.</param>
         /// <exception cref="ArgumentNullException"><paramref name="nonce"/> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="nonce"/> length is not 24.</exception>
-        public void UpdateDecryptNonce(byte[] nonce)
+        public void UpdateNonce(byte[] nonce, UpdateNonceType nonceType)
         {
-            if (nonce == null)
-                throw new ArgumentNullException("nonce");
-            if (nonce.Length != CoCKeyPair.NonceLength)
-                throw new ArgumentOutOfRangeException("nonce", "must be 24 bytes in length.");
-
             if (_cryptoState == CryptoState.SecoundKey) // can only be updated twice
-                throw new InvalidOperationException();
-            else if (_cryptoState == CryptoState.InitialKey)
-            {
-                if (Direction == MessageDirection.Client) // order of keys is important. we're the server
-                    _blake2bNonce = GenerateBlake2BNonce(nonce, _sharedKey, _keyPair.PublicKey);
-                else // we're the client
-                    _blake2bNonce = GenerateBlake2BNonce(nonce, _keyPair.PublicKey, _sharedKey);
-
-                _cryptoState = CryptoState.BlakeNonce; // use blake nonce
-            }
-
-            _decryptNonce = nonce;
-        }
-
-        public void UpdateEncryptNonce(byte[] nonce)
-        {
+                throw new InvalidOperationException("Cannot update nonce after updated with shared key 'k'.");
             if (nonce == null)
                 throw new ArgumentNullException("nonce");
             if (nonce.Length != CoCKeyPair.NonceLength)
-                throw new ArgumentOutOfRangeException("nonce", "must be 24 bytes in length.");
+                throw new ArgumentOutOfRangeException("nonce", "nonce must be 24 bytes in length.");
 
-            _encryptNonce = nonce;
+            switch (nonceType)
+            {
+                case UpdateNonceType.Blake:
+                    if (_cryptoState == CryptoState.InitialKey)
+                    {
+                        if (Direction == MessageDirection.Client) // order of keys is important. we're the server
+                            _blake2bNonce = GenerateBlake2BNonce(nonce, _sharedKey, _keyPair.PublicKey);
+                        else // we're the client
+                            _blake2bNonce = GenerateBlake2BNonce(nonce, _keyPair.PublicKey, _sharedKey);
+
+                        _cryptoState = CryptoState.BlakeNonce; // use blake nonce
+                    }
+                    break;
+
+                case UpdateNonceType.Decrypt:
+                    _decryptNonce = nonce;
+                    break;
+
+                case UpdateNonceType.Encrypt:
+                    _encryptNonce = nonce;
+                    break;
+
+                default:
+                    throw new ArgumentException("Unexpected NonceType: " + nonceType, "nonceType");
+            }
         }
 
         /// <summary>
-        /// Generates a <see cref="CoCKeyPair"/>.
+        /// Generates a public and private <see cref="CoCKeyPair"/>.
         /// </summary>
         /// <remarks>
         /// This is a wrapper around <see cref="PublicKeyBox.GenerateKeyPair()"/>.
