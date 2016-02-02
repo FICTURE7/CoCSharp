@@ -107,7 +107,7 @@ namespace CoCSharp.Networking.Cryptography
         private readonly CoCKeyPair _keyPair;
         private readonly MessageDirection _direction;
 
-        private byte[] _sharedKey; // other end public key (can be client or server)
+        private byte[] _sharedKey; // other end public key can either be clientkey(pk), serverkey and k
         private byte[] _blake2bNonce; // generated with (clientKey, serverKey) or (snonce, clientKey, serverKey)
         private byte[] _encryptNonce; // can be snonce or rnonce according to _direction
         private byte[] _decryptNonce; // can be snonce or rnonce according to _direction
@@ -192,7 +192,7 @@ namespace CoCSharp.Networking.Cryptography
                 throw new InvalidOperationException();
             else if (_cryptoState == CryptoState.None)
             {
-                if (Direction == MessageDirection.Client) // we're the server
+                if (Direction == MessageDirection.Client) // order of keys is important. we're the server
                     _blake2bNonce = GenerateBlake2BNonce(publicKey, _keyPair.PublicKey);
                 else // we're the client
                     _blake2bNonce = GenerateBlake2BNonce(_keyPair.PublicKey, publicKey);
@@ -201,6 +201,12 @@ namespace CoCSharp.Networking.Cryptography
             }
             else
             {
+                if (_decryptNonce == null) // make sure we have a decrypt nonce before decrypting with k
+                    throw new InvalidOperationException("Cannot update shared key 'k' because did not provide a decrypt nonce.");
+
+                if (_encryptNonce == null) // make sure we have an encrypt nonce before encrypting with k
+                    throw new InvalidOperationException("Cannot update shared key 'k' because did not provide a encrypt nonce.");
+
                 _cryptoState = CryptoState.SecoundKey;
             }
 
@@ -275,6 +281,7 @@ namespace CoCSharp.Networking.Cryptography
             return PublicKeyBox.GenerateNonce();
         }
 
+        // Generate blake2b nonce with clientkey(pk) and serverkey.
         private static byte[] GenerateBlake2BNonce(byte[] clientKey, byte[] serverKey)
         {
             var hashBuffer = new byte[clientKey.Length + serverKey.Length];
@@ -285,6 +292,7 @@ namespace CoCSharp.Networking.Cryptography
             return GenericHash.Hash(hashBuffer, null, CoCKeyPair.NonceLength);
         }
 
+        // Generate blake2b nonce with snonce, clientkey and serverkey.
         private static byte[] GenerateBlake2BNonce(byte[] snonce, byte[] clientKey, byte[] serverKey)
         {
             var hashBuffer = new byte[clientKey.Length + serverKey.Length + snonce.Length];
@@ -296,9 +304,11 @@ namespace CoCSharp.Networking.Cryptography
             return GenericHash.Hash(hashBuffer, null, CoCKeyPair.NonceLength);
         }
 
+        // Increment nonce by 2.
         private static void IncrementNonce(byte[] nonce)
         {
-            nonce = Utilities.Increment(Utilities.Increment(nonce)); // TODO: Make fancier?
+            // TODO: Write own methods for incrementing nonces by 2.
+            nonce = Utilities.Increment(Utilities.Increment(nonce));
         }
     }
 }
