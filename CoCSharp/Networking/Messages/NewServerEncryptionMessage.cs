@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Networking.Messages
+﻿using System;
+
+namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// New message introduced in the latest update. Its is 
@@ -30,8 +32,11 @@
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="NewServerEncryptionMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             SessionKey = reader.ReadBytes();
         }
 
@@ -41,8 +46,11 @@
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="NewServerEncryptionMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(SessionKey, true);
         }
     }

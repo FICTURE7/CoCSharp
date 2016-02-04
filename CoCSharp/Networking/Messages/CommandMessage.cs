@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Networking.Messages
+﻿using System;
+
+namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// Message that is sent by the client to the server
@@ -39,8 +41,11 @@
         /// <see cref="MessageReader"/> that will be used to read the <see cref="CommandMessage"/>.
         /// </param>
         /// <exception cref="InvalidMessageException">Number of embedded commands is less than 0.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             Subtick = reader.ReadInt32();
             Checksum = reader.ReadInt32();
 
@@ -68,8 +73,11 @@
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="CommandMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(Subtick);
             writer.Write(Checksum);
 

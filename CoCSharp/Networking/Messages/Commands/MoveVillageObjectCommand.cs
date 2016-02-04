@@ -39,8 +39,11 @@ namespace CoCSharp.Networking.Messages.Commands
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="MoveVillageObjectCommand"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             MoveData = new MoveVillageObjectData();
             MoveData.X = reader.ReadInt32();
             MoveData.Y = reader.ReadInt32();
@@ -56,8 +59,10 @@ namespace CoCSharp.Networking.Messages.Commands
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="MoveVillageObjectCommand"/>.
         /// </param>
         /// <exception cref="NullReferenceException">MoveData is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
             if (MoveData == null)
                 throw new NullReferenceException("MoveData cannot be null");
 

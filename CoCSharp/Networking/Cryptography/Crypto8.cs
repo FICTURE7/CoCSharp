@@ -60,6 +60,7 @@ namespace CoCSharp.Networking.Cryptography
         /// specified <see cref="MessageDirection"/> and a generated <see cref="CoCKeyPair"/> using <see cref="GenerateKeyPair"/>.
         /// </summary>
         /// <param name="direction">Direction of the data.</param>
+        /// <exception cref="ArgumentException">Incorrect direction.</exception>
         public Crypto8(MessageDirection direction) : this(direction, GenerateKeyPair())
         {
             // Space
@@ -71,8 +72,15 @@ namespace CoCSharp.Networking.Cryptography
         /// </summary>
         /// <param name="direction">Direction of the data.</param>
         /// <param name="keyPair">Public and private key pair to use for encryption.</param>
+        /// <exception cref="ArgumentException">Incorrect direction.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="keyPair"/> is null.</exception>"
         public Crypto8(MessageDirection direction, CoCKeyPair keyPair)
         {
+            if (direction != MessageDirection.Client && direction != MessageDirection.Server)
+                throw new ArgumentException("Cannot initialize Crypto8 with direction: " + direction, "direction");
+            if (keyPair == null)
+                throw new ArgumentNullException("keyPair");
+
             _direction = direction;
             _keyPair = keyPair;
         }
@@ -97,7 +105,7 @@ namespace CoCSharp.Networking.Cryptography
         }
 
         /// <summary>
-        /// Gets the direction of the data used by the <see cref="Crypto8"/>.
+        /// Gets the direction of the data.
         /// </summary>
         public MessageDirection Direction
         {
@@ -138,7 +146,7 @@ namespace CoCSharp.Networking.Cryptography
                     IncrementNonce(_encryptNonce);
                     var padData = SecretBox.Create(data, _encryptNonce, _sharedKey);
                     data = new byte[padData.Length - 16];
-                    Buffer.BlockCopy(padData, 16, data, 0, padData.Length - 16);
+                    Buffer.BlockCopy(padData, 16, data, 0, padData.Length - 16); // skip 16 bytes pad
                     break;
 
                 default:
@@ -205,7 +213,7 @@ namespace CoCSharp.Networking.Cryptography
                     throw new InvalidOperationException("Cannot update shared key 'k' because did not provide a decrypt nonce.");
 
                 if (_encryptNonce == null) // make sure we have an encrypt nonce before encrypting with k
-                    throw new InvalidOperationException("Cannot update shared key 'k' because did not provide a encrypt nonce.");
+                    throw new InvalidOperationException("Cannot update shared key 'k' because did not provide an encrypt nonce.");
 
                 _cryptoState = CryptoState.SecoundKey;
             }
@@ -297,9 +305,9 @@ namespace CoCSharp.Networking.Cryptography
         {
             var hashBuffer = new byte[clientKey.Length + serverKey.Length + snonce.Length];
 
-            Buffer.BlockCopy(snonce, 0, hashBuffer, 0, snonce.Length);
-            Buffer.BlockCopy(clientKey, 0, hashBuffer, snonce.Length, clientKey.Length);
-            Buffer.BlockCopy(serverKey, 0, hashBuffer, CoCKeyPair.KeyLength + snonce.Length, serverKey.Length);
+            Buffer.BlockCopy(snonce, 0, hashBuffer, 0, CoCKeyPair.NonceLength);
+            Buffer.BlockCopy(clientKey, 0, hashBuffer, CoCKeyPair.NonceLength, clientKey.Length);
+            Buffer.BlockCopy(serverKey, 0, hashBuffer, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, serverKey.Length);
 
             return GenericHash.Hash(hashBuffer, null, CoCKeyPair.NonceLength);
         }
@@ -307,7 +315,7 @@ namespace CoCSharp.Networking.Cryptography
         // Increment nonce by 2.
         private static void IncrementNonce(byte[] nonce)
         {
-            // TODO: Write own methods for incrementing nonces by 2.
+            // TODO: Write own method for incrementing nonces by 2.
             nonce = Utilities.Increment(Utilities.Increment(nonce));
         }
     }

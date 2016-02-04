@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Networking.Messages
+﻿using System;
+
+namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// Message that is sent by the client to the server to send a message to the lobby chat. The
@@ -30,8 +32,11 @@
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="ChatMessageClientMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             Message = reader.ReadString();
         }
 
@@ -41,8 +46,11 @@
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="ChatMessageClientMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(Message);
         }
     }

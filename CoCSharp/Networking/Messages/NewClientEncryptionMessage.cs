@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Networking.Messages
+﻿using System;
+
+namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// New message introduced in the latest update. It is the
@@ -62,14 +64,21 @@
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="NewClientEncryptionMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
+
             MajorVersion = reader.ReadInt32();
+
             Unknown4 = reader.ReadInt32();
+
             MinorVersion = reader.ReadInt32();
             Hash = reader.ReadString();
+
             Unknown6 = reader.ReadInt32();
             Unknown7 = reader.ReadInt32();
         }
@@ -80,14 +89,21 @@
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="NewClientEncryptionMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(Unknown1);
             writer.Write(Unknown2);
+
             writer.Write(MajorVersion);
+
             writer.Write(Unknown4);
+
             writer.Write(MinorVersion);
             writer.Write(Hash);
+
             writer.Write(Unknown6);
             writer.Write(Unknown7);
         }

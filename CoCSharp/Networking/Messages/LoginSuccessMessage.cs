@@ -122,8 +122,11 @@ namespace CoCSharp.Networking.Messages
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="LoginSuccessMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             Nonce = reader.ReadBytes(CoCKeyPair.NonceLength);
             PublicKey = reader.ReadBytes(CoCKeyPair.KeyLength);
 
@@ -159,8 +162,11 @@ namespace CoCSharp.Networking.Messages
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="LoginSuccessMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(Nonce, false);
             writer.Write(PublicKey, false);
 

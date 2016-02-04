@@ -47,8 +47,11 @@ namespace CoCSharp.Networking.Messages
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="OwnHomeDataMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             LastVisit = TimeSpan.FromSeconds(reader.ReadInt32());
             Unknown1 = reader.ReadInt32(); // -1
             Timestamp = DateTimeConverter.FromUnixTimestamp(reader.ReadInt32());
@@ -63,8 +66,10 @@ namespace CoCSharp.Networking.Messages
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="OwnHomeDataMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
             if (OwnAvatarData == null) // quit early just not to mess up the stream
                 throw new NullReferenceException("OwnAvatarData was null.");
 

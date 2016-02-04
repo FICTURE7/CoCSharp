@@ -20,7 +20,8 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <param name="connection"><see cref="Socket"/> instance.</param>
         /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
-        public NetworkManagerAsync(Socket connection) : this(connection, NetworkManagerAsyncSettings.DefaultSettings)
+        public NetworkManagerAsync(Socket connection)
+            : this(connection, NetworkManagerAsyncSettings.DefaultSettings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
         {
             // Space
         }
@@ -37,16 +38,38 @@ namespace CoCSharp.Networking
         /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
         public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings)
+            : this(connection, settings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
+        {
+            // Space
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
+        /// with the specified <see cref="Socket"/> and <see cref="NetworkManagerAsyncSettings"/> with
+        /// the specified <see cref="Crypto8"/> that will be used to encrypt and decrypt messages.
+        /// </summary>
+        /// <param name="connection"><see cref="Socket"/> instance.</param>
+        /// <param name="settings">
+        /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
+        /// object management.
+        /// </param>
+        /// <param name="crypto"><see cref="Crypto8"/> instance that will be used to encrypt and decrypt messages.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="crypto"/> is null.</exception>
+        public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings, Crypto8 crypto)
         {
             if (connection == null)
                 throw new ArgumentNullException("connection");
             if (settings == null)
                 throw new ArgumentNullException("settings");
+            if (crypto == null)
+                throw new ArgumentNullException("crypto");
 
             Connection = connection;
             Settings = settings;
+            Crypto = crypto;
             Statistics = new NetworkManagerAsyncStatistics();
-            Crypto = new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair); //TODO: intiate as server
 
             _receivePool = Settings.ReceivePool;
             _sendPool = Settings.SendPool;
@@ -80,7 +103,7 @@ namespace CoCSharp.Networking
         /// Gets the <see cref="Crypto8"/> being used with
         /// the current <see cref="NetworkManagerAsync"/>.
         /// </summary>
-        public Crypto8 Crypto { get; set; } //TODO: Get only.
+        public Crypto8 Crypto { get; private set; }
 
         /// <summary>
         /// Sends the specified message using the <see cref="Connection"/> socket.
@@ -91,6 +114,9 @@ namespace CoCSharp.Networking
         public void SendMessage(Message message)
         {
             //TODO: Custom write for LoginRequestMessage.
+
+            if (_disposed)
+                throw new ObjectDisposedException(null, "Cannot SendMessage because the NetworkManagerAsync object was disposed.");
             if (message == null)
                 throw new ArgumentNullException("message");
 
@@ -265,7 +291,7 @@ namespace CoCSharp.Networking
                 Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
-                if (!(message is NewServerEncryptionMessage || message is NewClientEncryptionMessage))
+                if (!(message is NewServerEncryptionMessage || message is NewClientEncryptionMessage)) // ignore 10100 and 20100 for decryption
                     Crypto.Decrypt(ref messageDeBody);
 
                 if (message is UnknownMessage)
@@ -331,6 +357,7 @@ namespace CoCSharp.Networking
             token.Length = (token.Header[2] << 16) | (token.Header[3] << 8) | (token.Header[4]);
             token.Version = (ushort)((token.Header[5] << 8) | (token.Header[6]));
             token.Body = new byte[token.Length];
+
         }
 
         private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
@@ -366,7 +393,6 @@ namespace CoCSharp.Networking
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -387,7 +413,7 @@ namespace CoCSharp.Networking
                     catch { }
 
                     Connection.Close();
-                    //Settings.Dipose();
+                    //Settings.Dipose(); // don't dispose the settings cause there might be other networkmanagers
                 }
                 _disposed = true;
             }
@@ -403,7 +429,7 @@ namespace CoCSharp.Networking
         /// <param name="e">The arguments.</param>
         protected virtual void OnMessageReceived(MessageReceivedEventArgs e)
         {
-            if (MessageReceived != null)
+            if (MessageReceived != null && !_disposed)
                 MessageReceived(this, e);
         }
     }

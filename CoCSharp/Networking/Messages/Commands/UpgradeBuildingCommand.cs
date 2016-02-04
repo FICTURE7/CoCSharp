@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Logic;
+using System;
 
 namespace CoCSharp.Networking.Messages.Commands
 {
@@ -42,8 +43,11 @@ namespace CoCSharp.Networking.Messages.Commands
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="UpgradeBuildingCommand"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             var gameID = reader.ReadInt32();
             if (!Building.ValidGameID(gameID))
                 throw new InvalidCommandException("Unexpected data ID: " + gameID, this);
@@ -60,8 +64,11 @@ namespace CoCSharp.Networking.Messages.Commands
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="UpgradeBuildingCommand"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(BuildingGameIndex);
 
             writer.Write(Unknown1);

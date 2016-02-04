@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Networking
+﻿using System;
+
+namespace CoCSharp.Networking
 {
     /// <summary>
     /// Represents a Clash of Clans command sent in CommandMessage.
@@ -33,5 +35,19 @@
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="Command"/>.
         /// </param>
         public abstract void WriteCommand(MessageWriter writer);
+
+        // "protected internal" does not seem to work.
+        internal void ThrowIfReaderNull(MessageReader reader)
+        {
+            if (reader == null)
+                throw new ArgumentException("reader");
+        }
+
+        // "protected internal" does not seem to work.
+        internal void ThrowIfWriterNull(MessageWriter writer)
+        {
+            if (writer == null)
+                throw new ArgumentException("writer");
+        }
     }
 }

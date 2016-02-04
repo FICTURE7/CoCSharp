@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Networking.Cryptography;
+using System;
 
 namespace CoCSharp.Networking.Messages
 {
@@ -43,22 +44,22 @@ namespace CoCSharp.Networking.Messages
         /// Client major version. If the client version is incorrect
         /// the server will respond with a LoginFailedMessage.
         /// </summary>
-        public int ClientMajorVersion;
+        public int MajorVersion;
         /// <summary>
         /// Client content version. If the client version is incorrect
         /// the server will respond with a LoginFailedMessage.
         /// </summary>
-        public int ClientContentVersion;
+        public int ContentVersion;
         /// <summary>
         /// Client minor version. If the client version is incorrect
         /// the server will respond with a LoginFailedMessage.
         /// </summary>
-        public int ClientMinorVersion;
+        public int MinorVersion;
         /// <summary>
         /// Hash of 'fingerprint.json'. If the fingerprint hash is incorrect
         /// the server will respond with a LoginFailedMessage.
         /// </summary>
-        public string FingerprintHash;
+        public string MasterHash;
 
         /// <summary>
         /// Unknown string 1.
@@ -104,10 +105,6 @@ namespace CoCSharp.Networking.Messages
         public string Unknown3;
 
         /// <summary>
-        /// Is advertising tracking enabled.
-        /// </summary>
-        public bool IsAdvertisingTrackingEnabled;
-        /// <summary>
         /// Android device ID.
         /// </summary>
         public string AndroidDeviceID;
@@ -116,13 +113,35 @@ namespace CoCSharp.Networking.Messages
         /// </summary>
         public string FacebookDistributionID;
         /// <summary>
+        /// Is advertising tracking enabled.
+        /// </summary>
+        public bool IsAdvertisingTrackingEnabled;
+        /// <summary>
         /// Vendor GUID.
         /// </summary>
         public string VendorGUID;
         /// <summary>
-        /// Seed that is needed for encryption.
+        /// Seed that was needed for encryption before updated 8.x.x.
         /// </summary>
         public int Seed;
+        
+        /// <summary>
+        /// Unknown byte 4.
+        /// </summary>
+        public byte Unknown4;
+        /// <summary>
+        /// Unknown string 5.
+        /// </summary>
+        public string Unknown5;
+        /// <summary>
+        /// Unknown string 6.
+        /// </summary>
+        public string Unknown6;
+
+        /// <summary>
+        /// Client version string.
+        /// </summary>
+        public string ClientVersion;
 
         /// <summary>
         ///  Gets the ID of the <see cref="LoginRequestMessage"/>.
@@ -135,17 +154,20 @@ namespace CoCSharp.Networking.Messages
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="LoginRequestMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             SessionKey = reader.ReadBytes(CoCKeyPair.NonceLength);
             Nonce = reader.ReadBytes(CoCKeyPair.NonceLength);
 
             UserID = reader.ReadInt64();
             UserToken = reader.ReadString();
-            ClientMajorVersion = reader.ReadInt32();
-            ClientContentVersion = reader.ReadInt32();
-            ClientMinorVersion = reader.ReadInt32();
-            FingerprintHash = reader.ReadString();
+            MajorVersion = reader.ReadInt32();
+            ContentVersion = reader.ReadInt32();
+            MinorVersion = reader.ReadInt32();
+            MasterHash = reader.ReadString();
 
             Unknown1 = reader.ReadString();
 
@@ -165,6 +187,12 @@ namespace CoCSharp.Networking.Messages
             IsAdvertisingTrackingEnabled = reader.ReadBoolean();
             VendorGUID = reader.ReadString();
             Seed = reader.ReadInt32();
+
+            Unknown4 = reader.ReadByte();
+            Unknown5 = reader.ReadString();
+            Unknown6 = reader.ReadString();
+
+            ClientVersion = reader.ReadString();
         }
 
         /// <summary>
@@ -173,17 +201,20 @@ namespace CoCSharp.Networking.Messages
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="LoginRequestMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(SessionKey, false);
             writer.Write(Nonce, false);
 
             writer.Write(UserID);
             writer.Write(UserToken);
-            writer.Write(ClientMajorVersion);
-            writer.Write(ClientContentVersion);
-            writer.Write(ClientMinorVersion);
-            writer.Write(FingerprintHash);
+            writer.Write(MajorVersion);
+            writer.Write(ContentVersion);
+            writer.Write(MinorVersion);
+            writer.Write(MasterHash);
 
             writer.Write(Unknown1);
 
@@ -202,6 +233,12 @@ namespace CoCSharp.Networking.Messages
             writer.Write(IsAdvertisingTrackingEnabled);
             writer.Write(VendorGUID);
             writer.Write(Seed);
+
+            writer.Write(Unknown4);
+            writer.Write(Unknown5);
+            writer.Write(Unknown6);
+
+            writer.Write(ClientVersion);
         }
     }
 }

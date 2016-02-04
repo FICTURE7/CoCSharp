@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Logic;
+using System;
 
 namespace CoCSharp.Networking.Messages
 {
@@ -56,8 +57,11 @@ namespace CoCSharp.Networking.Messages
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="ChatMessageServerMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             Message = reader.ReadString();
             Name = reader.ReadString();
             Level = reader.ReadInt32();
@@ -79,8 +83,11 @@ namespace CoCSharp.Networking.Messages
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="ChatMessageServerMessage"/>.
         /// </param>
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
+
             writer.Write(Message);
             writer.Write(Name);
             writer.Write(Level);

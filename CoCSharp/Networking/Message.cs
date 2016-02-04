@@ -79,7 +79,21 @@ namespace CoCSharp.Networking
         public static MessageDirection GetMessageDirection<T>() where T : Message
         {
             var tType = typeof(T);
-            return GetMessageDirection((Message)Activator.CreateInstance(tType));
+            return GetMessageDirection((T)Activator.CreateInstance(tType));
+        }
+
+        // "protected internal" does not seem to work.
+        internal void ThrowIfReaderNull(MessageReader reader)
+        {
+            if (reader == null)
+                throw new ArgumentException("reader");
+        }
+
+        // "protected internal" does not seem to work.
+        internal void ThrowIfWriterNull(MessageWriter writer)
+        {
+            if (writer == null)
+                throw new ArgumentException("writer");
         }
     }
 }
