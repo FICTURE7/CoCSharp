@@ -121,7 +121,7 @@ namespace CoCSharp.Csv
 
             var rawCsv = Encoding.UTF8.GetString(bytes); // kinda silly
 
-            var rows = Regex.Split(rawCsv.Replace("\"", string.Empty), "\r\n");
+            var rows = Regex.Split(rawCsv.Replace("\"", string.Empty), "\n");
             var columnNames = Regex.Split(rows[0], ",");
             var columnTypes = Regex.Split(rows[1], ",");
 
