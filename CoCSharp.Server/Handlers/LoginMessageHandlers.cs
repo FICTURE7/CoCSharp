@@ -14,20 +14,19 @@ namespace CoCSharp.Server.Handlers
     {
         private static void HandleLoginRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
-            var encryptionMessage = new EncryptionMessage()
-            {
-                ServerRandom = Crypto7.GenerateNonce(),
-                ScramblerVersion = 1
-            };
+            //TODO: Implement LoginFailed to old client versions.
 
             var lrMessage = message as LoginRequestMessage;
+            var keyPair = Crypto8.GenerateKeyPair();
             var lsMessage = new LoginSuccessMessage()
             {
+                Nonce = Crypto8.GenerateNonce(),
+                PublicKey = keyPair.PublicKey,
                 FacebookID = null,
                 GameCenterID = null,
-                MajorVersion = 7,
-                MinorVersion = 200,
-                RevisionVersion = 19,
+                MajorVersion = 8,
+                MinorVersion = 112,
+                RevisionVersion = 0,
                 ServerEnvironment = "prod",
                 LoginCount = 0,
                 PlayTime = new TimeSpan(0, 0, 0), //TODO: Implement saving of playtime.
@@ -37,7 +36,7 @@ namespace CoCSharp.Server.Handlers
                 DateJoined = DateTime.Now, //TODO: Implement saving of date joined.
                 Unknown2 = 0,
                 GooglePlusID = null,
-                CountryCode = "EU"
+                CountryCode = "OI"
             };
 
             var avatar = (Avatar)null;
@@ -95,14 +94,24 @@ namespace CoCSharp.Server.Handlers
                 OwnAvatarData = avatarData
             };
 
-            client.NetworkManager.SendMessage(encryptionMessage);
             client.NetworkManager.SendMessage(lsMessage); // LoginSuccessMessage
             client.NetworkManager.SendMessage(ohdMessage); // OwnHomeDataMessage
+        }
+
+        public static void HandleNewClientEncryptionMessage(CoCServer server, CoCRemoteClient client, Message message)
+        {
+            var enMessage = new NewServerEncryptionMessage()
+            {
+                SessionKey = client.SessionKey
+            };
+
+            client.NetworkManager.SendMessage(enMessage);
         }
 
         public static void RegisterLoginMessageHandlers(CoCServer server)
         {
             server.RegisterMessageHandler(new LoginRequestMessage(), HandleLoginRequestMessage);
+            server.RegisterMessageHandler(new NewClientEncryptionMessage(), HandleNewClientEncryptionMessage);
         }
     }
 }

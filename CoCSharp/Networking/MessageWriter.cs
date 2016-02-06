@@ -133,11 +133,11 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Writes a byte array to the underlying stream and a four-byte signed integer
-        /// of the length of the byte array if prefixed is set to true.
+        /// of the length of the byte array if prefixed is set to <c>true</c>.
         /// </summary>
         /// <param name="buffer">A byte array containing the data to write. </param>
         /// <param name="prefixed">
-        /// If set to true, a four-byte signed integer of the length of the byte array
+        /// If set to <c>true</c> a four-byte signed integer of the length of the byte array
         /// will be written.
         /// </param>
         public void Write(byte[] buffer, bool prefixed)
@@ -147,13 +147,13 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Writes a region of a byte array to the current stream and a four-byte signed integer
-        /// of the length of the byte array if prefixed is set to true.
+        /// of the length of the byte array if prefixed is set to <c>true</c>.
         /// </summary>
         /// <param name="buffer">A byte array containing the data to write.</param>
         /// <param name="index">The starting point in <paramref name="buffer"/> at which to begin writing.</param>
         /// <param name="count">The number of bytes to write.</param>
         /// <param name="prefixed">
-        /// If set to true, a four-byte signed integer of the length of the byte array
+        /// If set to <c>true</c>, a four-byte signed integer of the length of the byte array
         /// will be written.
         /// </param>
         public void Write(byte[] buffer, int index, int count, bool prefixed)

@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using CoCSharp.Server.Handlers;
 using CoCSharp.Logic;
 using System;
+using CoCSharp.Networking.Cryptography;
 
 namespace CoCSharp.Server
 {
@@ -12,6 +13,7 @@ namespace CoCSharp.Server
         {
             _server = server;
             Connection = connection;
+            SessionKey = Crypto8.GenerateNonce();
             Avatar = new Avatar();
             NetworkManager = new NetworkManagerAsync(connection, settings);
             NetworkManager.MessageReceived += OnMessageReceived;
@@ -20,6 +22,7 @@ namespace CoCSharp.Server
         public Avatar Avatar { get; set; }
         public Socket Connection { get; private set; }
         public NetworkManagerAsync NetworkManager { get; private set; }
+        public byte[] SessionKey { get; private set; }
 
         private readonly CoCServer _server;
 

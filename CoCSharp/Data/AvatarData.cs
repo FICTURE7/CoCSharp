@@ -55,24 +55,26 @@ namespace CoCSharp.Data
             League = avatar.League;
             Name = avatar.Name;
 
-            Unknown12 = -1;
+            Unknown13 = -1;
+            Unknown14 = -1;
 
             Experience = avatar.Experience;
             Level = avatar.Level;
             Gems = avatar.Gems;
             FreeGems = avatar.FreeGems;
 
-            Unknown13 = 1200;
-            Unknown14 = 60;
+            Unknown15 = 1200;
+            Unknown16 = 60;
 
             Trophies = avatar.Trophies;
 
-            Unknown22 = 1;
-            Unknown23 = 946720861000;
+            Unknown20 = 1;
+            Unknown21 = 946720861000;
 
             IsNamed = avatar.IsNamed;
 
-            Unknown27 = 1;
+            Unknown25 = 1;
+            Unknown26 = 1;
 
             ResourcesCapacity = new ResourceCapacitySlot[0];
             ResourcesAmount = new ResourceAmountSlot[0];
@@ -89,6 +91,14 @@ namespace CoCSharp.Data
             NpcStars = new NpcStarSlot[0];
             NpcGold = new NpcGoldSlot[0];
             NpcElixir = new NpcElixirSlot[0];
+            UnknownSlot1 = new UnknownSlot[0];
+            UnknownSlot2 = new UnknownSlot[0];
+            UnknownSlot3 = new UnknownSlot[0];
+            UnknownSlot4 = new UnknownSlot[0];
+
+            Unknown30 = 1454783074000;
+            Unknown31 = 1454783074000;
+            Unknown32 = 1454783074000;
         }
         #endregion
 
@@ -154,6 +164,14 @@ namespace CoCSharp.Data
         /// Unknown integer 11.
         /// </summary>
         public int Unknown11; // 0
+        /// <summary>
+        /// Unknown integer 12.
+        /// </summary>
+        public int Unknown12; // 0
+        /// <summary>
+        /// Unknown integer 13.
+        /// </summary>
+        public int Unknown13; // -1
 
         /// <summary>
         /// League ID.
@@ -180,9 +198,9 @@ namespace CoCSharp.Data
         /// </summary>
         public string Name;
         /// <summary>
-        /// Unknown integer 12.
+        /// Unknown integer 14.
         /// </summary>
-        public int Unknown12; // -1
+        public int Unknown14; // -1
         /// <summary>
         /// Level of avatar.
         /// </summary>
@@ -201,13 +219,13 @@ namespace CoCSharp.Data
         public int FreeGems;
 
         /// <summary>
-        /// Unknown integer 13.
+        /// Unknown integer 15.
         /// </summary>
-        public int Unknown13; // 1200
+        public int Unknown15; // 1200
         /// <summary>
-        /// Unknown integer 14.
+        /// Unknown integer 16.
         /// </summary>
-        public int Unknown14; // 60
+        public int Unknown16; // 60
         /// <summary>
         /// Score.
         /// </summary>
@@ -230,29 +248,37 @@ namespace CoCSharp.Data
         /// </summary> 
         public int DefensesLost; // 0
         /// <summary>
+        /// Unknown integer 17.
+        /// </summary>
+        public int Unknown17; // 0
+        /// <summary>
+        /// Unknown integer 18.
+        /// </summary>
+        public int Unknown18; // 0
+        /// <summary>
         /// Unknown integer 19.
         /// </summary>
         public int Unknown19; // 0
         /// <summary>
-        /// Unknown integer 20.
+        /// Unknown byte 20.
         /// </summary>
-        public int Unknown20; // 0
+        public byte Unknown20; // 1
         /// <summary>
-        /// Unknown integer 21.
+        /// Unknown long 21.
         /// </summary>
-        public int Unknown21; // 0
-        /// <summary>
-        /// Unknown byte 22.
-        /// </summary>
-        public byte Unknown22; // 1
-        /// <summary>
-        /// Unknown long 23.
-        /// </summary>
-        public long Unknown23;
+        public long Unknown21;
         /// <summary>
         /// Avatar name is set.
         /// </summary>
         public bool IsNamed;
+        /// <summary>
+        /// Unknown integer 22.
+        /// </summary>
+        public int Unknown22;
+        /// <summary>
+        /// Unknown integer 23.
+        /// </summary>
+        public int Unknown23;
         /// <summary>
         /// Unknown integer 24.
         /// </summary>
@@ -269,6 +295,7 @@ namespace CoCSharp.Data
         /// Unknown integer 27.
         /// </summary>
         public int Unknown27;
+
         /// <summary>
         /// Resources capacity.
         /// </summary>
@@ -333,10 +360,44 @@ namespace CoCSharp.Data
         /// Npc elixir.
         /// </summary>
         public NpcElixirSlot[] NpcElixir;
+
+        /// <summary>
+        /// Unknown slot 1.
+        /// </summary>
+        public UnknownSlot[] UnknownSlot1;
+        /// <summary>
+        /// Unknown slot 2.
+        /// </summary>
+        public UnknownSlot[] UnknownSlot2;
+        /// <summary>
+        /// Unknown slot 3.
+        /// </summary>
+        public UnknownSlot[] UnknownSlot3;
+        /// <summary>
+        /// Unknown slot 4.
+        /// </summary>
+        public UnknownSlot[] UnknownSlot4;
+
         /// <summary>
         /// Unknown integer 28.
         /// </summary>
         public int Unknown28;
+        /// <summary>
+        /// Unknown integer 29.
+        /// </summary>
+        public int Unknown29;
+        /// <summary>
+        /// Unknown long 30.
+        /// </summary>
+        public long Unknown30;
+        /// <summary>
+        /// Unknown long 31
+        /// </summary>
+        public long Unknown31;
+        /// <summary>
+        /// Unknown long 32.
+        /// </summary>
+        public long Unknown32;
         #endregion
 
         #region Methods
@@ -363,8 +424,8 @@ namespace CoCSharp.Data
                 OwnClanData.Level = reader.ReadInt32();
                 OwnClanData.Unknown1 = reader.ReadByte();
             }
-            Unknown1 = reader.ReadInt32();
 
+            Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
             Unknown3 = reader.ReadInt32();
             Unknown4 = reader.ReadInt32();
@@ -376,22 +437,25 @@ namespace CoCSharp.Data
             Unknown10 = reader.ReadInt32();
             Unknown11 = reader.ReadInt32();
 
+            Unknown12 = reader.ReadInt32(); // 0 = 8.x.x
+            Unknown13 = reader.ReadInt32(); // -1 = 8.x.x
+
             League = reader.ReadInt32();
-            AllianceCastleLevel = reader.ReadInt32();
+            AllianceCastleLevel = reader.ReadInt32(); // might be at wrong offset
             AllianceCastleTotalCapacity = reader.ReadInt32();
             AllianceCastleUsedCapacity = reader.ReadInt32();
             TownHallLevel = reader.ReadInt32();
             Name = reader.ReadString();
 
-            Unknown12 = reader.ReadInt32();
+            Unknown14 = reader.ReadInt32(); // -1, facebook ID
 
             Level = reader.ReadInt32();
             Experience = reader.ReadInt32();
             Gems = reader.ReadInt32();
             FreeGems = reader.ReadInt32();
 
-            Unknown13 = reader.ReadInt32();
-            Unknown14 = reader.ReadInt32();
+            Unknown15 = reader.ReadInt32(); // 1200
+            Unknown16 = reader.ReadInt32(); // 60
 
             Trophies = reader.ReadInt32();
 
@@ -399,18 +463,22 @@ namespace CoCSharp.Data
             AttacksLost = reader.ReadInt32();
             DefensesWon = reader.ReadInt32();
             DefensesLost = reader.ReadInt32();
+
+            Unknown17 = reader.ReadInt32();
+            Unknown18 = reader.ReadInt32();
             Unknown19 = reader.ReadInt32();
-            Unknown20 = reader.ReadInt32();
-            Unknown21 = reader.ReadInt32();
-            Unknown22 = reader.ReadByte();
-            Unknown23 = reader.ReadInt64();
+            Unknown20 = reader.ReadByte(); // 1, might be a bool
+            Unknown21 = reader.ReadInt64(); // 946720861000
 
             IsNamed = reader.ReadBoolean();
 
+            Unknown22 = reader.ReadInt32();
+            Unknown23 = reader.ReadInt32();
             Unknown24 = reader.ReadInt32();
-            Unknown25 = reader.ReadInt32();
-            Unknown26 = reader.ReadInt32();
-            Unknown27 = reader.ReadInt32();
+            Unknown25 = reader.ReadInt32(); // 1
+
+            Unknown26 = reader.ReadInt32(); // 1 = 8.x.x
+            Unknown27 = reader.ReadInt32(); // 0 = 8.x.x
 
             ResourcesCapacity = Slot.ReadSlotArray<ResourceCapacitySlot>(reader);
             ResourcesAmount = Slot.ReadSlotArray<ResourceAmountSlot>(reader);
@@ -421,6 +489,7 @@ namespace CoCSharp.Data
             HeroUpgrades = Slot.ReadSlotArray<HeroUpgradeSlot>(reader);
             HeroHealths = Slot.ReadSlotArray<HeroHealthSlot>(reader);
             HeroStates = Slot.ReadSlotArray<HeroStateSlot>(reader);
+            AllianceUnits = Slot.ReadSlotArray<AllianceUnitSlot>(reader);
             TutorialProgess = Slot.ReadSlotArray<TutorialProgressSlot>(reader);
             Acheivements = Slot.ReadSlotArray<AchievementSlot>(reader);
             AcheivementProgress = Slot.ReadSlotArray<AchievementProgessSlot>(reader);
@@ -428,7 +497,16 @@ namespace CoCSharp.Data
             NpcGold = Slot.ReadSlotArray<NpcGoldSlot>(reader);
             NpcElixir = Slot.ReadSlotArray<NpcElixirSlot>(reader);
 
-            Unknown28 = reader.ReadInt32();
+            UnknownSlot1 = Slot.ReadSlotArray<UnknownSlot>(reader);
+            UnknownSlot2 = Slot.ReadSlotArray<UnknownSlot>(reader);
+            UnknownSlot3 = Slot.ReadSlotArray<UnknownSlot>(reader);
+            UnknownSlot4 = Slot.ReadSlotArray<UnknownSlot>(reader); // ID = 37000002, value = 0
+
+            Unknown28 = reader.ReadInt32(); // 0
+            Unknown29 = reader.ReadInt32(); // 0
+            Unknown30 = reader.ReadInt64(); // 1454781274000
+            Unknown31 = reader.ReadInt64(); // 1454781274000
+            Unknown32 = reader.ReadInt64(); // 1454783074000
         }
 
         /// <summary>
@@ -456,8 +534,8 @@ namespace CoCSharp.Data
                 writer.Write(OwnClanData.Level);
                 writer.Write(OwnClanData.Unknown1);
             }
-            writer.Write(Unknown1);
 
+            writer.Write(Unknown1);
             writer.Write(Unknown2);
             writer.Write(Unknown3);
             writer.Write(Unknown4);
@@ -467,7 +545,10 @@ namespace CoCSharp.Data
             writer.Write(Unknown8);
             writer.Write(Unknown9);
             writer.Write(Unknown10);
-            writer.Write(Unknown11);
+            writer.Write(Unknown11); // 1
+
+            writer.Write(Unknown12); // 1 = 8.x.x
+            writer.Write(Unknown13); // 0 = 8.x.x
 
             writer.Write(League);
             writer.Write(AllianceCastleLevel);
@@ -476,15 +557,15 @@ namespace CoCSharp.Data
             writer.Write(TownHallLevel);
             writer.Write(Name);
 
-            writer.Write(Unknown12);
+            writer.Write(Unknown13); // -1
 
             writer.Write(Level);
             writer.Write(Experience);
             writer.Write(Gems);
             writer.Write(FreeGems);
 
-            writer.Write(Unknown13);
-            writer.Write(Unknown14);
+            writer.Write(Unknown14); // 1200
+            writer.Write(Unknown15); // 60
 
             writer.Write(Trophies);
 
@@ -493,19 +574,21 @@ namespace CoCSharp.Data
             writer.Write(DefensesWon);
             writer.Write(DefensesLost);
 
+            writer.Write(Unknown17);
+            writer.Write(Unknown18);
             writer.Write(Unknown19);
-            writer.Write(Unknown20);
-            writer.Write(Unknown21);
-
-            writer.Write(Unknown22); // if Unknown22 then read Unknown23?
-            writer.Write(Unknown23);
+            writer.Write(Unknown20); // 1, might be a bool
+            writer.Write(Unknown21); // 946720861000
 
             writer.Write(IsNamed);
 
+            writer.Write(Unknown22);
+            writer.Write(Unknown23);
             writer.Write(Unknown24);
-            writer.Write(Unknown25);
-            writer.Write(Unknown26);
-            writer.Write(Unknown27);
+            writer.Write(Unknown25); // 1
+
+            writer.Write(Unknown26); // 1 = 8.x.x
+            writer.Write(Unknown27); // 0 = 8.x.x
 
             Slot.WriteSlotArray(writer, ResourcesCapacity);
             Slot.WriteSlotArray(writer, ResourcesAmount);
@@ -522,8 +605,16 @@ namespace CoCSharp.Data
             Slot.WriteSlotArray(writer, NpcStars);
             Slot.WriteSlotArray(writer, NpcGold);
             Slot.WriteSlotArray(writer, NpcElixir);
+            Slot.WriteSlotArray(writer, UnknownSlot1);
+            Slot.WriteSlotArray(writer, UnknownSlot2);
+            Slot.WriteSlotArray(writer, UnknownSlot3);
+            Slot.WriteSlotArray(writer, UnknownSlot4);
 
             writer.Write(Unknown28);
+            writer.Write(Unknown29);
+            writer.Write(Unknown30);
+            writer.Write(Unknown31);
+            writer.Write(Unknown32);
         }
         #endregion
     }

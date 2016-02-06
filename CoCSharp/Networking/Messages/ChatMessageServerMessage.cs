@@ -68,7 +68,8 @@ namespace CoCSharp.Networking.Messages
             League = reader.ReadInt32();
             UserID = reader.ReadInt64();
             CurrentUserID = reader.ReadInt64();
-            
+
+            Clan = new Clan();
             if (reader.ReadBoolean())
             {
                 Clan.ID = reader.ReadInt64();

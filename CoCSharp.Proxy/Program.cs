@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CoCSharp.Networking;
+using CoCSharp.Networking.Messages;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -25,6 +27,13 @@ namespace CoCSharp.Proxy
 
             Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
             Thread.Sleep(Timeout.Infinite);
+        }
+
+        public static void m()
+        {
+            var reader = new MessageReader(new MemoryStream(File.ReadAllBytes("msg")));
+            var ohdMessage = new OwnHomeDataMessage();
+            ohdMessage.ReadMessage(reader);
         }
     }
 }

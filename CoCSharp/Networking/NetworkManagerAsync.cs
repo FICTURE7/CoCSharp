@@ -124,10 +124,19 @@ namespace CoCSharp.Networking
             {
                 message.WriteMessage(deMessageWriter);
                 var body = ((MemoryStream)deMessageWriter.BaseStream).ToArray();
-                Crypto.Encrypt(ref body);
 
                 if (body.Length > Message.MaxSize)
                     throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
+
+                if (!(message is NewServerEncryptionMessage || message is NewClientEncryptionMessage)) // ignore 10100 and 20100 for encryption
+                    Crypto.Encrypt(ref body);
+
+                if (message is LoginSuccessMessage)
+                {
+                    var lsMessage = message as LoginSuccessMessage;
+                    Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Encrypt);
+                    Crypto.UpdateSharedKey(lsMessage.PublicKey);
+                }
 
                 using (var enMessageWriter = new MessageWriter(new MemoryStream()))
                 {

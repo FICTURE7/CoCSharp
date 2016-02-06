@@ -167,6 +167,7 @@ namespace CoCSharp.Networking.Messages
         {
             ThrowIfWriterNull(writer);
 
+            //TODO: Check if nonce and k is not null.
             writer.Write(Nonce, false);
             writer.Write(PublicKey, false);
 

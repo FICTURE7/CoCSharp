@@ -36,11 +36,19 @@ namespace CoCSharp.Data
         /// <summary>
         /// Unknown integer 2.
         /// </summary>
-        public int Unknown2; // 1200
+        public int Unknown2; // 1800 = 8.x.x
         /// <summary>
         /// Unknown integer 3.
         /// </summary>
-        public int Unknown3; // 60
+        public int Unknown3; // 69119 = 8.x.x seems to change
+        /// <summary>
+        /// Unknown integer 4.
+        /// </summary>
+        public int Unknown4; // 1200
+        /// <summary>
+        /// Unknown integer 5.
+        /// </summary>
+        public int Unknown5; // 60
         /// <summary>
         /// Village data is compressed.
         /// </summary>
@@ -51,9 +59,9 @@ namespace CoCSharp.Data
         public Village Home;
 
         /// <summary>
-        /// Unknown integer 4.
+        /// Unknown integer 6.
         /// </summary>
-        public int Unknown4; // 0
+        public int Unknown6; // 0
 
         /// <summary>
         /// Reads the <see cref="VillageData"/> from the specified <see cref="MessageReader"/>.
@@ -65,15 +73,20 @@ namespace CoCSharp.Data
         /// <exception cref="InvalidMessageException">Home data array is null.</exception>
         public void Read(MessageReader reader)
         {
-            if (!Compressed)
-                throw new NotImplementedException("Uncompressed Village definition is not implemented.");
-
             Unknown1 = reader.ReadInt32(); // 0
             UserID = reader.ReadInt64();
             ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt32());
-            Unknown2 = reader.ReadInt32(); // 1200
-            Unknown3 = reader.ReadInt32(); // 60
+
+            Unknown2 = reader.ReadInt32(); // 1800 = 8.x.x
+            Unknown3 = reader.ReadInt32(); // 69119 = 8.x.x seems to change
+
+            Unknown4 = reader.ReadInt32(); // 1200
+            Unknown5 = reader.ReadInt32(); // 60
+
             Compressed = reader.ReadBoolean();
+
+            if (!Compressed)
+                throw new NotImplementedException("Uncompressed Village definition is not implemented.");
 
             var homeData = reader.ReadBytes();
             if (homeData == null)
@@ -87,7 +100,7 @@ namespace CoCSharp.Data
                 Home = Village.FromJson(homeJson);
             }
 
-            Unknown4 = reader.ReadInt32();
+            Unknown6 = reader.ReadInt32(); // 0
         }
 
         /// <summary>
@@ -107,6 +120,8 @@ namespace CoCSharp.Data
             writer.Write((int)ShieldDuration.TotalSeconds);
             writer.Write(Unknown2); // 1200
             writer.Write(Unknown3); // 60
+            writer.Write(Unknown4);
+            writer.Write(Unknown5);
             writer.Write(Compressed);
 
             using (var bw = new BinaryWriter(new MemoryStream()))
@@ -119,7 +134,7 @@ namespace CoCSharp.Data
                 writer.Write(((MemoryStream)bw.BaseStream).ToArray(), true);
             }
 
-            writer.Write(Unknown4);
+            writer.Write(Unknown6); // 0
         }
     }
 }

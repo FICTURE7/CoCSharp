@@ -172,8 +172,8 @@ namespace CoCSharp.Server.Core
         {
             var saveValues = saveProperty.Split('=');
 
-            saveValues[0] = saveValues[0].Remove(saveValues[0].Length - 1);
-            saveValues[1] = saveValues[1].Remove(0, 1);
+            //saveValues[0] = saveValues[0].Remove(saveValues[0].Length - 1);
+            //saveValues[1] = saveValues[1].Remove(0, 1);
 
             return saveValues;
         }

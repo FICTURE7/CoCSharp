@@ -97,6 +97,7 @@
     <Compile Include="Data\Slots\TutorialProgressSlot.cs" />
     <Compile Include="Data\Slots\UnitSlot.cs" />
     <Compile Include="Data\Slots\UnitUpgradeSlot.cs" />
+    <Compile Include="Data\Slots\UnknownSlot.cs" />
     <Compile Include="Data\VillageData.cs" />
     <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Logic\Avatar.cs" />

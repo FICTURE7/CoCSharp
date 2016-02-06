@@ -4,38 +4,33 @@ using System;
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
-    /// Represents a Clash of Clans tutorial(misison) progress slot.
+    /// Represents an unknown slot.
     /// </summary>
-    public class TutorialProgressSlot : Slot
+    public class UnknownSlot : Slot
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TutorialProgressSlot"/> class.
+        /// Initalizes a new instance of the <see cref="UnknownSlot"/> class.
         /// </summary>
-        public TutorialProgressSlot()
+        public UnknownSlot()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TutorialProgressSlot"/> class with
-        /// the specified mission ID.
-        /// </summary>
-        /// <param name="id">ID of the mission.</param>
-        public TutorialProgressSlot(int id)
-        {
-            ID = id;
-        }
-
-        /// <summary>
-        /// Gets or sets the mission ID.
+        /// Gets or sets the ID of the unknown slot.
         /// </summary>
         public int ID { get; set; }
 
         /// <summary>
-        /// Reads the <see cref="TutorialProgressSlot"/> from the specified <see cref="MessageReader"/>.
+        /// Gets or sets the value of the unknown slot.
+        /// </summary>
+        public int Value { get; set; }
+
+        /// <summary>
+        /// Reads the <see cref="UnknownSlot"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="TutorialProgressSlot"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="UnknownSlot"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadSlot(MessageReader reader)
@@ -43,13 +38,14 @@ namespace CoCSharp.Data.Slots
             ThrowIfReaderNull(reader);
 
             ID = reader.ReadInt32();
+            Value = reader.ReadInt32();
         }
 
         /// <summary>
-        /// Writes the <see cref="TutorialProgressSlot"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="UnknownSlot"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="TutorialProgressSlot"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="UnknownSlot"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteSlot(MessageWriter writer)
@@ -57,6 +53,7 @@ namespace CoCSharp.Data.Slots
             ThrowIfWriterNull(writer);
 
             writer.Write(ID);
+            writer.Write(Value);
         }
     }
 }
