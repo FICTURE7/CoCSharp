@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Networking;
 using CoCSharp.Networking.Messages.Commands;
 using CoCSharp.Logic;
+using System;
 
 namespace CoCSharp.Server.Handlers
 {
@@ -19,13 +20,13 @@ namespace CoCSharp.Server.Handlers
             var bbCmd = command as BuyBuildingCommand;
             var dataIndex = bbCmd.BuildingDataIndex;
             var dataID = Building.IndexToDataID(dataIndex);
-            //Console.WriteLine("Buying new building {0} at {1}, {2}", dataID, bbCmd.X, bbCmd.Y);
+            Console.WriteLine("Buying new building {0} at {1}, {2}", dataID, bbCmd.X - 3, bbCmd.Y - 3);
 
             var building = new Building(dataID);
             building.Data = server.DataManager.FindBuilding(dataIndex, 0);
 
-            building.X = bbCmd.X;
-            building.Y = bbCmd.Y;
+            building.X = bbCmd.X - 3;
+            building.Y = bbCmd.Y - 3;
             building.BeginConstruct();
             building.ConstructionFinished += OnConstructed;
 

@@ -81,14 +81,14 @@ namespace CoCSharp.Server.Handlers
 
                 ResourcesAmount = new ResourceAmountSlot[] 
                 {
-                    new ResourceAmountSlot(3000001, 100),
-                    new ResourceAmountSlot(3000002, 200)
+                    new ResourceAmountSlot(3000001, 1000),
+                    new ResourceAmountSlot(3000002, 1000)
                 }
             };
 
             var ohdMessage = new OwnHomeDataMessage()
             {
-                LastVisit = TimeSpan.FromSeconds(100),
+                LastVisit = TimeSpan.FromSeconds(100), //TODO: Implement saving of LastVisit.
                 Unknown1 = -1,
                 Timestamp = DateTime.UtcNow,
                 OwnAvatarData = avatarData

@@ -106,9 +106,9 @@ namespace CoCSharp.Csv
         }
 
         /// <summary>
-        /// Reads the specified .csv file from a <see cref="Byte"/> array without compression.
+        /// Reads the specified .csv file from a byte array without compression.
         /// </summary>
-        /// <param name="bytes"><see cref="Byte"/> array of the .csv file.</param>
+        /// <param name="bytes">Bytes array of the .csv file.</param>
         /// <exception cref="ArgumentNullException"><paramref name="bytes"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
         /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
@@ -121,12 +121,15 @@ namespace CoCSharp.Csv
 
             var rawCsv = Encoding.UTF8.GetString(bytes); // kinda silly
 
-            var rows = Regex.Split(rawCsv.Replace("\"", string.Empty), "\n");
+            var eol = GetLineEnding(rawCsv);
+            var rows = Regex.Split(rawCsv.Replace("\"", string.Empty), eol);
             var columnNames = Regex.Split(rows[0], ",");
             var columnTypes = Regex.Split(rows[1], ",");
 
+            // maybe we should check the line ending consistency?
+
             if (columnNames.Length != columnTypes.Length)
-                throw new CsvException("Number of column and number of ");
+                throw new CsvException("Invalid number of columnNames and columnTypes.");
 
             // manipulating directly Table is probably a bad idea
             // might wanna create a new table
@@ -278,6 +281,30 @@ namespace CoCSharp.Csv
                     Table.Dispose();
             }
             _disposed = true;
+        }
+
+        // Get the line ending of the file depending of the first '\n','\r' characters found.
+        private static string GetLineEnding(string csv)
+        {
+            var indexCR = csv.IndexOf('\r');
+
+            if (indexCR == -1) // unix
+            {
+                var indexLN = csv.IndexOf('\n');
+                if (indexLN == -1) // no valid ending
+                    throw new FormatException("Unable to identify line ending.");
+                else
+                    return "\n";
+            }
+            else
+            {
+                var nextChar = csv[indexCR + 1];
+
+                if (nextChar == '\n') // windows
+                    return "\r\n";
+                else // mac
+                    return "\r";
+            }
         }
     }
 }
