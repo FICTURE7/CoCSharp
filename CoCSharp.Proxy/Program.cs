@@ -20,6 +20,7 @@ namespace CoCSharp.Proxy
             stopwatch.Start();
 
             Directory.CreateDirectory("messages");
+            Directory.CreateDirectory("villages");
             Proxy = new CoCProxy();
             Proxy.Start(new IPEndPoint(IPAddress.Any, 9339));
 

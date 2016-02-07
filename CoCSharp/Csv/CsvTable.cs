@@ -119,7 +119,7 @@ namespace CoCSharp.Csv
             if (bytes == null)
                 throw new ArgumentNullException("bytes");
 
-            var rawCsv = Encoding.UTF8.GetString(bytes); // kinda silly
+            var rawCsv = Encoding.UTF8.GetString(bytes); // kinda silly, cause we already had it as a string
 
             var eol = GetLineEnding(rawCsv);
             var rows = Regex.Split(rawCsv.Replace("\"", string.Empty), eol);

@@ -7,7 +7,7 @@ namespace CoCSharp.Networking.Messages
     /// first message sent by the client to the server to initiate
     /// a login.
     /// </summary>
-    public class NewClientEncryptionMessage : Message
+    public class NewClientEncryptionMessage : Message //TODO: Find a better name.
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NewClientEncryptionMessage"/> class.

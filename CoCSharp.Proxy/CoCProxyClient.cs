@@ -45,6 +45,8 @@ namespace CoCSharp.Proxy
             Console.WriteLine("[S < C] => ID:{0} Name:{1}", e.Message.ID, e.Message.GetType().Name);
             if (!e.MessageFullyRead)
                 Console.WriteLine("        => Did not fully read.");
+            if (e.Exception != null)
+                Console.WriteLine("        => Warning: Exception occured during reading: {0}", e.Exception.Message);
 
             var message = e.Message;
             var messageBytes = (byte[])null;
@@ -96,7 +98,7 @@ namespace CoCSharp.Proxy
             if (e.Exception != null)
                 Console.WriteLine("        => Warning: Exception occured during reading: {0}", e.Exception.Message);
 
-            
+
             var message = e.Message;
             var messageBytes = (byte[])null;
             if (message is NewServerEncryptionMessage)
@@ -118,6 +120,12 @@ namespace CoCSharp.Proxy
             }
             else
             {
+                if (message is OwnHomeDataMessage)
+                {
+                    var ohdMessage = message as OwnHomeDataMessage;
+                    File.WriteAllText("villages\\" + DateTime.Now.ToString("hh-mm-ss.fff") + " ownhomedata.json", 
+                                      ohdMessage.OwnAvatarData.OwnVillageData.Home.DeserializedJson);
+                }
                 messageBytes = new byte[e.MessageData.Length];
 
                 var body = e.MessageBody;

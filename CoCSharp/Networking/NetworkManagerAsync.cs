@@ -342,6 +342,12 @@ namespace CoCSharp.Networking
                         Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
                         Crypto.UpdateSharedKey(lsMessage.PublicKey); // update crypto with k
                     }
+                    else if (message is LoginFailedMessage) // we're the client
+                    {
+                        var lfMessage = message as LoginFailedMessage;
+                        Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
+                        Crypto.UpdateSharedKey(lfMessage.PublicKey); // update crypto with k
+                    }
 
                     OnMessageReceived(new MessageReceivedEventArgs()
                     {

@@ -33,6 +33,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.ZLib, Version=2.0.0.14, Culture=neutral, processorArchitecture=MSIL">
@@ -129,6 +131,7 @@
     <Compile Include="Networking\Messages\Commands\MoveMultipleVillageObjectCommand.cs" />
     <Compile Include="Networking\Messages\Commands\MoveVillageObjectCommand.cs" />
     <Compile Include="Networking\Messages\Commands\UpgradeBuildingCommand.cs" />
+    <Compile Include="Networking\Messages\LoginFailedMessage.cs" />
     <Compile Include="Networking\Messages\LoginSuccessMessage.cs" />
     <Compile Include="Networking\Messages\OwnHomeDataMessage.cs" />
     <Compile Include="Networking\MessageToken.cs" />
