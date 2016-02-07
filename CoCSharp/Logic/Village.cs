@@ -74,6 +74,12 @@ namespace CoCSharp.Logic
         public List<Decoration> Decorations { get; set; }
 
         /// <summary>
+        /// Gets or sets the experience version.
+        /// </summary>
+        [JsonProperty("exp_ver")]
+        public int ExperienceVersion { get; set; } // 8.x.x clients needs it when there is "loot_multi_ver" stuff
+
+        /// <summary>
         /// Gets or sets the JSON from which the <see cref="Village"/> was
         /// deserialized. Returns <c>null</c> if the <see cref="Village"/> wasn't deserialized.
         /// </summary>
@@ -81,19 +87,19 @@ namespace CoCSharp.Logic
         public string DeserializedJson { get; set; }
 
         /// <summary>
-        /// Returns a JSON formatted string that represents the current <see cref="Village"/>.
+        /// Returns a JSON string that represents the current <see cref="Village"/>.
         /// </summary>
-        /// <returns>A JSON formatted string that represents the current <see cref="Village"/>.</returns>
+        /// <returns>A JSON string that represents the current <see cref="Village"/>.</returns>
         public string ToJson()
         {
             return ToJson(false);
         }
 
         /// <summary>
-        /// Returns a JSON formatted string and indented if specified that represents the current <see cref="Village"/>.
+        /// Returns a JSON string and indented if specified that represents the current <see cref="Village"/>.
         /// </summary>
         /// <param name="indent">If set to <c>true</c> the returned JSON string will be indented.</param>
-        /// <returns>A JSON formatted string and indented if specified that represents the current <see cref="Village"/>.</returns>
+        /// <returns>A JSON string and indented if specified that represents the current <see cref="Village"/>.</returns>
         public string ToJson(bool indent)
         {
             return indent == true ? JsonConvert.SerializeObject(this, Formatting.Indented) : JsonConvert.SerializeObject(this);

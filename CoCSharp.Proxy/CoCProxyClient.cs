@@ -11,7 +11,7 @@ namespace CoCSharp.Proxy
     {
         public CoCProxyClient(Socket client, Socket server, NetworkManagerAsyncSettings settings)
         {
-            // initiated first because message receive trigger too quickly sometimes
+            // initiated first because message receive triggers too quickly sometimes
             var crypto = new Crypto8(MessageDirection.Server);
             crypto.UpdateSharedKey(Crypto8.SupercellPublicKey);  // use supercell's public key
 
