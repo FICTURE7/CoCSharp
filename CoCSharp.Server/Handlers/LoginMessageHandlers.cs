@@ -100,7 +100,7 @@ namespace CoCSharp.Server.Handlers
 
         public static void HandleNewClientEncryptionMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
-            var enMessage = new NewServerEncryptionMessage()
+            var enMessage = new SessionSuccessMessage()
             {
                 SessionKey = client.SessionKey
             };
@@ -111,7 +111,7 @@ namespace CoCSharp.Server.Handlers
         public static void RegisterLoginMessageHandlers(CoCServer server)
         {
             server.RegisterMessageHandler(new LoginRequestMessage(), HandleLoginRequestMessage);
-            server.RegisterMessageHandler(new NewClientEncryptionMessage(), HandleNewClientEncryptionMessage);
+            server.RegisterMessageHandler(new SessionRequestMessage(), HandleNewClientEncryptionMessage);
         }
     }
 }

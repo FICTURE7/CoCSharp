@@ -50,7 +50,7 @@ namespace CoCSharp.Proxy
 
             var message = e.Message;
             var messageBytes = (byte[])null;
-            if (message is NewClientEncryptionMessage)
+            if (message is SessionRequestMessage)
                 messageBytes = e.MessageData;
             else if (message is LoginRequestMessage)
             {
@@ -101,7 +101,7 @@ namespace CoCSharp.Proxy
 
             var message = e.Message;
             var messageBytes = (byte[])null;
-            if (message is NewServerEncryptionMessage)
+            if (message is SessionSuccessMessage)
                 messageBytes = e.MessageData;
             else if (message is LoginSuccessMessage)
             {

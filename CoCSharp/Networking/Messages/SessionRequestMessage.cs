@@ -3,16 +3,15 @@
 namespace CoCSharp.Networking.Messages
 {
     /// <summary>
-    /// New message introduced in the latest update. It is the
-    /// first message sent by the client to the server to initiate
-    /// a login.
+    /// Message that is sent by the client to the server to 
+    /// begin a new session.
     /// </summary>
-    public class NewClientEncryptionMessage : Message //TODO: Find a better name.
+    public class SessionRequestMessage : Message
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NewClientEncryptionMessage"/> class.
+        /// Initializes a new instance of the <see cref="SessionRequestMessage"/> class.
         /// </summary>
-        public NewClientEncryptionMessage()
+        public SessionRequestMessage()
         {
             // Space
         }
@@ -54,15 +53,15 @@ namespace CoCSharp.Networking.Messages
         public int Unknown7;
 
         /// <summary>
-        /// Gets the ID of the <see cref="NewClientEncryptionMessage"/>.
+        /// Gets the ID of the <see cref="SessionRequestMessage"/>.
         /// </summary>
         public override ushort ID { get { return 10100; } }
 
         /// <summary>
-        /// Reads the <see cref="NewClientEncryptionMessage"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="SessionRequestMessage"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="NewClientEncryptionMessage"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="SessionRequestMessage"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
@@ -84,10 +83,10 @@ namespace CoCSharp.Networking.Messages
         }
 
         /// <summary>
-        /// Writes the <see cref="NewClientEncryptionMessage"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="SessionRequestMessage"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="NewClientEncryptionMessage"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="SessionRequestMessage"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)

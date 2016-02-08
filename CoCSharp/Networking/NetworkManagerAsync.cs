@@ -128,7 +128,7 @@ namespace CoCSharp.Networking
                 if (body.Length > Message.MaxSize)
                     throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
 
-                if (!(message is NewServerEncryptionMessage || message is NewClientEncryptionMessage)) // ignore 10100 and 20100 for encryption
+                if (!(message is SessionSuccessMessage || message is SessionRequestMessage)) // ignore 10100 and 20100 for encryption
                     Crypto.Encrypt(ref body);
 
                 if (message is LoginSuccessMessage)
@@ -300,7 +300,7 @@ namespace CoCSharp.Networking
                 Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
-                if (!(message is NewServerEncryptionMessage || message is NewClientEncryptionMessage)) // ignore 10100 and 20100 for decryption
+                if (!(message is SessionSuccessMessage || message is SessionRequestMessage)) // ignore 10100 and 20100 for decryption
                     Crypto.Decrypt(ref messageDeBody);
 
                 if (message is UnknownMessage)

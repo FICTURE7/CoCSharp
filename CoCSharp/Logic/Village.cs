@@ -9,34 +9,14 @@ namespace CoCSharp.Logic
     public class Village
     {
         /// <summary>
-        /// Represents the minimum legal value of the X coordinate. This field is constant.
-        /// </summary>
-        public const int MinX = 2;
-        
-        /// <summary>
-        /// Represents the minimum legal value of the Y coordinate. This field is constant.
-        /// </summary>
-        public const int MinY = 2;
-
-        /// <summary>
-        /// Represents the maximum legal value of the X coordinate. This field is constant.
-        /// </summary>
-        public const int MaxX = 38;
-
-        /// <summary>
-        /// Represents the maximum legal value of the Y coordinate. This field is constant.
-        /// </summary>
-        public const int MaxY = 38;
-
-        /// <summary>
         /// Represents the width of the <see cref="Village"/> layout.
         /// </summary>
-        public const int Width = 40;
+        public const int Width = 43;
 
         /// <summary>
         /// Represents the height of the <see cref="Village"/> layout.
         /// </summary>
-        public const int Height = 40;
+        public const int Height = 43;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Village"/> class.
@@ -116,28 +96,6 @@ namespace CoCSharp.Logic
             var village = JsonConvert.DeserializeObject<Village>(value);
             village.DeserializedJson = value;
             return village;
-        }
-
-        /// <summary>
-        /// Determines if the specified coordinates is legal. Returns <c>true</c>
-        /// if its valid.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <returns>Returns <c>true</c> if coordinate is valid.</returns>
-        public static bool IsCoordinatesLegal(int x, int y)
-        {
-            if (x > MaxX)
-                return false; // exit asap, small optimization
-            if (y > MaxY)
-                return false;
-
-            if (x < MinX)
-                return false;
-            if (y < MinY)
-                return false;
-
-            return true;
         }
     }
 }

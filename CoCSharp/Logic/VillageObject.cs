@@ -26,6 +26,18 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
+        /// Gets the base data ID of the <see cref="VillageObject"/>.
+        /// </summary>
+        [JsonIgnore]
+        internal abstract int BaseDataID { get; }
+
+        /// <summary>
+        /// Gets the base game ID of the <see cref="VillageObject"/>.
+        /// </summary>
+        [JsonIgnore]
+        internal abstract int BaseGameID { get; }
+
+        /// <summary>
         /// Gets or sets the data ID of the <see cref="VillageObject"/>.
         /// </summary>
         [JsonProperty("data")]

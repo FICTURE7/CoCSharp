@@ -22,5 +22,9 @@
         {
             // Space
         }
+
+        internal override int BaseDataID { get { return 18000000; } }
+
+        internal override int BaseGameID { get { return 506000000; } }
     }
 }

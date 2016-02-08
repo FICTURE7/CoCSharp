@@ -31,9 +31,9 @@ namespace CoCSharp.Networking.Messages.Commands
         /// </summary>
         public int Y;
         /// <summary>
-        /// Data index of the building that was bought.
+        /// Data ID of the building that was bought.
         /// </summary>
-        public int BuildingDataIndex;
+        public int BuildingDataID;
 
         /// <summary>
         /// Unknown integer 1.
@@ -47,20 +47,19 @@ namespace CoCSharp.Networking.Messages.Commands
         /// <see cref="MessageReader"/> that will be used to read the <see cref="BuyBuildingCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
+        /// <exception cref="InvalidCommandException"><see cref="BuildingDataID"/> is invalid.</exception>
         public override void ReadCommand(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
 
             X = reader.ReadInt32();
             Y = reader.ReadInt32();
+            BuildingDataID = reader.ReadInt32();
 
-            var dataID = reader.ReadInt32();
-            if (!Building.ValidDataID(dataID))
-                throw new InvalidCommandException("Unexpected data ID: " + dataID, this);
+            Unknown1 = reader.ReadInt32(); // 4746
 
-            BuildingDataIndex = Building.DataIDToIndex(dataID);
-
-            Unknown1 = reader.ReadInt32();
+            if (!IDConverter.IsValidData<Building>(BuildingDataID))
+                throw new InvalidCommandException("Unexpected data ID: " + BuildingDataID, this);
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace CoCSharp.Networking.Messages.Commands
 
             writer.Write(X);
             writer.Write(Y);
-            writer.Write(BuildingDataIndex);
+            writer.Write(BuildingDataID);
 
             writer.Write(Unknown1);
         }

@@ -45,10 +45,10 @@ namespace CoCSharp.Networking.Messages.Commands
             ThrowIfReaderNull(reader);
 
             var gameID = reader.ReadInt32();
-            if (!Obstacle.ValidGameID(gameID))
-                throw new InvalidCommandException("Unexpected game ID: " + gameID, this);
+            //if (!Obstacle.ValidGameID(gameID))
+            //    throw new InvalidCommandException("Unexpected game ID: " + gameID, this);
 
-            ObstacleGameIndex = Obstacle.GameIDToIndex(gameID);
+            //ObstacleGameIndex = Obstacle.GameIDToIndex(gameID);
 
             Unknown1 = reader.ReadInt32();
         }

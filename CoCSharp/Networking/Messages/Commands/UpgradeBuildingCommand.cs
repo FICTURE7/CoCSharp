@@ -49,10 +49,10 @@ namespace CoCSharp.Networking.Messages.Commands
             ThrowIfReaderNull(reader);
 
             var gameID = reader.ReadInt32();
-            if (!Building.ValidGameID(gameID))
-                throw new InvalidCommandException("Unexpected data ID: " + gameID, this);
+            //if (!Building.ValidGameID(gameID))
+            //    throw new InvalidCommandException("Unexpected data ID: " + gameID, this);
 
-            BuildingGameIndex = Building.GameIDToIndex(gameID);
+            //BuildingGameIndex = Building.GameIDToIndex(gameID);
 
             Unknown1 = reader.ReadByte();
             Unknown2 = reader.ReadInt32();
