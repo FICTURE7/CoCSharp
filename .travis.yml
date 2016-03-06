@@ -10,4 +10,4 @@ install:
 
 script:
     - xbuild CoCSharp.sln
-    - mono ./nunitrunner/NUnit.Runners.3.0.1/tools/nunit-console.exe ./CoCSharp.Test/bin/Debug/CoCSharp.Test.dll
+    - mono ./nunitrunner/NUnit.Console.3.0.1/tools/nunit-console.exe ./CoCSharp.Test/bin/Debug/CoCSharp.Test.dll
