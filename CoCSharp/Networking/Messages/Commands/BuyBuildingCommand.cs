@@ -23,15 +23,15 @@ namespace CoCSharp.Networking.Messages.Commands
         public override int ID { get { return 500; } }
 
         /// <summary>
-        /// X coordinates of the building.
+        /// X coordinates of the <see cref="Building"/> where it was placed.
         /// </summary>
         public int X;
         /// <summary>
-        /// Y coordinates of the building.
+        /// Y coordinates of the <see cref="Building"/> where it was placed.
         /// </summary>
         public int Y;
         /// <summary>
-        /// Data ID of the building that was bought.
+        /// Data ID of the <see cref="Building"/> that was bought.
         /// </summary>
         public int BuildingDataID;
 
@@ -47,7 +47,6 @@ namespace CoCSharp.Networking.Messages.Commands
         /// <see cref="MessageReader"/> that will be used to read the <see cref="BuyBuildingCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
-        /// <exception cref="InvalidCommandException"><see cref="BuildingDataID"/> is invalid.</exception>
         public override void ReadCommand(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
@@ -57,9 +56,6 @@ namespace CoCSharp.Networking.Messages.Commands
             BuildingDataID = reader.ReadInt32();
 
             Unknown1 = reader.ReadInt32(); // 4746
-
-            if (!IDConverter.IsValidData<Building>(BuildingDataID))
-                throw new InvalidCommandException("Unexpected data ID: " + BuildingDataID, this);
         }
 
         /// <summary>

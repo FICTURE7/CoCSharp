@@ -16,7 +16,7 @@ namespace CoCSharp.Server.Core
 
         public BuildingData[] FindBuilding(int id)
         {
-            return BuildingsData.Where(bd => bd.DataIndex == id).ToArray();
+            return BuildingsData.Where(bd => bd.ID == id).ToArray();
         }
 
         public BuildingData FindBuilding(int id, int level)

@@ -5,6 +5,8 @@
     /// </summary>
     public class Decoration : VillageObject
     {
+        internal const int BaseGameID = 506000000;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Decoration"/> class.
         /// </summary>
@@ -12,19 +14,5 @@
         {
             // Space
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Decoration"/> class
-        /// with the specified data ID.
-        /// </summary>
-        /// <param name="dataID">Data ID of the <see cref="Decoration"/>.</param>
-        public Decoration(int dataID) : base(dataID)
-        {
-            // Space
-        }
-
-        internal override int BaseDataID { get { return 18000000; } }
-
-        internal override int BaseGameID { get { return 506000000; } }
     }
 }

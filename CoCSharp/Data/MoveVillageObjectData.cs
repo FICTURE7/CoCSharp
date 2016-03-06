@@ -3,6 +3,8 @@ using CoCSharp.Networking.Messages.Commands;
 
 namespace CoCSharp.Data
 {
+    //TODO: Figure something better for it.
+
     /// <summary>
     /// Represents data about move village object sent
     /// in <see cref="MoveVillageObjectCommand"/> and <see cref="MoveMultipleVillageObjectCommand"/>.
@@ -26,9 +28,9 @@ namespace CoCSharp.Data
         /// </summary>
         public int Y;
         /// <summary>
-        /// <see cref="VillageObject"/> game index in <see cref="Village"/> that
+        /// <see cref="VillageObject"/> game ID in a <see cref="Village"/> that
         /// was moved.
         /// </summary>
-        public int VillageObjectGameIndex;
+        public int VillageObjectGameID;
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Wrapper of <see cref="BinaryReader"/> that implements methods to read Clash of Clans mesasges.
+    /// Wrapper of <see cref="BinaryReader"/> that implements methods to read Clash of Clans messages.
     /// </summary>
     public class MessageReader : BinaryReader
     {
@@ -19,12 +19,17 @@ namespace CoCSharp.Networking
             // Space
         }
 
+        private bool _disposed;
+
         /// <summary>
         /// Reads an 8-byte floating point value from the current stream and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <returns>A</returns>
+        /// <returns>Reads an 8-byte floating point value from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override double ReadDouble()
         {
+            CheckDispose();
+
             var buffer = ReadByteArrayEndian(8);
             return BitConverter.ToDouble(buffer, 0);
         }
@@ -33,8 +38,11 @@ namespace CoCSharp.Networking
         /// Reads a 8-byte signed integer from the current stream and advances the current position of the stream by four bytes.
         /// </summary>
         /// <returns>A 8-byte signed integer from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override long ReadInt64()
         {
+            CheckDispose();
+
             return (long)ReadUInt64();
         }
 
@@ -42,8 +50,11 @@ namespace CoCSharp.Networking
         /// Reads an 8-byte unsigned integer from the current stream and advances the position of the stream by eight bytes.
         /// </summary>
         /// <returns>An 8-byte unsigned integer from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override ulong ReadUInt64()
         {
+            CheckDispose();
+
             var buffer = ReadByteArrayEndian(8);
             return BitConverter.ToUInt64(buffer, 0);
         }
@@ -52,8 +63,11 @@ namespace CoCSharp.Networking
         /// Reads a 4-byte floating-point value from the current stream and advances the current position of the stream by four bytes.
         /// </summary>
         /// <returns>A 4-byte floating-point value from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override float ReadSingle()
         {
+            CheckDispose();
+
             var buffer = ReadByteArrayEndian(4);
             return BitConverter.ToSingle(buffer, 0);
         }
@@ -62,8 +76,11 @@ namespace CoCSharp.Networking
         /// Reads a 4-byte signed integer from the current stream and advances the current position of the stream by four bytes.
         /// </summary>
         /// <returns>A 4-byte signed integer read from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override int ReadInt32()
         {
+            CheckDispose();
+
             return (int)ReadUInt32();
         }
 
@@ -71,8 +88,11 @@ namespace CoCSharp.Networking
         /// Reads a 4-byte unsigned integer from the current stream and advances the position of the stream by four bytes.
         /// </summary>
         /// <returns>A 4-byte unsigned integer from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override uint ReadUInt32()
         {
+            CheckDispose();
+
             var buffer = ReadByteArrayEndian(4);
             return BitConverter.ToUInt32(buffer, 0);
         }
@@ -81,8 +101,11 @@ namespace CoCSharp.Networking
         /// Reads a 2-byte signed integer from the current stream and advances the current position of the stream by two bytes.
         /// </summary>
         /// <returns>A 2-byte signed integer read from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override short ReadInt16()
         {
+            CheckDispose();
+
             return (short)ReadUInt16();
         }
 
@@ -90,8 +113,11 @@ namespace CoCSharp.Networking
         /// Reads a 2-byte unsigned integer from the current stream and advances the position of the stream by two bytes.
         /// </summary>
         /// <returns>A 2-byte unsigned integer from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override ushort ReadUInt16()
         {
+            CheckDispose();
+
             var buffer = ReadByteArrayEndian(2);
             return BitConverter.ToUInt16(buffer, 0);
         }
@@ -102,13 +128,16 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <returns>A string read from the current stream.</returns>
         /// <exception cref="InvalidMessageException">String length is invalid.</exception>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public override string ReadString()
         {
-            var length = ReadInt32();
-            CheckLength(length, "string");
+            CheckDispose();
 
+            var length = ReadInt32();
             if (length == -1)
                 return null;
+
+            CheckLength(length, "string");
             var buffer = ReadBytes(length);
             return Encoding.UTF8.GetString(buffer);
         }
@@ -119,14 +148,26 @@ namespace CoCSharp.Networking
         /// </summary>
         /// <returns>A byte array read from the current stream.</returns>
         /// <exception cref="InvalidMessageException">Byte array length is invalid.</exception>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
         public byte[] ReadBytes()
         {
-            var length = ReadInt32();
-            CheckLength(length, "byte array");
+            CheckDispose();
 
+            var length = ReadInt32();
             if (length == -1)
                 return null;
+
+            CheckLength(length, "byte array");
             return ReadBytes(length);
+        }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="MessageReader"/> class.
+        /// </summary>
+        public new void Dispose()
+        {
+            Dispose(true);
+            _disposed = true;
         }
 
         private byte[] ReadByteArrayEndian(int count)
@@ -140,13 +181,18 @@ namespace CoCSharp.Networking
         private void CheckLength(int length, string typeName)
         {
             if (length > Message.MaxSize)
-                throw new InvalidMessageException("The length of a " + typeName + " was larger than the maximum size of a message: " + length);
+                throw new InvalidMessageException("The length of a " + typeName + " was larger than the maximum size of a message '" + length + "'.");
 
             if (length < -1)
-                throw new InvalidMessageException("The length of a " + typeName + " was invalid: " + length);
+                throw new InvalidMessageException("The length of a " + typeName + " was invalid '" + length + "'.");
 
             if (length > BaseStream.Length - BaseStream.Position)
-                throw new InvalidMessageException("The length of a " + typeName + " was larger than the remaining bytes: " + length);
+                throw new InvalidMessageException("The length of a " + typeName + " was larger than the remaining bytes '" + length + "'.");
+        }
+        private void CheckDispose()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(null, "Cannot access the MessageReader object because it was disposed.");
         }
     }
 }

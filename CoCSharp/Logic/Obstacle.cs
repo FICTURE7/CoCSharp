@@ -8,6 +8,8 @@ namespace CoCSharp.Logic
     /// </summary>
     public class Obstacle : VillageObject
     {
+        internal const int BaseGameID = 503000000;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Obstacle"/> class.
         /// </summary>
@@ -15,20 +17,6 @@ namespace CoCSharp.Logic
         {
             // Space
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Obstacle"/> class
-        /// with the specified data ID.
-        /// </summary>
-        /// <param name="dataID">Data ID of the <see cref="Obstacle"/>.</param>
-        public Obstacle(int dataID) : base(dataID)
-        {
-            // Space
-        }
-
-        internal override int BaseDataID { get { return 8000000; } }
-
-        internal override int BaseGameID { get { return 503000000; } }
 
         /// <summary>
         /// Gets or sets the loot multiplier of the <see cref="Obstacle"/>.

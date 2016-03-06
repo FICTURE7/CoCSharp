@@ -15,10 +15,7 @@ namespace CoCSharp.Data
             // Space
         }
 
-        /// <summary>
-        /// Gets the base data ID of the <see cref="BuildingData"/>.
-        /// </summary>
-        public override int BaseDataID
+        internal override int BaseDataID
         {
             get { return 3000000; }
         }

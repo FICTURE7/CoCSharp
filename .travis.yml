@@ -1,8 +1,13 @@
 language: csharp
 solution: CoCSharp.sln
+
 mono:
     - latest
+
 install:
     - nuget restore CoCSharp.sln
+    - nuget install NUnit.Runners -Version 3.0.1 -OutputDirectory nunitrunner
+
 script:
     - xbuild CoCSharp.sln
+    - mono ./nunitrunner/NUnit.Runners.3.0.1/tools/nunit-console.exe ./CoCSharp.Test/bin/Debug/CoCSharp.Test.dll

@@ -1,18 +1,17 @@
 ﻿using CoCSharp.Logic;
-using CoCSharp.Networking;
 
-namespace CoCSharp.Data
+namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// Represents an <see cref="Avatar"/>'s clan data sent
     /// in the networking protocol.
     /// </summary>
-    public class ClanData
+    public class ClanMessageData : MessageData
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClanData"/> class.
+        /// Initializes a new instance of the <see cref="ClanMessageData"/> class.
         /// </summary>
-        public ClanData()
+        public ClanMessageData()
         {
             // Space
         }

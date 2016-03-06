@@ -23,10 +23,9 @@ namespace CoCSharp.Networking.Messages.Commands
         public override int ID { get { return 507; } }
 
         /// <summary>
-        /// <see cref="Obstacle"/> game index in <see cref="Village.Obstacles"/> list that
-        /// was cleared.
+        /// Game ID of the <see cref="Obstacle"/> that was cleared.
         /// </summary>
-        public int ObstacleGameIndex;
+        public int ObstacleGameID;
         
         /// <summary>
         /// Unknown integer 1.
@@ -44,11 +43,7 @@ namespace CoCSharp.Networking.Messages.Commands
         {
             ThrowIfReaderNull(reader);
 
-            var gameID = reader.ReadInt32();
-            //if (!Obstacle.ValidGameID(gameID))
-            //    throw new InvalidCommandException("Unexpected game ID: " + gameID, this);
-
-            //ObstacleGameIndex = Obstacle.GameIDToIndex(gameID);
+            ObstacleGameID = reader.ReadInt32();
 
             Unknown1 = reader.ReadInt32();
         }
@@ -63,7 +58,8 @@ namespace CoCSharp.Networking.Messages.Commands
         public override void WriteCommand(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
-            writer.Write(ObstacleGameIndex);
+
+            writer.Write(ObstacleGameID);
 
             writer.Write(Unknown1);
         }

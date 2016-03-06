@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using CoCSharp.Networking.Messages;
+using System.Diagnostics;
 
 namespace CoCSharp.Networking
 {
@@ -24,13 +25,16 @@ namespace CoCSharp.Networking
                 if (type.IsSubclassOf(s_messageType))
                 {
                     var suppressAttribute = type.GetCustomAttributes<MessageFactorySuppressAttribute>().FirstOrDefault();
+
+                    // Ignore classes that has the MessageFactorySuppressAttribute.
                     if (suppressAttribute != null && suppressAttribute.Suppress)
-                        continue; // check if the class has the MessageFactorySuppressAttribute
+                        continue;
 
+                    // Create an instance to get the message ID.
                     var instance = (Message)Activator.CreateInstance(type);
-                    if (MessageDictionary.ContainsKey(instance.ID))
-                        throw new MessageException("A Message type with the same ID: " + instance.ID + " was already added to the dictionary.", instance);
 
+                    // A message with the same ID as instance.ID was already added to the dictionary.
+                    Debug.Assert(!MessageDictionary.ContainsKey(instance.ID));
                     MessageDictionary.Add(instance.ID, type);
                 }
             }
@@ -49,7 +53,10 @@ namespace CoCSharp.Networking
         /// message ID.
         /// </summary>
         /// <param name="id">The message ID.</param>
-        /// <returns>The instance of the <see cref="Message"/>.</returns>
+        /// <returns>
+        /// The instance of the <see cref="Message"/>. If no <see cref="Message"/> with the specified message ID was
+        /// found then a new instance of the <see cref="UnknownMessage"/> will returned.
+        /// </returns>
         public static Message Create(ushort id)
         {
             var type = (Type)null;
@@ -60,17 +67,23 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Tries to create a new instance of a <see cref="Message"/> with the specified
-        /// message ID. Returns <c>true</c> if the instance was created successfully.
+        /// message ID. Returns <c>true</c> if the instance was created successfully; otherwise
+        /// <c>false</c>.
         /// </summary>
         /// <param name="id">The message ID.</param>
-        /// <param name="message">The instance of the <see cref="Message"/>.</param>
-        /// <returns>Returns <c>true</c> if the instance was created successfully.</returns>
+        /// <param name="message">
+        /// The instance of the <see cref="Message"/> created. If it returns <c>false</c> then
+        /// the instance of the <see cref="Message"/> will be set to its default value.
+        /// </param>
+        /// <returns>
+        /// Returns <c>true</c> if the instance was created successfully; otherwise <c>false</c>.
+        /// </returns>
         public static bool TryCreate(ushort id, out Message message)
         {
             var type = (Type)null;
             if (!MessageDictionary.TryGetValue(id, out type))
             {
-                message = null;
+                message = default(Message);
                 return false;
             }
             message = (Message)Activator.CreateInstance(type);

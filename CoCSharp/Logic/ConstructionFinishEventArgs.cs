@@ -2,6 +2,8 @@
 
 namespace CoCSharp.Logic
 {
+    //TODO: Add more genericness for event handling. Like a LogicFinishEventArgs.
+
     /// <summary>
     /// Provides arguments data for construction finish event. 
     /// </summary>
@@ -16,19 +18,25 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="Logic.Building"/> that was constructed.
+        /// Gets or sets the <see cref="Buildable"/> that was constructed.
         /// </summary>
-        public Building Building { get; set; }
+        public Buildable BuildableConstructed { get; set; }
 
         /// <summary>
-        /// Gets or sets when the construction of the <see cref="Logic.Building"/> was finished.
+        /// Gets or sets when the construction of the <see cref="Buildable"/> was finished.
         /// </summary>
-        public DateTime EndTime { get; set; }
+        public DateTime EndTime { get; set; } //TODO: Check if its kind is of Utc.
 
         /// <summary>
-        /// Gets or sets whether the construction of the <see cref="Logic.Building"/> was ended.
-        /// That is when <see cref="Logic.Building.EndConstruct"/> is called.
+        /// Gets or sets whether the construction of the <see cref="Buildable"/> was cancelled,
+        /// that is when <see cref="Buildable.EndConstruction"/> is called.
         /// </summary>
-        public bool WasEnded { get; set; }
+        public bool WasCancelled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user token object associated with the <see cref="Buildable"/> that was
+        /// constructed.
+        /// </summary>
+        public object UserToken { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using CoCSharp.Csv;
+using Newtonsoft.Json;
+using System;
 
 namespace CoCSharp.Logic
 {
@@ -7,52 +9,138 @@ namespace CoCSharp.Logic
     /// </summary>
     public abstract class VillageObject
     {
+        internal const int Base = 1000000;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VillageObject"/> class.
         /// </summary>
         public VillageObject()
         {
-            // Space
+            X = 0;
+            Y = 0;
         }
 
         /// <summary>
-        /// Initailizes a new instance of the <see cref="VillageObject"/> class
-        /// with the specified data ID.
+        /// Initializes a new instance of the <see cref="VillageObject"/> class with
+        /// the specified X coordinate and Y coordinate.
         /// </summary>
-        /// <param name="dataID">Data ID of the <see cref="VillageObject"/>.</param>
-        public VillageObject(int dataID)
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="x"/> is not between 0 and Village.Width.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="y"/> is not between 0 and Village.Height.</exception>
+        public VillageObject(int x, int y)
         {
-            DataID = dataID;
+            X = x;
+            Y = y;
         }
-
-        /// <summary>
-        /// Gets the base data ID of the <see cref="VillageObject"/>.
-        /// </summary>
-        [JsonIgnore]
-        internal abstract int BaseDataID { get; }
-
-        /// <summary>
-        /// Gets the base game ID of the <see cref="VillageObject"/>.
-        /// </summary>
-        [JsonIgnore]
-        internal abstract int BaseGameID { get; }
-
-        /// <summary>
-        /// Gets or sets the data ID of the <see cref="VillageObject"/>.
-        /// </summary>
-        [JsonProperty("data")]
-        public int DataID { get; set; } //TODO: Hide this thing
 
         /// <summary>
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Width.</exception>
         [JsonProperty("x")]
-        public int X { get; set; }
+        public int X
+        {
+            get { return _x; }
+            set
+            {
+                if (value < 0 || value > Village.Width)
+                    throw new ArgumentOutOfRangeException("value", "value must be between 0 and Village.Width.");
+
+                _x = value;
+            }
+        }
+
+        // X coordinate of object.
+        private int _x;
 
         /// <summary>
         /// Gets or sets the y coordinate of the <see cref="VillageObject"/>.
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Height.</exception>
         [JsonProperty("y")]
-        public int Y { get; set; }
+        public int Y
+        {
+            get { return _y; }
+            set
+            {
+                if (value < 0 || value > Village.Height)
+                    throw new ArgumentOutOfRangeException("value", "value must be between 0 and Village.Height.");
+
+                _y = value;
+            }
+        }
+
+        // Y cooridnate of object.
+        private int _y;
+
+        /// <summary>
+        /// Gets or sets the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.
+        /// </summary>
+        /// <remarks>
+        /// This is needed for handling of construction, updgrading and other game logic actions. It must be updated
+        /// regularly to keep up with the current game state.
+        /// </remarks>
+        [JsonIgnore]
+        public CsvData Data
+        {
+            get
+            {
+                return _data;
+            }
+            set
+            {
+                // Update _dataID with the provided data.
+                if (value != null)
+                {
+                    var type = value.GetType();
+
+                    // Make sure its of the expected type.
+                    if (type != ExpectedDataType)
+                        throw new ArgumentException("Expected value to in the type of '" + ExpectedDataType + "'.");
+
+                    _dataID = value.ID;
+                }
+                else
+                    _dataID = 0;
+
+                _data = value;
+            }
+        }
+
+        // Data associated with the object.
+        [JsonIgnore]
+        private CsvData _data;
+
+        // This is mostly for testing.
+        internal int DataID
+        {
+            get
+            {
+                return _dataID;
+            }
+        }
+
+        // ID of _data;
+        [JsonProperty("data")]
+        private int _dataID;
+
+        /// <summary>
+        /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected
+        /// by the <see cref="VillageObject"/>.
+        /// </summary>
+        protected virtual Type ExpectedDataType { get; }
+
+        /// <summary>
+        /// Returns the data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>. Not the neatest of
+        /// the things.
+        /// </summary>
+        /// <returns>Data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.</returns>
+        public int GetDataID()
+        {
+            //TODO: Needs some API Improvement.
+
+            return _dataID;
+        }
     }
 }

@@ -12,8 +12,6 @@ namespace CoCSharp.Networking
     /// </summary>
     public class NetworkManagerAsync : IDisposable
     {
-        //TODO: Change constructors for improved initializing with crypto8 and stuff.
-
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
         /// with the specified <see cref="Socket"/>.
@@ -301,7 +299,7 @@ namespace CoCSharp.Networking
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
                 if (!(message is SessionSuccessMessage || message is SessionRequestMessage)) // ignore 10100 and 20100 for decryption
-                    Crypto.Decrypt(ref messageDeBody);
+                    Crypto.Decrypt(ref messageDeBody); //TODO: Try/Catch this thing.
 
                 if (message is UnknownMessage)
                 {
@@ -372,7 +370,6 @@ namespace CoCSharp.Networking
             token.Length = (token.Header[2] << 16) | (token.Header[3] << 8) | (token.Header[4]);
             token.Version = (ushort)((token.Header[5] << 8) | (token.Header[6]));
             token.Body = new byte[token.Length];
-
         }
 
         private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
@@ -384,8 +381,15 @@ namespace CoCSharp.Networking
                 return; // gently stop any operations
             }
 
+            //TODO: Better handling, DisconnectedEventArgs
             if (args.SocketError != SocketError.Success)
-                throw new SocketException((int)args.SocketError); //TODO: Better handling, DisconnectedEventArgs
+                throw new SocketException((int)args.SocketError);
+
+            if (args.BytesTransferred == 0)
+            {
+                _receivePool.Push(args);
+                return;
+            }
 
             switch (args.LastOperation)
             {

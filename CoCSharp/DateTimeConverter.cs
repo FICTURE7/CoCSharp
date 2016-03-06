@@ -4,9 +4,9 @@ namespace CoCSharp
 {
     internal class DateTimeConverter
     {
-        private static readonly DateTime UnixTime = new DateTime(1970, 1, 1);
+        private static readonly DateTime UnixTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        public static int UtcNow
+        public static int UnixUtcNow
         {
             get { return (int)ToUnixTimestamp(DateTime.UtcNow); }
         }

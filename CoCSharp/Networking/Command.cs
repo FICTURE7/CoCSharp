@@ -8,6 +8,12 @@ namespace CoCSharp.Networking
     public abstract class Command
     {
         /// <summary>
+        /// Maximum amount of embedded command allowed to be read.
+        /// This field is constant.
+        /// </summary>
+        public const int MaxEmbeddedDepth = 10;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Command"/> class.
         /// </summary>
         public Command()
@@ -36,18 +42,21 @@ namespace CoCSharp.Networking
         /// </param>
         public abstract void WriteCommand(MessageWriter writer);
 
-        // "protected internal" does not seem to work.
+        // Throws a ArgumentNullException if reader is null.
         internal void ThrowIfReaderNull(MessageReader reader)
         {
             if (reader == null)
-                throw new ArgumentException("reader");
+                throw new ArgumentNullException("reader");
         }
 
-        // "protected internal" does not seem to work.
+        // Throws a ArgumentNullException if writer is null.
         internal void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
-                throw new ArgumentException("writer");
+                throw new ArgumentNullException("writer");
         }
+
+        // Depth of this command. This is mostly for checking embedded command recursion.
+        internal int Depth { get; set; }
     }
 }

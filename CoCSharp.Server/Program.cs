@@ -1,5 +1,4 @@
-﻿using CoCSharp.Logic;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
 
@@ -11,7 +10,6 @@ namespace CoCSharp.Server
 
         public static void Main(string[] args)
         {
-            var kek = IDConverter.IsValidData<Building>(2000001);
             Console.Title = "CoC# - Server";
 
             var stopwatch = new Stopwatch();

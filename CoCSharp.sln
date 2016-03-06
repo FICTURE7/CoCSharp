@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp.Server", "CoCSharp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostBuild", "PostBuild\PostBuild.csproj", "{A6CA6697-2A7D-4012-84F7-A0E9E7ABB289}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp.Test", "CoCSharp.Test\CoCSharp.Test.csproj", "{A10E17E7-2B42-4A02-900B-B91E3950F80C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{A6CA6697-2A7D-4012-84F7-A0E9E7ABB289}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6CA6697-2A7D-4012-84F7-A0E9E7ABB289}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6CA6697-2A7D-4012-84F7-A0E9E7ABB289}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A10E17E7-2B42-4A02-900B-B91E3950F80C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A10E17E7-2B42-4A02-900B-B91E3950F80C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A10E17E7-2B42-4A02-900B-B91E3950F80C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A10E17E7-2B42-4A02-900B-B91E3950F80C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

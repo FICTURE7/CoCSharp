@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Data;
-using CoCSharp.Logic;
 using System;
 
 namespace CoCSharp.Networking.Messages.Commands
@@ -47,7 +46,7 @@ namespace CoCSharp.Networking.Messages.Commands
             MoveData = new MoveVillageObjectData();
             MoveData.X = reader.ReadInt32();
             MoveData.Y = reader.ReadInt32();
-            MoveData.VillageObjectGameIndex = reader.ReadInt32();
+            MoveData.VillageObjectGameID = reader.ReadInt32();
 
             Unknown1 = reader.ReadInt32();
         }
@@ -68,7 +67,7 @@ namespace CoCSharp.Networking.Messages.Commands
 
             writer.Write(MoveData.X);
             writer.Write(MoveData.Y);
-            writer.Write(MoveData.VillageObjectGameIndex);
+            writer.Write(MoveData.VillageObjectGameID);
 
             writer.Write(Unknown1);
         }

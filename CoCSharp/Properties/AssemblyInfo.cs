@@ -2,11 +2,14 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+// Make sure that we can test it.
+[assembly: InternalsVisibleTo("CoCSharp.Test")]
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CoCSharp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Clash of Clans library written in .NET")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CoCSharp")]

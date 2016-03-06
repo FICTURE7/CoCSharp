@@ -12,13 +12,27 @@ namespace PostBuild
 
         public static void Main(string[] args)
         {
+            // args[0] = dst folder
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             Console.WriteLine("PostBuild running...");
 
+            if (!Directory.Exists(PackagesPath))
+            {
+                Console.WriteLine("Could not find /packages directory. Make sure to restore the nuget packages.");
+                Environment.Exit(1);
+            }
+
             var libsodiumVersion = string.Empty;
             var packageConfig = Path.Combine(CoCSharpPath, "packages.config");
+
+            if (!File.Exists(packageConfig))
+            {
+                Console.WriteLine("Could not find /CoCSharp/packages.config.");
+                Environment.Exit(1);
+            }
 
             Console.WriteLine("Reading libsodium-net version from {0}...", packageConfig);
             using (var reader = XmlReader.Create(packageConfig))
@@ -43,11 +57,35 @@ namespace PostBuild
             }
 
             Console.WriteLine("Copying libsodium natives version {0}...", libsodiumVersion);
-            var libsodiumPath = Path.Combine(PackagesPath, "libsodium-net." + libsodiumVersion, "output");
-            var dstPath = Path.Combine(CoCSharpPath, "bin", "Debug");
+            var outputPath = Path.Combine(PackagesPath, "libsodium-net." + libsodiumVersion, "output");
 
-            File.Copy(Path.Combine(libsodiumPath, "libsodium.dll"), Path.Combine(dstPath, "libsodium.dll"), true);
-            File.Copy(Path.Combine(libsodiumPath, "libsodium-64.dll"), Path.Combine(dstPath, "libsodium-64.dll"), true);
+            if (!Directory.Exists(outputPath))
+            {
+                Console.WriteLine("Could not find packages/libsodium-net.ver/output directory.");
+                Environment.Exit(1);
+            }
+
+            var dstPath = args.Length > 0 ? Path.Combine(CoCSharpPath, args[0]) : Path.Combine(CoCSharpPath, "bin/Debug");
+
+            var dllSrc = Path.Combine(outputPath, "libsodium.dll");
+            var dllDst = Path.Combine(dstPath, "libsodium.dll");
+            if (!File.Exists(dllSrc))
+            {
+                Console.WriteLine("Could not find packages/libsodium-net.{0}/output/libsodium.dll file.", libsodiumVersion);
+                Environment.Exit(1);
+            }
+
+            File.Copy(dllSrc, dllDst, true);
+
+            var dll64Src = Path.Combine(outputPath, "libsodium-64.dll");
+            var dll64Dst = Path.Combine(dstPath, "libsodium-64.dll");
+            if (!File.Exists(dll64Src))
+            {
+                Console.WriteLine("Could not find packages/libsodium-net.{0}/output/libsodium-64.dll file.", libsodiumVersion);
+                Environment.Exit(1);
+            }
+
+            File.Copy(dll64Src, dll64Dst, true);
 
             stopwatch.Stop();
 

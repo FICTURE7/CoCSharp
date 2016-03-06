@@ -1,33 +1,33 @@
-﻿using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
-using CoCSharp.Networking;
 using System;
 
-namespace CoCSharp.Data
+namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// Represents an <see cref="Avatar"/>'s data sent in the
     /// networking protocol.
     /// </summary>
-    public class AvatarData
+    public class AvatarMessageData : MessageData
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="AvatarData"/> class.
+        /// Initializes a new instance of the <see cref="AvatarMessageData"/> class.
         /// </summary>
-        public AvatarData()
+        public AvatarMessageData()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AvatarData"/> class from
+        /// Initializes a new instance of the <see cref="AvatarMessageData"/> class from
         /// the specified <see cref="Avatar"/>.
         /// </summary>
         /// <param name="avatar"><see cref="Avatar"/> from which the data will be set.</param>
-        public AvatarData(Avatar avatar)
+        public AvatarMessageData(Avatar avatar)
         {
-            OwnVillageData = new VillageData()
+            OwnVillageData = new VillageMessageData()
             {
                 UserID = avatar.ID,
                 ShieldDuration = avatar.ShieldDuration,
@@ -42,7 +42,7 @@ namespace CoCSharp.Data
 
             if (avatar.Alliance != null)
             {
-                OwnClanData = new ClanData()
+                OwnClanData = new ClanMessageData()
                 {
                     ID = avatar.Alliance.ID,
                     Name = avatar.Alliance.Name,
@@ -106,7 +106,7 @@ namespace CoCSharp.Data
         /// <summary>
         /// Data of the village of the avatar.
         /// </summary>
-        public VillageData OwnVillageData;
+        public VillageMessageData OwnVillageData;
         /// <summary>
         /// User ID.
         /// </summary>
@@ -118,7 +118,7 @@ namespace CoCSharp.Data
         /// <summary>
         /// Data of the clan of the avatar.
         /// </summary>
-        public ClanData OwnClanData;
+        public ClanMessageData OwnClanData;
 
         /// <summary>
         /// Unknown integer 1.
@@ -402,27 +402,29 @@ namespace CoCSharp.Data
 
         #region Methods
         /// <summary>
-        /// Reads the <see cref="AvatarData"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="AvatarMessageData"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="AvatarData"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="AvatarMessageData"/>.
         /// </param>
-        public void Read(MessageReader reader)
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
+        public override void ReadMessageData(MessageReader reader)
         {
-            OwnVillageData = new VillageData();
-            OwnVillageData.Read(reader);
+            ThrowIfReaderNull(reader);
+            OwnVillageData = new VillageMessageData();
+            OwnVillageData.ReadMessageData(reader);
 
             UserID = reader.ReadInt64();
             UserID2 = reader.ReadInt64();
-            OwnClanData = new ClanData();
             if (reader.ReadBoolean())
             {
+                OwnClanData = new ClanMessageData();
                 OwnClanData.ID = reader.ReadInt64();
                 OwnClanData.Name = reader.ReadString();
                 OwnClanData.Badge = reader.ReadInt32();
                 OwnClanData.Role = reader.ReadInt32();
                 OwnClanData.Level = reader.ReadInt32();
-                OwnClanData.Unknown1 = reader.ReadByte();
+                OwnClanData.Unknown1 = reader.ReadByte(); // Clan war?
             }
 
             Unknown1 = reader.ReadInt32();
@@ -458,7 +460,6 @@ namespace CoCSharp.Data
             Unknown16 = reader.ReadInt32(); // 60
 
             Trophies = reader.ReadInt32();
-
             AttacksWon = reader.ReadInt32();
             AttacksLost = reader.ReadInt32();
             DefensesWon = reader.ReadInt32();
@@ -510,17 +511,20 @@ namespace CoCSharp.Data
         }
 
         /// <summary>
-        /// Writes the <see cref="AvatarData"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="AvatarMessageData"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="AvatarData"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="AvatarMessageData"/>.
         /// </param>
-        public void Write(MessageWriter writer)
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="OwnVillageData"/> is null.</exception>
+        public override void WriteMessageData(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
             if (OwnVillageData == null)
-                throw new NullReferenceException("OwnAvatarData was null.");
+                throw new InvalidOperationException("OwnAvatarData cannot be null.");
 
-            OwnVillageData.Write(writer);
+            OwnVillageData.WriteMessageData(writer);
 
             writer.Write(UserID);
             writer.Write(UserID2);

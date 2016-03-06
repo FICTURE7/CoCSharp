@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Networking;
 using CoCSharp.Networking.Messages;
+using System;
 
 namespace CoCSharp.Server.Handlers
 {
@@ -18,12 +19,21 @@ namespace CoCSharp.Server.Handlers
                 for (int i = 0; i < cmdMessage.Commands.Length; i++)
                 {
                     var cmd = cmdMessage.Commands[i];
+                    
+                    // Should probably drop the client as well, because the network stream is very likely to be messed up.
                     if (cmd == null)
-                        continue;
+                        break;
 
-                    var handler = (CommandHandler)null;
-                    if (server.CommandHandlers.TryGetValue(cmd.ID, out handler))
-                        handler(server, client, cmd);
+                    try
+                    {
+                        var handler = (CommandHandler)null;
+                        if (server.CommandHandlers.TryGetValue(cmd.ID, out handler))
+                            handler(server, client, cmd);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine("Exception occured while handling command: {0}\r\n\t{1}", cmd.GetType().Name, ex);
+                    }
                 }
                 server.AvatarManager.SaveAvatar(client.Avatar);
             }

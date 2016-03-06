@@ -47,10 +47,9 @@
     <Compile Include="CoCRemoteClient.cs" />
     <Compile Include="CoCServer.cs" />
     <Compile Include="Core\AvatarManager.cs" />
-    <Compile Include="Core\AvatarSave.cs" />
     <Compile Include="Core\DataManager.cs" />
     <Compile Include="CoCServerPaths.cs" />
-    <Compile Include="Core\SaveFile.cs" />
+    <Compile Include="Handlers\BuildableUserToken.cs" />
     <Compile Include="Handlers\BuildingCommandHandlers.cs" />
     <Compile Include="Handlers\InGameMessageHandlers.cs" />
     <Compile Include="Handlers\LoginMessageHandlers.cs" />
@@ -70,7 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\buildings.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\default_village.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -85,11 +84,7 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ProjectExtensions>
-    <VisualStudio>
-      <UserProperties Content_4default_3village_1json__JSONSchema="http://json.schemastore.org/package.manifest" />
-    </VisualStudio>
-  </ProjectExtensions>
+  <ProjectExtensions />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

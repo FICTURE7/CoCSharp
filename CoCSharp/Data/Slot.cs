@@ -32,20 +32,6 @@ namespace CoCSharp.Data
         /// </param>
         public abstract void WriteSlot(MessageWriter writer);
 
-        // Throws ArgumentNullException when reader is null.
-        internal void ThrowIfReaderNull(MessageReader reader)
-        {
-            if (reader == null)
-                throw new ArgumentNullException("reader");
-        }
-
-        // Throws ArgumentNullException when writer is null.
-        internal void ThrowIfWriterNull(MessageWriter writer)
-        {
-            if (writer == null)
-                throw new ArgumentNullException("writer");
-        }
-
         /// <summary>
         /// Writes the <see cref="Slot"/> array to the specified <see cref="MessageWriter"/>.
         /// </summary>
@@ -91,6 +77,20 @@ namespace CoCSharp.Data
                 array[i] = instance;
             }
             return array;
+        }
+
+        // Throws ArgumentNullException when reader is null.
+        internal void ThrowIfReaderNull(MessageReader reader)
+        {
+            if (reader == null)
+                throw new ArgumentNullException("reader");
+        }
+
+        // Throws ArgumentNullException when writer is null.
+        internal void ThrowIfWriterNull(MessageWriter writer)
+        {
+            if (writer == null)
+                throw new ArgumentNullException("writer");
         }
     }
 }

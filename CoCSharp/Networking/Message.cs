@@ -82,18 +82,18 @@ namespace CoCSharp.Networking
             return GetMessageDirection((T)Activator.CreateInstance(tType));
         }
 
-        // "protected internal" does not seem to work.
+        // Throws a ArgumentNullException if reader is null.
         internal void ThrowIfReaderNull(MessageReader reader)
         {
             if (reader == null)
-                throw new ArgumentException("reader");
+                throw new ArgumentNullException("reader");
         }
 
-        // "protected internal" does not seem to work.
+        // Throws a ArgumentNullException if writer is null.
         internal void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
-                throw new ArgumentException("writer");
+                throw new ArgumentNullException("writer");
         }
     }
 }

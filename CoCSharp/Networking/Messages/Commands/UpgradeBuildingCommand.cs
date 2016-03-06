@@ -23,10 +23,9 @@ namespace CoCSharp.Networking.Messages.Commands
         public override int ID { get { return 502; } }
 
         /// <summary>
-        /// <see cref="Building"/> game index in <see cref="Village.Buildings"/> list that
-        /// was upgraded.
+        /// Game ID of the <see cref="Building"/> that was upgraded.
         /// </summary>
-        public int BuildingGameIndex;
+        public int BuildingGameID;
 
         /// <summary>
         /// Unknown byte 1.
@@ -48,11 +47,7 @@ namespace CoCSharp.Networking.Messages.Commands
         {
             ThrowIfReaderNull(reader);
 
-            var gameID = reader.ReadInt32();
-            //if (!Building.ValidGameID(gameID))
-            //    throw new InvalidCommandException("Unexpected data ID: " + gameID, this);
-
-            //BuildingGameIndex = Building.GameIDToIndex(gameID);
+            BuildingGameID = reader.ReadInt32();
 
             Unknown1 = reader.ReadByte();
             Unknown2 = reader.ReadInt32();
@@ -69,7 +64,7 @@ namespace CoCSharp.Networking.Messages.Commands
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(BuildingGameIndex);
+            writer.Write(BuildingGameID);
 
             writer.Write(Unknown1);
             writer.Write(Unknown2);

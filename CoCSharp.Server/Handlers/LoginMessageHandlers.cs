@@ -1,5 +1,4 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Cryptography;
@@ -66,7 +65,7 @@ namespace CoCSharp.Server.Handlers
             server.AvatarManager.SaveAvatar(avatar);
             client.Avatar = avatar;
 
-            var avatarData = new AvatarData(avatar)
+            var avatarData = new AvatarMessageData(avatar)
             {
                 TownHallLevel = 5,
                 AllianceCastleLevel = 1,

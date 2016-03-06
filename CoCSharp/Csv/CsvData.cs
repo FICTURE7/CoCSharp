@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CoCSharp.Csv
+﻿namespace CoCSharp.Csv
 {
     /// <summary>
     /// Represents a Clash of Clans .csv file data.
@@ -8,19 +6,15 @@ namespace CoCSharp.Csv
     public abstract class CsvData
     {
         /// <summary>
-        /// Gets or sets the data index of the <see cref="CsvData"/>.
-        /// </summary>
-        public int DataIndex { get; set; }
-
-        /// <summary>
         /// Gets or sets the data ID of the <see cref="CsvData"/>.
         /// </summary>
         [CsvIgnore]
-        public int DataID { get { return DataIndex + BaseDataID; } }
+        public int ID { get { return Index + BaseDataID; } }
 
-        /// <summary>
-        /// Gets the base data ID of the <see cref="CsvData"/>.
-        /// </summary>
-        public abstract int BaseDataID { get; }
+        // Index of the CsvData.
+        internal int Index { get; set; }
+
+        // Base data ID, Example: 1000000 for BuildingData
+        internal abstract int BaseDataID { get; }
     }
 }

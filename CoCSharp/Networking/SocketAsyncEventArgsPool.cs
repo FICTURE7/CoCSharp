@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Networking
 {
-    internal class SocketAsyncEventArgsPool : IDisposable
+    internal sealed class SocketAsyncEventArgsPool : IDisposable
     {
         public SocketAsyncEventArgsPool(int capacity)
         {
@@ -12,11 +12,11 @@ namespace CoCSharp.Networking
                 throw new ArgumentOutOfRangeException("capacity", "capacity cannot be less that 1.");
 
             Capacity = capacity;
-            _objLock = new object();
+            _lock = new object();
             _pool = new Stack<SocketAsyncEventArgs>(capacity);
         }
 
-        private object _objLock;
+        private object _lock;
         private bool _disposed;
         private Stack<SocketAsyncEventArgs> _pool;
 
@@ -26,36 +26,40 @@ namespace CoCSharp.Networking
 
         public SocketAsyncEventArgs Pop()
         {
-            lock(_objLock)
+            if (_disposed)
+                throw new ObjectDisposedException(null, "Cannot Pop because the SocketAsyncEventArgsPool was disposed.");
+
+            lock (_lock)
             {
+                if (_pool.Count == 0)
+                    throw new InvalidOperationException("Pool empty.");
+
                 return _pool.Pop();
             }
         }
 
         public void Push(SocketAsyncEventArgs args)
         {
-            lock(_objLock)
+            if (_disposed)
+                throw new ObjectDisposedException(null, "Cannot Push because the SocketAsyncEventArgsPool was disposed.");
+
+            lock (_lock)
             {
+                if (Count >= Capacity)
+                    throw new InvalidOperationException("Cannot push args because the SocketAsyncEventArgsPool has reached it capacity.");
+
                 _pool.Push(args);
             }
         }
 
         public void Dispose()
         {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
             if (!_disposed)
             {
-                if (disposing)
+                for (int i = 0; i < _pool.Count; i++)
                 {
-                    for (int i = 0; i < _pool.Count; i++)
-                    {
-                        var args = _pool.Pop();
-                        args.Dispose();
-                    }
+                    var args = _pool.Pop();
+                    args.Dispose();
                 }
                 _disposed = true;
             }

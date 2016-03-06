@@ -7,6 +7,8 @@ namespace CoCSharp.Logic
     /// </summary>
     public class Trap : VillageObject
     {
+        internal const int BaseGameID = 504000000;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class.
         /// </summary>
@@ -14,20 +16,6 @@ namespace CoCSharp.Logic
         {
             // Space
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Trap"/> class
-        /// with the specified data ID.
-        /// </summary>
-        /// <param name="dataID">Data ID of the <see cref="Trap"/>.</param>
-        public Trap(int dataID) : base(dataID)
-        {
-            // Space
-        }
-
-        internal override int BaseDataID { get { return 12000000; } }
-
-        internal override int BaseGameID { get { return 504000000; } }
 
         /// <summary>
         /// Gets or sets whether the trap needs to be repaired.

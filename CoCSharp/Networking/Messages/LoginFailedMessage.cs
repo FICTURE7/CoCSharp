@@ -11,17 +11,19 @@ namespace CoCSharp.Networking.Messages
     public enum LoginFailureReason : int
     {
         /// <summary>
-        /// Content version is outdated.
+        /// Content version is outdated. This occurs when the client's fingerprint hash is not equal
+        /// to the server's fingerprint hash.
         /// </summary>
         OutdatedContent = 7,
 
         /// <summary>
-        /// Client verision is outdated.
+        /// Client verision is outdated. This occurs when the client's version is not equal
+        /// to the server's expected version.
         /// </summary>
         OutdatedVersion = 8,
 
         /// <summary>
-        /// Unknown reasons 1.
+        /// Unknown reason 1.
         /// </summary>
         Unknown1 = 9,
 
@@ -36,12 +38,12 @@ namespace CoCSharp.Networking.Messages
         TemporarilyBanned = 11,
 
         /// <summary>
-        /// Take a rest.
+        /// Take a rest. This occurs when the connection to the server has been maintain for too long.
         /// </summary>
         TakeRest = 12,
 
         /// <summary>
-        /// Account has been locked. Can only be unlocked with a specific code.
+        /// Account has been locked. It can only be unlocked with a specific code.
         /// </summary>
         Locked = 13
     };
@@ -151,6 +153,7 @@ namespace CoCSharp.Networking.Messages
             Unknown4 = reader.ReadByte(); // 0
             Unknown5 = reader.ReadString(); // ""
 
+            //TODO: Implement Compressed String in MessageWriter and MessageReader.
             var fingerprintData = reader.ReadBytes();
             using (var br = new BinaryReader(new MemoryStream(fingerprintData)))
             {

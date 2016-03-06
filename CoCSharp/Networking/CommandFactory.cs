@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -23,13 +24,16 @@ namespace CoCSharp.Networking
                 if (type.IsSubclassOf(s_commandType))
                 {
                     var suppressAttribute = type.GetCustomAttributes<CommandFactorySuppressAttribute>().FirstOrDefault();
+
+                    // Ignore classes that has the CommandFactorySuppressAttribute.
                     if (suppressAttribute != null && suppressAttribute.Suppress)
-                        continue; // check if the class has the MessageFactorySuppressAttribute
+                        continue;
 
+                    // Create an instance to get command ID.
                     var instance = (Command)Activator.CreateInstance(type);
-                    if (CommandDictionary.ContainsKey(instance.ID))
-                        throw new CommandException("A Command type with the same ID: " + instance.ID + " was already added to the dictionary.", instance);
 
+                    // A command with the same ID as instance.ID was already added to the dictionary.
+                    Debug.Assert(!CommandDictionary.ContainsKey(instance.ID));
                     CommandDictionary.Add(instance.ID, type);
                 }
             }
@@ -48,7 +52,10 @@ namespace CoCSharp.Networking
         /// command ID.
         /// </summary>
         /// <param name="id">The command ID.</param>
-        /// <returns>The instance of the <see cref="Command"/>.</returns>
+        /// <returns>
+        /// The instance of the <see cref="Command"/>.
+        /// </returns>
+        /// <exception cref="NotSupportedException">Could not find a <see cref="Command"/> with the specified command ID.</exception>"
         public static Command Create(int id)
         {
             var type = (Type)null;
@@ -59,17 +66,23 @@ namespace CoCSharp.Networking
 
         /// <summary>
         /// Tries to create a new instance of a <see cref="Command"/> with the specified
-        /// command ID. Returns <c>true</c> if the instance was created successfully.
+        /// command ID. Returns <c>true</c> if the instance was created successfully; otherwise
+        /// <c>false</c>.
         /// </summary>
         /// <param name="id">The command ID.</param>
-        /// <param name="command">The instance of the <see cref="Command"/>.</param>
-        /// <returns>Returns <c>true</c> if the instance was created successfully.</returns>
+        /// <param name="command">
+        /// The instance of the <see cref="Command"/> created. If it returns <c>false</c> then
+        /// the instance of the <see cref="Command"/> will be set to its default value.
+        /// </param>
+        /// <returns>
+        /// Returns <c>true</c> if the instance was created successfully; otherwise <c>false</c>.
+        /// </returns>
         public static bool TryCreate(int id, out Command command)
         {
             var type = (Type)null;
             if (!CommandDictionary.TryGetValue(id, out type))
             {
-                command = null;
+                command = default(Command);
                 return false;
             }
             command = (Command)Activator.CreateInstance(type);

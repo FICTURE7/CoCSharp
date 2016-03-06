@@ -10,6 +10,7 @@ namespace CoCSharp.Server.Core
     public class AvatarManager
     {
         //TODO: Improve saving system to save resources progess and all that jazz.
+        //TODO: Its probably a bad idea to load all avatars on start up with reflection as well. :/
 
         public AvatarManager()
         {
@@ -42,6 +43,8 @@ namespace CoCSharp.Server.Core
             avatar.Level = 10; // bypass tut
             avatar.Home = Village.FromJson(File.ReadAllText(vilPath));
             avatar.Name = "Patrik"; // :]
+            avatar.Gems = 300;
+            avatar.FreeGems = 300;
 
             LoadedAvatar.Add(avatar.Token, avatar);
             return avatar;
@@ -88,6 +91,7 @@ namespace CoCSharp.Server.Core
 
         public void LoadAllAvatars()
         {
+            //TODO: Reduce usage of reflection as much as possible because it causing performance issues.
             if (!Directory.Exists(CoCServerPaths.Avatars))
             {
                 Directory.CreateDirectory(CoCServerPaths.Avatars);

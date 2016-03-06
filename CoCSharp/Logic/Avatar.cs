@@ -42,7 +42,12 @@ namespace CoCSharp.Logic
         {
             get
             {
-                return TimeSpan.FromSeconds(DateTimeConverter.ToUnixTimestamp(ShieldEndTime) - DateTimeConverter.UtcNow);
+                var duration = DateTimeConverter.ToUnixTimestamp(ShieldEndTime) - DateTimeConverter.UnixUtcNow;
+
+                if (duration < 0)
+                    return TimeSpan.FromSeconds(0);
+
+                return TimeSpan.FromSeconds(duration);
             }
         }
 
@@ -77,8 +82,10 @@ namespace CoCSharp.Logic
             get { return _level; }
             set
             {
-                if (value < 1) // CoC crashes when lvl is less than 1
+                // Clash of Clans crashes when level is less than 1.
+                if (value < 1)
                     throw new ArgumentOutOfRangeException("Level cannot be less than 1.");
+
                 _level = value;
             }
         }
@@ -105,22 +112,22 @@ namespace CoCSharp.Logic
         public int Trophies { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of attacks won.
+        /// Gets or sets the number of attacks won by the <see cref="Avatar"/>.
         /// </summary>
         public int AttacksWon { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of attacks lost.
+        /// Gets or sets the number of attacks lost by the <see cref="Avatar"/>.
         /// </summary>
         public int AttacksLost { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of defenses lost.
+        /// Gets or sets the number of defenses won by the <see cref="Avatar"/>.
         /// </summary>
         public int DefensesWon { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of defenses lost.
+        /// Gets or sets the number of defenses lost by the <see cref="Avatar"/>.
         /// </summary>
         public int DefensesLost { get; set; }
     }

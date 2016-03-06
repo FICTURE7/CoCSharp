@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\CoCSharp.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.ZLib, Version=2.0.0.14, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MarkerMetro.Unity.Ionic.Zlib.2.0.0.14\lib\net35\Ionic.ZLib.dll</HintPath>
@@ -50,7 +53,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Csv\Compression\Common\CommandLineParser.cs" />
@@ -75,10 +77,15 @@
     <Compile Include="Csv\CsvAliasAttribute.cs" />
     <Compile Include="Csv\CsvConvert.cs" />
     <Compile Include="Csv\CsvTable.cs" />
-    <Compile Include="Data\AvatarData.cs" />
+    <Compile Include="Data\AssetManager.cs" />
+    <Compile Include="Networking\Messages\AvatarMessageData.cs" />
     <Compile Include="Data\BuildingData.cs" />
-    <Compile Include="Data\ClanData.cs" />
+    <Compile Include="Networking\Messages\ClanMessageData.cs" />
     <Compile Include="Csv\CsvData.cs" />
+    <Compile Include="Data\AssetDownloadCompletedEventArgs.cs" />
+    <Compile Include="Data\AssetDownloadProgressChangedEventArgs.cs" />
+    <Compile Include="Data\Fingerprint.cs" />
+    <Compile Include="Data\FingerprintFile.cs" />
     <Compile Include="Data\MoveVillageObjectData.cs" />
     <Compile Include="Data\Slots\AchievementProgessSlot.cs" />
     <Compile Include="Data\Slots\AchievementSlot.cs" />
@@ -99,10 +106,13 @@
     <Compile Include="Data\Slots\UnitSlot.cs" />
     <Compile Include="Data\Slots\UnitUpgradeSlot.cs" />
     <Compile Include="Data\Slots\UnknownSlot.cs" />
-    <Compile Include="Data\VillageData.cs" />
+    <Compile Include="Networking\Messages\Commands\BuyResourcesCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\CancelConsturctionCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\SpeedUpConstructionCommand.cs" />
+    <Compile Include="Networking\Messages\VillageMessageData.cs" />
     <Compile Include="DateTimeConverter.cs" />
-    <Compile Include="IDConverter.cs" />
     <Compile Include="Logic\Avatar.cs" />
+    <Compile Include="Logic\Buildable.cs" />
     <Compile Include="Logic\Building.cs" />
     <Compile Include="Logic\Clan.cs" />
     <Compile Include="Logic\ConstructionFinishEventArgs.cs" />
@@ -121,12 +131,13 @@
     <Compile Include="Networking\Cryptography\Crypto8.cs" />
     <Compile Include="Networking\Cryptography\UpdateNonceType.cs" />
     <Compile Include="Networking\InvalidCommandException.cs" />
+    <Compile Include="Networking\MessageData.cs" />
     <Compile Include="Networking\MessageDirection.cs" />
     <Compile Include="Networking\Messages\ChatMessageClientMessage.cs" />
     <Compile Include="Networking\Messages\ChatMessageServerMessage.cs" />
     <Compile Include="Networking\Messages\CommandMessage.cs" />
     <Compile Include="Networking\Messages\Commands\BuyBuildingCommand.cs" />
-    <Compile Include="Networking\Messages\Commands\BuyDecoration.cs" />
+    <Compile Include="Networking\Messages\Commands\BuyDecorationCommand.cs" />
     <Compile Include="Networking\Messages\Commands\ClearObstacleCommand.cs" />
     <Compile Include="Networking\Messages\Commands\MoveMultipleVillageObjectCommand.cs" />
     <Compile Include="Networking\Messages\Commands\MoveVillageObjectCommand.cs" />
@@ -166,7 +177,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mono ../../../PostBuild/bin/Debug/PostBuild.exe</PostBuildEvent>
+    <PostBuildEvent>mono ../../../PostBuild/bin/Debug/PostBuild.exe $(OutDir)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

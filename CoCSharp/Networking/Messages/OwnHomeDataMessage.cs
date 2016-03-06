@@ -39,7 +39,7 @@ namespace CoCSharp.Networking.Messages
         /// <summary>
         /// Own avatar data.
         /// </summary>
-        public AvatarData OwnAvatarData;
+        public AvatarMessageData OwnAvatarData;
 
         /// <summary>
         /// Reads the <see cref="OwnHomeDataMessage"/> from the specified <see cref="MessageReader"/>.
@@ -56,8 +56,8 @@ namespace CoCSharp.Networking.Messages
             Unknown1 = reader.ReadInt32(); // -1
             Timestamp = DateTimeConverter.FromUnixTimestamp(reader.ReadInt32());
 
-            OwnAvatarData = new AvatarData();
-            OwnAvatarData.Read(reader);
+            OwnAvatarData = new AvatarMessageData();
+            OwnAvatarData.ReadMessageData(reader);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace CoCSharp.Networking.Messages
             writer.Write(Unknown1); // -1
             writer.Write((int)DateTimeConverter.ToUnixTimestamp(Timestamp));
 
-            OwnAvatarData.Write(writer);
+            OwnAvatarData.WriteMessageData(writer);
         }
     }
 }

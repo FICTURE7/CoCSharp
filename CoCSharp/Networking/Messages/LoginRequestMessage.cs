@@ -202,9 +202,16 @@ namespace CoCSharp.Networking.Messages
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="LoginRequestMessage"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="SessionKey"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Nonce"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
+
+            if (SessionKey == null)
+                throw new InvalidOperationException("SessionKey cannot be null.");
+            if (Nonce == null)
+                throw new InvalidOperationException("Nonce cannot be null.");
 
             writer.Write(SessionKey, false);
             writer.Write(Nonce, false);

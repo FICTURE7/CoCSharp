@@ -47,13 +47,14 @@ namespace CoCSharp.Networking.Messages.Commands
             var count = reader.ReadInt32();
             if (count < 0)
                 throw new InvalidCommandException("Number of MovesData cannot be less than 0.", this);
+
             MovesData = new MoveVillageObjectData[count];
             for (int i = 0; i < count; i++)
             {
                 var data = new MoveVillageObjectData();
                 data.X = reader.ReadInt32();
                 data.Y = reader.ReadInt32();
-                data.VillageObjectGameIndex = reader.ReadInt32();
+                data.VillageObjectGameID = reader.ReadInt32();
 
                 MovesData[i] = data;
             }
@@ -67,20 +68,24 @@ namespace CoCSharp.Networking.Messages.Commands
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="MoveVillageObjectCommand"/>.
         /// </param>
-        /// <exception cref="NullReferenceException">MovesData is null.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="MovesData"/> is null.</exception>
+        /// /// <exception cref="InvalidOperationException">An element in <see cref="MovesData"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
 
             if (MovesData == null)
-                throw new NullReferenceException("MovesData cannot be null");
+                throw new InvalidOperationException("MovesData cannot be null");
 
             for (int i = 0; i < MovesData.Length; i++)
             {
+                if (MovesData[i] == null)
+                    throw new InvalidOperationException("MovesData at index '" + i + "' was null.");
+
                 writer.Write(MovesData[i].X);
                 writer.Write(MovesData[i].Y);
-                writer.Write(MovesData[i].VillageObjectGameIndex);
+                writer.Write(MovesData[i].VillageObjectGameID);
             }
 
             writer.Write(Unknown1);

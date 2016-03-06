@@ -4,18 +4,18 @@ using Ionic.Zlib;
 using System;
 using System.IO;
 
-namespace CoCSharp.Data
+namespace CoCSharp.Networking.Messages
 {
     /// <summary>
     /// Represents a <see cref="Village"/> sent in
     /// the networking protocol.
     /// </summary>
-    public class VillageData
+    public class VillageMessageData : MessageData
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="VillageData"/> class.
+        /// Initializes a new instance of the <see cref="VillageMessageData"/> class.
         /// </summary>
-        public VillageData()
+        public VillageMessageData()
         {
             // Space
         }
@@ -64,21 +64,24 @@ namespace CoCSharp.Data
         public int Unknown6; // 0
 
         /// <summary>
-        /// Reads the <see cref="VillageData"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="VillageMessageData"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="VillageData"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="VillageMessageData"/>.
         /// </param>
         /// <exception cref="NotImplementedException">Compressed set to false.</exception>
         /// <exception cref="InvalidMessageException">Home data array is null.</exception>
-        public void Read(MessageReader reader)
+        /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
+        public override void ReadMessageData(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
+
             Unknown1 = reader.ReadInt32(); // 0
             UserID = reader.ReadInt64();
             ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt32());
 
             Unknown2 = reader.ReadInt32(); // 1800 = 8.x.x
-            Unknown3 = reader.ReadInt32(); // 69119 = 8.x.x seems to change
+            Unknown3 = reader.ReadInt32(); // 69119 = 8.x.x seems to change, might be a TimeSpan.
 
             Unknown4 = reader.ReadInt32(); // 1200
             Unknown5 = reader.ReadInt32(); // 60
@@ -104,22 +107,27 @@ namespace CoCSharp.Data
         }
 
         /// <summary>
-        /// Writes the <see cref="VillageData"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="VillageMessageData"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="VillageData"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="VillageMessageData"/>.
         /// </param>
         /// <exception cref="NotImplementedException">Compressed set to false.</exception>
-        public void Write(MessageWriter writer)
+        /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
+        public override void WriteMessageData(MessageWriter writer)
         {
-            if (!Compressed) // quit early just not to mess up the stream
-                throw new NotImplementedException("Uncompressed Village definition is not implemented.");
+            ThrowIfWriterNull(writer);
+
+            // Quit early just not to mess up the stream.
+            if (!Compressed)
+                throw new NotSupportedException("Uncompressed Village definition is not supported yet.");
 
             writer.Write(Unknown1); // 0
             writer.Write(UserID);
             writer.Write((int)ShieldDuration.TotalSeconds);
             writer.Write(Unknown2); // 1200
             writer.Write(Unknown3); // 60
+
             writer.Write(Unknown4);
             writer.Write(Unknown5);
             writer.Write(Compressed);

@@ -10,10 +10,12 @@ namespace CoCSharp.Csv
     /// </summary>
     public static class CsvConvert
     {
+        //TODO: Make this thing safer.
+
         static CsvConvert()
         {
             s_csvDataType = typeof(CsvData);
-            s_dataIndexProperty = s_csvDataType.GetProperty("DataIndex");
+            s_dataIndexProperty = s_csvDataType.GetProperty("Index", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         private static readonly Type s_csvDataType;
@@ -35,7 +37,7 @@ namespace CoCSharp.Csv
             if (type == null)
                 throw new ArgumentNullException("type");
             if (!type.IsSubclassOf(s_csvDataType))
-                throw new ArgumentException("type is not a subclass of CsvData.");
+                throw new ArgumentException("type is not a subclass of CsvData.", "type");
 
             var rows = table.Rows;
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -49,6 +51,7 @@ namespace CoCSharp.Csv
 
                 for (int j = 0; j < properties.Length; j++) // set property value loop
                 {
+                    // could be faster if we use properties from table instead
                     var property = properties[j];
 
                     if (property.Name == s_dataIndexProperty.Name && property.DeclaringType == s_csvDataType) // check if DataIndex

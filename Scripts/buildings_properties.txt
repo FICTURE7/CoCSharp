@@ -1,0 +1,586 @@
+// NOTE: This was generated from the buildings.csv using gen_csv_properties.py script.
+
+/// <summary>
+/// Gets or sets the .
+/// </summary>
+public string  { get; set; }
+/// <summary>
+/// Gets or sets the T i d.
+/// </summary>
+public string TID { get; set; }
+/// <summary>
+/// Gets or sets the Info t i d.
+/// </summary>
+public string InfoTID { get; set; }
+/// <summary>
+/// Gets or sets the T i d  instructor.
+/// </summary>
+public string TID_Instructor { get; set; }
+/// <summary>
+/// Gets or sets the Instructor weight.
+/// </summary>
+public int InstructorWeight { get; set; }
+/// <summary>
+/// Gets or sets the Building class.
+/// </summary>
+public string BuildingClass { get; set; }
+/// <summary>
+/// Gets or sets the Secondary targeting class.
+/// </summary>
+public string SecondaryTargetingClass { get; set; }
+/// <summary>
+/// Gets or sets the Shop building class.
+/// </summary>
+public string ShopBuildingClass { get; set; }
+/// <summary>
+/// Gets or sets the S w f.
+/// </summary>
+public string SWF { get; set; }
+/// <summary>
+/// Gets or sets the Export name.
+/// </summary>
+public string ExportName { get; set; }
+/// <summary>
+/// Gets or sets the Export name npc.
+/// </summary>
+public string ExportNameNpc { get; set; }
+/// <summary>
+/// Gets or sets the Export name construction.
+/// </summary>
+public string ExportNameConstruction { get; set; }
+/// <summary>
+/// Gets or sets the Build time d.
+/// </summary>
+public int BuildTimeD { get; set; }
+/// <summary>
+/// Gets or sets the Build time h.
+/// </summary>
+public int BuildTimeH { get; set; }
+/// <summary>
+/// Gets or sets the Build time m.
+/// </summary>
+public int BuildTimeM { get; set; }
+/// <summary>
+/// Gets or sets the Build time s.
+/// </summary>
+public int BuildTimeS { get; set; }
+/// <summary>
+/// Gets or sets the Build resource.
+/// </summary>
+public string BuildResource { get; set; }
+/// <summary>
+/// Gets or sets the Build cost.
+/// </summary>
+public int BuildCost { get; set; }
+/// <summary>
+/// Gets or sets the Town hall level.
+/// </summary>
+public int TownHallLevel { get; set; }
+/// <summary>
+/// Gets or sets the Width.
+/// </summary>
+public int Width { get; set; }
+/// <summary>
+/// Gets or sets the Height.
+/// </summary>
+public int Height { get; set; }
+/// <summary>
+/// Gets or sets the Icon.
+/// </summary>
+public string Icon { get; set; }
+/// <summary>
+/// Gets or sets the Export name build anim.
+/// </summary>
+public string ExportNameBuildAnim { get; set; }
+/// <summary>
+/// Gets or sets the Max stored gold.
+/// </summary>
+public int MaxStoredGold { get; set; }
+/// <summary>
+/// Gets or sets the Max stored elixir.
+/// </summary>
+public int MaxStoredElixir { get; set; }
+/// <summary>
+/// Gets or sets the Max stored dark elixir.
+/// </summary>
+public int MaxStoredDarkElixir { get; set; }
+/// <summary>
+/// Gets or sets the Max stored war gold.
+/// </summary>
+public int MaxStoredWarGold { get; set; }
+/// <summary>
+/// Gets or sets the Max stored war elixir.
+/// </summary>
+public int MaxStoredWarElixir { get; set; }
+/// <summary>
+/// Gets or sets the Max stored war dark elixir.
+/// </summary>
+public int MaxStoredWarDarkElixir { get; set; }
+/// <summary>
+/// Gets or sets the Percentage stored gold.
+/// </summary>
+public int PercentageStoredGold { get; set; }
+/// <summary>
+/// Gets or sets the Percentage stored elixir.
+/// </summary>
+public int PercentageStoredElixir { get; set; }
+/// <summary>
+/// Gets or sets the Percentage stored dark elixir.
+/// </summary>
+public int PercentageStoredDarkElixir { get; set; }
+/// <summary>
+/// Gets or sets the Loot on destruction.
+/// </summary>
+public bool LootOnDestruction { get; set; }
+/// <summary>
+/// Gets or sets the Bunker.
+/// </summary>
+public bool Bunker { get; set; }
+/// <summary>
+/// Gets or sets the Housing space.
+/// </summary>
+public int HousingSpace { get; set; }
+/// <summary>
+/// Gets or sets the Housing space alt.
+/// </summary>
+public int HousingSpaceAlt { get; set; }
+/// <summary>
+/// Gets or sets the Produces resource.
+/// </summary>
+public string ProducesResource { get; set; }
+/// <summary>
+/// Gets or sets the Resource per hour.
+/// </summary>
+public int ResourcePerHour { get; set; }
+/// <summary>
+/// Gets or sets the Resource max.
+/// </summary>
+public int ResourceMax { get; set; }
+/// <summary>
+/// Gets or sets the Resource icon limit.
+/// </summary>
+public int ResourceIconLimit { get; set; }
+/// <summary>
+/// Gets or sets the Unit production.
+/// </summary>
+public int UnitProduction { get; set; }
+/// <summary>
+/// Gets or sets the Upgrades units.
+/// </summary>
+public bool UpgradesUnits { get; set; }
+/// <summary>
+/// Gets or sets the Produces units of type.
+/// </summary>
+public int ProducesUnitsOfType { get; set; }
+/// <summary>
+/// Gets or sets the Boost cost.
+/// </summary>
+public int BoostCost { get; set; }
+/// <summary>
+/// Gets or sets the Hitpoints.
+/// </summary>
+public int Hitpoints { get; set; }
+/// <summary>
+/// Gets or sets the Regen time.
+/// </summary>
+public int RegenTime { get; set; }
+/// <summary>
+/// Gets or sets the Attack range.
+/// </summary>
+public int AttackRange { get; set; }
+/// <summary>
+/// Gets or sets the Alt attack mode.
+/// </summary>
+public bool AltAttackMode { get; set; }
+/// <summary>
+/// Gets or sets the Alt attack range.
+/// </summary>
+public int AltAttackRange { get; set; }
+/// <summary>
+/// Gets or sets the Prepare speed.
+/// </summary>
+public int PrepareSpeed { get; set; }
+/// <summary>
+/// Gets or sets the Attack speed.
+/// </summary>
+public int AttackSpeed { get; set; }
+/// <summary>
+/// Gets or sets the Cool down override.
+/// </summary>
+public int CoolDownOverride { get; set; }
+/// <summary>
+/// Gets or sets the D p s.
+/// </summary>
+public int DPS { get; set; }
+/// <summary>
+/// Gets or sets the Damage.
+/// </summary>
+public int Damage { get; set; }
+/// <summary>
+/// Gets or sets the Preferred target.
+/// </summary>
+public string PreferredTarget { get; set; }
+/// <summary>
+/// Gets or sets the Preferred target damage mod.
+/// </summary>
+public int PreferredTargetDamageMod { get; set; }
+/// <summary>
+/// Gets or sets the Random hit position.
+/// </summary>
+public bool RandomHitPosition { get; set; }
+/// <summary>
+/// Gets or sets the Destroy effect.
+/// </summary>
+public string DestroyEffect { get; set; }
+/// <summary>
+/// Gets or sets the Attack effect.
+/// </summary>
+public string AttackEffect { get; set; }
+/// <summary>
+/// Gets or sets the Attack effect2.
+/// </summary>
+public string AttackEffect2 { get; set; }
+/// <summary>
+/// Gets or sets the Hit effect.
+/// </summary>
+public string HitEffect { get; set; }
+/// <summary>
+/// Gets or sets the Projectile.
+/// </summary>
+public string Projectile { get; set; }
+/// <summary>
+/// Gets or sets the Export name damaged.
+/// </summary>
+public string ExportNameDamaged { get; set; }
+/// <summary>
+/// Gets or sets the Building w.
+/// </summary>
+public int BuildingW { get; set; }
+/// <summary>
+/// Gets or sets the Building h.
+/// </summary>
+public int BuildingH { get; set; }
+/// <summary>
+/// Gets or sets the Export name base.
+/// </summary>
+public string ExportNameBase { get; set; }
+/// <summary>
+/// Gets or sets the Export name base npc.
+/// </summary>
+public string ExportNameBaseNpc { get; set; }
+/// <summary>
+/// Gets or sets the Export name base war.
+/// </summary>
+public string ExportNameBaseWar { get; set; }
+/// <summary>
+/// Gets or sets the Air targets.
+/// </summary>
+public bool AirTargets { get; set; }
+/// <summary>
+/// Gets or sets the Ground targets.
+/// </summary>
+public bool GroundTargets { get; set; }
+/// <summary>
+/// Gets or sets the Alt air targets.
+/// </summary>
+public bool AltAirTargets { get; set; }
+/// <summary>
+/// Gets or sets the Alt ground targets.
+/// </summary>
+public bool AltGroundTargets { get; set; }
+/// <summary>
+/// Gets or sets the Alt multi targets.
+/// </summary>
+public bool AltMultiTargets { get; set; }
+/// <summary>
+/// Gets or sets the Ammo count.
+/// </summary>
+public int AmmoCount { get; set; }
+/// <summary>
+/// Gets or sets the Ammo resource.
+/// </summary>
+public string AmmoResource { get; set; }
+/// <summary>
+/// Gets or sets the Ammo cost.
+/// </summary>
+public int AmmoCost { get; set; }
+/// <summary>
+/// Gets or sets the Min attack range.
+/// </summary>
+public int MinAttackRange { get; set; }
+/// <summary>
+/// Gets or sets the Damage radius.
+/// </summary>
+public int DamageRadius { get; set; }
+/// <summary>
+/// Gets or sets the Push back.
+/// </summary>
+public int PushBack { get; set; }
+/// <summary>
+/// Gets or sets the Wall corner pieces.
+/// </summary>
+public bool WallCornerPieces { get; set; }
+/// <summary>
+/// Gets or sets the Load ammo effect.
+/// </summary>
+public string LoadAmmoEffect { get; set; }
+/// <summary>
+/// Gets or sets the No ammo effect.
+/// </summary>
+public string NoAmmoEffect { get; set; }
+/// <summary>
+/// Gets or sets the Toggle attack mode effect.
+/// </summary>
+public string ToggleAttackModeEffect { get; set; }
+/// <summary>
+/// Gets or sets the Pick up effect.
+/// </summary>
+public string PickUpEffect { get; set; }
+/// <summary>
+/// Gets or sets the Placing effect.
+/// </summary>
+public string PlacingEffect { get; set; }
+/// <summary>
+/// Gets or sets the Can not sell last.
+/// </summary>
+public bool CanNotSellLast { get; set; }
+/// <summary>
+/// Gets or sets the Defender character.
+/// </summary>
+public string DefenderCharacter { get; set; }
+/// <summary>
+/// Gets or sets the Defender count.
+/// </summary>
+public int DefenderCount { get; set; }
+/// <summary>
+/// Gets or sets the Defender z.
+/// </summary>
+public int DefenderZ { get; set; }
+/// <summary>
+/// Gets or sets the Destruction x p.
+/// </summary>
+public int DestructionXP { get; set; }
+/// <summary>
+/// Gets or sets the Locked.
+/// </summary>
+public bool Locked { get; set; }
+/// <summary>
+/// Gets or sets the Hidden.
+/// </summary>
+public bool Hidden { get; set; }
+/// <summary>
+/// Gets or sets the A o e spell.
+/// </summary>
+public string AOESpell { get; set; }
+/// <summary>
+/// Gets or sets the A o e spell alternate.
+/// </summary>
+public string AOESpellAlternate { get; set; }
+/// <summary>
+/// Gets or sets the Trigger radius.
+/// </summary>
+public int TriggerRadius { get; set; }
+/// <summary>
+/// Gets or sets the Export name triggered.
+/// </summary>
+public string ExportNameTriggered { get; set; }
+/// <summary>
+/// Gets or sets the Appear effect.
+/// </summary>
+public string AppearEffect { get; set; }
+/// <summary>
+/// Gets or sets the Forges spells.
+/// </summary>
+public bool ForgesSpells { get; set; }
+/// <summary>
+/// Gets or sets the Forges mini spells.
+/// </summary>
+public bool ForgesMiniSpells { get; set; }
+/// <summary>
+/// Gets or sets the Is hero barrack.
+/// </summary>
+public bool IsHeroBarrack { get; set; }
+/// <summary>
+/// Gets or sets the Hero type.
+/// </summary>
+public string HeroType { get; set; }
+/// <summary>
+/// Gets or sets the Increasing damage.
+/// </summary>
+public bool IncreasingDamage { get; set; }
+/// <summary>
+/// Gets or sets the D p s lv2.
+/// </summary>
+public int DPSLv2 { get; set; }
+/// <summary>
+/// Gets or sets the D p s lv3.
+/// </summary>
+public int DPSLv3 { get; set; }
+/// <summary>
+/// Gets or sets the D p s multi.
+/// </summary>
+public int DPSMulti { get; set; }
+/// <summary>
+/// Gets or sets the Lv2 switch time.
+/// </summary>
+public int Lv2SwitchTime { get; set; }
+/// <summary>
+/// Gets or sets the Lv3 switch time.
+/// </summary>
+public int Lv3SwitchTime { get; set; }
+/// <summary>
+/// Gets or sets the Attack effect lv2.
+/// </summary>
+public string AttackEffectLv2 { get; set; }
+/// <summary>
+/// Gets or sets the Attack effect lv3.
+/// </summary>
+public string AttackEffectLv3 { get; set; }
+/// <summary>
+/// Gets or sets the Transition effect lv2.
+/// </summary>
+public string TransitionEffectLv2 { get; set; }
+/// <summary>
+/// Gets or sets the Transition effect lv3.
+/// </summary>
+public string TransitionEffectLv3 { get; set; }
+/// <summary>
+/// Gets or sets the Alt num multi targets.
+/// </summary>
+public int AltNumMultiTargets { get; set; }
+/// <summary>
+/// Gets or sets the Prevents healing.
+/// </summary>
+public bool PreventsHealing { get; set; }
+/// <summary>
+/// Gets or sets the Strength weight.
+/// </summary>
+public int StrengthWeight { get; set; }
+/// <summary>
+/// Gets or sets the Alternate pick new target delay.
+/// </summary>
+public int AlternatePickNewTargetDelay { get; set; }
+/// <summary>
+/// Gets or sets the Alt build resource.
+/// </summary>
+public string AltBuildResource { get; set; }
+/// <summary>
+/// Gets or sets the Speed mod.
+/// </summary>
+public int SpeedMod { get; set; }
+/// <summary>
+/// Gets or sets the Status effect time.
+/// </summary>
+public int StatusEffectTime { get; set; }
+/// <summary>
+/// Gets or sets the Shockwave push strength.
+/// </summary>
+public int ShockwavePushStrength { get; set; }
+/// <summary>
+/// Gets or sets the Shockwave arc length.
+/// </summary>
+public int ShockwaveArcLength { get; set; }
+/// <summary>
+/// Gets or sets the Shockwave expand radius.
+/// </summary>
+public int ShockwaveExpandRadius { get; set; }
+/// <summary>
+/// Gets or sets the Targeting cone angle.
+/// </summary>
+public int TargetingConeAngle { get; set; }
+/// <summary>
+/// Gets or sets the Aim rotate step.
+/// </summary>
+public int AimRotateStep { get; set; }
+/// <summary>
+/// Gets or sets the Penetrating projectile.
+/// </summary>
+public bool PenetratingProjectile { get; set; }
+/// <summary>
+/// Gets or sets the Penetrating radius.
+/// </summary>
+public int PenetratingRadius { get; set; }
+/// <summary>
+/// Gets or sets the Turn speed.
+/// </summary>
+public int TurnSpeed { get; set; }
+/// <summary>
+/// Gets or sets the Needs aim.
+/// </summary>
+public bool NeedsAim { get; set; }
+/// <summary>
+/// Gets or sets the Target groups.
+/// </summary>
+public bool TargetGroups { get; set; }
+/// <summary>
+/// Gets or sets the Target groups radius.
+/// </summary>
+public int TargetGroupsRadius { get; set; }
+/// <summary>
+/// Gets or sets the Hit spell.
+/// </summary>
+public string HitSpell { get; set; }
+/// <summary>
+/// Gets or sets the Hit spell level.
+/// </summary>
+public int HitSpellLevel { get; set; }
+/// <summary>
+/// Gets or sets the Export name beam start.
+/// </summary>
+public string ExportNameBeamStart { get; set; }
+/// <summary>
+/// Gets or sets the Export name beam end.
+/// </summary>
+public string ExportNameBeamEnd { get; set; }
+/// <summary>
+/// Gets or sets the Damage2.
+/// </summary>
+public int Damage2 { get; set; }
+/// <summary>
+/// Gets or sets the Damage2 radius.
+/// </summary>
+public int Damage2Radius { get; set; }
+/// <summary>
+/// Gets or sets the Damage2 delay.
+/// </summary>
+public int Damage2Delay { get; set; }
+/// <summary>
+/// Gets or sets the Damage2 min.
+/// </summary>
+public int Damage2Min { get; set; }
+/// <summary>
+/// Gets or sets the Damage2 falloff start.
+/// </summary>
+public int Damage2FalloffStart { get; set; }
+/// <summary>
+/// Gets or sets the Damage2 falloff end.
+/// </summary>
+public int Damage2FalloffEnd { get; set; }
+/// <summary>
+/// Gets or sets the Hit effect2.
+/// </summary>
+public string HitEffect2 { get; set; }
+/// <summary>
+/// Gets or sets the Wake up speed.
+/// </summary>
+public int WakeUpSpeed { get; set; }
+/// <summary>
+/// Gets or sets the Wake up space.
+/// </summary>
+public int WakeUpSpace { get; set; }
+/// <summary>
+/// Gets or sets the Pre attack effect.
+/// </summary>
+public string PreAttackEffect { get; set; }
+/// <summary>
+/// Gets or sets the Share hero combat data.
+/// </summary>
+public bool ShareHeroCombatData { get; set; }
+/// <summary>
+/// Gets or sets the Burst count.
+/// </summary>
+public int BurstCount { get; set; }
+/// <summary>
+/// Gets or sets the Burst delay.
+/// </summary>
+public int BurstDelay { get; set; }

@@ -1,0 +1,2730 @@
+{
+    "files": [
+        {
+            "sha": "acb02238e90703dda8d2cb52d384495b62a940b4",
+            "file": "csv\/animations.csv"
+        },
+        {
+            "sha": "f4f380e790537ab24540735c111cc7849ba25eb5",
+            "file": "csv\/billing_packages.csv"
+        },
+        {
+            "sha": "5bd97f7ffffb4f848b56a858adb2930c789936d4",
+            "file": "csv\/client_globals.csv"
+        },
+        {
+            "sha": "71643a7206a1b07a19eec1d1b325b90f8224eec7",
+            "file": "csv\/credits.csv"
+        },
+        {
+            "sha": "65a221a92f79912f2351d136664611d0543fe036",
+            "file": "csv\/faq.csv"
+        },
+        {
+            "sha": "8b23df876dc8cbb8f5e75c855545deac99735a04",
+            "file": "csv\/helpshift.csv"
+        },
+        {
+            "sha": "94c4d5dc51c6b57d1152641a83177de84f86b57c",
+            "file": "csv\/hints.csv"
+        },
+        {
+            "sha": "14233bc4ef0347533ce77b70bb47f23ecc088715",
+            "file": "csv\/news.csv"
+        },
+        {
+            "sha": "2ea878af743d65f60ecedb4adb75ab7fb54bc9ff",
+            "file": "csv\/particle_emitters.csv"
+        },
+        {
+            "sha": "94f90fdc2cfe19568f9434943c4eaa42195c1ae4",
+            "file": "csv\/resource_packs.csv"
+        },
+        {
+            "sha": "0b3e061e197606832c4ba43aef62a935bd760eea",
+            "file": "csv\/texts.csv"
+        },
+        {
+            "sha": "c1d24800e5bc23f0c0cc5dce98e69d3557c6df0f",
+            "file": "csv\/texts_patch.csv"
+        },
+        {
+            "sha": "65efb16fe665a649f66f897241ca008db93c6d47",
+            "file": "font\/CCBackBeat-Light_5.ttf"
+        },
+        {
+            "sha": "9515989125309566cf2c4a5a84d7e498f853939f",
+            "file": "font\/NotoNaskhArabic-Bold.ttf"
+        },
+        {
+            "sha": "89ebc1efe2ac968fdc471f06d3968e0df3504f76",
+            "file": "font\/Supercell-Magic_5.ttf"
+        },
+        {
+            "sha": "719870d4573b1267eba821b4a5498b5505139ce9",
+            "file": "font\/debug.fnt"
+        },
+        {
+            "sha": "09b88ec785c9997ccd6598fb6678927f131c7fe2",
+            "file": "font\/debug.png"
+        },
+        {
+            "sha": "e8fdf4d890d33751513db87abfafeb7eaef35dca",
+            "file": "image\/air_wave_shadow.png"
+        },
+        {
+            "sha": "0538d842e71f816413ca85ac0415a361ce60be2a",
+            "file": "image\/air_wave_tex.png"
+        },
+        {
+            "sha": "82aeace9f21d6a04f93449a975f742e4b4d538b1",
+            "file": "image\/range.png"
+        },
+        {
+            "sha": "82a052f20a400ddb8d7aefe457f871cb8718227e",
+            "file": "image\/tileset.png"
+        },
+        {
+            "sha": "e6fbdc0e38c67c9b9d3c2691244762ab99aa37ac",
+            "file": "logic\/achievements.csv"
+        },
+        {
+            "sha": "01a4e1e80e0b38d01647dd10a6361317bf082fa2",
+            "file": "logic\/alliance_badge_layers.csv"
+        },
+        {
+            "sha": "88faeeabb1cac5bc3d46a0c935f0ee2bd8125c19",
+            "file": "logic\/alliance_badges.csv"
+        },
+        {
+            "sha": "2ed9071976a471ba8aaeb7b4a5fbdc7443768f20",
+            "file": "logic\/alliance_levels.csv"
+        },
+        {
+            "sha": "56f847f166f2bbb33947636c6e2dff95afe05106",
+            "file": "logic\/alliance_portal.csv"
+        },
+        {
+            "sha": "d51b3d05baa8fa76221eb68485568e5b8d259182",
+            "file": "logic\/building_classes.csv"
+        },
+        {
+            "sha": "cea51b2389a6784797e3a189f954732acb7e6f5d",
+            "file": "logic\/buildings.csv"
+        },
+        {
+            "sha": "5e9da2255529ac58f450ae91735814f7874f0f69",
+            "file": "logic\/characters.csv"
+        },
+        {
+            "sha": "f5c0926be821afc0662d607f78ab5ba4eea582a9",
+            "file": "logic\/decos.csv"
+        },
+        {
+            "sha": "c710da2375d6bfb535e58e18fa08c647ffd0d6c8",
+            "file": "logic\/effects.csv"
+        },
+        {
+            "sha": "7d2b5c312e9314cd342c85c38495ba895961ea63",
+            "file": "logic\/experience_levels.csv"
+        },
+        {
+            "sha": "7f17a2111084c779b1107bcbb0e1720c9bb35b5e",
+            "file": "logic\/globals.csv"
+        },
+        {
+            "sha": "b779899b75d2026f7029f80785b15c659a6dec77",
+            "file": "logic\/heroes.csv"
+        },
+        {
+            "sha": "b9e429c58182d61615d384d6f55d616c8dd5c276",
+            "file": "logic\/leagues.csv"
+        },
+        {
+            "sha": "5e19f7253397fc08fff85be0f7eb1ee6dbc8ddb0",
+            "file": "logic\/locales.csv"
+        },
+        {
+            "sha": "16953352a83da163cf10eb62ccdc70b1c701fc3b",
+            "file": "logic\/missions.csv"
+        },
+        {
+            "sha": "7db82951ab226917b5e1f760b226271a2c1c8ee3",
+            "file": "logic\/npcs.csv"
+        },
+        {
+            "sha": "b36aa466b64626d5f4b7cb1ca7ef56fdd6ce02f4",
+            "file": "logic\/obstacles.csv"
+        },
+        {
+            "sha": "b3d0ebd3e7685b039f892f44c0e1ed26fb6830ec",
+            "file": "logic\/projectiles.csv"
+        },
+        {
+            "sha": "b563bb4711fc34e6918c9917db84ba95e44e7857",
+            "file": "logic\/regions.csv"
+        },
+        {
+            "sha": "660c8f9f6cc5d4e6fd13ab11b2743934d790e144",
+            "file": "logic\/resources.csv"
+        },
+        {
+            "sha": "286732e892ee79573598d9c05dbb2dfb97a7e733",
+            "file": "logic\/shields.csv"
+        },
+        {
+            "sha": "772cebd63e749a2e74d78f3d1f175022c65b8f6a",
+            "file": "logic\/spells.csv"
+        },
+        {
+            "sha": "db93aa1580d0a2330b8374f8ea6ed57ac050f2ef",
+            "file": "logic\/townhall_levels.csv"
+        },
+        {
+            "sha": "39afd681957b234cac38364b9be810cc18ed37d6",
+            "file": "logic\/traps.csv"
+        },
+        {
+            "sha": "779695af38f47010cb61c6c51f7b4ae86e341bec",
+            "file": "logic\/variables.csv"
+        },
+        {
+            "sha": "e296ac09f55059a3b5593ff58a5165f48b80186e",
+            "file": "logic\/war.csv"
+        },
+        {
+            "sha": "2079748f5eb9017d6affae7a75b846b2115d2cd1",
+            "file": "music\/battle_lost_02.mp3"
+        },
+        {
+            "sha": "7a6741de9ae07e2f2d4ee77e69f2615ceb12bf2d",
+            "file": "music\/combat_music.mp3"
+        },
+        {
+            "sha": "746111e8a6d68e57d2f61458a4509be241815b5a",
+            "file": "music\/combat_music.ogg"
+        },
+        {
+            "sha": "3945c1cf3c26b7623e72d663b6df37fb6c42f4bf",
+            "file": "music\/combat_planning_music.mp3"
+        },
+        {
+            "sha": "040cb4fdfcf35942655e9041d4ffa601f85c423f",
+            "file": "music\/fem_talk.mp3"
+        },
+        {
+            "sha": "d4da65a316148d1e62e3561a97ace16079cb1a0a",
+            "file": "music\/fem_talk_scared.mp3"
+        },
+        {
+            "sha": "59486e67acf7c63521f50e24c38cf68d2c467d74",
+            "file": "music\/gob_attack.mp3"
+        },
+        {
+            "sha": "7954c50e37e4625300cad8b713804b812e5612fa",
+            "file": "music\/goblin_talk.mp3"
+        },
+        {
+            "sha": "0f43bfb6d657ba816eaa7ef27d6eafbf081fc2c1",
+            "file": "music\/home_music_part_1.mp3"
+        },
+        {
+            "sha": "1a41b87d892bccc7f1ae882212ec5263ba92174b",
+            "file": "music\/home_music_part_1.ogg"
+        },
+        {
+            "sha": "bda04af92f315553f7380464594cdf0a61bd91d9",
+            "file": "music\/home_music_part_2.mp3"
+        },
+        {
+            "sha": "cb5dc53c43eeb48fd693f1e1128d4b744207e0f7",
+            "file": "music\/home_music_part_2.ogg"
+        },
+        {
+            "sha": "cc269ea274dcad955959c6453a66315563530983",
+            "file": "music\/home_music_part_3.mp3"
+        },
+        {
+            "sha": "ae8fcc4bd6de77cae4ecd112850f64c2b03458c0",
+            "file": "music\/home_music_part_3.ogg"
+        },
+        {
+            "sha": "5f389c4989d15aa934a8b74a8bad4f9e13510cc8",
+            "file": "music\/war_map_ambi_01.mp3"
+        },
+        {
+            "sha": "faca0df6b42505b6541138a4425d20beb65925a7",
+            "file": "music\/winwinwin.mp3"
+        },
+        {
+            "sha": "22d4f0f4fbce50aac91060c92c8286ca8381a4ff",
+            "file": "sc\/background_npc.sc"
+        },
+        {
+            "sha": "5feb074ce4a7a7580e3e2c586fb4ff6aa15cc014",
+            "file": "sc\/background_npc_tex.sc"
+        },
+        {
+            "sha": "ffa0c00fa6bd975247a75766fbb4233cde88532b",
+            "file": "sc\/background_player.sc"
+        },
+        {
+            "sha": "e6876aa60f61dfb586723dc7aa76ca115d5a964e",
+            "file": "sc\/background_player_tex.sc"
+        },
+        {
+            "sha": "be63d1f8cb59a376b47a3f084d7be67bb3267205",
+            "file": "sc\/background_war.sc"
+        },
+        {
+            "sha": "e9a8ef56624a5fb8a29b4f685ef0cb5561aa0da6",
+            "file": "sc\/background_war_tex.sc"
+        },
+        {
+            "sha": "3a4d26e5d18f907db2a82a0f808e0cced9f25dfd",
+            "file": "sc\/buildings.sc"
+        },
+        {
+            "sha": "c6ea064fe2eaebcc31d6fea1402000195b8c54fb",
+            "file": "sc\/buildings_tex.sc"
+        },
+        {
+            "sha": "3386dde853f3cd6cff80c28de0b9584e8fb90964",
+            "file": "sc\/characters.sc"
+        },
+        {
+            "sha": "616f905b6734d65e74c373086ab33ab3c47e6e68",
+            "file": "sc\/characters_tex.sc"
+        },
+        {
+            "sha": "7cb29a871d50e34272681bf0374d0be5396a3dfc",
+            "file": "sc\/clouds.sc"
+        },
+        {
+            "sha": "c9c43939e102fe5ca9595bd659862f43a2785562",
+            "file": "sc\/clouds_tex.sc"
+        },
+        {
+            "sha": "bcc2972521da31a1b02e2dcc35d288ff8614941a",
+            "file": "sc\/debug.sc"
+        },
+        {
+            "sha": "9a9f8d477b72bde78102d75bc40825c4d93f3105",
+            "file": "sc\/debug_tex.sc"
+        },
+        {
+            "sha": "e89f29843e1566b5cce2bfd5313f27dd65a12e66",
+            "file": "sc\/env.sc"
+        },
+        {
+            "sha": "b507583aca37e268870cf775c34805e40776c5e5",
+            "file": "sc\/env_tex.sc"
+        },
+        {
+            "sha": "8a9acce6a989b799eba33e949d7ff27029930226",
+            "file": "sc\/info_ancientelder.sc"
+        },
+        {
+            "sha": "af6cd473c8aac4b12aec787401c5b04d032f41ce",
+            "file": "sc\/info_ancientelder_tex.sc"
+        },
+        {
+            "sha": "b5f64fa7bf4f01d9213baf194ab602e40e1be90b",
+            "file": "sc\/info_archer.sc"
+        },
+        {
+            "sha": "2aedbfec1f3f133b35fb42d397607b47d653f16a",
+            "file": "sc\/info_archer_tex.sc"
+        },
+        {
+            "sha": "b9854aadbe3c428b48c9679ef0d1bbd07c9fe60c",
+            "file": "sc\/info_archerqueen.sc"
+        },
+        {
+            "sha": "cb8b22578c834bbb970a460e085eec601849cf9e",
+            "file": "sc\/info_archerqueen_tex.sc"
+        },
+        {
+            "sha": "0fba46d506433c44f61d665d70283b38048412a7",
+            "file": "sc\/info_balloon.sc"
+        },
+        {
+            "sha": "21b35921e424230347ac1e29ee51507315d8cf4b",
+            "file": "sc\/info_balloon_tex.sc"
+        },
+        {
+            "sha": "4a7beadf07601971c0860dafc387cfecb9db7d25",
+            "file": "sc\/info_barbarian.sc"
+        },
+        {
+            "sha": "090793d0b37976cae55f2a13b13277e5ff85674d",
+            "file": "sc\/info_barbarian_tex.sc"
+        },
+        {
+            "sha": "a763640995feac306f84586e78d9c424b3424d60",
+            "file": "sc\/info_barbarianking.sc"
+        },
+        {
+            "sha": "5e0a6a6f274bb31858575039c942a2e4db95c84d",
+            "file": "sc\/info_barbarianking_tex.sc"
+        },
+        {
+            "sha": "ae5b694eceb4535a461367e04e032e67995b30e4",
+            "file": "sc\/info_dragon.sc"
+        },
+        {
+            "sha": "b8359301b8b754bab332c13acb3df9fd1d7bbc08",
+            "file": "sc\/info_dragon_tex.sc"
+        },
+        {
+            "sha": "a78a3b145ace6dbcc2b3e626eae98b28fbafae6e",
+            "file": "sc\/info_giant.sc"
+        },
+        {
+            "sha": "4c3484213b9312907c57839a6cb37993510b79d0",
+            "file": "sc\/info_giant_tex.sc"
+        },
+        {
+            "sha": "e54d4ace49bf0906911b78d29b20808f21f43851",
+            "file": "sc\/info_goblin.sc"
+        },
+        {
+            "sha": "b4c98d0eaf80245a611284049a974ef2955344c0",
+            "file": "sc\/info_goblin_tex.sc"
+        },
+        {
+            "sha": "496a5ca1305f6accaf5858d5db7cb1ba3b88de07",
+            "file": "sc\/info_golem.sc"
+        },
+        {
+            "sha": "d4d1fc7c3aabc1887e06900545c5bc9b34a103ca",
+            "file": "sc\/info_golem_tex.sc"
+        },
+        {
+            "sha": "fe9494d2c88174db1e0482b60bad9108ecb44cfa",
+            "file": "sc\/info_healer.sc"
+        },
+        {
+            "sha": "a41c2eb7673502baab1a0d9ec3a0d163b14b3c00",
+            "file": "sc\/info_healer_tex.sc"
+        },
+        {
+            "sha": "4ae43ab6bec7ba74cc4a820efc64cb5509d046f3",
+            "file": "sc\/info_hogrider.sc"
+        },
+        {
+            "sha": "d6aa9dd5d1062493d80642be5875453d0409cb97",
+            "file": "sc\/info_hogrider_tex.sc"
+        },
+        {
+            "sha": "2defa5c27b1af24aa09123fb4862ad9914176677",
+            "file": "sc\/info_minion.sc"
+        },
+        {
+            "sha": "f8904a51291d093ba0e8c24a74c6ac6544e96ba6",
+            "file": "sc\/info_minion_tex.sc"
+        },
+        {
+            "sha": "9f6281e87864f023d27891946987ad31921eaa71",
+            "file": "sc\/info_pekka.sc"
+        },
+        {
+            "sha": "bde0bd1bca8a84344b387b89f63dac1381dc1d8a",
+            "file": "sc\/info_pekka_tex.sc"
+        },
+        {
+            "sha": "e61a43f832e4128b495bc12a931ce03c48c44cbb",
+            "file": "sc\/info_tiny.sc"
+        },
+        {
+            "sha": "d14eda3e92fbd43b374c9203f61579eda24bc6a9",
+            "file": "sc\/info_tiny_tex.sc"
+        },
+        {
+            "sha": "1865ad9b9d506ef9f46bc006137dbc73aad69301",
+            "file": "sc\/info_valkyrie.sc"
+        },
+        {
+            "sha": "99b7cd422602f0d98f4ad812520c44daf1fd0923",
+            "file": "sc\/info_valkyrie_tex.sc"
+        },
+        {
+            "sha": "dad8bce852e1a4a38883d7e0f321c62988bb491e",
+            "file": "sc\/info_wallbreaker.sc"
+        },
+        {
+            "sha": "fc63249469a5fe82a9feaf0852bdc36e69ffde2c",
+            "file": "sc\/info_wallbreaker_tex.sc"
+        },
+        {
+            "sha": "c0f40f0766ff4cf6c69ca914dea389f1c9946c4a",
+            "file": "sc\/info_witch.sc"
+        },
+        {
+            "sha": "9a8886fd197a8a0cf67148865f83b51594bab53d",
+            "file": "sc\/info_witch_tex.sc"
+        },
+        {
+            "sha": "ca9731c853f978ba423b9f59b143ab2393efe6d1",
+            "file": "sc\/info_wizard.sc"
+        },
+        {
+            "sha": "45693a93944fe8b270b3402d44c4ddbe2b80aad8",
+            "file": "sc\/info_wizard_tex.sc"
+        },
+        {
+            "sha": "828ecfa472aba208e9decaab9fa3498d9ebd53a1",
+            "file": "sc\/loading.sc"
+        },
+        {
+            "sha": "f571a79f530b22806a88f65e571d3b1dafe67aca",
+            "file": "sc\/loading_tex.sc"
+        },
+        {
+            "sha": "f4d365534cb6ac820efd2e6c3f606cea10f81cc4",
+            "file": "sc\/map.sc"
+        },
+        {
+            "sha": "3778be79ebd5c7425eb700a29a97d942df236035",
+            "file": "sc\/map_tex.sc"
+        },
+        {
+            "sha": "a6eb32fc0ba5f53c07bbb47608de29cde460dc0f",
+            "file": "sc\/matchsearch.sc"
+        },
+        {
+            "sha": "267ed339e3431755546b7728e33e355b02b931d6",
+            "file": "sc\/matchsearch_tex.sc"
+        },
+        {
+            "sha": "cfbc4f9355f546eed2818fd94cae755a0efdc156",
+            "file": "sc\/news.sc"
+        },
+        {
+            "sha": "0c3d35dcc317677cf8906f0974886e51d956d965",
+            "file": "sc\/news_tex.sc"
+        },
+        {
+            "sha": "921aae8f478c91789916632254acbe9eeeaf0e8f",
+            "file": "sc\/overlay.sc"
+        },
+        {
+            "sha": "e0de90e051164ba0a08a179382759fd424d05a5e",
+            "file": "sc\/overlay_tex.sc"
+        },
+        {
+            "sha": "7c0ffcb657c1470f855827bdabf636ff61a55e14",
+            "file": "sc\/promo_puzzle_and_dragons.sc"
+        },
+        {
+            "sha": "dbb55cfbfbbafaf5add43febcc5c09b0bb656de8",
+            "file": "sc\/promo_puzzle_and_dragons_tex.sc"
+        },
+        {
+            "sha": "06acca70985c938dd9e156887125b395611b7853",
+            "file": "sc\/royale.sc"
+        },
+        {
+            "sha": "dd708a43d4c5fcb446776e9eefb1f5f15f96f2ec",
+            "file": "sc\/royale_tex.sc"
+        },
+        {
+            "sha": "b4f6b5e6864ec9abd5b440130105765f0cb0f907",
+            "file": "sc\/shop.sc"
+        },
+        {
+            "sha": "8cb7b6600c117161d48befca8931f0228523d392",
+            "file": "sc\/shop_tex.sc"
+        },
+        {
+            "sha": "94215c2fc114b1c122ff258addce32082ab51937",
+            "file": "sc\/tutorial2.sc"
+        },
+        {
+            "sha": "73fff3272e30a592269c31a717fcb49fd5a9d49f",
+            "file": "sc\/tutorial2_tex.sc"
+        },
+        {
+            "sha": "d4c90c3f0e039c84f51e80d45a50a0706118c709",
+            "file": "sc\/tutorial_character_neutral.sc"
+        },
+        {
+            "sha": "c227d7063d643e3705517b8f0609e1628c4aa7ea",
+            "file": "sc\/tutorial_character_neutral_tex.sc"
+        },
+        {
+            "sha": "03ccc04fdab210cf185a296ba35c7990c149e0cf",
+            "file": "sc\/tutorial_characters.sc"
+        },
+        {
+            "sha": "1da6cac8d896a35f9f8bd53363e50a00d12b6a30",
+            "file": "sc\/tutorial_characters_tex.sc"
+        },
+        {
+            "sha": "db982be8b466681674b0df1d53d81ee155d39a5b",
+            "file": "sc\/ui.sc"
+        },
+        {
+            "sha": "df0f34e22696aa7715fd3eb914aa833ab17c437a",
+            "file": "sc\/ui_tex.sc"
+        },
+        {
+            "sha": "6c2c4683dec2310ea57f40f8368331cd4345f271",
+            "file": "sfx\/caf\/air_cannon_fire_04.caf"
+        },
+        {
+            "sha": "cf421455406432f84ff8b9efd69d8b1e113e05b1",
+            "file": "sfx\/caf\/air_cannon_pickup_03.caf"
+        },
+        {
+            "sha": "f7cd382782fb2a462433130074ad902654fc69c5",
+            "file": "sfx\/caf\/air_cannon_place_02.caf"
+        },
+        {
+            "sha": "05252ea3a033ad7d9b14825e0f78673d91a8c68e",
+            "file": "sfx\/caf\/air_def_attack_02.caf"
+        },
+        {
+            "sha": "71e3e76a6aae1ef3def90a5b9aeb9830ee6158d4",
+            "file": "sfx\/caf\/air_def_hit_02.caf"
+        },
+        {
+            "sha": "931d6b3298e6eb64e1e9ef4e215eb1f312021ab6",
+            "file": "sfx\/caf\/air_def_pickup_03.caf"
+        },
+        {
+            "sha": "6b7630993745e8602653a8faff874466b79cc795",
+            "file": "sfx\/caf\/air_defense_place_01.caf"
+        },
+        {
+            "sha": "48658cbb72197ffeb119352b37dea11e8187f339",
+            "file": "sfx\/caf\/air_trap.caf"
+        },
+        {
+            "sha": "caa6498fce924e642fee86700e0d6dba0a7689a0",
+            "file": "sfx\/caf\/alliance_build_drop_04.caf"
+        },
+        {
+            "sha": "db86c65f060efbe98d9b912442895187306bbef8",
+            "file": "sfx\/caf\/alliance_build_pickup_03.caf"
+        },
+        {
+            "sha": "a48eadb631e4f1f9f182bca90b72841489a0c1db",
+            "file": "sfx\/caf\/alliance_jingle_v2.caf"
+        },
+        {
+            "sha": "ed36d554773159b7de62f9cc5670dfb3f73136a5",
+            "file": "sfx\/caf\/ancient_defcon_1.caf"
+        },
+        {
+            "sha": "9c2afd5517700764b1988ecde8e983f0d8c4d175",
+            "file": "sfx\/caf\/ancient_defcon_2.caf"
+        },
+        {
+            "sha": "b48856ea996dfa125173d20910f3cc8ae6dbdcb2",
+            "file": "sfx\/caf\/ancient_defcon_3.caf"
+        },
+        {
+            "sha": "a09a05493571b701cf5dcd9982f9a698ecd9867d",
+            "file": "sfx\/caf\/ancient_defcon_4.caf"
+        },
+        {
+            "sha": "20f26817fe86fcba49602847f7c0f49f30280141",
+            "file": "sfx\/caf\/ancient_explo_01.caf"
+        },
+        {
+            "sha": "42c07c66e28cb8b13962987b8cf415e98c068d83",
+            "file": "sfx\/caf\/ancient_fire_02.caf"
+        },
+        {
+            "sha": "8e9216b3cf1c11221a6a4a42dc7d4db06afdc36b",
+            "file": "sfx\/caf\/ancient_place_mecha_eagle_01.caf"
+        },
+        {
+            "sha": "4915e0c212e475b4d1615493017432a1af6297a1",
+            "file": "sfx\/caf\/ancient_target_01.caf"
+        },
+        {
+            "sha": "2bce3a32734ab306186c3816606f7ee8e73ab1ba",
+            "file": "sfx\/caf\/ancient_target_02.caf"
+        },
+        {
+            "sha": "fcc7fad765b13719fd662b80438086bd30033420",
+            "file": "sfx\/caf\/archer_death_05.caf"
+        },
+        {
+            "sha": "914df97d5b26156737a92d726672c41bb45fdd58",
+            "file": "sfx\/caf\/archer_death_05v2.caf"
+        },
+        {
+            "sha": "4e15e30742ae614a7abc3c0a6fd43e7642f9f229",
+            "file": "sfx\/caf\/archer_deploy_09.caf"
+        },
+        {
+            "sha": "af017547a0b3f2acc46d7fd71b783e7f78df8fc6",
+            "file": "sfx\/caf\/archer_deploy_09v2.caf"
+        },
+        {
+            "sha": "378cba486c0d9c2eea168563cade8a3a592fd9ac",
+            "file": "sfx\/caf\/archer_deploy_09v3.caf"
+        },
+        {
+            "sha": "99f6dca90b60515b1761909246d5764299531b8c",
+            "file": "sfx\/caf\/archer_invis_01v2.caf"
+        },
+        {
+            "sha": "54392d08fac26cc8735e8d30b681cddd9dec94e3",
+            "file": "sfx\/caf\/archer_queen_attack_01.caf"
+        },
+        {
+            "sha": "2dc2362f8c051ec888d7bc6cda1e3d98bfb5e8b7",
+            "file": "sfx\/caf\/archer_queen_attack_02.caf"
+        },
+        {
+            "sha": "8dab24375f86435f67e8844050e3104a784dd815",
+            "file": "sfx\/caf\/archer_queen_deploy_01.caf"
+        },
+        {
+            "sha": "b9486c551a8d760ade8de67945e3a71dcf566cbf",
+            "file": "sfx\/caf\/archer_queen_die_01.caf"
+        },
+        {
+            "sha": "61dbaee8f78ab8fd9dacbccceba26a3ae39caa8d",
+            "file": "sfx\/caf\/archer_queen_scream_01.caf"
+        },
+        {
+            "sha": "1578252c0feacbe8e5a073e1da9736e8266dbe34",
+            "file": "sfx\/caf\/archer_tower_pick_01.caf"
+        },
+        {
+            "sha": "e083b921db360f6f9b53e795f7aa3209c3f07388",
+            "file": "sfx\/caf\/archer_tower_place_02.caf"
+        },
+        {
+            "sha": "f7931da3786b504d6c991137ca8e1e541482c62e",
+            "file": "sfx\/caf\/arrow_hit_07.caf"
+        },
+        {
+            "sha": "cb9252671f0df3b96eadeb7f7cc9681af999f49f",
+            "file": "sfx\/caf\/arrow_hit_07v2.caf"
+        },
+        {
+            "sha": "3e1932bdfad441a31a99695bfae9f7b618557246",
+            "file": "sfx\/caf\/arrow_hit_07v3.caf"
+        },
+        {
+            "sha": "dd77559665b51560165e857e024bea115d5d90ee",
+            "file": "sfx\/caf\/arrow_hit_12.caf"
+        },
+        {
+            "sha": "815c53005b478ba4d33e00e1f73100a490670d71",
+            "file": "sfx\/caf\/bad_move_06.caf"
+        },
+        {
+            "sha": "240521b2fc0731c27e3038ef782ef08bf1aa1f0b",
+            "file": "sfx\/caf\/balloon_deploy_02.caf"
+        },
+        {
+            "sha": "97f6ced2714a946a4cd5b50a34799bfc68444d09",
+            "file": "sfx\/caf\/balloon_die_01.caf"
+        },
+        {
+            "sha": "c44ac76059a9d8e7303173ddfc7230e496f278f1",
+            "file": "sfx\/caf\/balloon_hit_01.caf"
+        },
+        {
+            "sha": "7c65b56147c9166af00518688b7f9aa60a1835b4",
+            "file": "sfx\/caf\/barb_deploy_11.caf"
+        },
+        {
+            "sha": "6eb5b02456441dccb88d3819a6ef786ce6f9fcb7",
+            "file": "sfx\/caf\/barb_deploy_11v2.caf"
+        },
+        {
+            "sha": "f2af16cfe1a569c72de4f59ca72a6f18cfb9bb71",
+            "file": "sfx\/caf\/barb_deploy_11v3.caf"
+        },
+        {
+            "sha": "5f31c39596344a0ae02c3e20f1344987e65db157",
+            "file": "sfx\/caf\/barb_king_rage_fist_01.caf"
+        },
+        {
+            "sha": "41a6fb0d81a7722076e446085dc7db0f1a40c184",
+            "file": "sfx\/caf\/barbarian_death_01.caf"
+        },
+        {
+            "sha": "3d3e7243dbed4695507abfaabc1a4e46d4eb71bc",
+            "file": "sfx\/caf\/barbarian_death_02.caf"
+        },
+        {
+            "sha": "a753ff0088f3e5a0c84a6bcc8a442d16b893fddc",
+            "file": "sfx\/caf\/barbarian_hit_stuff.caf"
+        },
+        {
+            "sha": "84effa50785c1065a3a5525971de15b590207f8d",
+            "file": "sfx\/caf\/barbarian_hit_stuff2.caf"
+        },
+        {
+            "sha": "be592db3dc4df6d2f94aa55d6d48c23aca834c2a",
+            "file": "sfx\/caf\/barbarian_hit_stuff3.caf"
+        },
+        {
+            "sha": "a36cc2ea6e78217b027e3045a98a43464a622fdf",
+            "file": "sfx\/caf\/barbarian_hit_stuff4.caf"
+        },
+        {
+            "sha": "437977e08f1c22761e330e2bde5000f819fd03c4",
+            "file": "sfx\/caf\/barbarian_king_attack_01.caf"
+        },
+        {
+            "sha": "6d2b267ff4384cc4111e2041704cc587840c7d01",
+            "file": "sfx\/caf\/barbarian_king_deploy.caf"
+        },
+        {
+            "sha": "118039521ade077166f26d2467468edd702ddd7b",
+            "file": "sfx\/caf\/barbarian_king_die_01.caf"
+        },
+        {
+            "sha": "412d711d88888eb4dc19e672b393132ab0f798ba",
+            "file": "sfx\/caf\/barbarian_king_scream_01.caf"
+        },
+        {
+            "sha": "5a2c09453ce069157b8843a3473f56a8fa9d5fc1",
+            "file": "sfx\/caf\/barbarian_sword_swing_hit_14.caf"
+        },
+        {
+            "sha": "d0a10323c660321cd289f0149550487cb898351a",
+            "file": "sfx\/caf\/barbarian_sword_swing_hit_14v2.caf"
+        },
+        {
+            "sha": "5587fb7f73480f75ec660464923c327d5da7996e",
+            "file": "sfx\/caf\/barbarian_sword_swing_hit_14v3.caf"
+        },
+        {
+            "sha": "15298597145cc6233190c9d511f472056e298edf",
+            "file": "sfx\/caf\/beam_up_02.caf"
+        },
+        {
+            "sha": "e8e6e72571a48812bc03cf3ca7e092d8ddac5743",
+            "file": "sfx\/caf\/boarrider_attack_01.caf"
+        },
+        {
+            "sha": "28d3be29cfbf1564610e573410b84cc4baeecc3e",
+            "file": "sfx\/caf\/boarrider_attack_02.caf"
+        },
+        {
+            "sha": "0a6352842e54c7f8f43f856d05d367e61985d3a2",
+            "file": "sfx\/caf\/boarrider_deploy_01.caf"
+        },
+        {
+            "sha": "f635e21fceb38e09754e366c1d1b29ce8463dae5",
+            "file": "sfx\/caf\/boarrider_deploy_02.caf"
+        },
+        {
+            "sha": "3d989abf47b9778c8549c6775276429a1f3531dc",
+            "file": "sfx\/caf\/boarrider_die_02.caf"
+        },
+        {
+            "sha": "888ba2e45140ef83ef956118a05cb2669b9634ea",
+            "file": "sfx\/caf\/bottle_break_04_lightning_01.caf"
+        },
+        {
+            "sha": "d34e9e9da9100b52702f5050c3ffe887b4fbf15f",
+            "file": "sfx\/caf\/bottle_heal_magic_03.caf"
+        },
+        {
+            "sha": "c63bb67681ab8b79b80f55a6941843a0d1670ce8",
+            "file": "sfx\/caf\/bottle_jump_spell_01.caf"
+        },
+        {
+            "sha": "0b08459f2dadb2577aa0235293a87880e9b35b41",
+            "file": "sfx\/caf\/bottle_rage_magic_07v2.caf"
+        },
+        {
+            "sha": "85364e47f970ae0a356c91994b9ce7bf15c4b332",
+            "file": "sfx\/caf\/bow_attack.caf"
+        },
+        {
+            "sha": "1a92df360ccf945b9912c153aa55dd0089201990",
+            "file": "sfx\/caf\/bow_load.caf"
+        },
+        {
+            "sha": "2be3742adfd85d6aaed9fce3eaa06533f58b8309",
+            "file": "sfx\/caf\/bow_out_of_ammo.caf"
+        },
+        {
+            "sha": "3164ae9ccaeb2d60932ff37ec43a7ac5f778df9a",
+            "file": "sfx\/caf\/bow_pickup.caf"
+        },
+        {
+            "sha": "a9408bd38ded6df0c055dc12fb664bdebf88d861",
+            "file": "sfx\/caf\/bow_place.caf"
+        },
+        {
+            "sha": "afcd249780964d5b66c8f84a43fdb0c6ed7109e0",
+            "file": "sfx\/caf\/bow_target.caf"
+        },
+        {
+            "sha": "c1e143f32047da6dcdae0a04d25a8a33daa18668",
+            "file": "sfx\/caf\/build_pickup_05.caf"
+        },
+        {
+            "sha": "a537b11ab70d0cfae2b79d4dab3daaad513f8951",
+            "file": "sfx\/caf\/builder_hut_pickup_02.caf"
+        },
+        {
+            "sha": "4775dbf4427d7d73021b9b720ea5f8dae222c012",
+            "file": "sfx\/caf\/builder_hut_place_02.caf"
+        },
+        {
+            "sha": "e203b2a219781ed7795ecfeb9f22aa78c4e0067a",
+            "file": "sfx\/caf\/building_construct_07.caf"
+        },
+        {
+            "sha": "6ecece92e0b1736844106e3323182598104397ff",
+            "file": "sfx\/caf\/building_destroyed_01.caf"
+        },
+        {
+            "sha": "9160bfbfcf5984bab62dd199f2259805058f82d5",
+            "file": "sfx\/caf\/building_finished_01.caf"
+        },
+        {
+            "sha": "114401cd05073456d5fa18b7fcae8d9773bdea97",
+            "file": "sfx\/caf\/bush2-halloween.caf"
+        },
+        {
+            "sha": "032c2f7016b280076290e37bb329b1d627d4eb4d",
+            "file": "sfx\/caf\/bush2.caf"
+        },
+        {
+            "sha": "ee7766fe5d66c60723c3f6719d1826ddcc007061",
+            "file": "sfx\/caf\/button_click.caf"
+        },
+        {
+            "sha": "f0da18a5208d3f5a35aa448ef60020675f9ef996",
+            "file": "sfx\/caf\/cannon_08.caf"
+        },
+        {
+            "sha": "5b8634b88b8ed4720d4649360f2608667f7703f0",
+            "file": "sfx\/caf\/cannon_drop2.caf"
+        },
+        {
+            "sha": "ef98a1ff03fbc600fc55c116f7bc5ab5fe9c4d85",
+            "file": "sfx\/caf\/cannon_fire3.caf"
+        },
+        {
+            "sha": "521010683e5daa542bbe576e8595f628b598f4b0",
+            "file": "sfx\/caf\/cannon_pickup3.caf"
+        },
+        {
+            "sha": "7c775cf2ba040097929fdae0e6ae8c38a0840a43",
+            "file": "sfx\/caf\/clanwars_engaged_on_map_01small.caf"
+        },
+        {
+            "sha": "a122bb31f7e0a0565e72e9e6da5d76b9c21f72d9",
+            "file": "sfx\/caf\/clear_tombstone_01.caf"
+        },
+        {
+            "sha": "75fb5bea42152bd629b4127b004b45b1b6fee92e",
+            "file": "sfx\/caf\/coffin_pickup_01.caf"
+        },
+        {
+            "sha": "86312260153a716a44b1c63b4ea5321f165f260b",
+            "file": "sfx\/caf\/coffin_place_01.caf"
+        },
+        {
+            "sha": "bbcb479cc16b0554f57dbc05f23c97dd3ad7960f",
+            "file": "sfx\/caf\/coffin_popup_01.caf"
+        },
+        {
+            "sha": "296f72ac8c90a745018ecbeb1c820c3e06e88c48",
+            "file": "sfx\/caf\/coin_steal_02.caf"
+        },
+        {
+            "sha": "bc675146d977866d0855c25e1a623cf3d802d330",
+            "file": "sfx\/caf\/coins_collect_01.caf"
+        },
+        {
+            "sha": "f782e6c655eadae7600ae421897fdee4c5c27321",
+            "file": "sfx\/caf\/collect_diamonds_01.caf"
+        },
+        {
+            "sha": "732f1c81882b802225831651029741758202c51d",
+            "file": "sfx\/caf\/dark_drill_pickup.caf"
+        },
+        {
+            "sha": "56080bcd7a22206ad52d8ccb55a45b83e35ab8f5",
+            "file": "sfx\/caf\/dark_drill_pickup_02.caf"
+        },
+        {
+            "sha": "433302ddf38cf5005884a2f8b8db6c012f578203",
+            "file": "sfx\/caf\/dark_drill_place.caf"
+        },
+        {
+            "sha": "32a0c2148405ab838d262a3f2bb4b55f2f7087ee",
+            "file": "sfx\/caf\/dark_drill_place_07.caf"
+        },
+        {
+            "sha": "7f4ed82aa819e8e47d54a2aef033d39a87943f0c",
+            "file": "sfx\/caf\/dark_elixir_collect.caf"
+        },
+        {
+            "sha": "5e26dc04f35efeedc2d77d3f4bdd8f09067fdbbe",
+            "file": "sfx\/caf\/dark_elixir_steal.caf"
+        },
+        {
+            "sha": "f9b4cd868f9facf30affaef245d1b3ec02952128",
+            "file": "sfx\/caf\/dark_storage_pickup.caf"
+        },
+        {
+            "sha": "45fc5da8ecd04a7f29f74e3bc60bbbcf9000552f",
+            "file": "sfx\/caf\/dark_storage_place.caf"
+        },
+        {
+            "sha": "f6aace95b5ac0d8d5faa5b5872a6fb86b90c832f",
+            "file": "sfx\/caf\/darktower_noammo_02.caf"
+        },
+        {
+            "sha": "1d9dd00a8f9ba94699d8b2b6e198c34084496e94",
+            "file": "sfx\/caf\/darktower_pickup_01.caf"
+        },
+        {
+            "sha": "ff341a6063ac6efb165b386261bfa991d3972820",
+            "file": "sfx\/caf\/darktower_place_01.caf"
+        },
+        {
+            "sha": "cb16e0145a71c90299fcd84c5175108bf8892b7b",
+            "file": "sfx\/caf\/darktower_reload_01.caf"
+        },
+        {
+            "sha": "bdc81353ba2c9ac38c69a7b31b0cb93fb25e2cbc",
+            "file": "sfx\/caf\/deploy_pekka_05.caf"
+        },
+        {
+            "sha": "fab1ecc6c92ae39b17519139877f9efdf0f7dc60",
+            "file": "sfx\/caf\/deploy_skeleton_07.caf"
+        },
+        {
+            "sha": "413ab98e35d612f2eeca44cb3760c1999eb4bcb1",
+            "file": "sfx\/caf\/deploy_skeleton_07v2.caf"
+        },
+        {
+            "sha": "a345b2243e901eff661aea04a7e2c9ffd6e8d556",
+            "file": "sfx\/caf\/deploy_skeleton_07v3.caf"
+        },
+        {
+            "sha": "b151ce3995defc5c1ac9ef2d7c19056df09716f5",
+            "file": "sfx\/caf\/dragon_attack_01.caf"
+        },
+        {
+            "sha": "1bf949b5bb95f73b4a74d74012dc86eabe12b3eb",
+            "file": "sfx\/caf\/dragon_deploy_01.caf"
+        },
+        {
+            "sha": "d623a596a63e350e807269bb1707fbd5022d5dc0",
+            "file": "sfx\/caf\/dragon_die_01.caf"
+        },
+        {
+            "sha": "901772bb9c9d641fd04b3e9ee3d37651317d119e",
+            "file": "sfx\/caf\/droid_sans_fallback.ttf"
+        },
+        {
+            "sha": "cd329a951aaf9395f01f7c8d1f0c371e6f0be0bb",
+            "file": "sfx\/caf\/elixir_collect_02.caf"
+        },
+        {
+            "sha": "d1778318b7a402be12651710079c6efd91849b38",
+            "file": "sfx\/caf\/elixir_pump_drop_03.caf"
+        },
+        {
+            "sha": "2f0cf97527b24593c49c53d3308ac7f4aa335539",
+            "file": "sfx\/caf\/elixir_pump_pickup_07.caf"
+        },
+        {
+            "sha": "a0188b3bc0ac2e8fa038b283b79a27fcda12cb91",
+            "file": "sfx\/caf\/elixir_steal_03.caf"
+        },
+        {
+            "sha": "80bdcf5bfdcfa82b93321e814ecb9fbb4579b96a",
+            "file": "sfx\/caf\/elixir_storage_drop_02.caf"
+        },
+        {
+            "sha": "434ff656932545b2ed612c61404027df1759ae5a",
+            "file": "sfx\/caf\/elixir_storage_pickup_04.caf"
+        },
+        {
+            "sha": "fa6dbbac41f0eb615e5e352ea01cd85c5d01fb9b",
+            "file": "sfx\/caf\/explosion_02.caf"
+        },
+        {
+            "sha": "1445bd14fa11d2e1ad7cb9499dc704c32c8637d8",
+            "file": "sfx\/caf\/explosive_arrow_01v2.caf"
+        },
+        {
+            "sha": "6a4aadec61ab702bf232b7c844f7281de46d739e",
+            "file": "sfx\/caf\/find_clan_01.caf"
+        },
+        {
+            "sha": "1f3eab445ed5f9aa9211f6ca0abc490744b992e2",
+            "file": "sfx\/caf\/flower_03.caf"
+        },
+        {
+            "sha": "18e3b7fc0bf1ecb0399c54e44102e6ff71f5f139",
+            "file": "sfx\/caf\/freeze_spell_01.caf"
+        },
+        {
+            "sha": "c0cd6eb6375e39a067bd4aaa77628153366bf50c",
+            "file": "sfx\/caf\/garg_attack_01.caf"
+        },
+        {
+            "sha": "6e1187b271e9b3e43e0430db27cd3188e4a3f33c",
+            "file": "sfx\/caf\/garg_deploy_02.caf"
+        },
+        {
+            "sha": "ea8b71d3a8abc03c4e5d025b37eb9dab3652c279",
+            "file": "sfx\/caf\/garg_die_01.caf"
+        },
+        {
+            "sha": "5dd2605168830f6d471fa85324591359f58155c1",
+            "file": "sfx\/caf\/gem_boost_01.caf"
+        },
+        {
+            "sha": "976804dd481cf4751f196e4d69e5f93a7a4d7626",
+            "file": "sfx\/caf\/giant_attack_05.caf"
+        },
+        {
+            "sha": "78c74ad3b64130dabdb6bc19b1ae070d1c87c15b",
+            "file": "sfx\/caf\/giant_attack_06.caf"
+        },
+        {
+            "sha": "1dd7117139da5cf41da7783f8ce4f224fa206e78",
+            "file": "sfx\/caf\/giant_attack_hit_01.caf"
+        },
+        {
+            "sha": "a3b356e257e52e3e3bc1eabc671fa82ecaeb98bb",
+            "file": "sfx\/caf\/giant_attack_hit_02.caf"
+        },
+        {
+            "sha": "c0daa8fd787e70087da1d0a7ebd4fd2531145b5c",
+            "file": "sfx\/caf\/giant_death_02.caf"
+        },
+        {
+            "sha": "e2f2d280f13e29da1fd52d1d38c88e18cb8c3ad6",
+            "file": "sfx\/caf\/giant_deploy_04.caf"
+        },
+        {
+            "sha": "efc25e04cbb5cba12c359fd1c6e20ffaf5b87d44",
+            "file": "sfx\/caf\/giant_deploy_04v2.caf"
+        },
+        {
+            "sha": "a1d5f082f4253f5d33aea47313752ddf102a172c",
+            "file": "sfx\/caf\/giant_deploy_04v3.caf"
+        },
+        {
+            "sha": "3c0e13d12a992c725d28dd5dc5a9e301efd0f7d8",
+            "file": "sfx\/caf\/gob_attack_01.caf"
+        },
+        {
+            "sha": "e1a4e435628bc152362806643d8a6724341f903a",
+            "file": "sfx\/caf\/gob_attack_02.caf"
+        },
+        {
+            "sha": "6c795392fb311922da25d42a5ccce747f7e9a7cb",
+            "file": "sfx\/caf\/gob_attack_03.caf"
+        },
+        {
+            "sha": "d30b757e96df4f89d26f7e8ced4b3b28dac05d3d",
+            "file": "sfx\/caf\/gob_talk_woop_01.caf"
+        },
+        {
+            "sha": "1f58e3982ce4ca349f5802156b6aa659f98e5d5a",
+            "file": "sfx\/caf\/goblin_death_02.caf"
+        },
+        {
+            "sha": "e11de7b43db371d752221c30651a162176e500b9",
+            "file": "sfx\/caf\/goblin_deploy_14.caf"
+        },
+        {
+            "sha": "dffc83c704f569851f013d1776741ca50ff75094",
+            "file": "sfx\/caf\/goblin_deploy_14v2.caf"
+        },
+        {
+            "sha": "d228967e98099e48d07c538cf7b65b053db8f7b3",
+            "file": "sfx\/caf\/goblin_deploy_14v3.caf"
+        },
+        {
+            "sha": "12133343326fa37b3bb47b481a5bcb4aedb36fdc",
+            "file": "sfx\/caf\/goblin_talk_2.caf"
+        },
+        {
+            "sha": "46ce6845b9302fdb3094172463d0f596873d942f",
+            "file": "sfx\/caf\/goblin_talk_3.caf"
+        },
+        {
+            "sha": "ffcd8bc1ffc9858e17204b4b35da4d1c2ffb310a",
+            "file": "sfx\/caf\/goblin_talk_4.caf"
+        },
+        {
+            "sha": "7ef4bf9110bf89d15988c8d219778276f9eb024f",
+            "file": "sfx\/caf\/golden_haus_04.caf"
+        },
+        {
+            "sha": "2b37f1ab2ebcd3ef0aae71e30c5595cc83001d76",
+            "file": "sfx\/caf\/golden_haus_drop_02.caf"
+        },
+        {
+            "sha": "01916bd61f0924a8f6ab12800c0a6788f1594e39",
+            "file": "sfx\/caf\/goldmine_drop4.caf"
+        },
+        {
+            "sha": "35bdbe3376ab85aa44e104a6580e425db8b883f9",
+            "file": "sfx\/caf\/goldmine_pickup4.caf"
+        },
+        {
+            "sha": "85dbfa099c9f38feeae87f50a445fe4ead0015b6",
+            "file": "sfx\/caf\/grand_warden_attack_01.caf"
+        },
+        {
+            "sha": "0c3b7a8fddcd549a2c4e1665ffd0fbdf2ef68542",
+            "file": "sfx\/caf\/grand_warden_aura_loop_01.caf"
+        },
+        {
+            "sha": "49668ab3877931a6e25bd746e5276904b822a058",
+            "file": "sfx\/caf\/grand_warden_deploy_02.caf"
+        },
+        {
+            "sha": "6461338dde699cca5ee9c08236daca6b4147b7b2",
+            "file": "sfx\/caf\/grand_warden_dizzy_01.caf"
+        },
+        {
+            "sha": "b965322861f4232567ad4a850095290ec24f1d18",
+            "file": "sfx\/caf\/grand_warden_shield_01.caf"
+        },
+        {
+            "sha": "d6d618bc221769e529aa93120c5972915be4db6a",
+            "file": "sfx\/caf\/healer_attack_01.caf"
+        },
+        {
+            "sha": "18850de58e1f5c1b4255311f62c97f474522b184",
+            "file": "sfx\/caf\/healer_deploy_01.caf"
+        },
+        {
+            "sha": "28ea7ab8ea2a182f570b8c23b5c548609ce02af4",
+            "file": "sfx\/caf\/healer_die_01.caf"
+        },
+        {
+            "sha": "a5033742a9ee5a136fa331bf1a41a1821737b3ed",
+            "file": "sfx\/caf\/healer_hit_01.caf"
+        },
+        {
+            "sha": "ca69d320f11561b058a89e77b659543acb79fd26",
+            "file": "sfx\/caf\/healer_hit_02.caf"
+        },
+        {
+            "sha": "b164e453717f132687e9bac9636558075039b1af",
+            "file": "sfx\/caf\/hero_altar_pickup_02.caf"
+        },
+        {
+            "sha": "118cb191130982469abf768aa4670fef925ff837",
+            "file": "sfx\/caf\/hero_altar_place.caf"
+        },
+        {
+            "sha": "0a4abed52fcbae83f2cac1d601c2620004581303",
+            "file": "sfx\/caf\/hero_energized.caf"
+        },
+        {
+            "sha": "3a84912b030564c490c0a2c7c2c27ef3f20acf86",
+            "file": "sfx\/caf\/hero_patrol.caf"
+        },
+        {
+            "sha": "8375e21e2ac34fe62726cdb98761c6ad292cc18b",
+            "file": "sfx\/caf\/hero_sleep.caf"
+        },
+        {
+            "sha": "e0d7157048ba68cf88a775d51eb59c4059bf023c",
+            "file": "sfx\/caf\/hero_spot_01.caf"
+        },
+        {
+            "sha": "b47279f488361307347482dfc2b6229c4bf64ff9",
+            "file": "sfx\/caf\/hero_ui_select_01.caf"
+        },
+        {
+            "sha": "cd3906fac7772adb45326ebe2aaaf5f432521923",
+            "file": "sfx\/caf\/hero_upgrade_02.caf"
+        },
+        {
+            "sha": "0cb74e083037d7d4492cf39037770244a0f66edd",
+            "file": "sfx\/caf\/laser_loop_02.caf"
+        },
+        {
+            "sha": "a823c0425e138462ebfbf392904211827cfca55e",
+            "file": "sfx\/caf\/league_bonus.caf"
+        },
+        {
+            "sha": "576468c89fa148d615be9e7f0d816b415184c3e9",
+            "file": "sfx\/caf\/league_demote.caf"
+        },
+        {
+            "sha": "52544bdf1d40c9c040f5db9d621edb9314ed598a",
+            "file": "sfx\/caf\/league_promote.caf"
+        },
+        {
+            "sha": "8163255f56f443f0ef3d51220655068ec9a9362a",
+            "file": "sfx\/caf\/leg_league_01.caf"
+        },
+        {
+            "sha": "0b64127493bd9a6dec3517ad8c9287ac2df559a5",
+            "file": "sfx\/caf\/leg_league_over_01.caf"
+        },
+        {
+            "sha": "c90e5aa9259c3be726e7b958abc1c066ec510f3d",
+            "file": "sfx\/caf\/lightning_amb_01.caf"
+        },
+        {
+            "sha": "3673888c32e8cb851c1fddd6132e0728bd1111cc",
+            "file": "sfx\/caf\/loading_screen_jingle.caf"
+        },
+        {
+            "sha": "e415b5ac75ce40cf7f2c281f405b0125f2eb9eb0",
+            "file": "sfx\/caf\/mage_attack_02.caf"
+        },
+        {
+            "sha": "24ad71e455ef446c98f1d5bd5f2372e550f0de57",
+            "file": "sfx\/caf\/mage_attack_02v2.caf"
+        },
+        {
+            "sha": "4e0e28c52394e541378287869c5cbd3c14459263",
+            "file": "sfx\/caf\/mage_attack_02v3.caf"
+        },
+        {
+            "sha": "b491fed34e5a6837b8b9283647920e0be4e2cd26",
+            "file": "sfx\/caf\/mage_deploy_06.caf"
+        },
+        {
+            "sha": "1a55466c2c1c3e79f8774747716a73c5698636ff",
+            "file": "sfx\/caf\/magic_bottle_fall_05.caf"
+        },
+        {
+            "sha": "f157d5cd867a7aed8834c31bfb1555f5e6e4cff3",
+            "file": "sfx\/caf\/mech_eagle_reload_01.caf"
+        },
+        {
+            "sha": "3aba05c9287ebce21b456f4bf6bac1fff0ef7d22",
+            "file": "sfx\/caf\/mech_eagle_sad_no_ammo_01.caf"
+        },
+        {
+            "sha": "91d6d5d7b08657bf6120fd504b64d6827b0b35ff",
+            "file": "sfx\/caf\/mortar_fire_02_with_fall.caf"
+        },
+        {
+            "sha": "9a9512eb1b7745df221d8eae1317af40962b880b",
+            "file": "sfx\/caf\/mortar_hit_01.caf"
+        },
+        {
+            "sha": "71b14e05dcebb63a310f7a9ac0ab5dd6e9c998bf",
+            "file": "sfx\/caf\/mortar_pickup_01.caf"
+        },
+        {
+            "sha": "7a8331be0e74d6c7a778e7aad2af4fa2779cd61c",
+            "file": "sfx\/caf\/mortar_place_02.caf"
+        },
+        {
+            "sha": "f02f216b4079126d496877b72e6b450814eca6fb",
+            "file": "sfx\/caf\/moving_07.caf"
+        },
+        {
+            "sha": "4a0de3fb07c96f78207683c1dead63587c557738",
+            "file": "sfx\/caf\/no_troops_01short.caf"
+        },
+        {
+            "sha": "48f16e55f9faef48eec4e6dcc6ae3ad0c71e710f",
+            "file": "sfx\/caf\/pekka_attack_02v2.caf"
+        },
+        {
+            "sha": "0edc746968ee6efbbbbba94aac151d62b134c20c",
+            "file": "sfx\/caf\/pekka_attack_hit_02.caf"
+        },
+        {
+            "sha": "d8dab1abd2859fb40df1ef50189bc898e0800809",
+            "file": "sfx\/caf\/pekka_death_06.caf"
+        },
+        {
+            "sha": "71b55de55b1f0f745728a9a88e7c8ff8da3f117f",
+            "file": "sfx\/caf\/rearm_jingle_01.caf"
+        },
+        {
+            "sha": "d41837bcef6716a9182ec3699995f9bcfc2ee4d4",
+            "file": "sfx\/caf\/rock_pickup3.caf"
+        },
+        {
+            "sha": "d63316a479510f7cdc3da2bb2f5f9eee0d4ec76f",
+            "file": "sfx\/caf\/santa.caf"
+        },
+        {
+            "sha": "46df34babd2c300ae367292f3d1fbe11820d1c69",
+            "file": "sfx\/caf\/sell_item_01.caf"
+        },
+        {
+            "sha": "dea03589396d19ad1b32aa198ff1236379b4129e",
+            "file": "sfx\/caf\/slimeball_fire_05.caf"
+        },
+        {
+            "sha": "a8a48597bd36c850c9d6eca8e4f11d70849cc104",
+            "file": "sfx\/caf\/spell_ui_select_01.caf"
+        },
+        {
+            "sha": "6b73999e0a8f07f1bece37e406d3b683a68c446d",
+            "file": "sfx\/caf\/spellfactory_pickup_01.caf"
+        },
+        {
+            "sha": "750dfb604a7e064f42aca715b3a81bf0255fa8df",
+            "file": "sfx\/caf\/spellfactory_place_01.caf"
+        },
+        {
+            "sha": "1a0ad18b2492425ef7138a0a701b521efa7e8e77",
+            "file": "sfx\/caf\/stone_golem_attack_01.caf"
+        },
+        {
+            "sha": "76b0b90153baa72085a44f18424fe1aa7a3e149e",
+            "file": "sfx\/caf\/stone_golem_death_01.caf"
+        },
+        {
+            "sha": "c590cde537355068dc0b9586591324d1146f13ee",
+            "file": "sfx\/caf\/stone_golem_deploy_01.caf"
+        },
+        {
+            "sha": "76f6de7590d59e63da100a42dc0ea103147d6c77",
+            "file": "sfx\/caf\/stone_golem_hit_01.caf"
+        },
+        {
+            "sha": "9c0dc94d674163e7bacc3b8988ce4ba1f28757e5",
+            "file": "sfx\/caf\/summon_attack_01.caf"
+        },
+        {
+            "sha": "86ce1938de6b348907f5523b5ecd1cdbea639e06",
+            "file": "sfx\/caf\/summon_die_02.caf"
+        },
+        {
+            "sha": "8b0730c61ed0b6025fe9431a9eafb2481d6ce72b",
+            "file": "sfx\/caf\/supercell_jingle.caf"
+        },
+        {
+            "sha": "53eb250d64895c028c35867fd58f8fa9cb3a43d9",
+            "file": "sfx\/caf\/tap_cauldron_01.caf"
+        },
+        {
+            "sha": "118f8b41cf0d1fb09c5775d8e206802b65a55eb9",
+            "file": "sfx\/caf\/tap_chest_01.caf"
+        },
+        {
+            "sha": "98e5d050829ad4a43cdfa945bf732700223936fe",
+            "file": "sfx\/caf\/tap_grand_warden_04.caf"
+        },
+        {
+            "sha": "a731d77c4412e18cba84037734c8ca1e6bb37b60",
+            "file": "sfx\/caf\/tesla_appear_01.caf"
+        },
+        {
+            "sha": "a4bd26512c825bebfc09dfab9d6ee2d2596e0cca",
+            "file": "sfx\/caf\/tesla_drop_09.caf"
+        },
+        {
+            "sha": "d4fca57df2323d3bf2fbdcdcf1d3a86e977b6573",
+            "file": "sfx\/caf\/tesla_hit_02.caf"
+        },
+        {
+            "sha": "45aef72252729da534d4c6392c7892aa91fe5bf6",
+            "file": "sfx\/caf\/tesla_pickup_11.caf"
+        },
+        {
+            "sha": "35f6b6bd59da506ffbf77278bdc7736fabe1829e",
+            "file": "sfx\/caf\/tesla_zap_01.caf"
+        },
+        {
+            "sha": "789d29a45f1ff5ac8d42798e777a9eceee91af03",
+            "file": "sfx\/caf\/tesla_zap_03.caf"
+        },
+        {
+            "sha": "5bd29fb763824948d65b803f6912f78ddd20dc8b",
+            "file": "sfx\/caf\/tiny_attack_04.caf"
+        },
+        {
+            "sha": "378124646267d712f93991146a9cd9deafdae75e",
+            "file": "sfx\/caf\/tiny_deploy_05.caf"
+        },
+        {
+            "sha": "0af2d17abdcf629c15d1f1eced88a53ec9c7f9a8",
+            "file": "sfx\/caf\/tiny_die_03.caf"
+        },
+        {
+            "sha": "1b510145f73208ab47a96cf33b69d02ef103a260",
+            "file": "sfx\/caf\/tiny_hurt_02.caf"
+        },
+        {
+            "sha": "8b6c78933cdd8b5bba5d3bb543d80503ff4500f2",
+            "file": "sfx\/caf\/tinymite_attack_04.caf"
+        },
+        {
+            "sha": "bc9592ca259cebbce8b64c4619171ff42ae7b42f",
+            "file": "sfx\/caf\/tinymite_die_03.caf"
+        },
+        {
+            "sha": "c6f9dbac65fd644f9ed861ec8468bc75ff78b98a",
+            "file": "sfx\/caf\/tinymite_hurt_01.caf"
+        },
+        {
+            "sha": "52e02afd9cc8f6247c6760171cc79e4035d79bbf",
+            "file": "sfx\/caf\/town_hall_placing_04.caf"
+        },
+        {
+            "sha": "3f4824c47424806c2aa3d383c806e6c02daf3ce9",
+            "file": "sfx\/caf\/training_finished_03.caf"
+        },
+        {
+            "sha": "7470f875f2d460c36e6447966cea1c9399f59782",
+            "file": "sfx\/caf\/trap_eject_01v2.caf"
+        },
+        {
+            "sha": "16981cbd43fdb0062573b5cdffd2db09390810b1",
+            "file": "sfx\/caf\/tree8.caf"
+        },
+        {
+            "sha": "71ba9aa40a7e0d4f5be86476ce475e72af2d6fa4",
+            "file": "sfx\/caf\/troop_housing_pickup_06.caf"
+        },
+        {
+            "sha": "782415f14cebff930e09f53ef489b7d8400ce398",
+            "file": "sfx\/caf\/troop_housing_pickup_09.caf"
+        },
+        {
+            "sha": "1ac01d569a3aa3e0e5b046995f073912dcefca4d",
+            "file": "sfx\/caf\/troop_housing_placing_06.caf"
+        },
+        {
+            "sha": "e0f7f66cf97fb7a3bd6cb33a8cc34832229df321",
+            "file": "sfx\/caf\/troop_housing_placing_08.caf"
+        },
+        {
+            "sha": "cd73e289663acc1076966bb553dd57971d34f8b2",
+            "file": "sfx\/caf\/troop_ui_select_01.caf"
+        },
+        {
+            "sha": "cbb676b08682b1161da04e800dfaa84d2cbcc743",
+            "file": "sfx\/caf\/tutor_happy_01.caf"
+        },
+        {
+            "sha": "b929b378cd92658c837c58a7b367aa384c095888",
+            "file": "sfx\/caf\/tutor_hey_01.caf"
+        },
+        {
+            "sha": "897d2299cc58feb2b59392038d1e594332a97475",
+            "file": "sfx\/caf\/tutor_no_talk_woop_01.caf"
+        },
+        {
+            "sha": "0ebb9d6d48fe57a249587da97d47dd89304b9eff",
+            "file": "sfx\/caf\/tutor_relief_01.caf"
+        },
+        {
+            "sha": "92bc85bcb9d192bd6d601069f3ed7bcbca5b007d",
+            "file": "sfx\/caf\/tutor_talk_aha_01.caf"
+        },
+        {
+            "sha": "20e28fd70d7f33d20bd715f0d14c5f6f4add3518",
+            "file": "sfx\/caf\/tutor_talk_yeah_01.caf"
+        },
+        {
+            "sha": "d39a333ee16bef01ec06df3013555e347df3fd98",
+            "file": "sfx\/caf\/tutor_urgency_01.caf"
+        },
+        {
+            "sha": "c88b0268b3a887dd5dff5f19782f9a98c5207cd5",
+            "file": "sfx\/caf\/tutor_urgency_02.caf"
+        },
+        {
+            "sha": "a7a79254368a71b1ae2028ca765215fe9d497cd1",
+            "file": "sfx\/caf\/tutor_urgency_04.caf"
+        },
+        {
+            "sha": "68132de3379d0be12e3aaf648d344464aa0b2e25",
+            "file": "sfx\/caf\/tutor_urgency_05.caf"
+        },
+        {
+            "sha": "861dcb977902bac8af67d224edeb5c8b2a903d29",
+            "file": "sfx\/caf\/tutor_wow_01.caf"
+        },
+        {
+            "sha": "1f4623ed843032102d93117ef3acfb7647a25f60",
+            "file": "sfx\/caf\/upfromground_05.caf"
+        },
+        {
+            "sha": "b027c80f413df4847da9eb10cdacda6d675d8e84",
+            "file": "sfx\/caf\/vial_earthquake_hit_gound_01.caf"
+        },
+        {
+            "sha": "467f6beb36504331fb8a8bc66bd82d1a47a5c95e",
+            "file": "sfx\/caf\/vial_fall_02.caf"
+        },
+        {
+            "sha": "03df089e9409689539b54cd474b2cd355f8dad2b",
+            "file": "sfx\/caf\/vial_poison_hit_gound_01.caf"
+        },
+        {
+            "sha": "d803c115456ffe1a47034773ed45652d9a5c44af",
+            "file": "sfx\/caf\/vial_speed_hit_gound_01.caf"
+        },
+        {
+            "sha": "9858bbcce6ef6e23fd25816c45c13afe7221325f",
+            "file": "sfx\/caf\/wall_breaker_attack_01.caf"
+        },
+        {
+            "sha": "365e7c7d3077b4e2642e9c3692d6c491ad407ad1",
+            "file": "sfx\/caf\/wall_breaker_die_01.caf"
+        },
+        {
+            "sha": "b3b1e1922de0285dfd0f55e8508d68060fc04e17",
+            "file": "sfx\/caf\/wall_pickup_01.caf"
+        },
+        {
+            "sha": "58e0fd07471cd308a16af5a6c70d51fff6b4f04e",
+            "file": "sfx\/caf\/wall_place_01.caf"
+        },
+        {
+            "sha": "6e4c464205e8d10352c682ae2b4601b26ca9586b",
+            "file": "sfx\/caf\/warriorgirl_die_01.caf"
+        },
+        {
+            "sha": "a91c4a2a56ed08ac21e5acdc0ad52d40eb145099",
+            "file": "sfx\/caf\/warriorgirl_hit_01.caf"
+        },
+        {
+            "sha": "06c71b15992ad9129d6651095cce8970ccc6f116",
+            "file": "sfx\/caf\/warriorgirlattack_01.caf"
+        },
+        {
+            "sha": "bfc457242579b9cb109e510bc0bd2bab9122f62b",
+            "file": "sfx\/caf\/warriorgirlattack_02.caf"
+        },
+        {
+            "sha": "2faca19fcc0759478236b5c2c702a5d31ca1d4a9",
+            "file": "sfx\/caf\/warriorgirldeploy_01.caf"
+        },
+        {
+            "sha": "e5da46eef388a0c406c415e9e74e8b3587405109",
+            "file": "sfx\/caf\/warriorgirldeploy_02.caf"
+        },
+        {
+            "sha": "7948ada3620105488dcbeb1a2156d87ab784264c",
+            "file": "sfx\/caf\/witch_deploy_01.caf"
+        },
+        {
+            "sha": "7f47a8e003432ca1ae4e09f8bf35609dc6bf1cdf",
+            "file": "sfx\/caf\/witch_die_01.caf"
+        },
+        {
+            "sha": "bd53363617d41f30a5e156e14665627b420b5aa8",
+            "file": "sfx\/caf\/witch_summon_01.caf"
+        },
+        {
+            "sha": "4476aee9161491b95d4443f6951b32a8ea1b9cd0",
+            "file": "sfx\/caf\/wizard_die_01.caf"
+        },
+        {
+            "sha": "f585c5a97339021edc5830df0c3331e17c12ec28",
+            "file": "sfx\/caf\/wizard_hit_01.caf"
+        },
+        {
+            "sha": "7d3320147db9d00f6736343edb4f785545da460c",
+            "file": "sfx\/caf\/wizard_tower_drop_01.caf"
+        },
+        {
+            "sha": "4255f015cab3e43749e4b4597b8bff4d456f5b35",
+            "file": "sfx\/caf\/wizard_tower_pickup_02.caf"
+        },
+        {
+            "sha": "fb9abed7cf9916bea203a47e598cc94a07dc6236",
+            "file": "sfx\/caf\/xmastree.caf"
+        },
+        {
+            "sha": "5962f49c74b17d4c6647ad7610366f20155de5a8",
+            "file": "sfx\/caf\/xp_gain_06.caf"
+        },
+        {
+            "sha": "2e760a5858c6ab6e68122ee3017e9f425903ac36",
+            "file": "sfx\/ogg\/air_cannon_fire_04.ogg"
+        },
+        {
+            "sha": "8bbb86feae897f14290c6bc3bd4dfffa0bdd811c",
+            "file": "sfx\/ogg\/air_cannon_pickup_03.ogg"
+        },
+        {
+            "sha": "b0b1533f98630dbb4178c7a1162f655e2a8e7df2",
+            "file": "sfx\/ogg\/air_cannon_place_02.ogg"
+        },
+        {
+            "sha": "b31d8733088149ef106ed6125af4781cdb82ae43",
+            "file": "sfx\/ogg\/air_def_attack_02.ogg"
+        },
+        {
+            "sha": "dfe9294dcb4e166ca490f60f2dc7c3d732d15486",
+            "file": "sfx\/ogg\/air_def_hit_02.ogg"
+        },
+        {
+            "sha": "fd8dd78a491965c39df6a3e7a353030d9131e250",
+            "file": "sfx\/ogg\/air_def_pickup_03.ogg"
+        },
+        {
+            "sha": "60acedc92ab0f91714c2a6a1700755ecee6a2378",
+            "file": "sfx\/ogg\/air_defense_place_01.ogg"
+        },
+        {
+            "sha": "995dc1c465a05c3e43f1fd142e18ab3dae9cf76d",
+            "file": "sfx\/ogg\/air_trap.ogg"
+        },
+        {
+            "sha": "edcdca7711a19536bd446d1ddf84d2196472f3ce",
+            "file": "sfx\/ogg\/alliance_build_drop_04.ogg"
+        },
+        {
+            "sha": "668f8a3166b2442b2e19c6e8d1ccc556f405b18c",
+            "file": "sfx\/ogg\/alliance_build_pickup_03.ogg"
+        },
+        {
+            "sha": "be8c7d307ad1abf67648c87e6d404d59c21bf607",
+            "file": "sfx\/ogg\/alliance_jingle_v2.ogg"
+        },
+        {
+            "sha": "d71db4e0520dc75a59257acf2475619944b6d5d0",
+            "file": "sfx\/ogg\/ancient_defcon_1.ogg"
+        },
+        {
+            "sha": "9ff827476faafd883bfe566a598f751db183ae64",
+            "file": "sfx\/ogg\/ancient_defcon_2.ogg"
+        },
+        {
+            "sha": "1fc3ea1a7df6a7c90e1340ca49ab3b095065c889",
+            "file": "sfx\/ogg\/ancient_defcon_3.ogg"
+        },
+        {
+            "sha": "d2af32c974b58c99be0c18e2cf7842aece044bfb",
+            "file": "sfx\/ogg\/ancient_defcon_4.ogg"
+        },
+        {
+            "sha": "7a8f737f7632c80a79838135e85d38ce1a401c29",
+            "file": "sfx\/ogg\/ancient_explo_01.ogg"
+        },
+        {
+            "sha": "17df375834b5abe41bbc825197716895d74fcaaa",
+            "file": "sfx\/ogg\/ancient_fire_02.ogg"
+        },
+        {
+            "sha": "4a028d8ca21dc94593d7e38b5080145476d702dd",
+            "file": "sfx\/ogg\/ancient_place_mecha_eagle_01.ogg"
+        },
+        {
+            "sha": "06c0792101c9b71d055059dde339fe7cc361bd0c",
+            "file": "sfx\/ogg\/ancient_target_01.ogg"
+        },
+        {
+            "sha": "73d02411ce5e5b1150f5f14d0177e8cc135b3639",
+            "file": "sfx\/ogg\/ancient_target_02.ogg"
+        },
+        {
+            "sha": "c8560f062346f68f7f95bfb468a7edfac3de35b1",
+            "file": "sfx\/ogg\/archer_death_05.ogg"
+        },
+        {
+            "sha": "bd0228c93d467353d8cefcdccb1d6559b44252cd",
+            "file": "sfx\/ogg\/archer_death_05v2.ogg"
+        },
+        {
+            "sha": "331a2d4a3857f63e309ef9bc4fb5a7856b77f7af",
+            "file": "sfx\/ogg\/archer_deploy_09.ogg"
+        },
+        {
+            "sha": "a46bf2f3c6c03d9667c2dc81705a1e0792d260c1",
+            "file": "sfx\/ogg\/archer_deploy_09v2.ogg"
+        },
+        {
+            "sha": "5d18c1801398ae02e2b9b524a62830162aa7d74e",
+            "file": "sfx\/ogg\/archer_deploy_09v3.ogg"
+        },
+        {
+            "sha": "09a6e010cc2dfa950b83efea7b3672ed74cb9cdb",
+            "file": "sfx\/ogg\/archer_invis_01v2.ogg"
+        },
+        {
+            "sha": "fb2035fb976507983bb0974b86de68cd95d959c8",
+            "file": "sfx\/ogg\/archer_queen_attack_01.ogg"
+        },
+        {
+            "sha": "8a8df72384ff29bb02bc4f134e08442b19bce868",
+            "file": "sfx\/ogg\/archer_queen_attack_02.ogg"
+        },
+        {
+            "sha": "b6e5e913b46a380a9810c26c39a4ee40f557d0c4",
+            "file": "sfx\/ogg\/archer_queen_deploy_01.ogg"
+        },
+        {
+            "sha": "30a80755b0633f2bdafaf7a44c2bd139af5130ac",
+            "file": "sfx\/ogg\/archer_queen_die_01.ogg"
+        },
+        {
+            "sha": "f6e54820b999c5295c3f54439216f347cd76bfb8",
+            "file": "sfx\/ogg\/archer_queen_scream_01.ogg"
+        },
+        {
+            "sha": "97111f9b373d894a49f62f9c2e11b29a46fd5a71",
+            "file": "sfx\/ogg\/archer_tower_pick_01.ogg"
+        },
+        {
+            "sha": "0eba1b35c01359a03e58b3d62b6b640f75bf37cf",
+            "file": "sfx\/ogg\/archer_tower_place_02.ogg"
+        },
+        {
+            "sha": "8d3c773092033716f24c7d7a0ff383990c05646c",
+            "file": "sfx\/ogg\/arrow_hit_07.ogg"
+        },
+        {
+            "sha": "498f493e25472d66ad29a6ee7a6f1a30c2ca15a9",
+            "file": "sfx\/ogg\/arrow_hit_07v2.ogg"
+        },
+        {
+            "sha": "4b0abdeb84934455b98deeb7f9ef9d3d3aa0662e",
+            "file": "sfx\/ogg\/arrow_hit_07v3.ogg"
+        },
+        {
+            "sha": "f6fdb9ab47b1d1c8281b91b3752ece2523765d26",
+            "file": "sfx\/ogg\/arrow_hit_12.ogg"
+        },
+        {
+            "sha": "12b15a9a106a9a59ce53651c0c6d2d7de32fc6d7",
+            "file": "sfx\/ogg\/bad_move_06.ogg"
+        },
+        {
+            "sha": "9c37f6dc5eed9615986c5fd5934848f5152c5c11",
+            "file": "sfx\/ogg\/balloon_deploy_02.ogg"
+        },
+        {
+            "sha": "a9350287c504dd904cc196e86a8b5ca7eb4ce469",
+            "file": "sfx\/ogg\/balloon_die_01.ogg"
+        },
+        {
+            "sha": "f5cd8d3ded1fa654080dca9f45927421b3c69e63",
+            "file": "sfx\/ogg\/balloon_hit_01.ogg"
+        },
+        {
+            "sha": "3384977cb21cc150d2cc8c93283707340421b402",
+            "file": "sfx\/ogg\/barb_deploy_11.ogg"
+        },
+        {
+            "sha": "5edb3409b288d4113240d6e628c03f332e5fb2b3",
+            "file": "sfx\/ogg\/barb_deploy_11v2.ogg"
+        },
+        {
+            "sha": "3ae4560c19bc73cdbf343b91e20b548e7cd9a976",
+            "file": "sfx\/ogg\/barb_deploy_11v3.ogg"
+        },
+        {
+            "sha": "9244358ebcf878e9e8a3bfa978ce6949c8191474",
+            "file": "sfx\/ogg\/barb_king_rage_fist_01.ogg"
+        },
+        {
+            "sha": "79eaa5e5aed5e53648ad4bf0f8d842fe9ddc2b86",
+            "file": "sfx\/ogg\/barbarian_death_01.ogg"
+        },
+        {
+            "sha": "08928b8433fbbf46da15814e06a49f1c463f3f1b",
+            "file": "sfx\/ogg\/barbarian_death_02.ogg"
+        },
+        {
+            "sha": "b09150cfb3c2afd4e1cd85fca89dcd769f8edd5e",
+            "file": "sfx\/ogg\/barbarian_hit_stuff.ogg"
+        },
+        {
+            "sha": "31f7133f6cbc5388d631a904ab9f16e06896f94c",
+            "file": "sfx\/ogg\/barbarian_hit_stuff2.ogg"
+        },
+        {
+            "sha": "e2bf2a12a7588cf6b81d87fe15f971f78668db42",
+            "file": "sfx\/ogg\/barbarian_hit_stuff3.ogg"
+        },
+        {
+            "sha": "f73a4b3b632285eb115d9a30448e4273166aba60",
+            "file": "sfx\/ogg\/barbarian_hit_stuff4.ogg"
+        },
+        {
+            "sha": "e1d2e3b31c5ebf511febddac831c60f20ef02ac3",
+            "file": "sfx\/ogg\/barbarian_king_attack_01.ogg"
+        },
+        {
+            "sha": "1bfa6c209f03a3c3b93d05134ecee97f9c350b05",
+            "file": "sfx\/ogg\/barbarian_king_deploy.ogg"
+        },
+        {
+            "sha": "e9299854fa039fe630572648bfae5a90ad14c831",
+            "file": "sfx\/ogg\/barbarian_king_die_01.ogg"
+        },
+        {
+            "sha": "08f77321257e774014620b13b40c1a6ddabda564",
+            "file": "sfx\/ogg\/barbarian_king_scream_01.ogg"
+        },
+        {
+            "sha": "80628cea1b60e7baa48fc3ccdcdf816a2d4b93e5",
+            "file": "sfx\/ogg\/barbarian_sword_swing_hit_14.ogg"
+        },
+        {
+            "sha": "973face82e88d883d98e0d306f796cd205572942",
+            "file": "sfx\/ogg\/barbarian_sword_swing_hit_14v2.ogg"
+        },
+        {
+            "sha": "fb921f014d4e6feb1b529d141804e28202903509",
+            "file": "sfx\/ogg\/barbarian_sword_swing_hit_14v3.ogg"
+        },
+        {
+            "sha": "8ea6dbb1d4595aa05d7dea3907df01564b511c50",
+            "file": "sfx\/ogg\/beam_up_02.ogg"
+        },
+        {
+            "sha": "ace385ac6be62dcdbfe5a4847a488c1c28f908d2",
+            "file": "sfx\/ogg\/boarrider_attack_01.ogg"
+        },
+        {
+            "sha": "0a7056b547cbe6d5e33b4fbaf197a35d70e8ea8e",
+            "file": "sfx\/ogg\/boarrider_attack_02.ogg"
+        },
+        {
+            "sha": "c3b0d1416b88b147e42cce2d089e4d911710d022",
+            "file": "sfx\/ogg\/boarrider_deploy_01.ogg"
+        },
+        {
+            "sha": "881a7f70bb61bcf4e7fce4a99fc565dafb7ad154",
+            "file": "sfx\/ogg\/boarrider_deploy_02.ogg"
+        },
+        {
+            "sha": "2df27083edd5b23e7c3a19c3d5fe648280810ba8",
+            "file": "sfx\/ogg\/boarrider_die_02.ogg"
+        },
+        {
+            "sha": "ae75073b3ae6bcf19239f675f2e7a9174abb3c14",
+            "file": "sfx\/ogg\/bottle_break_04_lightning_01.ogg"
+        },
+        {
+            "sha": "6e3787c2816e4c4e7abf006310a594cd57e90c11",
+            "file": "sfx\/ogg\/bottle_heal_magic_03.ogg"
+        },
+        {
+            "sha": "64e86c80d10b0be4dc99067c0f4750441528a003",
+            "file": "sfx\/ogg\/bottle_jump_spell_01.ogg"
+        },
+        {
+            "sha": "abda7acccefb13b692639a020db76be3fc05a61e",
+            "file": "sfx\/ogg\/bottle_rage_magic_07v2.ogg"
+        },
+        {
+            "sha": "8111b2bbca0198df20ee55170e0922a9c9ddbf8a",
+            "file": "sfx\/ogg\/bow_attack.ogg"
+        },
+        {
+            "sha": "4c52971f1d9ab49db1aff7dee9098a62980830d6",
+            "file": "sfx\/ogg\/bow_load.ogg"
+        },
+        {
+            "sha": "0bf830f566a6696793a31504c4599d8282ff7975",
+            "file": "sfx\/ogg\/bow_out_of_ammo.ogg"
+        },
+        {
+            "sha": "ce4b5fcb61f02ffb976a3e97291b8a97c489fefd",
+            "file": "sfx\/ogg\/bow_pickup.ogg"
+        },
+        {
+            "sha": "2313e97cb02ad00c3ddc2f444fddcaa7152cf715",
+            "file": "sfx\/ogg\/bow_place.ogg"
+        },
+        {
+            "sha": "38518229c08800ad82690c76b58cb2338f56261f",
+            "file": "sfx\/ogg\/bow_target.ogg"
+        },
+        {
+            "sha": "a7ac7cc474b457cf1ac05e07633c7cb685bb0656",
+            "file": "sfx\/ogg\/build_pickup_05.ogg"
+        },
+        {
+            "sha": "a47d150072958849cb3d1c3c0f3193c1506bdbb4",
+            "file": "sfx\/ogg\/builder_hut_pickup_02.ogg"
+        },
+        {
+            "sha": "50a2974f6f62ade6ea359ffbfbb664fb2af634d1",
+            "file": "sfx\/ogg\/builder_hut_place_02.ogg"
+        },
+        {
+            "sha": "ce3ccc090446dd1e5911c89ac2ef57dfd457fb10",
+            "file": "sfx\/ogg\/building_construct_07.ogg"
+        },
+        {
+            "sha": "0502449bc112edb66cfa7a9e032edda02b10c052",
+            "file": "sfx\/ogg\/building_destroyed_01.ogg"
+        },
+        {
+            "sha": "f79ba48b4a0c3565a527d94ff3a9fdf0e1c285c9",
+            "file": "sfx\/ogg\/building_finished_01.ogg"
+        },
+        {
+            "sha": "c038daacd8ab2693de7c34afaf6b4b9f2d7d6e9f",
+            "file": "sfx\/ogg\/bush2-halloween.ogg"
+        },
+        {
+            "sha": "ee999256d8e3b9770effb56e1b0db7eeb5f2ff93",
+            "file": "sfx\/ogg\/bush2.ogg"
+        },
+        {
+            "sha": "26c878b3dbaff91089e33329e68fe76ac6e707d1",
+            "file": "sfx\/ogg\/button_click.ogg"
+        },
+        {
+            "sha": "b5ad2154f1ed626a4f7d7c70693dfe1fabb38a3b",
+            "file": "sfx\/ogg\/cannon_08.ogg"
+        },
+        {
+            "sha": "686779bf43ba0d90b52fb9cad53debe046f8b284",
+            "file": "sfx\/ogg\/cannon_drop2.ogg"
+        },
+        {
+            "sha": "da6e4376b997432c30fb9589d5371dceabdd1e80",
+            "file": "sfx\/ogg\/cannon_fire3.ogg"
+        },
+        {
+            "sha": "9395d3ea74988b28f733182d418b5ed8eb2d3c59",
+            "file": "sfx\/ogg\/cannon_pickup3.ogg"
+        },
+        {
+            "sha": "13a027c8e7fc04a0d507054c20008aaa54ab11a2",
+            "file": "sfx\/ogg\/clanwars_engaged_on_map_01small.ogg"
+        },
+        {
+            "sha": "41bdb3cb86873faec706c9676ab04d47c2beff7e",
+            "file": "sfx\/ogg\/clear_tombstone_01.ogg"
+        },
+        {
+            "sha": "ed33eb10d8e7455c97ea28ba93c26209bd49c834",
+            "file": "sfx\/ogg\/coffin_pickup_01.ogg"
+        },
+        {
+            "sha": "a3c1b16104f00fe4267a1cbd637eaca9dc843e32",
+            "file": "sfx\/ogg\/coffin_place_01.ogg"
+        },
+        {
+            "sha": "89d48637dfc655e7e02731321c962eb51cf5e3af",
+            "file": "sfx\/ogg\/coffin_popup_01.ogg"
+        },
+        {
+            "sha": "f75b7a2a71a5efd2dc8ed1b2348dfd2a24b30970",
+            "file": "sfx\/ogg\/coin_steal_02.ogg"
+        },
+        {
+            "sha": "f03ffdf2940d48868ee8f09f443508596817d2ed",
+            "file": "sfx\/ogg\/coins_collect_01.ogg"
+        },
+        {
+            "sha": "267531d016572f02644ddcce3bf38b8e573e29b7",
+            "file": "sfx\/ogg\/collect_diamonds_01.ogg"
+        },
+        {
+            "sha": "153dfbe7c9746f7d3db1663073e094ee2d249ce2",
+            "file": "sfx\/ogg\/dark_drill_pickup.ogg"
+        },
+        {
+            "sha": "c06f1af19421b14f2c8a6fbb275cfb8a67883a20",
+            "file": "sfx\/ogg\/dark_drill_pickup_02.ogg"
+        },
+        {
+            "sha": "f81095e16a553d809543dff4976ad534efca94af",
+            "file": "sfx\/ogg\/dark_drill_place.ogg"
+        },
+        {
+            "sha": "addac59d2bc92bf413e1a3914b81fa5830db1a93",
+            "file": "sfx\/ogg\/dark_drill_place_07.ogg"
+        },
+        {
+            "sha": "8bfd7adf415284f2009f95117ba839b4c5710bdb",
+            "file": "sfx\/ogg\/dark_elixir_collect.ogg"
+        },
+        {
+            "sha": "99f574613b0830d4b0f30c45e1461d78a1d284ef",
+            "file": "sfx\/ogg\/dark_elixir_steal.ogg"
+        },
+        {
+            "sha": "5720fd4b0741842e1d9350f6f26b83f8852821db",
+            "file": "sfx\/ogg\/dark_storage_pickup.ogg"
+        },
+        {
+            "sha": "619da71c5744fec052fabbbffdcbe16647ca2925",
+            "file": "sfx\/ogg\/dark_storage_place.ogg"
+        },
+        {
+            "sha": "c96369bee5d098a94262556b3a5984eafd153a3a",
+            "file": "sfx\/ogg\/darktower_noammo_02.ogg"
+        },
+        {
+            "sha": "3b0c5314adf94a7b06a01c24c525b2613e080fb4",
+            "file": "sfx\/ogg\/darktower_pickup_01.ogg"
+        },
+        {
+            "sha": "53ee6efcfc188e05faf9058a79ee3860ac06557f",
+            "file": "sfx\/ogg\/darktower_place_01.ogg"
+        },
+        {
+            "sha": "057aab0a69b0f793e6edd8b7b281ed6cad32778d",
+            "file": "sfx\/ogg\/darktower_reload_01.ogg"
+        },
+        {
+            "sha": "278ea1c5455a62001a45a22a8cdbe8fb9ebd6ae5",
+            "file": "sfx\/ogg\/deploy_pekka_05.ogg"
+        },
+        {
+            "sha": "b648b205c18fe6102a852bf5d397f73e0f6e8d0c",
+            "file": "sfx\/ogg\/deploy_skeleton_07.ogg"
+        },
+        {
+            "sha": "b52be256dbb9341d47dfcac420da90660ca252c7",
+            "file": "sfx\/ogg\/deploy_skeleton_07v2.ogg"
+        },
+        {
+            "sha": "2867248f7c3bebd2944a386a10219f7ec62b81bb",
+            "file": "sfx\/ogg\/deploy_skeleton_07v3.ogg"
+        },
+        {
+            "sha": "9d3a2e03b704f93d76187d252905f80b0db2d216",
+            "file": "sfx\/ogg\/dragon_attack_01.ogg"
+        },
+        {
+            "sha": "affffd21f91a31e4ac74c9f3e55cd740fb45ab3d",
+            "file": "sfx\/ogg\/dragon_deploy_01.ogg"
+        },
+        {
+            "sha": "f5b03fa132f4392efcba5bd77703503c4fd3cfb6",
+            "file": "sfx\/ogg\/dragon_die_01.ogg"
+        },
+        {
+            "sha": "ea09cb92691f7a8bc927acf2d26bf6bd2806b3d4",
+            "file": "sfx\/ogg\/elixir_collect_02.ogg"
+        },
+        {
+            "sha": "9923fc299b2bd9416a67361aafaac6b36d95cd37",
+            "file": "sfx\/ogg\/elixir_pump_drop_03.ogg"
+        },
+        {
+            "sha": "10541355671ce959fefda44b07f15b658a348a69",
+            "file": "sfx\/ogg\/elixir_pump_pickup_07.ogg"
+        },
+        {
+            "sha": "d9e15a99da2847a44adbcde2c3b7f3fafb470273",
+            "file": "sfx\/ogg\/elixir_steal_03.ogg"
+        },
+        {
+            "sha": "34d34bd0ee925831cc45e7e3c85597f38bf30f18",
+            "file": "sfx\/ogg\/elixir_storage_drop_02.ogg"
+        },
+        {
+            "sha": "c886cd949f38a8c86b058b623838f14c67b8ac5d",
+            "file": "sfx\/ogg\/elixir_storage_pickup_04.ogg"
+        },
+        {
+            "sha": "9207a90d181807171057fbd8d2458687659cb654",
+            "file": "sfx\/ogg\/explosion_02.ogg"
+        },
+        {
+            "sha": "e816094a0d39127f7314fa22d5742e504842a691",
+            "file": "sfx\/ogg\/explosive_arrow_01v2.ogg"
+        },
+        {
+            "sha": "9ba4ae873a1bbe83907548c52121ab48e12d73d5",
+            "file": "sfx\/ogg\/find_clan_01.ogg"
+        },
+        {
+            "sha": "00d788695e1787e45d982051bdc05733661c8e1b",
+            "file": "sfx\/ogg\/flower_03.ogg"
+        },
+        {
+            "sha": "de4c543256e32e251b8ddd3bdaff53dce77cdbe1",
+            "file": "sfx\/ogg\/freeze_spell_01.ogg"
+        },
+        {
+            "sha": "67233c301e2209ffc8a837c12b560871c8b8e482",
+            "file": "sfx\/ogg\/garg_attack_01.ogg"
+        },
+        {
+            "sha": "d0e882be83dfa2dcb6de8482ef52844a5b6c81cb",
+            "file": "sfx\/ogg\/garg_deploy_02.ogg"
+        },
+        {
+            "sha": "b02bcab109dca85a752ec61517485314d1290862",
+            "file": "sfx\/ogg\/garg_die_01.ogg"
+        },
+        {
+            "sha": "e2d54d7bdfb240498ceb5433df285beb28fdaf1e",
+            "file": "sfx\/ogg\/gem_boost_01.ogg"
+        },
+        {
+            "sha": "00eeed94d24232796ce2d12a6c81a86127ab89f2",
+            "file": "sfx\/ogg\/giant_attack_05.ogg"
+        },
+        {
+            "sha": "109cdd71775bb1d6838b684c8bf626fe1fe33bc3",
+            "file": "sfx\/ogg\/giant_attack_06.ogg"
+        },
+        {
+            "sha": "e22fb544fb35d8bb5acff6bfe5ac56396d8e9fdf",
+            "file": "sfx\/ogg\/giant_attack_hit_01.ogg"
+        },
+        {
+            "sha": "39180d36b7807830388205cd899576320fd19673",
+            "file": "sfx\/ogg\/giant_attack_hit_02.ogg"
+        },
+        {
+            "sha": "4c24c40637bb7a46977cf17e34049b0c79c6331f",
+            "file": "sfx\/ogg\/giant_death_02.ogg"
+        },
+        {
+            "sha": "a30d45b73098ae00b55635056dd1f9a6dac52420",
+            "file": "sfx\/ogg\/giant_deploy_04.ogg"
+        },
+        {
+            "sha": "76ac92319712334c7113c202fdf2b8aee705ecfe",
+            "file": "sfx\/ogg\/giant_deploy_04v2.ogg"
+        },
+        {
+            "sha": "9ba5c58ce849e9500f71fed5da9035a9db79658d",
+            "file": "sfx\/ogg\/giant_deploy_04v3.ogg"
+        },
+        {
+            "sha": "f32d80d6404ed0191c0a04314a7167396c112dce",
+            "file": "sfx\/ogg\/gob_attack_01.ogg"
+        },
+        {
+            "sha": "771bbe7a4acd44b6dcd49dcefb658870af807b31",
+            "file": "sfx\/ogg\/gob_attack_02.ogg"
+        },
+        {
+            "sha": "60f65f4040d53be9f1bfe5ebcf615e1c72208f3a",
+            "file": "sfx\/ogg\/gob_attack_03.ogg"
+        },
+        {
+            "sha": "dcad1368eceac95e99ec0df039cb6cfcd3a5f9a6",
+            "file": "sfx\/ogg\/gob_talk_woop_01.ogg"
+        },
+        {
+            "sha": "9f35b691e684855533c99432dd35da8fe7577006",
+            "file": "sfx\/ogg\/goblin_death_02.ogg"
+        },
+        {
+            "sha": "d66c467cd9ac3580b34c28722b4782eb3beb3530",
+            "file": "sfx\/ogg\/goblin_deploy_14.ogg"
+        },
+        {
+            "sha": "7ba66570e8a3b9e66d9c2ac13039e6925ec62a86",
+            "file": "sfx\/ogg\/goblin_deploy_14v2.ogg"
+        },
+        {
+            "sha": "1b4619dbe463596f1f5c0a27d6a94537c6dee5c3",
+            "file": "sfx\/ogg\/goblin_deploy_14v3.ogg"
+        },
+        {
+            "sha": "a102b266eda60437fbf092bda5209249e8593650",
+            "file": "sfx\/ogg\/goblin_talk_2.ogg"
+        },
+        {
+            "sha": "138e16b16a0580c620155cd32c3863c07eb57953",
+            "file": "sfx\/ogg\/goblin_talk_3.ogg"
+        },
+        {
+            "sha": "6ff3f1e83821f3897aadda73bac6b71953d02de3",
+            "file": "sfx\/ogg\/goblin_talk_4.ogg"
+        },
+        {
+            "sha": "5a9e7a3f88d42b8f1bd951e5f1977c078d989f47",
+            "file": "sfx\/ogg\/golden_haus_04.ogg"
+        },
+        {
+            "sha": "b9fe1aa56d71fa2df960985ca2d143d32da0c37d",
+            "file": "sfx\/ogg\/golden_haus_drop_02.ogg"
+        },
+        {
+            "sha": "b17b9f8e3ce779d98913c2ed1898835fe5adbf51",
+            "file": "sfx\/ogg\/goldmine_drop4.ogg"
+        },
+        {
+            "sha": "839c2d2dc3a1dda5397f028e2b9ec00cd694fae8",
+            "file": "sfx\/ogg\/goldmine_pickup4.ogg"
+        },
+        {
+            "sha": "21f76d2e065df5c02258f3e22d0b986753de6c63",
+            "file": "sfx\/ogg\/grand_warden_attack_01.ogg"
+        },
+        {
+            "sha": "f15ff14adbfde4b0b8fa35e643aeb29ac499323a",
+            "file": "sfx\/ogg\/grand_warden_aura_loop_01.ogg"
+        },
+        {
+            "sha": "902252a5384df2ad8b611a77592bea86a54f7e20",
+            "file": "sfx\/ogg\/grand_warden_deploy_02.ogg"
+        },
+        {
+            "sha": "b35d306fe325fbcf08ac069ec9d1391dcb906c29",
+            "file": "sfx\/ogg\/grand_warden_dizzy_01.ogg"
+        },
+        {
+            "sha": "7b39824a761324674d63dbc2588658cff11e192d",
+            "file": "sfx\/ogg\/grand_warden_shield_01.ogg"
+        },
+        {
+            "sha": "0833b13706c2df36f64867a06827da42c08971c3",
+            "file": "sfx\/ogg\/healer_attack_01.ogg"
+        },
+        {
+            "sha": "6dfebba6bae1d148f12ebc6229eac98f06a3ff0a",
+            "file": "sfx\/ogg\/healer_deploy_01.ogg"
+        },
+        {
+            "sha": "9faf025eeb31ed748e881009c483c434e450e5a3",
+            "file": "sfx\/ogg\/healer_die_01.ogg"
+        },
+        {
+            "sha": "69d6966b281c52d8d7f642f3315d7c24fcff4e44",
+            "file": "sfx\/ogg\/healer_hit_01.ogg"
+        },
+        {
+            "sha": "8061f6d1770da15c9f65bf07eea97d83c4f76f43",
+            "file": "sfx\/ogg\/healer_hit_02.ogg"
+        },
+        {
+            "sha": "89e07515900acea0d33edba8c842ff1514240d20",
+            "file": "sfx\/ogg\/hero_altar_pickup_02.ogg"
+        },
+        {
+            "sha": "88f61521945cf9e455839e64e1d90b6b25dd0a3c",
+            "file": "sfx\/ogg\/hero_altar_place.ogg"
+        },
+        {
+            "sha": "16aa2a856de015dcc99ab56d12df610d3ff5e064",
+            "file": "sfx\/ogg\/hero_energized.ogg"
+        },
+        {
+            "sha": "51b280135895b67fd738c6931edb4adde4273416",
+            "file": "sfx\/ogg\/hero_patrol.ogg"
+        },
+        {
+            "sha": "62c049125f9641cfe89b010d3fffee5496392ebb",
+            "file": "sfx\/ogg\/hero_sleep.ogg"
+        },
+        {
+            "sha": "e5c794b99cbe38d8412117276ece7fdc60205e5c",
+            "file": "sfx\/ogg\/hero_spot_01.ogg"
+        },
+        {
+            "sha": "23b4f9209ece7bd13c61891cc895174b660aefe7",
+            "file": "sfx\/ogg\/hero_ui_select_01.ogg"
+        },
+        {
+            "sha": "2300b1358d056c7291d542768170bbb731a63da6",
+            "file": "sfx\/ogg\/hero_upgrade_02.ogg"
+        },
+        {
+            "sha": "371d52d52bb16900743d712271dfbfa6d3d16262",
+            "file": "sfx\/ogg\/laser_loop_02.ogg"
+        },
+        {
+            "sha": "bccc95407d8cb288785b8c3babfe3fe441f05e30",
+            "file": "sfx\/ogg\/league_bonus.ogg"
+        },
+        {
+            "sha": "0c0277c2812868c3887e9eb18252ad2e82aae86a",
+            "file": "sfx\/ogg\/league_demote.ogg"
+        },
+        {
+            "sha": "983c441b3fb208decffd1e3fed84e1e12f99481e",
+            "file": "sfx\/ogg\/league_promote.ogg"
+        },
+        {
+            "sha": "0fd1fa8a7b92bc4543d76420dc83dc5899677380",
+            "file": "sfx\/ogg\/leg_league_01.ogg"
+        },
+        {
+            "sha": "5a8b1053b65fb42a720bb697430e3c8406fa58bb",
+            "file": "sfx\/ogg\/leg_league_over_01.ogg"
+        },
+        {
+            "sha": "524789a341f6c82bc2b392c1d185f96eb71eb125",
+            "file": "sfx\/ogg\/lightning_amb_01.ogg"
+        },
+        {
+            "sha": "70c85d30681b7571afb1a1a273195fab82d97198",
+            "file": "sfx\/ogg\/loading_screen_jingle.ogg"
+        },
+        {
+            "sha": "9b26bde4edf692ad77926f125b172b96be7582a7",
+            "file": "sfx\/ogg\/mage_attack_02.ogg"
+        },
+        {
+            "sha": "808ce7c7c3eee8f8d4514b7d0ec5f72c128fe118",
+            "file": "sfx\/ogg\/mage_attack_02v2.ogg"
+        },
+        {
+            "sha": "ccd2959776969fe260ca1d7f41799d9e7753d1bf",
+            "file": "sfx\/ogg\/mage_attack_02v3.ogg"
+        },
+        {
+            "sha": "d6bbe8a0389e203a171f64868d518f2048436975",
+            "file": "sfx\/ogg\/mage_deploy_06.ogg"
+        },
+        {
+            "sha": "1b80b49e5447884e200a16b1e8bd02d57f0494cd",
+            "file": "sfx\/ogg\/magic_bottle_fall_05.ogg"
+        },
+        {
+            "sha": "bb76c3595e2cd3af4d3b4231b52c31913b577ac3",
+            "file": "sfx\/ogg\/mech_eagle_reload_01.ogg"
+        },
+        {
+            "sha": "0246095d946c01341fd96edf7eb7387b610b6ebf",
+            "file": "sfx\/ogg\/mech_eagle_sad_no_ammo_01.ogg"
+        },
+        {
+            "sha": "ce3ba857993f31759d7dff6902c9ccf6c7d3e7e4",
+            "file": "sfx\/ogg\/mortar_fire_02_with_fall.ogg"
+        },
+        {
+            "sha": "b7cc1076aa780d5f449bd6c5581c91e711213528",
+            "file": "sfx\/ogg\/mortar_hit_01.ogg"
+        },
+        {
+            "sha": "938f43837cd4d81955d24137bb8a4a3e2be62d95",
+            "file": "sfx\/ogg\/mortar_pickup_01.ogg"
+        },
+        {
+            "sha": "90ddb43f64a9b8ee9c5dce24209fe4798ce87c42",
+            "file": "sfx\/ogg\/mortar_place_02.ogg"
+        },
+        {
+            "sha": "3b1094f1dbd94a94ae56e796941279f8388495f9",
+            "file": "sfx\/ogg\/moving_07.ogg"
+        },
+        {
+            "sha": "adab61581b18b6c7624e6bc2647c034dba5c2258",
+            "file": "sfx\/ogg\/no_troops_01short.ogg"
+        },
+        {
+            "sha": "35f31e38fd53180080da6434be16d341cc92aed1",
+            "file": "sfx\/ogg\/pekka_attack_02v2.ogg"
+        },
+        {
+            "sha": "0f8a28b4eed1eb1ad89aab44f1ff2b18ffcfd171",
+            "file": "sfx\/ogg\/pekka_attack_hit_02.ogg"
+        },
+        {
+            "sha": "538245ccff8e904db54e573a71cc493b281e9ed4",
+            "file": "sfx\/ogg\/pekka_death_06.ogg"
+        },
+        {
+            "sha": "ef68a5969002d75e677ba82a3bbbccb3d5027e1f",
+            "file": "sfx\/ogg\/rearm_jingle_01.ogg"
+        },
+        {
+            "sha": "15ca774ce28fdb4fa12edfb9b6187dbedfa4f396",
+            "file": "sfx\/ogg\/rock_pickup3.ogg"
+        },
+        {
+            "sha": "3dbf7ae87fedca64a3d82155e93751a26ad22810",
+            "file": "sfx\/ogg\/santa.ogg"
+        },
+        {
+            "sha": "647ffd8e76ed6de6ff2fbd3c492aa9d6c9eec20e",
+            "file": "sfx\/ogg\/sell_item_01.ogg"
+        },
+        {
+            "sha": "00e42d4baf26b3aaad8654adc7bfefe2b66a9469",
+            "file": "sfx\/ogg\/slimeball_fire_05.ogg"
+        },
+        {
+            "sha": "89dd129e64f2ad3b10a3fe950b13e8dbb189bfc9",
+            "file": "sfx\/ogg\/spell_ui_select_01.ogg"
+        },
+        {
+            "sha": "0147581e2ff0a572f27b7982dae07dc384af9290",
+            "file": "sfx\/ogg\/spellfactory_pickup_01.ogg"
+        },
+        {
+            "sha": "d3980b9ec1f1e13eae24956e7443ce25ffff846a",
+            "file": "sfx\/ogg\/spellfactory_place_01.ogg"
+        },
+        {
+            "sha": "8d8136a038d2cdab6c0933edcfe7abf5732633c5",
+            "file": "sfx\/ogg\/stone_golem_attack_01.ogg"
+        },
+        {
+            "sha": "0a572516f566ee3fa6217aa501c448d97ce7c247",
+            "file": "sfx\/ogg\/stone_golem_death_01.ogg"
+        },
+        {
+            "sha": "c1658e40c9fffeecb527335f6462074b541f3fbb",
+            "file": "sfx\/ogg\/stone_golem_deploy_01.ogg"
+        },
+        {
+            "sha": "2d9f795729f6a9bbda53e0a1ef9112ebe6ef92f9",
+            "file": "sfx\/ogg\/stone_golem_hit_01.ogg"
+        },
+        {
+            "sha": "4a61a2364df1faca57552b463980ffc0f9b59455",
+            "file": "sfx\/ogg\/summon_attack_01.ogg"
+        },
+        {
+            "sha": "3d9dfd738db261e86a8abea39881daa74e2422c9",
+            "file": "sfx\/ogg\/summon_die_02.ogg"
+        },
+        {
+            "sha": "a1961beb8ebfc919c8860693d5a3cd8fd723d747",
+            "file": "sfx\/ogg\/supercell_jingle.ogg"
+        },
+        {
+            "sha": "a03a95fb827f84c98b81061236c961cab6157acb",
+            "file": "sfx\/ogg\/tap_cauldron_01.ogg"
+        },
+        {
+            "sha": "afc65f16cb55d283a00f1b25c3841195a724c973",
+            "file": "sfx\/ogg\/tap_chest_01.ogg"
+        },
+        {
+            "sha": "81285a53bcaf7a9fc2a814252dbf232710580bc6",
+            "file": "sfx\/ogg\/tap_grand_warden_04.ogg"
+        },
+        {
+            "sha": "967c7681b30af0004e61230cd29ad33363ef5116",
+            "file": "sfx\/ogg\/tesla_appear_01.ogg"
+        },
+        {
+            "sha": "9769f0346de3e5111ab92460b4a6b9a7854453a1",
+            "file": "sfx\/ogg\/tesla_drop_09.ogg"
+        },
+        {
+            "sha": "62ca0a6870cfe88c63ba9418a1ddc0613b296a9a",
+            "file": "sfx\/ogg\/tesla_hit_02.ogg"
+        },
+        {
+            "sha": "37e01d5d51f2c9a304a93b5f08f13abd9b7609a7",
+            "file": "sfx\/ogg\/tesla_pickup_11.ogg"
+        },
+        {
+            "sha": "053589da3d30f9f7104bec3bcf170e23d47983ef",
+            "file": "sfx\/ogg\/tesla_zap_01.ogg"
+        },
+        {
+            "sha": "1b07664a7b5eb3017a9b99cf9d232d5600ece514",
+            "file": "sfx\/ogg\/tesla_zap_03.ogg"
+        },
+        {
+            "sha": "45178c4cf7f0df65765d1f4b7c278ba03ba4f090",
+            "file": "sfx\/ogg\/tiny_attack_04.ogg"
+        },
+        {
+            "sha": "2a0b677d8b34b50b74d412b2a1c966cc752098f9",
+            "file": "sfx\/ogg\/tiny_deploy_05.ogg"
+        },
+        {
+            "sha": "de53262a2aa21de627602a85c95d16cf511d2811",
+            "file": "sfx\/ogg\/tiny_die_03.ogg"
+        },
+        {
+            "sha": "758ef1b61176688e997dbba946b3326439b1dde5",
+            "file": "sfx\/ogg\/tiny_hurt_02.ogg"
+        },
+        {
+            "sha": "2766870f250a6682d59f3acb8b2aa7ecfb4a628b",
+            "file": "sfx\/ogg\/tinymite_attack_04.ogg"
+        },
+        {
+            "sha": "755c887fba95dca125c8deae92ad30336fb38724",
+            "file": "sfx\/ogg\/tinymite_die_03.ogg"
+        },
+        {
+            "sha": "6375442f8cfb9c9fe51e2c4c26c6b47949cd7532",
+            "file": "sfx\/ogg\/tinymite_hurt_01.ogg"
+        },
+        {
+            "sha": "ee9e63d9870f752247dfa9c774ff2099606929af",
+            "file": "sfx\/ogg\/town_hall_placing_04.ogg"
+        },
+        {
+            "sha": "069cc99e0f65858bc65502b2c935ff2eb8e334ad",
+            "file": "sfx\/ogg\/training_finished_03.ogg"
+        },
+        {
+            "sha": "6d9e761dace16b8ae92a760fd562c53242a53a0a",
+            "file": "sfx\/ogg\/trap_eject_01v2.ogg"
+        },
+        {
+            "sha": "a6d1207581106632c2d0c9de894664ee1912adf3",
+            "file": "sfx\/ogg\/tree8.ogg"
+        },
+        {
+            "sha": "1c7303f39edd5096f7992e6630fe1c3d7b256728",
+            "file": "sfx\/ogg\/troop_housing_pickup_06.ogg"
+        },
+        {
+            "sha": "7772b0ed0eaaad633d7b46b3c5fef7cf509378d4",
+            "file": "sfx\/ogg\/troop_housing_pickup_09.ogg"
+        },
+        {
+            "sha": "cc5d82e045dbfbdee36c349172bb0b90e67eb341",
+            "file": "sfx\/ogg\/troop_housing_placing_06.ogg"
+        },
+        {
+            "sha": "f843c6ae6a4ee3aa2796846cb88aa107bdac1f1c",
+            "file": "sfx\/ogg\/troop_housing_placing_08.ogg"
+        },
+        {
+            "sha": "4ac18c573d726ef585316d1a87f8a1a05092b1b4",
+            "file": "sfx\/ogg\/troop_ui_select_01.ogg"
+        },
+        {
+            "sha": "7eb0c1ed2ba7e278c78a0fc7fe61826ba479ac24",
+            "file": "sfx\/ogg\/tutor_happy_01.ogg"
+        },
+        {
+            "sha": "627c6eed0c88027b248db3d87825a46dc1e37e92",
+            "file": "sfx\/ogg\/tutor_hey_01.ogg"
+        },
+        {
+            "sha": "cb36bd9d4d0d322cfe471f3c87a97246f834d0cb",
+            "file": "sfx\/ogg\/tutor_no_talk_woop_01.ogg"
+        },
+        {
+            "sha": "fb7c974cd485d04a688e78632946ce1b49d4d8b9",
+            "file": "sfx\/ogg\/tutor_relief_01.ogg"
+        },
+        {
+            "sha": "9b273fec575474a57005e8c221c9dd0ccc397e8d",
+            "file": "sfx\/ogg\/tutor_talk_aha_01.ogg"
+        },
+        {
+            "sha": "5f64fed2155473aec816696b4e4d7ffb9afc22f1",
+            "file": "sfx\/ogg\/tutor_talk_yeah_01.ogg"
+        },
+        {
+            "sha": "c6f031d82303c2a206669b1d5367b6491201f3b8",
+            "file": "sfx\/ogg\/tutor_urgency_01.ogg"
+        },
+        {
+            "sha": "79f5019831b2199e4cbce298663fe26f0f5df57a",
+            "file": "sfx\/ogg\/tutor_urgency_02.ogg"
+        },
+        {
+            "sha": "2dd8b74dff6b94eb8cce5c8ca9b5ba8719b0d6ac",
+            "file": "sfx\/ogg\/tutor_urgency_04.ogg"
+        },
+        {
+            "sha": "4f81ca0616ff87544843238a8f67a2a16d44cde3",
+            "file": "sfx\/ogg\/tutor_urgency_05.ogg"
+        },
+        {
+            "sha": "a4893bae0a9df20503d219b52f85962f8ca6c239",
+            "file": "sfx\/ogg\/tutor_wow_01.ogg"
+        },
+        {
+            "sha": "ab7a013b63ca370e6520a695d37088b5ed5f6034",
+            "file": "sfx\/ogg\/upfromground_05.ogg"
+        },
+        {
+            "sha": "371604839c8affcaf664c5224474b5b4b4f5df40",
+            "file": "sfx\/ogg\/vial_earthquake_hit_gound_01.ogg"
+        },
+        {
+            "sha": "e82ab4548e683f370cc1ff953f73c6cc29d1e5bf",
+            "file": "sfx\/ogg\/vial_fall_02.ogg"
+        },
+        {
+            "sha": "e51970dbcde632cf8e8bea1dac26630274f7e8df",
+            "file": "sfx\/ogg\/vial_poison_hit_gound_01.ogg"
+        },
+        {
+            "sha": "06b3eb976880087dec7c3a8f5905e68006d8e94f",
+            "file": "sfx\/ogg\/vial_speed_hit_gound_01.ogg"
+        },
+        {
+            "sha": "2023a18fb05501b20df76f7aecf2fcc22df0ce53",
+            "file": "sfx\/ogg\/wall_breaker_attack_01.ogg"
+        },
+        {
+            "sha": "95bd27bf200cdde7c064b44c1b97325dcd4ced6f",
+            "file": "sfx\/ogg\/wall_breaker_die_01.ogg"
+        },
+        {
+            "sha": "fe56e7757342d18094d7215dbfd709d6de47eac7",
+            "file": "sfx\/ogg\/wall_pickup_01.ogg"
+        },
+        {
+            "sha": "129f4d312a54ad7777ca137301e7a91f5d44cd40",
+            "file": "sfx\/ogg\/wall_place_01.ogg"
+        },
+        {
+            "sha": "fbf17b07b4289252247847318fb3bbbe27f790d5",
+            "file": "sfx\/ogg\/warriorgirl_die_01.ogg"
+        },
+        {
+            "sha": "8e3234da01809c4dcfe2e435f4295d25cbd448ff",
+            "file": "sfx\/ogg\/warriorgirl_hit_01.ogg"
+        },
+        {
+            "sha": "65fbe0d30639c8ff1970be4fa0ca3e3a31c5af9e",
+            "file": "sfx\/ogg\/warriorgirlattack_01.ogg"
+        },
+        {
+            "sha": "3522696378bd691b5448efea2813010df648d46a",
+            "file": "sfx\/ogg\/warriorgirlattack_02.ogg"
+        },
+        {
+            "sha": "c3bd55193d367e287ce8a93d5655bd1c9efe25db",
+            "file": "sfx\/ogg\/warriorgirldeploy_01.ogg"
+        },
+        {
+            "sha": "72f4fe9b575ddb1b7713ac5654984f9c34aca332",
+            "file": "sfx\/ogg\/warriorgirldeploy_02.ogg"
+        },
+        {
+            "sha": "e269781b8059c9e937eedaaa84bd070048855e05",
+            "file": "sfx\/ogg\/witch_deploy_01.ogg"
+        },
+        {
+            "sha": "49370bf9e47188bee0f158aa0a42650587bc05ec",
+            "file": "sfx\/ogg\/witch_die_01.ogg"
+        },
+        {
+            "sha": "f1d9b78461b98d21cd92f2cb2a4cf160bcb48e43",
+            "file": "sfx\/ogg\/witch_summon_01.ogg"
+        },
+        {
+            "sha": "de37c74d6cf82fe730ee414c1d82b42b16171db8",
+            "file": "sfx\/ogg\/wizard_die_01.ogg"
+        },
+        {
+            "sha": "d1a0f319ede598c27fcbfdd72290271ee1c14ad8",
+            "file": "sfx\/ogg\/wizard_hit_01.ogg"
+        },
+        {
+            "sha": "82dd8bc5454f12b1bc9f8fa7676dbdc3bc651917",
+            "file": "sfx\/ogg\/wizard_tower_drop_01.ogg"
+        },
+        {
+            "sha": "5d80c8e25e1da6e29669b445df501abc291220f5",
+            "file": "sfx\/ogg\/wizard_tower_pickup_02.ogg"
+        },
+        {
+            "sha": "e48866cf57f7289a976e8ffe0ca5b6c557af14c3",
+            "file": "sfx\/ogg\/xmastree.ogg"
+        },
+        {
+            "sha": "488549cba65c6a8c26608b663c85cf93a689f32e",
+            "file": "sfx\/ogg\/xp_gain_06.ogg"
+        }
+    ],
+    "sha": "9d075b9546211da641d06f4c576aa9b9c62212fb",
+    "version": "8.116.5"
+}
