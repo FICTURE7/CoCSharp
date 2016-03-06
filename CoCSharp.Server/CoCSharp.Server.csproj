@@ -50,7 +50,7 @@
     <Compile Include="Core\DataManager.cs" />
     <Compile Include="CoCServerPaths.cs" />
     <Compile Include="Handlers\BuildableUserToken.cs" />
-    <Compile Include="Handlers\BuildingCommandHandlers.cs" />
+    <Compile Include="Handlers\CommandHandlers.cs" />
     <Compile Include="Handlers\InGameMessageHandlers.cs" />
     <Compile Include="Handlers\LoginMessageHandlers.cs" />
     <Compile Include="Program.cs" />
