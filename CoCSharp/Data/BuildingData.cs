@@ -4,7 +4,7 @@ using System;
 namespace CoCSharp.Data
 {
     /// <summary>
-    /// Defines data from the buildings.csv file.
+    /// Defines data from the logic/buildings.csv file.
     /// </summary>
     public class BuildingData : CsvData
     {
@@ -205,7 +205,7 @@ namespace CoCSharp.Data
         /// </summary>
         public int AttackSpeed { get; set; }
         /// <summary>
-        /// Gets or sets Cooldown overide.
+        /// Gets or sets Cooldown override.
         /// </summary>
         public int CoolDownOverride { get; set; }
         /// <summary>
@@ -277,7 +277,7 @@ namespace CoCSharp.Data
         /// </summary>
         public bool GroundTargets { get; set; }
         /// <summary>
-        /// Gets or sets Alr air targets.
+        /// Gets or sets Alt air targets.
         /// </summary>
         public bool AltAirTargets { get; set; }
         /// <summary>
@@ -381,7 +381,7 @@ namespace CoCSharp.Data
         /// </summary>
         public string ExportNameTriggered { get; set; }
         /// <summary>
-        /// Gets or sets Apear effect.
+        /// Gets or sets Appear effect.
         /// </summary>
         public string AppearEffect { get; set; }
         /// <summary>

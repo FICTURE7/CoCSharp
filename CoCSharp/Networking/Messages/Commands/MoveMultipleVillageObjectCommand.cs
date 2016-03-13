@@ -46,7 +46,7 @@ namespace CoCSharp.Networking.Messages.Commands
 
             var count = reader.ReadInt32();
             if (count < 0)
-                throw new InvalidCommandException("Number of MovesData cannot be less than 0.", this);
+                throw new InvalidCommandException("Length of MovesData cannot be less than 0.", this);
 
             MovesData = new MoveVillageObjectData[count];
             for (int i = 0; i < count; i++)

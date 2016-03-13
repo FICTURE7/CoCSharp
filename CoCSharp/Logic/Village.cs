@@ -95,7 +95,7 @@ namespace CoCSharp.Logic
             // Check if the index is valid.
             // Index should be never less than 0 as it was checked above.
             if (index >= Buildings.Count)
-                throw new ArgumentException("Could not get Building with game ID '" + gameId + "'.", "gameId");
+                throw new ArgumentException("Could not find Building with game ID '" + gameId + "'.", "gameId");
 
             return Buildings[index];
         }
@@ -117,7 +117,7 @@ namespace CoCSharp.Logic
             // Check if the index is valid.
             // Index should be never less than 0 as it was checked above.
             if (index >= Obstacles.Count)
-                throw new ArgumentException("Could not get Obstacle with game ID '" + gameId + "'.", "gameId");
+                throw new ArgumentException("Could not find Obstacle with game ID '" + gameId + "'.", "gameId");
 
             return Obstacles[index];
         }
@@ -139,7 +139,7 @@ namespace CoCSharp.Logic
             // Check if the index is valid.
             // Index should be never less than 0 as it was checked above.
             if (index >= Traps.Count)
-                throw new ArgumentException("Could not get Trap with game ID '" + gameId + "'.", "gameId");
+                throw new ArgumentException("Could not find Trap with game ID '" + gameId + "'.", "gameId");
 
             return Traps[index];
         }
@@ -161,7 +161,7 @@ namespace CoCSharp.Logic
             // Check if the index is valid.
             // Index should be never less than 0 as it was checked above.
             if (index >= Decorations.Count)
-                throw new ArgumentException("Could not get Decoration with game ID '" + gameId + "'.", "gameId");
+                throw new ArgumentException("Could not find Decoration with game ID '" + gameId + "'.", "gameId");
 
             return Decorations[index];
         }
@@ -189,13 +189,13 @@ namespace CoCSharp.Logic
         public VillageObject GetVillageObject(int gameId)
         {
             // Code repetition here with double checking of gameIds.
-            if (gameId > Building.BaseGameID || gameId < Building.BaseGameID + VillageObject.Base)
+            if (gameId >= Building.BaseGameID && gameId <= Building.BaseGameID + VillageObject.Base)
                 return GetBuilding(gameId);
-            else if (gameId > Obstacle.BaseGameID || gameId < Obstacle.BaseGameID + VillageObject.Base)
+            else if (gameId >= Obstacle.BaseGameID && gameId <= Obstacle.BaseGameID + VillageObject.Base)
                 return GetObstacle(gameId);
-            else if (gameId > Trap.BaseGameID || gameId < Trap.BaseGameID + VillageObject.Base)
+            else if (gameId >= Trap.BaseGameID && gameId <= Trap.BaseGameID + VillageObject.Base)
                 return GetTrap(gameId);
-            else if (gameId > Decoration.BaseGameID || gameId < Decoration.BaseGameID + VillageObject.Base)
+            else if (gameId >= Decoration.BaseGameID && gameId <= Decoration.BaseGameID + VillageObject.Base)
                 return GetDecoration(gameId);
             else
                 throw new ArgumentException("Could not find VillageObject in this Village with game ID '" + gameId + "'.", "gameId");
@@ -236,15 +236,35 @@ namespace CoCSharp.Logic
             village.DeserializedJson = value;
 
             // Schedule constructions of Village Objects so that
-            // it execute logic stuff.
+            // it execute logic.
             for (int i = 0; i < village.Buildings.Count; i++)
             {
                 var building = village.Buildings[i];
 
-                // If the building is in construction schdule it with its current loaded construction time.
+                // If the building is in construction, schedule it with its current loaded construction time.
                 if (building.IsConstructing)
                     building.InternalScheduleBuild();
             }
+
+            for (int i = 0; i < village.Traps.Count; i++)
+            {
+                var trap = village.Traps[i];
+
+                // If the trap is in construction, schedule it with its current loaded construction time.
+                if (trap.IsConstructing)
+                    trap.InternalScheduleBuild();
+            }
+
+            for (int i = 0; i < village.Obstacles.Count; i++)
+            {
+                var obstacle = village.Obstacles[i];
+
+                // If the obstacle is being cleared, schedule it with its current loaded clear time.
+                if (obstacle.IsClearing)
+                    obstacle.InternalScheduleClearing();
+            }
+
+            // No need to schedule decorations because their constructions are instant.
 
             return village;
         }

@@ -11,9 +11,9 @@ namespace CoCSharp.Test.Logic
     public class VillageObjectTests
     {
         [Test]
-        public void TestVillageObjectCoordinates()
+        // Test the X and Y property of a village object.
+        public void XY_PositionOutOfVillageBounds_ExceptionThrown()
         {
-            // Check if checks for valid coordinates.
             var obj = new TestObject();
 
             // X Coordinate tests.
@@ -26,9 +26,9 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void TestVillageObjectJsonSerialization()
+        public void FromJsonToJson_DeserializeAndSerializeJson_DeserializedAndSerializedJsonShouldBeEqual()
         {
-            var json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/starting_home.json"));
+            var json = File.ReadAllText(Path.Combine(TestUtils.ContentDirectory, "starting_home.json"));
             // Converts starting_home.json into a Village object.
             var fromJson = Village.FromJson(json);
 
@@ -38,7 +38,7 @@ namespace CoCSharp.Test.Logic
 
             //NOTE: The hardcoded values are from starting_home.json.
 
-            // Already checked with linq above but just for consistency.
+            // Already checked with LINQ above but just for consistency.
             Assert.That(castle1.IsLocked == true); 
 
             Assert.That(castle1.DataID == 1000014);
@@ -46,10 +46,10 @@ namespace CoCSharp.Test.Logic
             Assert.That(castle1.X == 28);
             Assert.That(castle1.Y == 35);
 
-            // Converts the Village object into a json string.
+            // Converts the Village object into a JSON string.
             var toJson = fromJson.ToJson();
-            // Converts that json string backinto a Village object.
-            // Just to make sure it serialize json properly.
+            // Converts that JSON string back into a Village object.
+            // Just to make sure it serialize JSON properly.
             var serializedFromJson = Village.FromJson(toJson);
 
             // Make sure they are 2 different instances.
@@ -64,7 +64,7 @@ namespace CoCSharp.Test.Logic
             var castle2 = serializedFromJson.Buildings.FirstOrDefault(b => b.IsLocked == true);
             Assert.NotNull(castle1, "Did not find alliance castle in serialized starting_home.json");
 
-            // Already checked with linq above but just for consistency.
+            // Already checked with LINQ above but just for consistency.
             Assert.That(castle2.IsLocked == true);
 
             Assert.That(castle2.DataID == 1000014);
@@ -74,7 +74,7 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void TestVillageObjectData()
+        public void Data_UnexpectedType_ExceptionThrown()
         {
             var testObj = new TestObject();
             Assert.Throws<ArgumentException>(() => testObj.Data = new ResourceData());

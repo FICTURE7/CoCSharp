@@ -299,7 +299,25 @@ namespace CoCSharp.Networking
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
                 if (!(message is SessionSuccessMessage || message is SessionRequestMessage)) // ignore 10100 and 20100 for decryption
-                    Crypto.Decrypt(ref messageDeBody); //TODO: Try/Catch this thing.
+                {
+                    try
+                    {
+                        Crypto.Decrypt(ref messageDeBody);
+                    }
+                    catch(Exception ex)
+                    {
+                        // Failed to decrypt the message.
+                        OnMessageReceived(new MessageReceivedEventArgs()
+                        {
+                            Message = message,
+                            MessageData = messageData,
+                            MessageBody = messageDeBody,
+                            Exception = ex
+                        });
+                        token.Reset();
+                        continue;
+                    }
+                }
 
                 if (message is UnknownMessage)
                 {

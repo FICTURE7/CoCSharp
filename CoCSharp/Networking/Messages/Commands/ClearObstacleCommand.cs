@@ -10,7 +10,7 @@ namespace CoCSharp.Networking.Messages.Commands
     public class ClearObstacleCommand : Command
     {
         /// <summary>
-        /// Intializes a new instance of the <see cref="ClearObstacleCommand"/> class.
+        /// Initializes a new instance of the <see cref="ClearObstacleCommand"/> class.
         /// </summary>
         public ClearObstacleCommand()
         {

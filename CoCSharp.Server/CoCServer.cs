@@ -24,7 +24,9 @@ namespace CoCSharp.Server
 
             LoginMessageHandlers.RegisterLoginMessageHandlers(this);
             InGameMessageHandlers.RegisterInGameMessageHandlers(this);
-            Handlers.CommandHandlers.RegisterCommandHandlers(this);
+
+            ConstructionCommandHandlers.RegisterCommandHandlers(this);
+            VillageObjectCommandHandlers.RegisterCommandHandlers(this);
 
             AvatarManager.LoadAllAvatars();
         }

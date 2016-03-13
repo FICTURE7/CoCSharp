@@ -341,11 +341,11 @@ namespace CoCSharp.Networking.Messages
         /// </summary>
         public TutorialProgressSlot[] TutorialProgess;
         /// <summary>
-        /// Acheivements state.
+        /// Achievements state.
         /// </summary>
         public AchievementSlot[] Acheivements;
         /// <summary>
-        /// Acheivement progress.
+        /// Achievement progress.
         /// </summary>
         public AchievementProgessSlot[] AcheivementProgress;
         /// <summary>

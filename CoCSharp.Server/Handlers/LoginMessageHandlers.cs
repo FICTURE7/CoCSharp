@@ -67,21 +67,23 @@ namespace CoCSharp.Server.Handlers
 
             var avatarData = new AvatarMessageData(avatar)
             {
+                //TODO: Properly figure townhall level and alliance castle stuff.
                 TownHallLevel = 5,
                 AllianceCastleLevel = 1,
                 AllianceCastleTotalCapacity = 10,
                 AllianceCastleUsedCapacity = 0,
 
+                //TODO: Properly store them and calculate them.
                 ResourcesCapacity = new ResourceCapacitySlot[] 
                 {
-                    new ResourceCapacitySlot(3000001, 1000),
-                    new ResourceCapacitySlot(3000002, 1000)
+                    new ResourceCapacitySlot(3000001, 10000000),
+                    new ResourceCapacitySlot(3000002, 10000000)
                 },
 
                 ResourcesAmount = new ResourceAmountSlot[] 
                 {
-                    new ResourceAmountSlot(3000001, 1000),
-                    new ResourceAmountSlot(3000002, 1000)
+                    new ResourceAmountSlot(3000001, 10000000),
+                    new ResourceAmountSlot(3000002, 10000000)
                 }
             };
 

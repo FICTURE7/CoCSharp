@@ -22,7 +22,7 @@ namespace CoCSharp.Networking.Messages
         public override ushort ID { get { return 14102; } }
 
         /// <summary>
-        /// Subtick. 1/60 secounds since logged in.
+        /// Subtick. 1/60 seconds since logged in.
         /// </summary>
         public int Subtick;
         /// <summary>

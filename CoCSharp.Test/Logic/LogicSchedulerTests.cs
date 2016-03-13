@@ -22,11 +22,11 @@ namespace CoCSharp.Test.Logic
             _index = 0;
         }
 
-        [Test]
+        [Test, Ignore("This test is slow and inconsistent.")]
         public void TestLogicSchedulerScheduleLogic()
         {
             // This is a slow test as it
-            // schedules 10 logic actions at 1 secound intervals.
+            // schedules 10 logic actions at 1 second intervals.
 
             for (int i = 0; i < 10; i++)
             {

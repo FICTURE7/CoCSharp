@@ -9,7 +9,7 @@ namespace CoCSharp.Data.Slots
     public class AchievementProgessSlot : Slot
     {
         /// <summary>
-        /// Initalizes a new instance of the <see cref="AchievementProgessSlot"/> class.
+        /// Initializes a new instance of the <see cref="AchievementProgessSlot"/> class.
         /// </summary>
         public AchievementProgessSlot()
         {

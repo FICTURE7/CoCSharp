@@ -7,51 +7,48 @@ namespace CoCSharp.Server.Handlers
 {
     public delegate void CommandHandler(CoCServer server, CoCRemoteClient client, Command command);
 
-    public static class CommandHandlers
+    public static class VillageObjectCommandHandlers
     {
-        private static void HandleBuyBuildingCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleClearObstacleCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
-            var bbCommand = command as BuyBuildingCommand;
+            var coCommand = command as ClearObstacleCommand;
 
-            //TODO: Consume resource and all that jazz.
+            var token = new VillageObjectUserToken(server, client);
+            var obstacle = client.Avatar.Home.GetVillageObject<Obstacle>(coCommand.ObstacleGameID);
+            var data = server.DataManager.FindObstacle(obstacle.GetDataID());
 
-            // Look for the data in the loaded building data.
-            var data = server.DataManager.FindBuilding(bbCommand.BuildingDataID, 0);
+            obstacle.UserToken = token;
+            obstacle.Data = data;
+            obstacle.BeginClearing();
+            obstacle.ClearingFinished += ObstacleClearingFinished;
 
-            // A token is needed for saving of the avatar
-            // on event handling.
-            var token = new BuildableUserToken(server, client);
-            var building = new Building(bbCommand.X, bbCommand.Y, token);
-            client.Avatar.Home.Buildings.Add(building);
-
-            building.ConstructionFinished += BuyBuildingConstructionFinished;
-
-            building.Data = data;
-            building.BeginConstruction();
-
-            Console.WriteLine("\t[Co] -> BeingConstruction() for account {0} \n\t\tat {1},{2} with lvl {3}",
-                              client.Avatar.Token, bbCommand.X, bbCommand.Y, building.Level);
+            Console.WriteLine("\t[Cl] -> BeingClearing() for account {0} \n\t\tat {1},{2} - ",
+                              client.Avatar.Token, obstacle.X, obstacle.Y);
         }
 
-        private static void HandleUpgradeBuildingCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void ObstacleClearingFinished(object sender, ClearingFinishedEventArgs e)
         {
-            var ubCommand = command as UpgradeBuildingCommand;
+            // Remove this event handler from the buildable because it might re-register the same handler twice.
+            e.ClearedObstacle.ClearingFinished -= ObstacleClearingFinished;
 
-            //TODO: Consume resource and all that jazz.
+            var token = e.UserToken as VillageObjectUserToken;
+            var client = token.Client;
+            var server = token.Server;
 
-            var token = new BuildableUserToken(server, client);
-            var building = client.Avatar.Home.GetVillageObject<Building>(ubCommand.BuildingGameID);
-            var data = server.DataManager.FindBuilding(building.GetDataID(), building.Level + 1);
+            Console.Write("\t[Cl] -> BeingClearing() for account {0} \n\t\tat {1},{2} - ",
+                          client.Avatar.Token, e.ClearedObstacle.X, e.ClearedObstacle.Y);
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            if (!e.WasCancelled)
+            {
+                Console.WriteLine("Finished!");
+                client.Avatar.Home.Obstacles.Remove(e.ClearedObstacle);
+            }
+            else
+                Console.WriteLine("Cancelled!");
+            Console.ResetColor();
 
-            // Use upgraded CsvData.
-            building.UserToken = token;
-            building.Data = data;
-            building.BeginConstruction();
-
-            building.ConstructionFinished += UpgradeBuildingConstructionFinished;
-
-            Console.WriteLine("\t[Up] -> BeingConstruction() for account {0} \n\t\tat {1},{2} with lvl {3}",
-                              client.Avatar.Token, building.X, building.Y, building.Level);
+            //TODO: Schedule saves instead.
+            server.AvatarManager.SaveAvatar(client.Avatar);
         }
 
         private static void HandleSpeedUpConstructionCommand(CoCServer server, CoCRemoteClient client, Command command)
@@ -78,11 +75,20 @@ namespace CoCSharp.Server.Handlers
             //TODO: Add 50% of price to resource and all that jazz.
 
             // Gets a buildable object with the same gameId give by the sucCommand.
-            var buildable = client.Avatar.Home.GetVillageObject<Buildable>(ccCommand.VillageObjectID);
-            buildable.EndConstruction();
+            var villageObject = client.Avatar.Home.GetVillageObject(ccCommand.VillageObjectID);
+            if (villageObject is Buildable)
+            {
+                var buildable = villageObject as Buildable;
+                buildable.CancelConstruction();
+            }
+            else if (villageObject is Obstacle)
+            {
+                var obstacle = villageObject as Obstacle;
+                obstacle.CancelClearing();
+            }
 
-            Console.WriteLine("\t[Co] -> EndConstruction() for account {0} \n\t\tat {1},{2} with lvl {3}",
-                              client.Avatar.Token, buildable.X, buildable.Y, buildable.Level);
+            Console.WriteLine("\t[Co] -> CancelConstruction() for account {0} \n\t\tat {1},{2}",
+                              client.Avatar.Token, villageObject.X, villageObject.Y);
         }
 
         private static void HandleBuyResourcesCommand(CoCServer server, CoCRemoteClient client, Command command)
@@ -105,7 +111,7 @@ namespace CoCSharp.Server.Handlers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception occured while handling embedded command: {0}\r\n\t{1}", brCommand.GetType().Name, ex);
+                Console.WriteLine("Exception occurred while handling embedded command: {0}\r\n\t{1}", brCommand.GetType().Name, ex);
             }
         }
 
@@ -141,52 +147,14 @@ namespace CoCSharp.Server.Handlers
 
         public static void RegisterCommandHandlers(CoCServer server)
         {
-            server.RegisterCommandHandler(new BuyBuildingCommand(), HandleBuyBuildingCommand);
-            server.RegisterCommandHandler(new UpgradeBuildingCommand(), HandleUpgradeBuildingCommand);
+            server.RegisterCommandHandler(new ClearObstacleCommand(), HandleClearObstacleCommand);
+
             server.RegisterCommandHandler(new SpeedUpConstructionCommand(), HandleSpeedUpConstructionCommand);
             server.RegisterCommandHandler(new CancelConsturctionCommand(), HandleCancelConsturctionCommand);
             server.RegisterCommandHandler(new BuyResourcesCommand(), HandleBuyResourcesCommand);
 
             server.RegisterCommandHandler(new MoveVillageObjectCommand(), HandleMoveVillageObjectCommand);
             server.RegisterCommandHandler(new MoveMultipleVillageObjectCommand(), HandleMoveMultipleVillageObjectCommand);
-        }
-
-        private static void BuyBuildingConstructionFinished(object sender, ConstructionFinishEventArgs e)
-        {
-            // Remove this event handler from the buildable because it might reregister the same handler twice.
-            e.BuildableConstructed.ConstructionFinished -= BuyBuildingConstructionFinished;
-
-            var token = e.UserToken as BuildableUserToken;
-            var client = token.Client;
-            var server = token.Server;
-
-            Console.Write("\t[Co] -> BeingConstruction() for account {0} \n\t\tat {1},{2} with lvl {3} - ",
-                              client.Avatar.Token, e.BuildableConstructed.X, e.BuildableConstructed.Y, e.BuildableConstructed.Level);
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("Finished!");
-            Console.ResetColor();
-
-            //TODO: Schedule saves instead.
-            server.AvatarManager.SaveAvatar(client.Avatar);
-        }
-
-        private static void UpgradeBuildingConstructionFinished(object sender, ConstructionFinishEventArgs e)
-        {
-            // Remove this event handler from the buildable because it might reregister the same handler twice.
-            e.BuildableConstructed.ConstructionFinished -= UpgradeBuildingConstructionFinished;
-
-            var token = e.UserToken as BuildableUserToken;
-            var client = token.Client;
-            var server = token.Server;
-
-            Console.WriteLine("\t[Up] -> BeingConstruction() for account {0} \n\t\tat {1},{2} with lvl {3} - ",
-                              client.Avatar.Token, e.BuildableConstructed.X, e.BuildableConstructed.Y, e.BuildableConstructed.Level);
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("Finished!");
-            Console.ResetColor();
-
-            //TODO: Schedule saves instead.
-            server.AvatarManager.SaveAvatar(client.Avatar);
         }
     }
 }

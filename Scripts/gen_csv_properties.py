@@ -71,7 +71,7 @@ def gen_properties(f, n):
     # Iterate through columnsname and genrate its property.
     for i in range(len(columnsname)):
         # Add the documentation to the property.
-        prop = '/// <summary>\n/// Gets or sets the ' + format_documentation_name(columnsname[i]) + '.\n/// </summary>\n'
+        prop = '/// <summary>\n/// Gets or sets ' + format_documentation_name(columnsname[i]) + '.\n/// </summary>\n'
         # Add the property type and property name.
         prop += 'public ' + columnstype[i] + ' ' + columnsname[i] + ' { get; set; }'
         outf.write(prop + '\n')

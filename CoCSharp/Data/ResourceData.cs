@@ -3,12 +3,12 @@
 namespace CoCSharp.Data
 {
     /// <summary>
-    /// Defines data from resources.csv.
+    /// Defines data from logic/resources.csv.
     /// </summary>
     public class ResourceData : CsvData
     {
         /// <summary>
-        /// Initalizes a new instance of the <see cref="ResourceData"/> class.
+        /// Initializes a new instance of the <see cref="ResourceData"/> class.
         /// </summary>
         public ResourceData()
         {

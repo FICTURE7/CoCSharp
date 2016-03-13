@@ -5,7 +5,7 @@ using System.Reflection;
 namespace CoCSharp.Csv
 {
     /// <summary>
-    /// Provides methods to serialize and deserialize CsvTables to object array.
+    /// Provides methods to serialize CsvTables to object array.
     /// Mainly designed for Clash of Clans.
     /// </summary>
     public static class CsvConvert
@@ -65,7 +65,7 @@ namespace CoCSharp.Csv
 
                     var propertyName = CsvAttributeHelper.GetPropertyAlias(property);
                     if (!table.Columns.Contains(propertyName))
-                        continue; // ignore if does not contian column
+                        continue; // ignore if does not contain column
 
                     var value = rows[i][propertyName];
                     var parameters = (object[])null;

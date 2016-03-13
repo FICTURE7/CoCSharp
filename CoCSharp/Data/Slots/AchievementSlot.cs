@@ -4,7 +4,7 @@ using System;
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
-    /// Represents a Clash of Clans achievment slot.
+    /// Represents a Clash of Clans achievement slot.
     /// </summary>
     public class AchievementSlot : Slot
     {

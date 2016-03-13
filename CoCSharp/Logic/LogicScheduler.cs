@@ -59,7 +59,7 @@ namespace CoCSharp.Logic
                 s_scheduleList.Insert(index, schedule);
             }
 
-            //Console.WriteLine("Sechduled logic at {0}", utcWhen);
+            //Console.WriteLine("Scheduled logic at {0}", utcWhen);
         }
 
         // Prevents the t_worker from executing the scheduled logic.
@@ -73,6 +73,8 @@ namespace CoCSharp.Logic
                 for (int i = 0; i < s_scheduleList.Count; i++)
                 {
                     var schedule = s_scheduleList[i];
+
+                    // Cancel schedule logic with the same UserToken reference.
                     if (schedule.UserToken == userToken)
                         schedule.Cancelled = true;
                 }
@@ -99,7 +101,7 @@ namespace CoCSharp.Logic
                             // Check for the schedule before it.
                             i--;
 
-                            // No need to check if it needs to be excuted.
+                            // No need to check if it needs to be executed.
                             continue;
                         }
 

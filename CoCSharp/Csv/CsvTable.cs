@@ -60,14 +60,17 @@ namespace CoCSharp.Csv
         /// Gets the <see cref="DataTable"/> of the CSV file.
         /// </summary>
         public DataTable Table { get; private set; }
+
         /// <summary>
         /// Gets the rows of the CSV file.
         /// </summary>
         public DataRowCollection Rows { get { return Table.Rows; } }
+
         /// <summary>
         /// Gets the columns of the CSV file.
         /// </summary>
         public DataColumnCollection Columns { get { return Table.Columns; } }
+
         /// <summary>
         /// Gets the row of the CSV file which defines the data types of the columns.
         /// </summary>
@@ -281,6 +284,58 @@ namespace CoCSharp.Csv
                     Table.Dispose();
             }
             _disposed = true;
+        }
+
+        /// <summary>
+        /// Decompresses a CSV table represented by the specified byte array.
+        /// </summary>
+        /// <param name="bytes">Byte array representing the CSV table to decompress.</param>
+        /// <returns>Decompressed byte array.</returns>
+        public static byte[] DecompressCsvTable(byte[] bytes)
+        {
+            var retBytes = new byte[bytes.Length + 4];
+            Buffer.BlockCopy(bytes, 0, retBytes, 0, 9);
+
+            // Fix the header by apending 4 0x00 bytes at offset 9.
+            Buffer.BlockCopy(bytes, 9, retBytes, 13, bytes.Length - 9);
+            return LzmaUtils.Decompress(retBytes);
+        }
+
+        /// <summary>
+        /// Decompresses a CSV table represented by the specified UTF-8 string.
+        /// </summary>
+        /// <param name="csvString">UTF-8 string representing the CSV table to decompress.</param>
+        /// <returns>Decompressed byte array.</returns>
+        public static byte[] DecompressCsvTable(string csvString)
+        {
+            return DecompressCsvTable(Encoding.UTF8.GetBytes(csvString));
+        }
+
+        /// <summary>
+        /// Compresses a CSV table represented by the specified byte array.
+        /// </summary>
+        /// <param name="bytes">Byte array representing the CSV table to compress.</param>
+        /// <returns>Compressed byte array.</returns>
+        public static byte[] CompressCsvTable(byte[] bytes)
+        {
+            var comBytes = LzmaUtils.Compress(bytes);
+            var retBytes = new byte[comBytes.Length - 4];
+
+            Buffer.BlockCopy(comBytes, 0, retBytes, 0, 9);
+
+            // Patch the header by removing 4 bytes at offset 9.
+            Buffer.BlockCopy(comBytes, 13, retBytes, 9, comBytes.Length - 13);
+            return retBytes;
+        }
+
+        /// <summary>
+        /// Compresses a CSV table represented by the specified string.
+        /// </summary>
+        /// <param name="csvString">UTF-8 string representing the CSV table to compress.</param>
+        /// <returns>Compressed byte array.</returns>
+        public static byte[] CompressCsvTable(string csvString)
+        {
+            return CompressCsvTable(Encoding.UTF8.GetBytes(csvString));
         }
 
         // Get the line ending of the file depending of the first '\n','\r' characters found.

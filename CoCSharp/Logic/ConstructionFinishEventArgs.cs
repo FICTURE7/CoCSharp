@@ -17,6 +17,8 @@ namespace CoCSharp.Logic
             // Space
         }
 
+        private DateTime _endTime;
+
         /// <summary>
         /// Gets or sets the <see cref="Buildable"/> that was constructed.
         /// </summary>
@@ -25,11 +27,28 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets when the construction of the <see cref="Buildable"/> was finished.
         /// </summary>
-        public DateTime EndTime { get; set; } //TODO: Check if its kind is of Utc.
+        /// <remarks>
+        /// The <see cref="DateTimeKind"/> of the value specified must of <see cref="DateTimeKind.Utc"/>.
+        /// </remarks>
+        /// <exception cref="ArgumentException"><paramref name="value"/> kind must a kind of <see cref="DateTimeKind.Utc"/>.</exception>
+        public DateTime EndTime
+        {
+            get
+            {
+                return _endTime;
+            }
+            set
+            {
+                if (value.Kind != DateTimeKind.Utc)
+                    throw new ArgumentException("EndTime.Kind must be in DateTimeKind.Utc.", "value");
+
+                _endTime = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets whether the construction of the <see cref="Buildable"/> was cancelled,
-        /// that is when <see cref="Buildable.EndConstruction"/> is called.
+        /// that is when <see cref="Buildable.CancelConstruction"/> is called.
         /// </summary>
         public bool WasCancelled { get; set; }
 

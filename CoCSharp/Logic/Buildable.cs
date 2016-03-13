@@ -9,7 +9,7 @@ namespace CoCSharp.Logic
     public abstract class Buildable : VillageObject
     {
         /// <summary>
-        /// Level at which a builiding is not constructed. This field is readonly.
+        /// Level at which a building is not constructed. This field is readonly.
         /// </summary>
         public static readonly int NotConstructedLevel = -1;
 
@@ -33,7 +33,7 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Buildable"/> class with the specified
-        /// X coordinate and Y cooridnate.
+        /// X coordinate and Y coordinate.
         /// </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
@@ -44,7 +44,7 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Buildable"/> class with the specified
-        /// X coordinate, Y cooridnate and user token object.
+        /// X coordinate, Y coordinate and user token object.
         /// </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
@@ -60,7 +60,7 @@ namespace CoCSharp.Logic
         /// <remarks>
         /// This object is reference in the <see cref="ConstructionFinishEventArgs.UserToken"/>.
         /// </remarks>
-        [JsonIgnore()]
+        [JsonIgnore]
         public object UserToken { get; set; }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace CoCSharp.Logic
         {
             get
             {
-                return ConstructionTime > 0;
+                return ConstructionTSeconds > 0;
             }
         }
 
@@ -110,12 +110,12 @@ namespace CoCSharp.Logic
                 if (!IsConstructing)
                     throw new InvalidOperationException("Buildable object is not in construction.");
 
-                return TimeSpan.FromSeconds(ConstructionTime);
+                return TimeSpan.FromSeconds(ConstructionTSeconds);
             }
         }
 
         /// <summary>
-        /// Gets the UTC time at which the construction of the <see cref="Buildable"/> object will end.
+        /// Gets or sets the UTC time at which the construction of the <see cref="Buildable"/> object will end.
         /// </summary>
         /// <exception cref="InvalidOperationException">The <see cref="Buildable"/> object is not in construction.</exception>
         [JsonIgnore]
@@ -127,7 +127,7 @@ namespace CoCSharp.Logic
                     throw new InvalidOperationException("Buildable object is not in construction.");
 
                 // Converts the UnixTimestamp value into a DateTime.
-                return DateTimeConverter.FromUnixTimestamp(ConstructionTimeEnd);
+                return DateTimeConverter.FromUnixTimestamp(ConstructionTEndUnixTimestamp);
             }
             set
             {
@@ -135,25 +135,25 @@ namespace CoCSharp.Logic
                     throw new ArgumentException("DateTime.Kind of value must a DateTimeKind.Utc.", "value");
 
                 // Converts the provided DateTime into a UnixTimestamp.
-                ConstructionTimeEnd = (int)DateTimeConverter.ToUnixTimestamp(value);
+                ConstructionTEndUnixTimestamp = (int)DateTimeConverter.ToUnixTimestamp(value);
             }
         }
 
-        // Duration of construction in secounds. Everything is handled from here.
+        // Duration of construction in seconds. Everything is handled from here.
         [JsonProperty("const_t", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private int ConstructionTime
+        private int ConstructionTSeconds
         {
             get
             {
                 // Difference between construction end time and time now = duration.
-                var constructionTime = ConstructionTimeEnd - DateTimeConverter.UnixUtcNow;
+                var constructionTime = ConstructionTEndUnixTimestamp - DateTimeConverter.UnixUtcNow;
 
                 if (constructionTime < 0)
                 {
                     // If construction duration is less than 0 then the construction is finished.
                     // Set ConstructionTimeEnd to 0 because the construction is finished.
 
-                    ConstructionTimeEnd = 0;
+                    ConstructionTEndUnixTimestamp = 0;
                     return 0;
                 }
 
@@ -164,9 +164,9 @@ namespace CoCSharp.Logic
             // Changing ConstructionTimeEnd would also change ConstructionTime.
         }
 
-        // Date of when the construction is going to end in unix timestamp.
+        // Date of when the construction is going to end in UNIX timestamps.
         [JsonProperty("const_t_end", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        internal int ConstructionTimeEnd { get; set; }
+        internal int ConstructionTEndUnixTimestamp { get; set; }
 
         /// <summary>
         /// Begins the construction of the <see cref="Buildable"/> and increases its level by 1
@@ -175,9 +175,9 @@ namespace CoCSharp.Logic
         public abstract void BeginConstruction();
 
         /// <summary>
-        /// Ends(cancels) the construction of the <see cref="Buildable"/>.
+        /// Cancels the construction of the <see cref="Buildable"/>.
         /// </summary>
-        public abstract void EndConstruction(); // Could implement speed into it as well.
+        public abstract void CancelConstruction();
 
         /// <summary>
         /// Speeds up the construction of the <see cref="Buildable"/> and increases its level by 1
@@ -192,7 +192,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Use this method to trigger the <see cref="ConstructionFinished"/> event.
         /// </summary>
-        /// <param name="e">The arguments</param>
+        /// <param name="e">The arguments data.</param>
         protected virtual void OnConstructionFinished(ConstructionFinishEventArgs e)
         {
             if (ConstructionFinished != null)

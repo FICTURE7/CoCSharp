@@ -20,7 +20,7 @@
             if (token.Length != 40)
                 return false;
 
-            for (int i = 0; i < token.Length; i++)
+            for (int i = 0; i < TokenLength; i++)
             {
                 if (!TokenCharacters.Contains(token[i].ToString()))
                     return false;

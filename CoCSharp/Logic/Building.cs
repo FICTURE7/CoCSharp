@@ -32,7 +32,7 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified
-        /// X coordinate and Y cooridnate.
+        /// X coordinate and Y coordinate.
         /// </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
@@ -43,7 +43,7 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified
-        /// X coordinate, Y cooridnate and user token object.
+        /// X coordinate, Y coordinate and user token object.
         /// </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
@@ -62,7 +62,6 @@ namespace CoCSharp.Logic
             get { return _isLocked; }
             set { _isLocked = value; }
         }
-
         // Building is locked. Mainly for Alliance Castle.
         private bool _isLocked;
 
@@ -71,7 +70,7 @@ namespace CoCSharp.Logic
         /// by the <see cref="Building"/>.
         /// </summary>
         /// <remarks>
-        /// This is needed to make sure that the user provides a proper CsvData type
+        /// This is needed to make sure that the user provides a proper <see cref="CsvData"/> type
         /// for the <see cref="VillageObject"/>.
         /// </remarks>
         protected override Type ExpectedDataType
@@ -84,8 +83,11 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Begins the construction of the <see cref="Building"/> and increases its level by 1
-        /// when done.
+        /// when done if <see cref="Buildable.IsConstructing"/> is <c>false</c> and <see cref="VillageObject.Data"/>
+        /// is not null; otherwise it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="Buildable.IsConstructing"/> is <c>true</c>.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="VillageObject.Data"/> is <c>null</c>.</exception>
         public override void BeginConstruction()
         {
             if (IsConstructing)
@@ -111,9 +113,11 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Ends(cancels) the construction of the <see cref="Building"/>.
+        /// Cancel the construction of the <see cref="Building"/> if <see cref="Buildable.IsConstructing"/> is <c>true</c>; otherwise
+        /// it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
-        public override void EndConstruction()
+        /// <exception cref="InvalidOperationException"><see cref="Buildable.IsConstructing"/> is <c>false</c>.</exception>
+        public override void CancelConstruction()
         {
             if (!IsConstructing)
                 throw new InvalidOperationException("Building object is not in construction.");
@@ -122,7 +126,7 @@ namespace CoCSharp.Logic
 
             InternalCancelScheduleBuild();
 
-            ConstructionTimeEnd = 0;
+            ConstructionTEndUnixTimestamp = 0;
             OnConstructionFinished(new ConstructionFinishEventArgs()
             {
                 BuildableConstructed = this,
@@ -134,20 +138,37 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Speeds up the construction of the <see cref="Building"/> and increases its level by 1
-        /// when done.
+        /// instantly if <see cref="Buildable.IsConstructing"/> is <c>true</c>; otherwise it throws an
+        /// <see cref="InvalidOperationException"/>.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="Buildable.IsConstructing"/> is <c>false</c>.</exception>
         public override void SpeedUpConstruction()
         {
             // Make sure that we not speeding up construction of a building that is not in construction.
             if (!IsConstructing)
                 throw new InvalidOperationException("Building object is not in construction.");
 
-            // Remove the schedule because we dont want it to trigger the events.
+            // Remove the schedule because we don't want it to trigger the events.
             InternalCancelScheduleBuild();
             DoConstructionFinished();
         }
 
-        // Schdules the construction logic at ConstructionEndTime.
+        /// <summary>
+        /// Returns the associated <see cref="CsvData"/> with the <see cref="Building"/> as
+        /// a <see cref="BuildingData"/>.
+        /// </summary>
+        /// <returns>Associated <see cref="CsvData"/> with the <see cref="Building"/> as a <see cref="BuildingData"/>.</returns>
+        /// <exception cref="InvalidOperationException"><see cref="VillageObject.Data"/> is null.</exception>
+        public BuildingData GetBuildingData()
+        {
+            if (Data == null)
+                throw new InvalidOperationException("Building.Data is null.");
+
+            return (BuildingData)Data;
+        }
+
+
+        // Schedules the construction logic at ConstructionEndTime.
         internal void InternalScheduleBuild()
         {
             // Schedule it with the userToken as this object so that it can be cancelled later.
@@ -166,9 +187,9 @@ namespace CoCSharp.Logic
         {
             var endTime = DateTime.UtcNow;
 
-            // Increase level if construction finished succesfully.
+            // Increase level if construction finished successfully.
             Level++;
-            ConstructionTimeEnd = 0;
+            ConstructionTEndUnixTimestamp = 0;
 
             OnConstructionFinished(new ConstructionFinishEventArgs()
             {
@@ -176,16 +197,6 @@ namespace CoCSharp.Logic
                 UserToken = UserToken,
                 EndTime = endTime
             });
-        }
-
-        /// <summary>
-        /// Returns the associated <see cref="CsvData"/> with the <see cref="Building"/> as
-        /// a <see cref="BuildingData"/>.
-        /// </summary>
-        /// <returns>Associated <see cref="CsvData"/> with the <see cref="Building"/> as a <see cref="BuildingData"/>.</returns>
-        public BuildingData GetBuildingData()
-        {
-            return (BuildingData)Data;
         }
     }
 }

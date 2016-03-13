@@ -16,8 +16,7 @@ namespace CoCSharp.Logic
         /// </summary>
         public VillageObject()
         {
-            X = 0;
-            Y = 0;
+            // Space
         }
 
         /// <summary>
@@ -71,16 +70,17 @@ namespace CoCSharp.Logic
             }
         }
 
-        // Y cooridnate of object.
+        // Y coordinate of object.
         private int _y;
 
         /// <summary>
         /// Gets or sets the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.
         /// </summary>
         /// <remarks>
-        /// This is needed for handling of construction, updgrading and other game logic actions. It must be updated
+        /// This is needed for handling of construction, upgrading and other game logic actions. It must be updated
         /// regularly to keep up with the current game state.
         /// </remarks>
+        /// <exception cref="ArgumentException"><paramref name="value"/> is not type of expected type.</exception>
         [JsonIgnore]
         public CsvData Data
         {
@@ -97,7 +97,7 @@ namespace CoCSharp.Logic
 
                     // Make sure its of the expected type.
                     if (type != ExpectedDataType)
-                        throw new ArgumentException("Expected value to in the type of '" + ExpectedDataType + "'.");
+                        throw new ArgumentException("Expected value to in the type of '" + ExpectedDataType + "'.", "value");
 
                     _dataID = value.ID;
                 }
@@ -124,6 +124,8 @@ namespace CoCSharp.Logic
         // ID of _data;
         [JsonProperty("data")]
         private int _dataID;
+
+        //TODO: Turn this into an abstract function.
 
         /// <summary>
         /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected

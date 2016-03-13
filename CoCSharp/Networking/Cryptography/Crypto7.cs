@@ -53,7 +53,7 @@ namespace CoCSharp.Networking.Cryptography
         }
 
         /// <summary>
-        /// Decrypts the provided bytes(chipertext).
+        /// Decrypts the provided bytes(ciphertext).
         /// </summary>
         /// <param name="data">Bytes to decrypt.</param>
         /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
@@ -94,7 +94,7 @@ namespace CoCSharp.Networking.Cryptography
         }
 
         /// <summary>
-        /// Initializes the chipers with the specified key.
+        /// Initializes the ciphers with the specified key.
         /// </summary>
         /// <param name="key">The key used to update the cipher.</param>
         private void InitializeCiphers(string key)
@@ -164,7 +164,7 @@ namespace CoCSharp.Networking.Cryptography
             {
                 /* Key-Scheduling Algorithm
                  * 
-                 * Used to intialize key array.
+                 * Used to initialize key array.
                  */
 
                 var keyLength = key.Length;

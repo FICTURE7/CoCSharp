@@ -169,7 +169,7 @@ namespace CoCSharp.Networking.Cryptography
 
                 case CryptoState.SecoundKey:
                     IncrementNonce(_decryptNonce);
-                    var padData = new byte[data.Length + 16]; // apend a 16 bytes long pad to it
+                    var padData = new byte[data.Length + 16]; // append a 16 bytes long pad to it
                     Buffer.BlockCopy(data, 0, padData, 16, data.Length);
                     data = SecretBox.Open(padData, _decryptNonce, _sharedKey); // use decrypt nonce
                     break;

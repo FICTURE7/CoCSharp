@@ -4,6 +4,7 @@ using CoCSharp.Server.Handlers;
 using CoCSharp.Logic;
 using System;
 using CoCSharp.Networking.Cryptography;
+using System.Security.Cryptography;
 
 namespace CoCSharp.Server
 {
@@ -30,6 +31,8 @@ namespace CoCSharp.Server
         {
             if (e.Exception != null)
                 Console.WriteLine("Exception occured while receiving: {0}", e.Exception.ToString());
+            if (e.Exception is CryptographicException)
+                Console.WriteLine("\tCryptographicException occured while decrypting a message.");
 
             try
             {
