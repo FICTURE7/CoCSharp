@@ -9,9 +9,13 @@ It was written based off of [Clash of Clans Documentation Project](https://githu
 and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrapowa/UCS)
 which is now open source however no decompiled code was used in this project.
 
-### Note
-Due to the new encryption update in 8.x.x, a patched version of libg.so with the the standard public key is needed for
+### Notes
+Due to the new encryption update in 8.x.x, a patched version of libg.so with the standard public key is needed for
 CoCSharp.Proxy and CoCSharp.Server to work properly. [Here](https://github.com/clugh/coc-proxy#installation) are the steps needed to patch libg.so.
+
+[`libsodium`](https://github.com/adamcaudill/libsodium-net) also requires the
+[Visual C++ Redistributable for Visual Studio 2015.](https://www.microsoft.com/en-us/download/details.aspx?id=48145). If
+its not installed `Sodium.SodiumCore` will throw a `DllNotFoundException`.
 
 ## What can it do?
 * CoCSharp.Csv: Clash of Clans format CSV reader.
@@ -28,7 +32,7 @@ CoCSharp.Proxy and CoCSharp.Server to work properly. [Here](https://github.com/c
 
 ## Compiling
 The simplest way to compile CoCSharp is to open the solution in Visual Studio and pressing `F6` to build the entire
-solution, it will download the nuget packages as well. Or you could use the latest version of mono to compile CoCSharp.
+solution, it will restore the nuget packages as well. Or you could use the latest version of mono to compile CoCSharp.
 
 Run the following commands to build CoCSharp with mono.
 

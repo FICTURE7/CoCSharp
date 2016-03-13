@@ -10,7 +10,6 @@ namespace CoCSharp.Server
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("Base Directory: \"{0}\".", AppDomain.CurrentDomain.BaseDirectory);
             Console.Title = "CoC# - Server";
 
             var stopwatch = new Stopwatch();
