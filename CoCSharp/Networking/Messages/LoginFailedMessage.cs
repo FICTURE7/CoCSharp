@@ -138,8 +138,8 @@ namespace CoCSharp.Networking.Messages
         {
             ThrowIfReaderNull(reader);
 
-            //Nonce = reader.ReadBytes(CoCKeyPair.NonceLength);
-            //PublicKey = reader.ReadBytes(CoCKeyPair.KeyLength);
+            Nonce = reader.ReadBytes(CoCKeyPair.NonceLength);
+            PublicKey = reader.ReadBytes(CoCKeyPair.KeyLength);
 
             Reason = (LoginFailureReason)reader.ReadInt32();
 
