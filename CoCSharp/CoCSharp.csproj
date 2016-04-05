@@ -84,6 +84,7 @@
     <Compile Include="Data\ObstacleData.cs" />
     <Compile Include="Data\TrapData.cs" />
     <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
+    <Compile Include="Logic\LogicUtils.cs" />
     <Compile Include="Networking\Messages\AvatarMessageData.cs" />
     <Compile Include="Data\BuildingData.cs" />
     <Compile Include="Networking\Messages\ClanMessageData.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="Networking\Messages\Commands\BuyTrapCommand.cs" />
     <Compile Include="Networking\Messages\Commands\CancelConsturctionCommand.cs" />
     <Compile Include="Networking\Messages\Commands\SpeedUpConstructionCommand.cs" />
-    <Compile Include="Networking\Messages\Commands\UpgradeMultipleBuildingsCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\UpgradeMultipleBuildableCommand.cs" />
     <Compile Include="Networking\Messages\VillageMessageData.cs" />
     <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Logic\Avatar.cs" />

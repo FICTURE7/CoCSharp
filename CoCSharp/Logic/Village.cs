@@ -189,6 +189,7 @@ namespace CoCSharp.Logic
         public VillageObject GetVillageObject(int gameId)
         {
             // Code repetition here with double checking of gameIds.
+            //TODO: Return null instead.
             if (gameId >= Building.BaseGameID && gameId <= Building.BaseGameID + VillageObject.Base)
                 return GetBuilding(gameId);
             else if (gameId >= Obstacle.BaseGameID && gameId <= Obstacle.BaseGameID + VillageObject.Base)

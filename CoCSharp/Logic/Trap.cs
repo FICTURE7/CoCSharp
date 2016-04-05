@@ -94,7 +94,7 @@ namespace CoCSharp.Logic
             var data = GetTrapData();
 
             // No need to schedule construction logic if its construction is instant. (Walls)
-            if (data.BuildTime == TimeSpan.FromSeconds(0))
+            if (data.BuildTime.TotalSeconds == 0)
             {
                 DoConstructionFinished();
                 return;

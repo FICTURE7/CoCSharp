@@ -26,7 +26,7 @@ namespace CoCSharp.Logic
         /// with the specified user token object.
         /// </summary>
         /// <param name="userToken">User token associated with this <see cref="Buildable"/>.</param>
-        public Buildable(object userToken) : base()
+        public Buildable(object userToken) : this()
         {
             UserToken = userToken;
         }
@@ -39,7 +39,7 @@ namespace CoCSharp.Logic
         /// <param name="y">Y coordinate.</param>
         public Buildable(int x, int y) : base(x, y)
         {
-            // Space
+            _level = NotConstructedLevel;
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace CoCSharp.Logic
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Buildable"/>.</param>
-        public Buildable(int x, int y, object userToken) : base(x, y)
+        public Buildable(int x, int y, object userToken) : this(x, y)
         {
             UserToken = userToken;
         }
@@ -146,9 +146,9 @@ namespace CoCSharp.Logic
             get
             {
                 // Difference between construction end time and time now = duration.
-                var constructionTime = ConstructionTEndUnixTimestamp - DateTimeConverter.UnixUtcNow;
+                var constDuration = ConstructionTEndUnixTimestamp - DateTimeConverter.UnixUtcNow;
 
-                if (constructionTime < 0)
+                if (constDuration < 0)
                 {
                     // If construction duration is less than 0 then the construction is finished.
                     // Set ConstructionTimeEnd to 0 because the construction is finished.
@@ -157,7 +157,7 @@ namespace CoCSharp.Logic
                     return 0;
                 }
 
-                return constructionTime;
+                return constDuration;
             }
 
             // ConstructionTime does not need a setter because it is relative to ConstructionTimeEnd.

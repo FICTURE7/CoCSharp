@@ -19,22 +19,22 @@ namespace CoCSharp.Server
             AvatarManager = new AvatarManager();
             DataManager = new DataManager();
             Clients = new List<CoCRemoteClient>();
-            MessageHandlers = new Dictionary<ushort, MessageHandler>();
-            CommandHandlers = new Dictionary<int, CommandHandler>();
+            MessageHandlerDictionary = new Dictionary<ushort, MessageHandler>();
+            CommandHandlerDictionary = new Dictionary<int, CommandHandler>();
 
             LoginMessageHandlers.RegisterLoginMessageHandlers(this);
             InGameMessageHandlers.RegisterInGameMessageHandlers(this);
 
-            ConstructionCommandHandlers.RegisterCommandHandlers(this);
-            VillageObjectCommandHandlers.RegisterCommandHandlers(this);
+            CommandHandlers.RegisterCommandHandlers(this);
 
-            AvatarManager.LoadAllAvatars();
+            //ConstructionCommandHandlers.RegisterCommandHandlers(this);
+            //VillageObjectCommandHandlers.RegisterCommandHandlers(this);
         }
 
         public AvatarManager AvatarManager { get; private set; }
         public DataManager DataManager { get; private set; }
-        public Dictionary<int, CommandHandler> CommandHandlers { get; private set; }
-        public Dictionary<ushort, MessageHandler> MessageHandlers { get; private set; }
+        public Dictionary<int, CommandHandler> CommandHandlerDictionary { get; private set; }
+        public Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; private set; }
         public List<CoCRemoteClient> Clients { get; private set; }
 
         private readonly Socket _listener;
@@ -50,12 +50,12 @@ namespace CoCSharp.Server
 
         public void RegisterMessageHandler(Message message, MessageHandler handler)
         {
-            MessageHandlers.Add(message.ID, handler);
+            MessageHandlerDictionary.Add(message.ID, handler);
         }
 
         public void RegisterCommandHandler(Command command, CommandHandler handler)
         {
-            CommandHandlers.Add(command.ID, handler);
+            CommandHandlerDictionary.Add(command.ID, handler);
         }
 
         private void StartAccept()

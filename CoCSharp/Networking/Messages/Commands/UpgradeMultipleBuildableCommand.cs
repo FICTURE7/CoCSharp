@@ -7,18 +7,18 @@ namespace CoCSharp.Networking.Messages.Commands
     /// to tell it that multiple buildings was upgraded. This
     /// is mostly for walls.
     /// </summary>
-    public class UpgradeMultipleBuildingsCommand : Command
+    public class UpgradeMultipleBuildableCommand : Command
     {
         /// <summary>
-        /// Intializes a new instance of the <see cref="UpgradeMultipleBuildingsCommand"/> class.
+        /// Initializes a new instance of the <see cref="UpgradeMultipleBuildableCommand"/> class.
         /// </summary>
-        public UpgradeMultipleBuildingsCommand()
+        public UpgradeMultipleBuildableCommand()
         {
             // Space
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="UpgradeMultipleBuildingsCommand"/>.
+        /// Gets the ID of the <see cref="UpgradeMultipleBuildableCommand"/>.
         /// </summary>
         public override int ID { get { return 549; } }
 
@@ -37,10 +37,10 @@ namespace CoCSharp.Networking.Messages.Commands
         public int Unknown1;
 
         /// <summary>
-        /// Reads the <see cref="UpgradeMultipleBuildingsCommand"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="UpgradeMultipleBuildableCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="UpgradeMultipleBuildingsCommand"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="UpgradeMultipleBuildableCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         /// <exception cref="InvalidCommandException">Length <see cref="BuildingsGameID"/> is less 0.</exception>
@@ -65,10 +65,10 @@ namespace CoCSharp.Networking.Messages.Commands
         }
 
         /// <summary>
-        /// Writes the <see cref="UpgradeMultipleBuildingsCommand"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="UpgradeMultipleBuildableCommand"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="UpgradeMultipleBuildingsCommand"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="UpgradeMultipleBuildableCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         /// <exception cref="InvalidOperationException"><see cref="BuildingsGameID"/> is null.</exception>

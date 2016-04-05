@@ -1,34 +1,26 @@
 ﻿using CoCSharp.Logic;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace CoCSharp.Server.Core
 {
     public class AvatarManager
     {
-        //TODO: Improve saving system to save resources progess and all that jazz.
-        //TODO: Its probably a bad idea to load all avatars on start up with reflection as well. :/
-
         public AvatarManager()
         {
-            LoadedAvatar = new Dictionary<string, Avatar>();
-            //LoadAllAvatars();
+            LoadedAvatars = new Dictionary<string, Avatar>();
         }
 
-        public Dictionary<string, Avatar> LoadedAvatar { get; set; } // usertoken to avatar
+        public Dictionary<string, Avatar> LoadedAvatars { get; private set; }
 
         public Avatar CreateNewAvatar()
         {
             var token = TokenUtils.GenerateToken();
-            while (LoadedAvatar.ContainsKey(token))
+            while (Exists(token))
                 token = TokenUtils.GenerateToken();
 
             var userID = Utils.Random.Next();
-            while (!CheckAvatarID(userID))
-                userID = Utils.Random.Next();
 
             return CreateNewAvatar(token, userID);
         }
@@ -46,150 +38,42 @@ namespace CoCSharp.Server.Core
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
-            LoadedAvatar.Add(avatar.Token, avatar);
+            LoadedAvatars.Add(avatar.Token, avatar);
             return avatar;
         }
 
-        public void SaveAllAvatars()
+        public Avatar LoadAvatar(string token)
         {
-            var avatars = LoadedAvatar.Values.ToArray();
-            for (int i = 0; i < avatars.Length; i++)
-                SaveAvatar(avatars[i]);
+            if (!Exists(token))
+                throw new ArgumentException("Avatar with token '" + token + "' does not exists.", "token");
+
+            FancyConsole.WriteLine("[&(magenta)Avatar&(default)] Loading avatar ->");
+            var avatar = new Avatar()
+            {
+                Token = token
+            };
+            var avatarSave = new AvatarSave(avatar);
+            avatarSave.Load();
+            LoadedAvatars.Add(avatar.Token, avatar);
+            return avatar;
         }
 
         public void SaveAvatar(Avatar avatar)
         {
-            var path = Path.Combine(CoCServerPaths.Avatars, avatar.Token);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            var village = avatar.Home.ToJson(true);
-            File.WriteAllText(Path.Combine(path, "village.json"), village);
-
-            var builder = new StringBuilder();
-
-            var type = avatar.GetType();
-            var properties = type.GetProperties();
-            for (int i = 0; i < properties.Length; i++)
-            {
-                var property = properties[i];
-                if (property.PropertyType == typeof(Village))
-                    continue;
-
-                var name = property.Name;
-                var value = property.GetValue(avatar);
-
-                if (value == null)
-                    value = "null";
-
-                builder.AppendFormat("{0}={1}\n", name, value);
-            }
-
-            var savePath = Path.Combine(path, avatar.Name + ".txt");
-            File.WriteAllText(savePath, builder.ToString());
+            var avatarSave = new AvatarSave(avatar);
+            avatarSave.Save();
         }
 
-        public void LoadAllAvatars()
+        public bool Exists(string token)
         {
-            //TODO: Reduce usage of reflection as much as possible because it causing performance issues.
-            if (!Directory.Exists(CoCServerPaths.Avatars))
+            var directories = Directory.GetDirectories(CoCServerPaths.Avatars);
+            for (int i = 0; i < directories.Length; i++)
             {
-                Directory.CreateDirectory(CoCServerPaths.Avatars);
-                return; // exit early cause the file didnt exist
+                var directory = Path.GetFileName(directories[i]);
+                if (directory == token)
+                    return true;
             }
-
-            var avatarDirectories = Directory.GetDirectories("Avatars");
-            for (int i = 0; i < avatarDirectories.Length; i++)
-            {
-                var directory = avatarDirectories[i];
-                var files = Directory.GetFiles(directory);
-
-                var homePath = (string)null;
-                var dataPath = (string)null;
-
-                if (files.Length > 2)
-                    Console.WriteLine("WARNING: Found avatar save directory with more than 2 files. {0}", directory);
-
-                for (int j = 0; j < files.Length; j++)
-                {
-                    var file = files[j];
-                    if (Path.GetFileName(file) == "village.json")
-                        homePath = file;
-                    else if (Path.GetExtension(file) == ".txt")
-                        dataPath = file;
-                }
-
-                if (homePath == null || dataPath == null)
-                {
-                    Console.WriteLine("WARNING: Couldn't find a save file. Skipping {0}", directory);
-                    continue;
-                }
-
-                var home = Village.FromJson(File.ReadAllText(homePath));
-                var avatar = new Avatar();
-                avatar.Home = home;
-
-                var type = avatar.GetType();
-                var saveProperties = File.ReadAllLines(dataPath);
-                for (int j = 0; j < saveProperties.Length; j++)
-                {
-                    var saveValues = ParseSaveProperty(saveProperties[j]);
-                    if (saveValues[0] == "ShieldDuration")
-                        continue;
-
-                    var property = type.GetProperty(saveValues[0]);
-                    var value = (object)saveValues[1];
-
-                    if (saveValues[1] == "null")
-                    {
-                        value = null;
-                    }
-                    else if (property.PropertyType == typeof(TimeSpan))
-                    {
-                        value = TimeSpan.Parse(saveValues[1]);
-                    }
-                    else if (property.PropertyType == typeof(DateTime))
-                    {
-                        value = DateTime.Parse(saveValues[1]);
-                    }
-                    else if (property.PropertyType == typeof(int))
-                    {
-                        value = int.Parse(saveValues[1]);
-                    }
-                    else if (property.PropertyType == typeof(long))
-                    {
-                        value = long.Parse(saveValues[1]);
-                    }
-                    else if (property.PropertyType == typeof(bool))
-                    {
-                        value = bool.Parse(saveValues[1]);
-                    }
-
-                    property.SetValue(avatar, value);
-                }
-
-                LoadedAvatar.Add(avatar.Token, avatar);
-            }
-        }
-
-        private string[] ParseSaveProperty(string saveProperty)
-        {
-            var saveValues = saveProperty.Split('=');
-
-            //saveValues[0] = saveValues[0].Remove(saveValues[0].Length - 1);
-            //saveValues[1] = saveValues[1].Remove(0, 1);
-
-            return saveValues;
-        }
-
-        private bool CheckAvatarID(int id)
-        {
-            foreach (var avatar in LoadedAvatar.Values)
-            {
-                if (avatar.ID == id)
-                    return false;
-            }
-            return true;
+            return false;
         }
     }
 }

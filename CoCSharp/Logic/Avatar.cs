@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Data.Slots;
+using System;
 
 namespace CoCSharp.Logic
 {
@@ -12,6 +13,7 @@ namespace CoCSharp.Logic
         /// </summary>
         public Avatar()
         {
+            // If _level is less that 1 then the client crashes.
             _level = 1;
         }
 
@@ -130,5 +132,85 @@ namespace CoCSharp.Logic
         /// Gets or sets the number of defenses lost by the <see cref="Avatar"/>.
         /// </summary>
         public int DefensesLost { get; set; }
+
+        /// <summary>
+        /// Gets or sets the resources capacity.
+        /// </summary>
+        public ResourceCapacitySlot[] ResourcesCapacity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the amount of resources available.
+        /// </summary>
+        public ResourceAmountSlot[] ResourcesAmount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the units available.
+        /// </summary>
+        public UnitSlot[] Units { get; set; }
+
+        /// <summary>
+        /// Gets or sets the spells available.
+        /// </summary>
+        public SpellSlot[] Spells { get; set; }
+
+        /// <summary>
+        /// Gets or sets the units upgrades.
+        /// </summary>
+        public UnitUpgradeSlot[] UnitUpgrades { get; set; }
+
+        /// <summary>
+        /// Gets or sets the spells upgrades.
+        /// </summary>
+        public SpellUpgradeSlot[] SpellUpgrades { get; set; }
+
+        /// <summary>
+        /// Gets or sets the heroes upgrades.
+        /// </summary>
+        public HeroUpgradeSlot[] HeroUpgrades { get; set; }
+
+        /// <summary>
+        /// Gets or sets the heroes health.
+        /// </summary>
+        public HeroHealthSlot[] HeroHealths { get; set; }
+
+        /// <summary>
+        /// Gets or sets the heroes states.
+        /// </summary>
+        public HeroStateSlot[] HeroStates { get; set; }
+
+        /// <summary>
+        /// Gets or sets the alliance units.
+        /// </summary>
+        public AllianceUnitSlot[] AllianceUnits { get; set; }
+
+        /// <summary>
+        /// Get or sets the tutorial progress.
+        /// </summary>
+        public TutorialProgressSlot[] TutorialProgess { get; set; }
+
+        /// <summary>
+        /// Gets or sets the achievements state.
+        /// </summary>
+        public AchievementSlot[] Acheivements { get; set; }
+
+        /// <summary>
+        /// Gets or sets the achievements progress.
+        /// </summary>
+        public AchievementProgessSlot[] AcheivementProgress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the NPC stars.
+        /// </summary>
+        public NpcStarSlot[] NpcStars { get; set; }
+
+        /// <summary>
+        /// Gets or sets the NPC gold.
+        /// </summary>
+        public NpcGoldSlot[] NpcGold { get; set; }
+
+        /// <summary>
+        /// Gets or sets the NPC elixir.
+        /// </summary>
+        public NpcElixirSlot[] NpcElixir { get; set; }
     }
 }

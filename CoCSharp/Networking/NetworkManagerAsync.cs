@@ -315,6 +315,8 @@ namespace CoCSharp.Networking
                             Exception = ex
                         });
                         token.Reset();
+
+                        // Could break early here because the keys are probably messed up.
                         continue;
                     }
                 }

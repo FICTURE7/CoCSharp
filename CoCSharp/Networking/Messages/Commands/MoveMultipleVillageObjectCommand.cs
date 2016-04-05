@@ -11,7 +11,7 @@ namespace CoCSharp.Networking.Messages.Commands
     public class MoveMultipleVillageObjectCommand : Command
     {
         /// <summary>
-        /// Intializes a new instance of the <see cref="MoveMultipleVillageObjectCommand"/> class.
+        /// Initializes a new instance of the <see cref="MoveMultipleVillageObjectCommand"/> class.
         /// </summary>
         public MoveMultipleVillageObjectCommand()
         {

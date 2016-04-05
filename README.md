@@ -10,11 +10,11 @@ and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrap
 which is now open source however no decompiled code was used in this project.
 
 ### Notes
-Due to the new encryption update in 8.x.x, a patched version of libg.so with the standard public key is needed for
-CoCSharp.Proxy and CoCSharp.Server to work properly. [Here](https://github.com/clugh/coc-proxy#installation) are the steps needed to patch libg.so.
+Due to the new encryption update in 8.x.x, a patched version of `libg.so` with the standard public key is needed for
+`CoCSharp.Proxy` and `CoCSharp.Server` to work properly. [Here](https://github.com/clugh/coc-proxy#installation) are the steps needed to patch `libg.so`.
 
 [`libsodium`](https://github.com/adamcaudill/libsodium-net) also requires the
-[Visual C++ Redistributable for Visual Studio 2015.](https://www.microsoft.com/en-us/download/details.aspx?id=48145). If
+[Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145), if
 its not installed `Sodium.SodiumCore` will throw a `DllNotFoundException`.
 
 ## What can it do?
@@ -22,9 +22,9 @@ its not installed `Sodium.SodiumCore` will throw a `DllNotFoundException`.
   * Includes classes for reading CSV files.
 * CoCSharp.Logging: *(Needs to implemented)*
   * Includes classes to log and dump packet.
-* CoCSharp.Logic: Village object strutures and logic. *(Needs to be improved)*
+* CoCSharp.Logic: Village object structures and logic.
   * Includes classes for village objects: Village, Trap, Obstacle, Building etc...
-* CoCSharp.Networking: Clash of Clans network protocol implementaion.
+* CoCSharp.Networking: Clash of Clans network protocol implementation.
   * Includes classes for reading and writing messages.
   * Includes some classes containing packet definition.
 * CoCSharp.Networking.Cryptography: Clash of Clans encryption implementation.

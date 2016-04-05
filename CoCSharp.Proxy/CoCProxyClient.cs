@@ -46,7 +46,7 @@ namespace CoCSharp.Proxy
             if (!e.MessageFullyRead)
                 Console.WriteLine("        => Did not fully read.");
             if (e.Exception != null)
-                Console.WriteLine("        => Warning: Exception occured during reading: {0}", e.Exception.Message);
+                Console.WriteLine("        => Warning: Exception occurred during reading: {0}", e.Exception.Message);
 
             var message = e.Message;
             var messageBytes = (byte[])null;
@@ -96,7 +96,7 @@ namespace CoCSharp.Proxy
             if (!e.MessageFullyRead)
                 Console.WriteLine("        => Warning: Did not fully read message.");
             if (e.Exception != null)
-                Console.WriteLine("        => Warning: Exception occured during reading: {0}", e.Exception.Message);
+                Console.WriteLine("        => Warning: Exception occurred during reading: {0}", e.Exception.Message);
 
 
             var message = e.Message;

@@ -3,6 +3,7 @@ using CoCSharp.Logic;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Cryptography;
 using CoCSharp.Networking.Messages;
+using CoCSharp.Server.Core;
 using System;
 
 namespace CoCSharp.Server.Handlers
@@ -42,7 +43,8 @@ namespace CoCSharp.Server.Handlers
             if (lrMessage.UserID == 0 && lrMessage.UserToken == null) // new account
             {
                 avatar = server.AvatarManager.CreateNewAvatar();
-                Console.WriteLine("Created new avatar with Token {0}, ID {1}", avatar.Token, avatar.ID);
+                FancyConsole.WriteLine("[&(blue)Login&(default)] Created new avatar &(darkcyan){0}&(default):{1} success.", 
+                                       avatar.Token, avatar.ID);
 
                 lsMessage.UserID = avatar.ID;
                 lsMessage.UserID1 = avatar.ID;
@@ -50,19 +52,26 @@ namespace CoCSharp.Server.Handlers
             }
             else
             {
-                if (!server.AvatarManager.LoadedAvatar.TryGetValue(lrMessage.UserToken, out avatar)) // unknown token and id
+                // Create a new account if it does not exist.
+                if (!server.AvatarManager.Exists(lrMessage.UserToken))
                 {
                     avatar = server.AvatarManager.CreateNewAvatar(lrMessage.UserToken, lrMessage.UserID);
-                    Console.WriteLine("Unknown avatar, Created new avatar with Token {0}, ID {1}", avatar.Token, avatar.ID);
+                    FancyConsole.WriteLine("[&(blue)Login&(default)] Unknown avatar -> Created new avatar with &(darkcyan){0}&(default):{1} success.",
+                                           avatar.Token, avatar.ID);
                 }
-                else Console.WriteLine("Avatar with Token {0}, ID {1} logged in.", avatar.Token, avatar.ID);
+                else
+                {
+                    avatar = server.AvatarManager.LoadAvatar(lrMessage.UserToken);
+                    FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} success.",
+                                           avatar.Token, avatar.ID);
+                }
 
                 lsMessage.UserID = avatar.ID;
                 lsMessage.UserID1 = avatar.ID;
                 lsMessage.UserToken = avatar.Token;
             }
 
-            server.AvatarManager.SaveAvatar(avatar);
+            //server.AvatarManager.SaveAvatar(avatar);
             client.Avatar = avatar;
 
             var avatarData = new AvatarMessageData(avatar)
@@ -74,16 +83,16 @@ namespace CoCSharp.Server.Handlers
                 AllianceCastleUsedCapacity = 0,
 
                 //TODO: Properly store them and calculate them.
-                ResourcesCapacity = new ResourceCapacitySlot[] 
+                ResourcesCapacity = new ResourceCapacitySlot[]
                 {
-                    new ResourceCapacitySlot(3000001, 10000000),
-                    new ResourceCapacitySlot(3000002, 10000000)
+                    new ResourceCapacitySlot(3000001, 5000),
+                    new ResourceCapacitySlot(3000002, 5000)
                 },
 
-                ResourcesAmount = new ResourceAmountSlot[] 
+                ResourcesAmount = new ResourceAmountSlot[]
                 {
-                    new ResourceAmountSlot(3000001, 10000000),
-                    new ResourceAmountSlot(3000002, 10000000)
+                    new ResourceAmountSlot(3000001, 100000),
+                    new ResourceAmountSlot(3000002, 100000)
                 }
             };
 
@@ -99,7 +108,7 @@ namespace CoCSharp.Server.Handlers
             client.NetworkManager.SendMessage(ohdMessage); // OwnHomeDataMessage
         }
 
-        public static void HandleNewClientEncryptionMessage(CoCServer server, CoCRemoteClient client, Message message)
+        public static void HandleSessionRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
             var enMessage = new SessionSuccessMessage()
             {
@@ -112,7 +121,7 @@ namespace CoCSharp.Server.Handlers
         public static void RegisterLoginMessageHandlers(CoCServer server)
         {
             server.RegisterMessageHandler(new LoginRequestMessage(), HandleLoginRequestMessage);
-            server.RegisterMessageHandler(new SessionRequestMessage(), HandleNewClientEncryptionMessage);
+            server.RegisterMessageHandler(new SessionRequestMessage(), HandleSessionRequestMessage);
         }
     }
 }

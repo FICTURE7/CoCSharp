@@ -88,7 +88,7 @@ namespace CoCSharp.Networking.Messages
         /// </summary>
         public string Hostname;
         /// <summary>
-        /// Download root url from where all the assets will be downloaded.
+        /// Download root URL from where all the assets will be downloaded.
         /// </summary>
         public string DownloadRootUrl;
 
@@ -138,8 +138,8 @@ namespace CoCSharp.Networking.Messages
         {
             ThrowIfReaderNull(reader);
 
-            Nonce = reader.ReadBytes(CoCKeyPair.NonceLength);
-            PublicKey = reader.ReadBytes(CoCKeyPair.KeyLength);
+            //Nonce = reader.ReadBytes(CoCKeyPair.NonceLength);
+            //PublicKey = reader.ReadBytes(CoCKeyPair.KeyLength);
 
             Reason = (LoginFailureReason)reader.ReadInt32();
 

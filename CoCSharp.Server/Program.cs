@@ -15,6 +15,8 @@ namespace CoCSharp.Server
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            Console.WriteLine("Starting server...");
+
             Server = new CoCServer();
             Server.Start();
 

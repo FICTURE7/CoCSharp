@@ -30,19 +30,19 @@ namespace CoCSharp.Server
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             if (e.Exception != null)
-                Console.WriteLine("Exception occured while receiving: {0}", e.Exception.ToString());
+                Console.WriteLine("Exception occurred while receiving: {0}", e.Exception.ToString());
             if (e.Exception is CryptographicException)
-                Console.WriteLine("\tCryptographicException occured while decrypting a message.");
+                Console.WriteLine("\tCryptographicException occurred while decrypting a message.");
 
             try
             {
                 var handler = (MessageHandler)null;
-                if (_server.MessageHandlers.TryGetValue(e.Message.ID, out handler))
+                if (_server.MessageHandlerDictionary.TryGetValue(e.Message.ID, out handler))
                     handler(_server, this, e.Message);
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Exception occured while handling: {0}", ex.ToString());
+                Console.WriteLine("Exception occurred while handling: {0}", ex.ToString());
             }
         }
     }

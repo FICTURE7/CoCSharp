@@ -46,6 +46,7 @@ namespace CoCSharp.Logic
             }
         }
 
+        //TODO: Implement an enum for this instead.
         /// <summary>
         /// Gets or sets whether the construction of the <see cref="Buildable"/> was cancelled,
         /// that is when <see cref="Buildable.CancelConstruction"/> is called.

@@ -95,12 +95,10 @@ namespace CoCSharp.Logic
             if (Data == null)
                 throw new InvalidOperationException("Building.Data cannot be null.");
 
-            //Console.WriteLine("BeginConstruction called.");
-
             var data = GetBuildingData();
 
             // No need to schedule construction logic if its construction is instant. (Walls)
-            if (data.BuildTime == TimeSpan.FromSeconds(0))
+            if (data.BuildTime.TotalSeconds == 0)
             {
                 DoConstructionFinished();
                 return;

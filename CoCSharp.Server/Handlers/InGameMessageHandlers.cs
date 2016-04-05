@@ -27,12 +27,12 @@ namespace CoCSharp.Server.Handlers
                     try
                     {
                         var handler = (CommandHandler)null;
-                        if (server.CommandHandlers.TryGetValue(cmd.ID, out handler))
+                        if (server.CommandHandlerDictionary.TryGetValue(cmd.ID, out handler))
                             handler(server, client, cmd);
                     }
                     catch(Exception ex)
                     {
-                        Console.WriteLine("Exception occured while handling command: {0}\r\n\t{1}", cmd.GetType().Name, ex);
+                        Console.WriteLine("Exception occurred while handling command: {0}\r\n\t{1}", cmd.GetType().Name, ex);
                     }
                 }
                 server.AvatarManager.SaveAvatar(client.Avatar);

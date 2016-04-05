@@ -96,6 +96,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets the duration of the clearing of the <see cref="Obstacle"/>.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>false</c>.</exception>
         [JsonIgnore]
         public TimeSpan ClearDuration
         {
@@ -111,6 +112,8 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the UTC time at which the clearing of the <see cref="Obstacle"/> will end.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>false</c>.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/>'s kind is not <see cref="DateTimeKind.Utc"/>.</exception>
         [JsonIgnore]
         public DateTime ClearEndTime
         {
@@ -126,9 +129,6 @@ namespace CoCSharp.Logic
                 if (value.Kind != DateTimeKind.Utc)
                     throw new ArgumentException("DateTime.Kind of value must be a DateTimeKind.Utc.", "value");
 
-                //// Calculate the duration of the clearing operation.
-                //ClearTSeconds = (int)(value - DateTime.UtcNow).TotalSeconds;
-
                 // Convert the specified DateTime into UNIX timestamps.
                 ClearTEndUnixTimestamp = (int)DateTimeConverter.ToUnixTimestamp(value);
             }
@@ -141,14 +141,17 @@ namespace CoCSharp.Logic
             get
             {
                 // Json.Net will get this value then write it to a Json string or whatever.
-                var duration = ClearTEndUnixTimestamp - DateTimeConverter.UnixUtcNow;
+                var clearDuration = ClearTEndUnixTimestamp - DateTimeConverter.UnixUtcNow;
 
                 // Make sure we don't get any negative durations.
-                if (duration < 0)
+                if (clearDuration < 0)
+                {
+                    ClearTEndUnixTimestamp = 0;
                     return 0;
+                }
 
-                // Should add 100 with the value?
-                return duration;
+                // NOTE: Should add 100 with the value?
+                return clearDuration;
             }
             set
             {
@@ -170,6 +173,8 @@ namespace CoCSharp.Logic
         /// and <see cref="VillageObject.Data"/> is not null; otherwise 
         /// it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>true</c>.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="VillageObject.Data"/> is <c>null</c>.</exception>
         public void BeginClearing()
         {
             if (IsClearing)
@@ -178,6 +183,13 @@ namespace CoCSharp.Logic
                 throw new InvalidOperationException("Obstacle.Data cannot be null.");
 
             var data = GetObstacleData();
+
+            if (data.ClearTime == TimeSpan.FromSeconds(0))
+            {
+                DoClearingFinished();
+                return;
+            }
+
             ClearEndTime = DateTime.UtcNow.Add(data.ClearTime);
             InternalScheduleClearing();
         }

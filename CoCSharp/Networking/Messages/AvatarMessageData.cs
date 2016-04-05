@@ -349,15 +349,15 @@ namespace CoCSharp.Networking.Messages
         /// </summary>
         public AchievementProgessSlot[] AcheivementProgress;
         /// <summary>
-        /// Npc stars.
+        /// NPC stars.
         /// </summary>
         public NpcStarSlot[] NpcStars;
         /// <summary>
-        /// Npc gold.
+        /// NPC gold.
         /// </summary>
         public NpcGoldSlot[] NpcGold;
         /// <summary>
-        /// Npc elixir.
+        /// NPC elixir.
         /// </summary>
         public NpcElixirSlot[] NpcElixir;
 
@@ -449,7 +449,7 @@ namespace CoCSharp.Networking.Messages
             TownHallLevel = reader.ReadInt32();
             Name = reader.ReadString();
 
-            Unknown14 = reader.ReadInt32(); // -1, facebook ID
+            Unknown14 = reader.ReadInt32(); // -1, Facebook ID
 
             Level = reader.ReadInt32();
             Experience = reader.ReadInt32();
