@@ -3,7 +3,7 @@ using CoCSharp.Logic;
 using CoCSharp.Networking.Messages.Commands;
 using CoCSharp.Server.Core;
 
-namespace CoCSharp.Server.Handlers
+namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
@@ -14,7 +14,9 @@ namespace CoCSharp.Server.Handlers
         private const string CancelledConstructionFormat =
             "[&(darkgreen)Logic&(default)] Construction -> &(darkyellow)Cancelled&(default) for account &(darkcyan){0}&(default) \n\t\tat {1},{2} with lvl {3}";
         private const string BuildableAlreadyInConstructionFormat =
-            "[&(darkgreen)Logic&(default)] Construction -> &(red)Error:&(default) for account &(darkcyan){0}&(default) \n\t\twith ID {1}";
+            "[&(darkgreen)Logic&(default)] Construction -> &(red)Error:&(default) for account &(darkcyan){0}&(default) \n\t\talready in construction with ID {1}";
+        private const string BuildableNotInConstructionFormat =
+            "[&(darkgreen)Logic&(default)] Construction -> &(red)Error:&(default) for account &(darkcyan){0}&(default) \n\t\tnot in construction with ID {1}";
 
         private const string MoveVillageObjectFormat =
             "[&(darkgreen)Logic&(default)] Placement -> Moved &(darkcyan){0}&(default) for account &(darkcyan){1}&(default) \n\t\tat {2},{3}";
@@ -25,6 +27,12 @@ namespace CoCSharp.Server.Handlers
            "[&(darkgreen)Logic&(default)] Clearing -> &(green)Finished&(default) for account &(darkcyan){0}&(default) \n\t\tat {1},{2}";
         private const string CancelledClearObstacleFormat =
            "[&(darkgreen)Logic&(default)] Clearing -> &(darkyellow)Cancelled&(default) for account &(darkcyan){0}&(default) \n\t\tat {1},{2}";
+
+        private const string RearmedTrapFormat =
+            "[&(darkgreen)Logic&(default)] Rearmed -> &(darkcyan){0}&(default) for account &(darkcyan){1}&(default) \n\t\tat {2},{3}";
+
+        //TODO: Send an OutOfSyncMessage.
+        //TODO: Consume resources and all that fancy stuff.
 
         public static void RegisterCommandHandlers(CoCServer server)
         {
@@ -41,6 +49,8 @@ namespace CoCSharp.Server.Handlers
             server.RegisterCommandHandler(new MoveMultipleVillageObjectCommand(), HandleMoveMultipleVillageObjectCommand);
 
             server.RegisterCommandHandler(new ClearObstacleCommand(), HandleClearObstacleCommand);
+
+            server.RegisterCommandHandler(new RearmTrapCommand(), HandleRearmTrapCommand);
         }
 
         private static void ConstructionFinished(object sender, ConstructionFinishEventArgs e)

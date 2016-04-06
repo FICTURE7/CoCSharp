@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Networking;
 using CoCSharp.Server.Core;
 using CoCSharp.Server.Handlers;
+using CoCSharp.Server.Handlers.Commands;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -8,6 +9,10 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Server
 {
+    public delegate void CommandHandler(CoCServer server, CoCRemoteClient client, Command command);
+
+    public delegate void MessageHandler(CoCServer server, CoCRemoteClient client, Message message);
+
     public class CoCServer
     {
         public CoCServer()
@@ -26,15 +31,12 @@ namespace CoCSharp.Server
             InGameMessageHandlers.RegisterInGameMessageHandlers(this);
 
             CommandHandlers.RegisterCommandHandlers(this);
-
-            //ConstructionCommandHandlers.RegisterCommandHandlers(this);
-            //VillageObjectCommandHandlers.RegisterCommandHandlers(this);
         }
 
         public AvatarManager AvatarManager { get; private set; }
         public DataManager DataManager { get; private set; }
-        public Dictionary<int, CommandHandler> CommandHandlerDictionary { get; private set; }
-        public Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; private set; }
+        private Dictionary<int, CommandHandler> CommandHandlerDictionary { get; set; }
+        private Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; set; }
         public List<CoCRemoteClient> Clients { get; private set; }
 
         private readonly Socket _listener;
@@ -56,6 +58,40 @@ namespace CoCSharp.Server
         public void RegisterCommandHandler(Command command, CommandHandler handler)
         {
             CommandHandlerDictionary.Add(command.ID, handler);
+        }
+
+        public void HandleMessage(CoCRemoteClient client, Message message)
+        {
+            try
+            {
+                var handler = (MessageHandler)null;
+                if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
+                    handler(this, client, message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception occurred while handling message: {0}\r\n\t{1}", message.GetType().Name, ex);
+            }
+        }
+
+        public void HandleCommand(CoCRemoteClient client, Command command)
+        {
+            try
+            {
+                var handler = (CommandHandler)null;
+                if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
+                    handler(this, client, command);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception occurred while handling command: {0}\r\n\t{1}", command.GetType().Name, ex);
+            }
+        }
+
+        public void SendMessageAll(Message message)
+        {
+            for (int i = 0; i < Clients.Count; i++)
+                Clients[i].NetworkManager.SendMessage(message);
         }
 
         private void StartAccept()
@@ -100,7 +136,8 @@ namespace CoCSharp.Server
 
             StartAccept(); // start accept asap
 
-            Console.WriteLine("Accepted new connection: {0}", args.AcceptSocket.RemoteEndPoint);
+            FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> New connection accepted: &(darkcyan){0}&(default).",
+                                   args.AcceptSocket.RemoteEndPoint);
             Clients.Add(new CoCRemoteClient(this, args.AcceptSocket, _settings));
             args.AcceptSocket = null;
             _acceptPool.Push(args);

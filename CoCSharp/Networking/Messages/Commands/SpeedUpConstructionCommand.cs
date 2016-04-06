@@ -24,10 +24,10 @@ namespace CoCSharp.Networking.Messages.Commands
         public override int ID { get { return 504; } }
 
         /// <summary>
-        /// Game ID of the <see cref="VillageObject"/> whose
+        /// Game ID of the <see cref="Buildable"/> whose
         /// construction was speed up.
         /// </summary>
-        public int VillageObjectID;
+        public int BuildableGameID;
 
         /// <summary>
         /// Unknown integer 1.
@@ -45,7 +45,7 @@ namespace CoCSharp.Networking.Messages.Commands
         {
             ThrowIfReaderNull(reader);
 
-            VillageObjectID = reader.ReadInt32();
+            BuildableGameID = reader.ReadInt32();
 
             Unknown1 = reader.ReadInt32();
         }
@@ -61,7 +61,7 @@ namespace CoCSharp.Networking.Messages.Commands
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(VillageObjectID);
+            writer.Write(BuildableGameID);
 
             writer.Write(Unknown1);
         }

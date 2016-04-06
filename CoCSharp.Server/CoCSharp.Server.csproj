@@ -47,7 +47,6 @@
   <ItemGroup>
     <Compile Include="CoCRemoteClient.cs" />
     <Compile Include="CoCServer.cs" />
-    <Compile Include="CommandHandler.cs" />
     <Compile Include="Core\AvatarManager.cs" />
     <Compile Include="Core\AvatarSave.cs" />
     <Compile Include="Core\DataManager.cs" />
@@ -55,16 +54,17 @@
     <Compile Include="Core\FancyConsole.cs" />
     <Compile Include="Core\FancyConsole.Write.cs" />
     <Compile Include="Core\FancyConsole.WriteLine.cs" />
-    <Compile Include="Handlers\CommandHandlers.BuyBuilding.cs" />
-    <Compile Include="Handlers\CommandHandlers.BuyTrap.cs" />
-    <Compile Include="Handlers\CommandHandlers.CancelConstruction.cs" />
-    <Compile Include="Handlers\CommandHandlers.ClearObstacle.cs" />
-    <Compile Include="Handlers\CommandHandlers.cs" />
-    <Compile Include="Handlers\CommandHandlers.MoveMultipleVillageObject.cs" />
-    <Compile Include="Handlers\CommandHandlers.MoveVillageObject.cs" />
-    <Compile Include="Handlers\CommandHandlers.SpeedUpConstruction.cs" />
-    <Compile Include="Handlers\CommandHandlers.UpgradeBuildable.cs" />
-    <Compile Include="Handlers\CommandHandlers.UpgradeMultipleBuildable.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyBuilding.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyTrap.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.CancelConstruction.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.ClearObstacle.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.MoveMultipleVillageObject.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.MoveVillageObject.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.RearmTrap.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.SpeedUpConstruction.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeBuildable.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeMultipleBuildable.cs" />
     <Compile Include="Handlers\VillageObjectUserToken.cs" />
     <Compile Include="Handlers\InGameMessageHandlers.cs" />
     <Compile Include="Handlers\LoginMessageHandlers.cs" />
@@ -81,7 +81,7 @@
     <None Include="Content\traps.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Handlers\CommandHandlers.BuyResources.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyResources.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">

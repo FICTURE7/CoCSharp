@@ -190,13 +190,13 @@ namespace CoCSharp.Logic
         {
             // Code repetition here with double checking of gameIds.
             //TODO: Return null instead.
-            if (gameId >= Building.BaseGameID && gameId <= Building.BaseGameID + VillageObject.Base)
+            if (gameId >= Building.BaseGameID && gameId < Building.BaseGameID + VillageObject.Base)
                 return GetBuilding(gameId);
-            else if (gameId >= Obstacle.BaseGameID && gameId <= Obstacle.BaseGameID + VillageObject.Base)
+            else if (gameId >= Obstacle.BaseGameID && gameId < Obstacle.BaseGameID + VillageObject.Base)
                 return GetObstacle(gameId);
-            else if (gameId >= Trap.BaseGameID && gameId <= Trap.BaseGameID + VillageObject.Base)
+            else if (gameId >= Trap.BaseGameID && gameId < Trap.BaseGameID + VillageObject.Base)
                 return GetTrap(gameId);
-            else if (gameId >= Decoration.BaseGameID && gameId <= Decoration.BaseGameID + VillageObject.Base)
+            else if (gameId >= Decoration.BaseGameID && gameId < Decoration.BaseGameID + VillageObject.Base)
                 return GetDecoration(gameId);
             else
                 throw new ArgumentException("Could not find VillageObject in this Village with game ID '" + gameId + "'.", "gameId");

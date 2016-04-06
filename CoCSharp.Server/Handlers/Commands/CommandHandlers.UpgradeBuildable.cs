@@ -1,9 +1,10 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Csv;
+using CoCSharp.Logic;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Messages.Commands;
 using CoCSharp.Server.Core;
 
-namespace CoCSharp.Server.Handlers
+namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
@@ -18,7 +19,16 @@ namespace CoCSharp.Server.Handlers
                 return;
             }
 
-            var data = server.DataManager.FindBuilding(buildable.GetDataID(), buildable.Level + 1);
+            var data = (CsvData)null;
+            if (buildable is Building)
+            {
+                data = server.DataManager.FindBuilding(buildable.GetDataID(), buildable.Level + 1);
+            }
+            else if (buildable is Trap)
+            {
+                data = server.DataManager.FindTrap(buildable.GetDataID(), buildable.Level + 1);
+            }
+
             buildable.ConstructionFinished += ConstructionFinished;
 
             buildable.UserToken = token;

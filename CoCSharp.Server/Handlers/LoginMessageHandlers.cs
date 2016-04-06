@@ -8,8 +8,6 @@ using System;
 
 namespace CoCSharp.Server.Handlers
 {
-    public delegate void MessageHandler(CoCServer server, CoCRemoteClient client, Message message);
-
     public static class LoginMessageHandlers
     {
         private static void HandleLoginRequestMessage(CoCServer server, CoCRemoteClient client, Message message)

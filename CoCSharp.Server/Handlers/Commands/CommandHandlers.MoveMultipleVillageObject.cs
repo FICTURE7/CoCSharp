@@ -2,7 +2,7 @@
 using CoCSharp.Networking.Messages.Commands;
 using CoCSharp.Server.Core;
 
-namespace CoCSharp.Server.Handlers
+namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {

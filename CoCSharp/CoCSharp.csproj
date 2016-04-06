@@ -116,6 +116,7 @@
     <Compile Include="Networking\Messages\Commands\BuyResourcesCommand.cs" />
     <Compile Include="Networking\Messages\Commands\BuyTrapCommand.cs" />
     <Compile Include="Networking\Messages\Commands\CancelConsturctionCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\RearmTrapCommand.cs" />
     <Compile Include="Networking\Messages\Commands\SpeedUpConstructionCommand.cs" />
     <Compile Include="Networking\Messages\Commands\UpgradeMultipleBuildableCommand.cs" />
     <Compile Include="Networking\Messages\VillageMessageData.cs" />
@@ -150,7 +151,7 @@
     <Compile Include="Networking\Messages\Commands\ClearObstacleCommand.cs" />
     <Compile Include="Networking\Messages\Commands\MoveMultipleVillageObjectCommand.cs" />
     <Compile Include="Networking\Messages\Commands\MoveVillageObjectCommand.cs" />
-    <Compile Include="Networking\Messages\Commands\UpgradeBuildingCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\UpgradeBuildableCommand.cs" />
     <Compile Include="Networking\Messages\LoginFailedMessage.cs" />
     <Compile Include="Networking\Messages\LoginSuccessMessage.cs" />
     <Compile Include="Networking\Messages\OwnHomeDataMessage.cs" />

@@ -72,7 +72,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets whether the trap needs to be repaired.
         /// </summary>
-        [JsonProperty("need_repair", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("needs_repair", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool Broken { get; set; }
 
         /// <summary>

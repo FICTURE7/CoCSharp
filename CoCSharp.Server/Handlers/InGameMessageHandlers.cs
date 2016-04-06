@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Networking;
 using CoCSharp.Networking.Messages;
-using System;
 
 namespace CoCSharp.Server.Handlers
 {
@@ -19,21 +18,11 @@ namespace CoCSharp.Server.Handlers
                 for (int i = 0; i < cmdMessage.Commands.Length; i++)
                 {
                     var cmd = cmdMessage.Commands[i];
-                    
-                    // Should probably drop the client as well, because the network stream is very likely to be messed up.
+
                     if (cmd == null)
                         break;
 
-                    try
-                    {
-                        var handler = (CommandHandler)null;
-                        if (server.CommandHandlerDictionary.TryGetValue(cmd.ID, out handler))
-                            handler(server, client, cmd);
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine("Exception occurred while handling command: {0}\r\n\t{1}", cmd.GetType().Name, ex);
-                    }
+                    server.HandleCommand(client, cmd);
                 }
                 server.AvatarManager.SaveAvatar(client.Avatar);
             }
@@ -49,8 +38,7 @@ namespace CoCSharp.Server.Handlers
             cmsMessage.Name = client.Avatar.Name;
             cmsMessage.Message = cmcMessage.Message;
 
-            for (int i = 0; i < server.Clients.Count; i++)
-                server.Clients[i].NetworkManager.SendMessage(cmsMessage);
+            server.SendMessageAll(cmsMessage);
         }
 
         public static void RegisterInGameMessageHandlers(CoCServer server)

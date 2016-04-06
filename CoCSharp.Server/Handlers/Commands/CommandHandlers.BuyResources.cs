@@ -1,9 +1,8 @@
 ﻿using CoCSharp.Networking;
 using CoCSharp.Networking.Messages.Commands;
 using CoCSharp.Server.Core;
-using System;
 
-namespace CoCSharp.Server.Handlers
+namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
@@ -19,16 +18,7 @@ namespace CoCSharp.Server.Handlers
             if (embeddedCommand == null)
                 return;
 
-            try
-            {
-                var handler = (CommandHandler)null;
-                if (server.CommandHandlerDictionary.TryGetValue(embeddedCommand.ID, out handler))
-                    handler(server, client, embeddedCommand);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception occurred while handling embedded command: {0}\r\n\t{1}", brCommand.GetType().Name, ex);
-            }
+            server.HandleCommand(client, command);
         }
     }
 }

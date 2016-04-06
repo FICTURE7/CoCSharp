@@ -1,8 +1,9 @@
 ﻿using CoCSharp.Logic;
 using CoCSharp.Networking;
 using CoCSharp.Networking.Messages.Commands;
+using CoCSharp.Server.Core;
 
-namespace CoCSharp.Server.Handlers
+namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
@@ -10,7 +11,12 @@ namespace CoCSharp.Server.Handlers
         {
             // Fabulous variable name.
             var sucCommand = (SpeedUpConstructionCommand)command;
-            var buildable = client.Avatar.Home.GetVillageObject<Buildable>(sucCommand.VillageObjectID);
+            var buildable = client.Avatar.Home.GetVillageObject<Buildable>(sucCommand.BuildableGameID);
+            if (buildable.IsConstructing)
+            {
+                FancyConsole.WriteLine(BuildableNotInConstructionFormat, client.Avatar.Token, sucCommand.BuildableGameID);
+                return;
+            }
             buildable.SpeedUpConstruction();
         }
     }

@@ -22,7 +22,7 @@ namespace CoCSharp.Networking.Messages
         public override ushort ID { get { return 14715; } }
 
         /// <summary>
-        /// Message that must be sent to the lobby chat.
+        /// Message that will be sent to the lobby chat.
         /// </summary>
         public string Message;
 

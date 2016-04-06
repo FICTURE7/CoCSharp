@@ -1,4 +1,5 @@
-﻿using CoCSharp.Networking.Cryptography;
+﻿using CoCSharp.Data;
+using CoCSharp.Networking.Cryptography;
 using Ionic.Zlib;
 using System;
 using System.IO;
@@ -110,9 +111,10 @@ namespace CoCSharp.Networking.Messages
         public string Unknown5;
 
         /// <summary>
-        /// Fingerprint json string.
+        /// New fingerprint that the server wants the client
+        /// to use.
         /// </summary>
-        public string FingerprintJsonString; //TODO: Implement fingerprint.
+        public Fingerprint Fingerprint;
         /// <summary>
         /// Unknown int 6.
         /// </summary>
@@ -160,7 +162,7 @@ namespace CoCSharp.Networking.Messages
                 var decompressedLength = br.ReadInt32();
                 var compressedFingerprint = br.ReadBytes(fingerprintData.Length - 4);
                 var fingerprintJson = ZlibStream.UncompressString(compressedFingerprint);
-                FingerprintJsonString = fingerprintJson;
+                Fingerprint = Fingerprint.FromJson(fingerprintJson);
             }
 
             Unknown6 = reader.ReadInt32(); // -1
@@ -191,7 +193,7 @@ namespace CoCSharp.Networking.Messages
 
             writer.Write(Unknown5);
 
-            writer.Write(FingerprintJsonString); //TODO: Implmenent compression
+            writer.Write(Fingerprint.ToJson());
 
             writer.Write(Unknown5);
             writer.Write(Unknown6);

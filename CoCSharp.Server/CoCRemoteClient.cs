@@ -1,9 +1,8 @@
-﻿using CoCSharp.Networking;
-using System.Net.Sockets;
-using CoCSharp.Server.Handlers;
-using CoCSharp.Logic;
-using System;
+﻿using CoCSharp.Logic;
+using CoCSharp.Networking;
 using CoCSharp.Networking.Cryptography;
+using System;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 
 namespace CoCSharp.Server
@@ -15,7 +14,7 @@ namespace CoCSharp.Server
             _server = server;
             Connection = connection;
             SessionKey = Crypto8.GenerateNonce();
-            Avatar = new Avatar();
+            //Avatar = new Avatar();
             NetworkManager = new NetworkManagerAsync(connection, settings);
             NetworkManager.MessageReceived += OnMessageReceived;
         }
@@ -34,16 +33,7 @@ namespace CoCSharp.Server
             if (e.Exception is CryptographicException)
                 Console.WriteLine("\tCryptographicException occurred while decrypting a message.");
 
-            try
-            {
-                var handler = (MessageHandler)null;
-                if (_server.MessageHandlerDictionary.TryGetValue(e.Message.ID, out handler))
-                    handler(_server, this, e.Message);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("Exception occurred while handling: {0}", ex.ToString());
-            }
+            _server.HandleMessage(this, e.Message);
         }
     }
 }

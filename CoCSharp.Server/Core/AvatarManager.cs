@@ -9,10 +9,10 @@ namespace CoCSharp.Server.Core
     {
         public AvatarManager()
         {
-            LoadedAvatars = new Dictionary<string, Avatar>();
+            //LoadedAvatars = new Dictionary<string, Avatar>();
         }
 
-        public Dictionary<string, Avatar> LoadedAvatars { get; private set; }
+        //public Dictionary<string, Avatar> LoadedAvatars { get; private set; }
 
         public Avatar CreateNewAvatar()
         {
@@ -38,7 +38,7 @@ namespace CoCSharp.Server.Core
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
-            LoadedAvatars.Add(avatar.Token, avatar);
+            //LoadedAvatars.Add(avatar.Token, avatar);
             return avatar;
         }
 
@@ -54,7 +54,7 @@ namespace CoCSharp.Server.Core
             };
             var avatarSave = new AvatarSave(avatar);
             avatarSave.Load();
-            LoadedAvatars.Add(avatar.Token, avatar);
+            //LoadedAvatars.Add(avatar.Token, avatar);
             return avatar;
         }
 
