@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace CoCSharp.Logic
 {

@@ -7,6 +7,7 @@ namespace CoCSharp.Server.Core
     public class DataManager
     {
         // TODO: Make this safer.
+        // TODO: Avoid using LINQ for better performance.
 
         public DataManager()
         {
@@ -18,11 +19,15 @@ namespace CoCSharp.Server.Core
 
             var obstacleTable = new CsvTable("Content\\obstacles.csv");
             ObstaclesData = CsvConvert.Deserialize<ObstacleData>(obstacleTable);
+
+            var decorationTable = new CsvTable("Content\\decos.csv");
+            DecorationsData = CsvConvert.Deserialize<DecorationData>(decorationTable);
         }
 
         public BuildingData[] BuildingsData { get; set; }
         public TrapData[] TrapsData { get; set; }
         public ObstacleData[] ObstaclesData { get; private set; }
+        public DecorationData[] DecorationsData { get; private set; }
 
         public BuildingData[] FindBuilding(int id)
         {
@@ -47,6 +52,11 @@ namespace CoCSharp.Server.Core
         public ObstacleData FindObstacle(int id)
         {
             return ObstaclesData.Where(bd => bd.ID == id).FirstOrDefault();
+        }
+
+        public DecorationData FindDecoration(int id)
+        {
+            return DecorationsData.Where(bd => bd.ID == id).FirstOrDefault();
         }
     }
 }

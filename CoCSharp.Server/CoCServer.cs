@@ -22,7 +22,7 @@ namespace CoCSharp.Server
             _acceptPool = new SocketAsyncEventArgsPool(100);
 
             AvatarManager = new AvatarManager();
-            DataManager = new DataManager();
+            DataManager = new DataManager(); // This bad boi is hitting start performance hard. Need to rework the Csv implementation.
             Clients = new List<CoCRemoteClient>();
             MessageHandlerDictionary = new Dictionary<ushort, MessageHandler>();
             CommandHandlerDictionary = new Dictionary<int, CommandHandler>();

@@ -54,7 +54,7 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected
+        /// Gets the <see cref="Type"/> of the <see cref="CsvData"/> expected
         /// by the <see cref="Trap"/>.
         /// </summary>
         /// <remarks>
@@ -93,7 +93,7 @@ namespace CoCSharp.Logic
 
             var data = GetTrapData();
 
-            // No need to schedule construction logic if its construction is instant. (Walls)
+            // No need to schedule construction logic if its construction is instant. (Initial construction)
             if (data.BuildTime.TotalSeconds == 0)
             {
                 DoConstructionFinished();

@@ -128,10 +128,10 @@ namespace CoCSharp.Logic
         //TODO: Turn this into an abstract function.
 
         /// <summary>
-        /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected
+        /// Gets the <see cref="Type"/> of the <see cref="CsvData"/> expected
         /// by the <see cref="VillageObject"/>.
         /// </summary>
-        protected virtual Type ExpectedDataType { get; }
+        protected abstract Type ExpectedDataType { get; }
 
         /// <summary>
         /// Returns the data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>. Not the neatest of

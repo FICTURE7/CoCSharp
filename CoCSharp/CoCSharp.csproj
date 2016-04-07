@@ -81,6 +81,7 @@
     <Compile Include="Csv\CsvConvert.cs" />
     <Compile Include="Csv\CsvTable.cs" />
     <Compile Include="Data\AssetManager.cs" />
+    <Compile Include="Data\DecorationData.cs" />
     <Compile Include="Data\ObstacleData.cs" />
     <Compile Include="Data\TrapData.cs" />
     <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Networking\Messages\Commands\BuyTrapCommand.cs" />
     <Compile Include="Networking\Messages\Commands\CancelConsturctionCommand.cs" />
     <Compile Include="Networking\Messages\Commands\RearmTrapCommand.cs" />
+    <Compile Include="Networking\Messages\Commands\SellDecorationCommand.cs" />
     <Compile Include="Networking\Messages\Commands\SpeedUpConstructionCommand.cs" />
     <Compile Include="Networking\Messages\Commands\UpgradeMultipleBuildableCommand.cs" />
     <Compile Include="Networking\Messages\VillageMessageData.cs" />

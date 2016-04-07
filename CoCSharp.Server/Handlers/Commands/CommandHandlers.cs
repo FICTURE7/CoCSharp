@@ -31,14 +31,22 @@ namespace CoCSharp.Server.Handlers.Commands
         private const string RearmedTrapFormat =
             "[&(darkgreen)Logic&(default)] Rearmed -> &(darkcyan){0}&(default) for account &(darkcyan){1}&(default) \n\t\tat {2},{3}";
 
-        //TODO: Send an OutOfSyncMessage.
+        private const string BoughtDecorationFormat =
+            "[&(darkgreen)Logic&(default)] Decoration -> Bought &(darkcyan){0}&(default) for account &(darkcyan){1}&(default) \n\t\tat {2},{3}";
+        private const string SoldDecorationFormat =
+            "[&(darkgreen)Logic&(default)] Decoration -> Sold &(darkcyan){0}&(default) for account &(darkcyan){1}&(default) \n\t\tat {2},{3}";
+
+        //TODO: Send an OutOfSyncMessage when things seems wrong.
         //TODO: Consume resources and all that fancy stuff.
 
         public static void RegisterCommandHandlers(CoCServer server)
         {
             server.RegisterCommandHandler(new BuyBuildingCommand(), HandleBuyBuildingCommand);
             server.RegisterCommandHandler(new BuyTrapCommand(), HandleBuyTrapCommand);
+            server.RegisterCommandHandler(new BuyDecorationCommand(), HandleBuyDecorationCommand);
             server.RegisterCommandHandler(new BuyResourcesCommand(), HandleBuyResourcesCommand);
+
+            server.RegisterCommandHandler(new SellDecorationCommand(), HandleSellDecorationCommand);
 
             server.RegisterCommandHandler(new UpgradeBuildableCommand(), HandleUpgradeBuildableCommand);
             server.RegisterCommandHandler(new UpgradeMultipleBuildableCommand(), HandleUpgradeMultipleBuildableCommand);

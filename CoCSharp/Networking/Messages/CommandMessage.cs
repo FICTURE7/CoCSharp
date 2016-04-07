@@ -51,7 +51,7 @@ namespace CoCSharp.Networking.Messages
 
             var length = reader.ReadInt32();
             if (length < 0)
-                throw new InvalidMessageException("Number of embedded commands cannot be less than 0.");
+                throw new InvalidMessageException("Number of commands cannot be less than 0.");
 
             Commands = new Command[length];
 
@@ -60,7 +60,7 @@ namespace CoCSharp.Networking.Messages
                 var cmd = (Command)null;
                 var cmdID = reader.ReadInt32();
                 if (!CommandFactory.TryCreate(cmdID, out cmd))
-                    break; // just not to mess the stream up
+                    break; // Breaking early because we don't want to mess the stream up.
 
                 cmd.ReadCommand(reader);
                 Commands[i] = cmd;
@@ -81,10 +81,10 @@ namespace CoCSharp.Networking.Messages
             writer.Write(Subtick);
             writer.Write(Checksum);
 
-            if (Commands == null)
+            if (Commands == null || Commands.Length == 0)
             {
                 writer.Write(0);
-                return; // exit early because there is no commands
+                return;
             }
 
             writer.Write(Commands.Length);
