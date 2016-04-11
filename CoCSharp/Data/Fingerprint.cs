@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CoCSharp.Data
@@ -45,7 +46,7 @@ namespace CoCSharp.Data
             var json = File.ReadAllText(path);
             var fingerprint = FromJson(json);
             Files = fingerprint.Files;
-            Hash = fingerprint.Hash;
+            MasterHash = fingerprint.MasterHash;
             Version = fingerprint.Version;
         }
 
@@ -55,16 +56,37 @@ namespace CoCSharp.Data
         public FingerprintFile[] Files { get; set; }
 
         /// <summary>
-        /// Gets or sets the SHA-1 hash of the <see cref="Fingerprint"/>.
+        /// Gets or sets the SHA-1 master hash of the <see cref="Fingerprint"/>.
         /// </summary>
         [JsonProperty("sha")]
-        public string Hash { get; set; }
+        [JsonConverter(typeof(SHA1StringConverter))]
+        public byte[] MasterHash { get; set; }
 
         /// <summary>
         /// Gets or sets the version of the <see cref="Fingerprint"/>.
         /// </summary>
         [JsonProperty("version")]
         public string Version { get; set; }
+
+        /// <summary>
+        /// Computes the master hash of the overall fingerprint file.
+        /// </summary>
+        /// <returns>Master hash of the overall fingerprint file.</returns>
+        public byte[] ComputeMasterHash()
+        {
+            // All hashes of the FingerprintFiles into hex-strings.
+            var hashes = new StringBuilder();
+
+            for (int i = 0; i < Files.Length; i++)
+            {
+                var hash = Utils.BytesToString(Files[i].Hash);
+                hashes.Append(hash);
+            }
+
+            var hashesBytes = Encoding.UTF8.GetBytes(hashes.ToString());
+            using (var sha1 = SHA1.Create())
+                return sha1.ComputeHash(hashesBytes);
+        }
 
         /// <summary>
         /// Returns a JSON string that represents the current <see cref="Fingerprint"/>.
@@ -98,7 +120,7 @@ namespace CoCSharp.Data
             if (value == null)
                 throw new ArgumentNullException("value");
             if (value.Length == 0)
-                throw new ArgumentException("Empty json value is not valid.");
+                throw new ArgumentException("Empty JSON value is not valid.");
 
             var fingerprint = JsonConvert.DeserializeObject<Fingerprint>(value);
             return fingerprint;
@@ -136,12 +158,13 @@ namespace CoCSharp.Data
         /// <param name="serverUrl">URL of where to download the files.</param>
         /// <param name="checksum">
         /// If set to <c>true</c> then it will calculate the SHA-1 of the files downloaded
-        /// and redownload the file if the hash incorrect.
+        /// and re-download the file if the hash incorrect.
         /// </param>
         public void DownloadFiles(string path, string serverUrl, bool checksum)
         {
             var retryCount = 0;
-            var root = Path.Combine(serverUrl, Hash);
+            //var root = Path.Combine(serverUrl, Hash);
+            var root = string.Empty;
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
@@ -161,12 +184,12 @@ namespace CoCSharp.Data
                             var fileSha = Utils.BytesToString(sha1.ComputeHash(fileBytes));
 
                             // Restart download if hash check failed.
-                            if (fileSha != fingerprintFile.Hash)
-                            {
-                                retryCount++;
-                                i--;
-                                continue;
-                            }
+                            //if (fileSha != fingerprintFile.Hash)
+                            //{
+                            //    retryCount++;
+                            //    i--;
+                            //    continue;
+                            //}
                         }
 
                         var savePath = Path.Combine(path, fingerprintFile.Path);
@@ -181,8 +204,6 @@ namespace CoCSharp.Data
                             FileDownloaded = fingerprintFile,
                             ProgressPercentage = ((double)(i + 1) / Files.Length) * 100,
                             DownloadedCount = i + 1,
-                            DownloadsCount = Files.Length,
-                            RetryCount = retryCount
                         };
 
                         OnDownloadProgressChanged(args);

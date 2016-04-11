@@ -80,7 +80,8 @@
     <Compile Include="Csv\CsvAliasAttribute.cs" />
     <Compile Include="Csv\CsvConvert.cs" />
     <Compile Include="Csv\CsvTable.cs" />
-    <Compile Include="Data\AssetManager.cs" />
+    <Compile Include="Data\AssetDownloader.cs" />
+    <Compile Include="Data\SHA1StringConverter.cs" />
     <Compile Include="Data\DecorationData.cs" />
     <Compile Include="Data\ObstacleData.cs" />
     <Compile Include="Data\TrapData.cs" />

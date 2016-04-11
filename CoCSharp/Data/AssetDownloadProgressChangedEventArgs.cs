@@ -3,8 +3,7 @@
 namespace CoCSharp.Data
 {
     /// <summary>
-    /// Provides data for <see cref="Fingerprint.DownloadProgressChanged"/> event. 
-    /// Long name I know, if you have a better suggestion create an issue for it. ;]
+    /// Provides data for <see cref="AssetDownloader.DownloadProgressChanged"/> event.
     /// </summary>
     public class AssetDownloadProgressChangedEventArgs : EventArgs
     {
@@ -22,7 +21,12 @@ namespace CoCSharp.Data
         public FingerprintFile FileDownloaded { get; set; }
 
         /// <summary>
-        /// Gets or sets the progress percentage.
+        /// Gets or sets the next <see cref="FingerprintFile"/> to download.
+        /// </summary>
+        public FingerprintFile NextDownload { get; set; }
+
+        /// <summary>
+        /// Gets or sets the percentage progress made based on downloaded count per total downloads.
         /// </summary>
         public double ProgressPercentage { get; set; }
 
@@ -30,15 +34,5 @@ namespace CoCSharp.Data
         /// Gets or sets the amount of files downloaded.
         /// </summary>
         public int DownloadedCount { get; set; }
-
-        /// <summary>
-        /// Gets or sets the amount of file to download.
-        /// </summary>
-        public int DownloadsCount { get; set; } //TODO: Find a better name.
-
-        /// <summary>
-        /// Gets or sets the amount of download retried.
-        /// </summary>
-        public int RetryCount { get; set; }
     }
 }

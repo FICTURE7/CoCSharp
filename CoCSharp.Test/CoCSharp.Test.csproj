@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\AssetDownloaderTests.cs" />
     <Compile Include="Data\CsvTableTests.cs" />
     <Compile Include="Data\FingerprintTests.cs" />
     <Compile Include="Logic\LogicSchedulerTests.cs" />

@@ -19,7 +19,8 @@ namespace CoCSharp.Data
         /// Gets or sets the SHA-1 hash of the file.
         /// </summary>
         [JsonProperty("sha")]
-        public string Hash { get; set; }
+        [JsonConverter(typeof(SHA1StringConverter))]
+        public byte[] Hash { get; set; }
 
         /// <summary>
         /// Gets or sets the path of the file.

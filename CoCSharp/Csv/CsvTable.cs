@@ -291,7 +291,7 @@ namespace CoCSharp.Csv
         /// </summary>
         /// <param name="bytes">Byte array representing the CSV table to decompress.</param>
         /// <returns>Decompressed byte array.</returns>
-        public static byte[] DecompressCsvTable(byte[] bytes)
+        public static byte[] Decompress(byte[] bytes)
         {
             var retBytes = new byte[bytes.Length + 4];
             Buffer.BlockCopy(bytes, 0, retBytes, 0, 9);
@@ -306,9 +306,9 @@ namespace CoCSharp.Csv
         /// </summary>
         /// <param name="csvString">UTF-8 string representing the CSV table to decompress.</param>
         /// <returns>Decompressed byte array.</returns>
-        public static byte[] DecompressCsvTable(string csvString)
+        public static byte[] Decompress(string csvString)
         {
-            return DecompressCsvTable(Encoding.UTF8.GetBytes(csvString));
+            return Decompress(Encoding.UTF8.GetBytes(csvString));
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace CoCSharp.Csv
         /// </summary>
         /// <param name="bytes">Byte array representing the CSV table to compress.</param>
         /// <returns>Compressed byte array.</returns>
-        public static byte[] CompressCsvTable(byte[] bytes)
+        public static byte[] Compress(byte[] bytes)
         {
             var comBytes = LzmaUtils.Compress(bytes);
             var retBytes = new byte[comBytes.Length - 4];
@@ -333,9 +333,9 @@ namespace CoCSharp.Csv
         /// </summary>
         /// <param name="csvString">UTF-8 string representing the CSV table to compress.</param>
         /// <returns>Compressed byte array.</returns>
-        public static byte[] CompressCsvTable(string csvString)
+        public static byte[] Compress(string csvString)
         {
-            return CompressCsvTable(Encoding.UTF8.GetBytes(csvString));
+            return Compress(Encoding.UTF8.GetBytes(csvString));
         }
 
         // Get the line ending of the file depending of the first '\n','\r' characters found.

@@ -72,6 +72,7 @@ namespace CoCSharp.Networking
             _receivePool = Settings.ReceivePool;
             _sendPool = Settings.SendPool;
 
+            //TODO: If _receivePool.Pop() returns null we're done. =[
             StartReceive(_receivePool.Pop());
         }
 
