@@ -1,9 +1,5 @@
-﻿using CoCSharp.Data;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 
 namespace CoCSharp.Server

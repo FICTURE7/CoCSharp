@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CoCSharp.Data
 {
@@ -13,11 +12,6 @@ namespace CoCSharp.Data
     /// </summary>
     public class Fingerprint
     {
-        /// <summary>
-        /// Default server from which to download the assets from fingerprints. This field is constant.
-        /// </summary>
-        public const string DefaultAssetServer = "http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Fingerprint"/> class.
         /// </summary>
@@ -74,9 +68,9 @@ namespace CoCSharp.Data
         /// <returns>Master hash of the overall fingerprint file.</returns>
         public byte[] ComputeMasterHash()
         {
-            // All hashes of the FingerprintFiles into hex-strings.
             var hashes = new StringBuilder();
 
+            // Appends all hashes of the FingerprintFiles into hex-strings.
             for (int i = 0; i < Files.Length; i++)
             {
                 var hash = Utils.BytesToString(Files[i].Hash);
@@ -89,9 +83,9 @@ namespace CoCSharp.Data
         }
 
         /// <summary>
-        /// Returns a JSON string that represents the current <see cref="Fingerprint"/>.
+        /// Returns a non-indented JSON string that represents the current <see cref="Fingerprint"/>.
         /// </summary>
-        /// <returns>A JSON string that represents the current <see cref="Fingerprint"/>.</returns>
+        /// <returns>A non-indented JSON string that represents the current <see cref="Fingerprint"/>.</returns>
         public string ToJson()
         {
             return ToJson(false);
@@ -112,170 +106,92 @@ namespace CoCSharp.Data
         /// JSON string.
         /// </summary>
         /// <param name="value">JSON string that represents the <see cref="Fingerprint"/>.</param>
-        /// <returns>A <see cref="Fingerprint"/> that is deserialized from the specified JSON string.</returns>
+        /// <returns>A <see cref="Fingerprint"/> object that is deserialized from the specified JSON string.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="value"/>'s length is 0.</exception>
         public static Fingerprint FromJson(string value)
         {
             if (value == null)
                 throw new ArgumentNullException("value");
-            if (value.Length == 0)
-                throw new ArgumentException("Empty JSON value is not valid.");
 
-            var fingerprint = JsonConvert.DeserializeObject<Fingerprint>(value);
+            // Could use string.IsNullOrWhiteSpace to check if its null as well.
+            // But just to be specific about the exception type.
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Empty JSON value is not valid.", "value");
+
+            return JsonConvert.DeserializeObject<Fingerprint>(value);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Fingerprint"/> for the specified directory path.
+        /// </summary>
+        /// <param name="path">Path pointing to the directory.</param>
+        /// <returns>A <see cref="Fingerprint"/> representing the specified directory.</returns>
+        public static Fingerprint Create(string path)
+        {
+            return Create(path, null);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Fingerprint"/> for the specified directory path and version.
+        /// </summary>
+        /// <param name="path">Path pointing to the directory.</param>
+        /// <param name="version">Version of the <see cref="Fingerprint"/>.</param>
+        /// <returns>A <see cref="Fingerprint"/> representing the specified directory.</returns>
+        public static Fingerprint Create(string path, string version)
+        {
+            if (path == null)
+                throw new ArgumentNullException("path");
+            if (string.IsNullOrWhiteSpace(path))
+                throw new ArgumentException("Empty path is not valid.", "path");
+            if (!Directory.Exists(path))
+                throw new DirectoryNotFoundException("Could not find directory at '" + path + "'.");
+
+            var fingerprint = new Fingerprint();
+            var fingerprintFiles = new List<FingerprintFile>();
+            var filePaths = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+
+            using (var sha1 = SHA1.Create())
+            {
+                for (int i = 0; i < filePaths.Length; i++)
+                {
+                    var filePath = RemovePathRootDir(filePaths[i]);
+                    var fileBytes = File.ReadAllBytes(filePaths[i]);
+                    var fingerprintFile = new FingerprintFile();
+
+                    fingerprintFile.Path = filePath;
+                    fingerprintFile.Hash = sha1.ComputeHash(fileBytes);
+
+                    fingerprintFiles.Add(fingerprintFile);
+                }
+            }
+
+            fingerprint.Files = fingerprintFiles.ToArray();
+            fingerprint.MasterHash = fingerprint.ComputeMasterHash();
+            fingerprint.Version = version;
+
             return fingerprint;
         }
 
-        //TODO: Move this into a whole new class.
-        #region Download Methods
-
-        /// <summary>
-        /// Downloads files in the <see cref="Files"/> array at the
-        /// specified path from the <see cref="DefaultAssetServer"/>.
-        /// </summary>
-        /// <param name="path">Path where to save the downloads.</param>
-        public void DownloadFiles(string path)
+        // Removes the first directory from a path string.
+        private static string RemovePathRootDir(string path)
         {
-            DownloadFiles(path, DefaultAssetServer, false);
-        }
+            // Tries if the path contains a separator character.
+            var separatorIndex = path.IndexOf(Path.DirectorySeparatorChar);
 
-        /// <summary>
-        /// Downloads files in the <see cref="Files"/> array at the
-        /// specified path from the specified server URL.
-        /// </summary>
-        /// <param name="path">Path where to save the downloads.</param>
-        /// <param name="serverUrl">URL of where to download the files.</param>
-        public void DownloadFiles(string path, string serverUrl)
-        {
-            DownloadFiles(path, serverUrl, false);
-        }
-
-        /// <summary>
-        /// Downloads files in the <see cref="Files"/> array at the
-        /// specified path from the specified server URL and check SHA-1 if <paramref name="checksum"/> is set to <c>true</c>.
-        /// </summary>
-        /// <param name="path">Path where to save the downloads.</param>
-        /// <param name="serverUrl">URL of where to download the files.</param>
-        /// <param name="checksum">
-        /// If set to <c>true</c> then it will calculate the SHA-1 of the files downloaded
-        /// and re-download the file if the hash incorrect.
-        /// </param>
-        public void DownloadFiles(string path, string serverUrl, bool checksum)
-        {
-            var retryCount = 0;
-            //var root = Path.Combine(serverUrl, Hash);
-            var root = string.Empty;
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            // Kinda silly to create an instance if you might not gonna use it.
-            using (var sha1 = SHA1.Create())
+            // If does not contain a separator character then
+            // tries the alternative separator character.
+            if (separatorIndex == -1)
             {
-                using (var webClient = new WebClient())
-                {
-                    for (int i = 0; i < Files.Length; i++)
-                    {
-                        var fingerprintFile = Files[i];
-                        var downloadUrl = Path.Combine(root, fingerprintFile.Path);
-                        var fileBytes = webClient.DownloadData(downloadUrl);
+                separatorIndex = path.IndexOf(Path.AltDirectorySeparatorChar);
 
-                        if (checksum)
-                        {
-                            var fileSha = Utils.BytesToString(sha1.ComputeHash(fileBytes));
-
-                            // Restart download if hash check failed.
-                            //if (fileSha != fingerprintFile.Hash)
-                            //{
-                            //    retryCount++;
-                            //    i--;
-                            //    continue;
-                            //}
-                        }
-
-                        var savePath = Path.Combine(path, fingerprintFile.Path);
-                        var saveDirectory = Path.GetDirectoryName(savePath);
-
-                        if (!Directory.Exists(saveDirectory))
-                            Directory.CreateDirectory(saveDirectory);
-
-                        File.WriteAllBytes(savePath, fileBytes);
-                        var args = new AssetDownloadProgressChangedEventArgs()
-                        {
-                            FileDownloaded = fingerprintFile,
-                            ProgressPercentage = ((double)(i + 1) / Files.Length) * 100,
-                            DownloadedCount = i + 1,
-                        };
-
-                        OnDownloadProgressChanged(args);
-                        retryCount = 0;
-                    }
-                }
+                // If still does not contain a separator character then
+                // returns the original path.
+                if (separatorIndex == -1)
+                    return path;
             }
-        }
 
-        /// <summary>
-        ///  Downloads files in the <see cref="Files"/> array at the
-        /// specified path from the <see cref="DefaultAssetServer"/> asynchronously.
-        /// </summary>
-        /// <param name="path">Path where to save the downloads.</param>
-        public async void DownloadFilesAsync(string path)
-        {
-            await Task.Run(() => DownloadFiles(path, DefaultAssetServer, false));
+            return path.Remove(0, separatorIndex + 1);
         }
-
-        /// <summary>
-        /// Downloads files in the <see cref="Files"/> array at the
-        /// specified path from the specified server URL asynchronously.
-        /// </summary>
-        /// <param name="path">Path where to save the downloads.</param>
-        /// <param name="serverUrl">URL of where to download the files.</param>
-        public async void DownloadFilesAsync(string path, string serverUrl)
-        {
-            await Task.Run(() => DownloadFiles(path, serverUrl, false));
-        }
-
-        /// <summary>
-        /// Downloads files in the <see cref="Files"/> array asynchronously at the
-        /// specified path from the specified server URL and check SHA-1 if <paramref name="checksum"/> is set to <c>true</c>.
-        /// </summary>
-        /// <param name="path">Path where to save the downloads.</param>
-        /// <param name="serverUrl">URL of where to download the files.</param>
-        /// <param name="checksum">
-        /// If set to <c>true</c> then it will calculate the SHA-1 of the files downloaded
-        /// and redownload the file if the hash incorrect.
-        /// </param>
-        public async void DownloadFilesAsync(string path, string serverUrl, bool checksum)
-        {
-            await Task.Run(() => DownloadFiles(path, serverUrl, checksum));
-        }
-
-        /// <summary>
-        /// The event that is fired when the download progress has changed.
-        /// </summary>
-        public event EventHandler<AssetDownloadProgressChangedEventArgs> DownloadProgressChanged;
-        /// <summary>
-        /// Fires the <see cref="DownloadProgressChanged"/> event with the specified <see cref="AssetDownloadProgressChangedEventArgs"/>.
-        /// </summary>
-        /// <param name="e">The arguments with which to fire the event.</param>
-        protected virtual void OnDownloadProgressChanged(AssetDownloadProgressChangedEventArgs e)
-        {
-            if (DownloadProgressChanged != null)
-                DownloadProgressChanged(this, e);
-        }
-
-        /// <summary>
-        /// The even that is fired when the download has completed.
-        /// </summary>
-        public event EventHandler<AssetDownloadCompletedEventArgs> DownloadCompleted;
-        /// <summary>
-        /// Fires the <see cref="DownloadProgressChanged"/> event with the specified <see cref="AssetDownloadProgressChangedEventArgs"/>.
-        /// </summary>
-        /// <param name="e">The arguments with which to fire the event.</param>
-        protected virtual void OnDownloadCompleted(AssetDownloadCompletedEventArgs e)
-        {
-            if (DownloadCompleted != null)
-                DownloadCompleted(this, e);
-        }
-        #endregion
     }
 }

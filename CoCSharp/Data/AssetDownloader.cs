@@ -84,11 +84,8 @@ namespace CoCSharp.Data
 
             if (dstDir == null)
                 dstDir = string.Empty;
-            else
-            {
-                if (dstDir != string.Empty && !Directory.Exists(dstDir))
-                    throw new DirectoryNotFoundException("Could not find directory at '" + dstDir + "'.");
-            }
+            else if (dstDir != string.Empty && !Directory.Exists(dstDir))
+                throw new DirectoryNotFoundException("Could not find directory at '" + dstDir + "'.");
 
             var uriBuilder = new UriBuilder(_uri) { Path = _masterHash };
             var remoteRootPath = uriBuilder.Uri;
