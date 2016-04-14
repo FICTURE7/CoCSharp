@@ -8,8 +8,9 @@ namespace CoCSharp.Test.Data
     [TestFixture]
     public class CsvTableTests
     {
+        // Tests if compression are equal to original ones.
         [Test]
-        public void TestCsvTableCompression()
+        public void Compression_Equality()
         {
             var originalbytes = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/csv/com_buildings.csv"));
 

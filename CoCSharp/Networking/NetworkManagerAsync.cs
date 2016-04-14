@@ -7,7 +7,7 @@ using System.Net.Sockets;
 namespace CoCSharp.Networking
 {
     /// <summary>
-    /// Implements methods to read and write <see cref="Message"/> from <see cref="Socket"/> asynchronously
+    /// Implements methods to send and receive <see cref="Message"/> from <see cref="Socket"/> asynchronously
     /// using the <see cref="SocketAsyncEventArgs"/> model.
     /// </summary>
     public class NetworkManagerAsync : IDisposable
@@ -108,6 +108,7 @@ namespace CoCSharp.Networking
         /// Sends the specified message using the <see cref="Connection"/> socket.
         /// </summary>
         /// <param name="message"><see cref="Message"/> to send.</param>
+        /// <exception cref="ObjectDisposedException">The current instance of the <see cref="NetworkManagerAsync"/> is disposed.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is null.</exception>
         /// <exception cref="InvalidMessageException"><paramref name="message"/> length greater than <see cref="Message.MaxSize"/>.</exception>
         public void SendMessage(Message message)

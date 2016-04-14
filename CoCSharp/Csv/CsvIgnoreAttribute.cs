@@ -9,7 +9,7 @@ namespace CoCSharp.Csv
     public sealed class CsvIgnoreAttribute : Attribute
     {
         /// <summary>
-        /// Initalizes a new instance of the <see cref="CsvIgnoreAttribute"/> class.
+        /// Initializes a new instance of the <see cref="CsvIgnoreAttribute"/> class.
         /// </summary>
         public CsvIgnoreAttribute()
         {

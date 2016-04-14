@@ -17,7 +17,7 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void ClearEndTime_IsNotClearing_Exception()
         {
-            // Should throw an and InvalidOperationException when the obstacle is not being cleared.
+            // Should throw an InvalidOperationException when the obstacle is not being cleared.
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var test = _obstacle.ClearEndTime;
@@ -27,7 +27,7 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void ClearDuration_IsNotClearing_Exception()
         {
-            // Should throw an and InvalidOperationException when the obstacle is not in cleared.
+            // Should throw an InvalidOperationException when the obstacle is not being cleared
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var test = _obstacle.ClearDuration;
@@ -37,7 +37,6 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void ClearEndTime_InvalidDateTimeKind_Exception()
         {
-            // Should have been a DateTime.UtcNow.AddSeconds(10); instead.
             Assert.Throws<ArgumentException>(() => _obstacle.ClearEndTime = DateTime.Now.AddSeconds(10));
         }
 

@@ -8,13 +8,13 @@ using System.Text.RegularExpressions;
 namespace CoCSharp.Csv
 {
     /// <summary>
-    /// Represents a Comma Seperated Values(CSV) file as a <see cref="DataTable"/>. 
+    /// Represents a Comma Separated Values(CSV) file as a <see cref="DataTable"/>. 
     /// Mainly designed for the Clash of Clans CSV file format.
     /// </summary>
     public class CsvTable : IDisposable
     {
         /// <summary>
-        /// Initalizes a new instance of the <see cref="CsvTable"/> class.
+        /// Initializes a new instance of the <see cref="CsvTable"/> class.
         /// </summary>
         public CsvTable()
         {

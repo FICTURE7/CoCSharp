@@ -9,13 +9,13 @@ namespace CoCSharp.Test.Networking
     public class MessageWriterTests
     {
         [Test]
-        public void TestMessageWriterConstructors()
+        public void Constructors_InvalidArgs()
         {
             Assert.Throws<ArgumentNullException>(() => new MessageWriter(null));
         }
 
         [Test]
-        public void TestMessageWriterDisposed()
+        public void Writing_Disposed_Exception()
         {
             var memstream = new MemoryStream();
             var writer = new MessageWriter(memstream);

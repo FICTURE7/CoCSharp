@@ -8,6 +8,12 @@ namespace CoCSharp.Test.Networking
     public class MessageFactoryTests
     {
         [Test]
+        public void Constructor_Initialize()
+        {
+            MessageFactory.Initialize();
+        }
+
+        [Test]
         public void TestMessageFactoryCreate()
         {
             // Check if it returns the proper Type.

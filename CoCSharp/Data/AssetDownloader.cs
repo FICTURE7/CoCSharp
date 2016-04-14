@@ -18,7 +18,7 @@ namespace CoCSharp.Data
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetDownloader"/> class with the specified
-        /// master hash.
+        /// master hash. The <see cref="OfficialAssetServer"/> will be used as <see cref="Uri"/>.
         /// </summary>
         /// <param name="masterHash"></param>
         /// <exception cref="ArgumentNullException"><paramref name="masterHash"/> is null.</exception>
@@ -77,6 +77,7 @@ namespace CoCSharp.Data
         /// The <see cref="AssetDownloader"/> will download the <see cref="Fingerprint"/> from the asset server.
         /// </summary>
         /// <param name="dstDir">Destination directory of the downloads.</param>
+        /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetDownloader"/> is disposed.</exception>
         /// <exception cref="DirectoryNotFoundException"><paramref name="dstDir"/> does not exist.</exception>
         public void DownloadAssets(string dstDir)
         {
@@ -104,6 +105,7 @@ namespace CoCSharp.Data
         /// If set to <c>true</c> the <see cref="AssetDownloader"/> will check if the SHA1 hash of the downloads matches
         /// the ones of local files; otherwise no.
         /// </param>
+        /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetDownloader"/> is disposed.</exception>
         /// <exception cref="DirectoryNotFoundException"><paramref name="dstDir"/> does not exist.</exception>
         public void DownloadAssets(string dstDir, bool checkHash)
         {
@@ -133,6 +135,7 @@ namespace CoCSharp.Data
         /// If set to <c>true</c> the <see cref="AssetDownloader"/> will check if the SHA1 hash of the downloads matches
         /// the ones of local files; otherwise no.
         /// </param>
+        /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetDownloader"/> is disposed.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="fingerprint"/> is null.</exception>
         /// <exception cref="DirectoryNotFoundException"><paramref name="dstDir"/> does not exist.</exception>
         public void DownloadAssets(Fingerprint fingerprint, string dstDir, bool checkHash)

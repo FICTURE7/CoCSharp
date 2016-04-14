@@ -221,8 +221,11 @@ namespace CoCSharp.Networking
         /// </summary>
         public new void Dispose()
         {
-            Dispose(true);
-            _disposed = true;
+            if (!_disposed)
+            {
+                Dispose(true);
+                _disposed = true;
+            }
         }
 
         private void CheckDispose()

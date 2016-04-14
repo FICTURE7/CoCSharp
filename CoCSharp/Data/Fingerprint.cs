@@ -39,6 +39,7 @@ namespace CoCSharp.Data
 
             var json = File.ReadAllText(path);
             var fingerprint = FromJson(json);
+
             Files = fingerprint.Files;
             MasterHash = fingerprint.MasterHash;
             Version = fingerprint.Version;
@@ -108,7 +109,7 @@ namespace CoCSharp.Data
         /// <param name="value">JSON string that represents the <see cref="Fingerprint"/>.</param>
         /// <returns>A <see cref="Fingerprint"/> object that is deserialized from the specified JSON string.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="value"/>'s length is 0.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/> is empty.</exception>
         public static Fingerprint FromJson(string value)
         {
             if (value == null)
@@ -127,17 +128,23 @@ namespace CoCSharp.Data
         /// </summary>
         /// <param name="path">Path pointing to the directory.</param>
         /// <returns>A <see cref="Fingerprint"/> representing the specified directory.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is empty or white space.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path"/> does not exits.</exception>
         public static Fingerprint Create(string path)
         {
             return Create(path, null);
         }
 
         /// <summary>
-        /// Creates a new <see cref="Fingerprint"/> for the specified directory path and version.
+        /// Creates a new <see cref="Fingerprint"/> for the specified directory path and specified version.
         /// </summary>
         /// <param name="path">Path pointing to the directory.</param>
         /// <param name="version">Version of the <see cref="Fingerprint"/>.</param>
         /// <returns>A <see cref="Fingerprint"/> representing the specified directory.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is empty or white space.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path"/> does not exits.</exception>
         public static Fingerprint Create(string path, string version)
         {
             if (path == null)

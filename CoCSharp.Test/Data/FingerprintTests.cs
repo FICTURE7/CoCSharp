@@ -16,7 +16,7 @@ namespace CoCSharp.Test.Data
         private string _fingerprintPath;
 
         [Test]
-        public void Constructors_Invalid_Exception()
+        public void Constructors_InvalidArgs_Exception()
         {
             Assert.Throws<ArgumentNullException>(() => new Fingerprint(null));
             Assert.Throws<ArgumentException>(() => new Fingerprint(string.Empty));
@@ -33,7 +33,7 @@ namespace CoCSharp.Test.Data
         }
 
         [Test]
-        public void FromJson_Invalid_Exception()
+        public void FromJson_InvalidArgs_Exception()
         {
             Assert.Throws<ArgumentNullException>(() => Fingerprint.FromJson(null));
             Assert.Throws<ArgumentException>(() => Fingerprint.FromJson(string.Empty));
@@ -41,7 +41,7 @@ namespace CoCSharp.Test.Data
         }
 
         [Test]
-        public void FromJson_Valid()
+        public void FromJson_ValidArgs()
         {
             var json = File.ReadAllText(_fingerprintPath);
             var fingerprint = Fingerprint.FromJson(json);

@@ -19,7 +19,7 @@ namespace CoCSharp.Test.Logic
         #region Village.GetBuilding Tests
 
         [Test]
-        public void GetBuilding_ParameterRange_ReturnBuilding()
+        public void GetBuilding_ArgsRange_ReturnBuilding()
         {
             // Check minimum range.
             Assert.That(_village.GetBuilding(500000000), Is.TypeOf<Building>());
@@ -32,7 +32,7 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void GetBuilding_InvalidParameterRange_Exception()
+        public void GetBuilding_ArgsRange_Exception()
         {
             // Make sure it throws an exception when the gameId is not in the village.
             var couldNotFindEx = Assert.Throws<ArgumentException>(() => _village.GetBuilding(500000005));
@@ -55,7 +55,7 @@ namespace CoCSharp.Test.Logic
         #region Village.GetObstacle Tests
 
         [Test]
-        public void GetObstacle_ParameterRange_ReturnObstalce()
+        public void GetObstacle_ArgsRange_ReturnObstalce()
         {
             // Check min range.
             Assert.That(_village.GetObstacle(503000000), Is.TypeOf<Obstacle>());
@@ -68,7 +68,7 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void GetObstacle_InvalidParameterRange_Exception()
+        public void GetObstacle_InvalidArgsRange_Exception()
         {
             // Make sure it throws an exception when the gameId is not in the village.
             var couldNotFindEx = Assert.Throws<ArgumentException>(() => _village.GetObstacle(503000005));
@@ -90,7 +90,7 @@ namespace CoCSharp.Test.Logic
         #region Village.GetTrap Tests
 
         [Test]
-        public void GetTrap_ParameterRange_ReturnTrap()
+        public void GetTrap_ArgsRange_ReturnTrap()
         {
             // Check min range.
             Assert.That(_village.GetTrap(504000000), Is.TypeOf<Trap>());
@@ -103,7 +103,7 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void GetTrap_InvalidParameterRange_Exception()
+        public void GetTrap_InvalidArgsRange_Exception()
         {
             // Make sure it throws an exception when the gameId is not in the village.
             var couldNotFindEx = Assert.Throws<ArgumentException>(() => _village.GetTrap(504000005));
@@ -125,7 +125,7 @@ namespace CoCSharp.Test.Logic
         #region Village.GetDecoration Tests
 
         [Test]
-        public void GetDecoration_ParameterRange_ReturnDecoration()
+        public void GetDecoration_ArgsRange_ReturnDecoration()
         {
             // Check min range.
             Assert.That(_village.GetDecoration(506000000), Is.TypeOf<Decoration>());
@@ -138,7 +138,7 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void GetDecoration_InvalidParameterRange_Exception()
+        public void GetDecoration_InvalidArgsRange_Exception()
         {
             // Make sure it throws an exception when the gameId is not in the village.
             var couldNotFindEx = Assert.Throws<ArgumentException>(() => _village.GetDecoration(506000005));
@@ -155,7 +155,7 @@ namespace CoCSharp.Test.Logic
         #endregion
 
         [Test]
-        public void GetVillageObject_ParameterRange_ReturnVillageObject()
+        public void GetVillageObject_ArgsRange_ReturnVillageObject()
         {
             Assert.That(_village.GetVillageObject(500000000), Is.TypeOf<Building>());
 

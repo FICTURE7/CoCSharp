@@ -12,7 +12,7 @@ namespace CoCSharp.Test.Logic
     {
         [Test]
         // Test the X and Y property of a village object.
-        public void XY_PositionOutOfVillageBounds_ExceptionThrown()
+        public void XY_PositionOutOfVillageBounds_Exception()
         {
             var obj = new TestObject();
 
@@ -74,7 +74,7 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void Data_UnexpectedType_ExceptionThrown()
+        public void Data_UnexpectedType_Exception()
         {
             var testObj = new TestObject();
             Assert.Throws<ArgumentException>(() => testObj.Data = new ResourceData());

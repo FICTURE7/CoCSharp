@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SevenZip
 {
-    //Peter Bromberg's helper code. Big thanks for that.
+    // Peter Bromberg's helper code. Big thanks for that.
 
     /// <summary>
     /// Provides methods to compress or decompress LZMA <see cref="byte"/> array.
@@ -68,7 +68,7 @@ namespace SevenZip
         }
 
         /// <summary>
-        /// Decompresses the specified <see cref="byte"/> into
+        /// Decompresses the specified <see cref="byte"/> array from
         /// LZMA.
         /// </summary>
         /// <param name="bytes">The <see cref="byte"/> array to decompress.</param>

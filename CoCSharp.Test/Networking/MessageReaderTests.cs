@@ -9,13 +9,13 @@ namespace CoCSharp.Test.Networking
     public class MessageReaderTests
     {
         [Test]
-        public void TestMessageReaderConstructors()
+        public void Constructors_InvalidArgs()
         {
             Assert.Throws<ArgumentNullException>(() => new MessageReader(null));
         }
 
 		[Test]
-        public void TestMessageReaderDisposed()
+        public void Reading_Disposed_Exception()
         {
             var memstream = new MemoryStream();
             var reader = new MessageReader(memstream);

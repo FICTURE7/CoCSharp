@@ -13,7 +13,11 @@ namespace CoCSharp.Networking
     {
         static CommandFactory()
         {
-            s_commandType = typeof(Command);
+            Initialize();
+        }
+
+        internal static void Initialize()
+        {
             CommandDictionary = new Dictionary<int, Type>();
 
             var assembly = Assembly.GetExecutingAssembly();
@@ -39,7 +43,7 @@ namespace CoCSharp.Networking
             }
         }
 
-        private static readonly Type s_commandType;
+        private static readonly Type s_commandType = typeof(Command);
 
         /// <summary>
         /// Gets the dictionary that associates <see cref="Command"/> types with

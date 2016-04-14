@@ -9,13 +9,13 @@ namespace CoCSharp.Test.Networking
     public class SocketAsyncEventArgsPoolTests
     {
         [Test]
-        public void TestSocketAsyncEventArgsPoolConstructors()
+        public void Constructors_InvalidArgs_Exception()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new SocketAsyncEventArgsPool(-1));
         }
 
         [Test]
-        public void TestSocketAsyncEventArgsPoolPushPopDisposed()
+        public void PopPush_Disposed_Exception()
         {
             var pool = new SocketAsyncEventArgsPool(64);
 
@@ -34,7 +34,7 @@ namespace CoCSharp.Test.Networking
         }
 
         [Test]
-        public void TestSocketAsyncEventArgsPoolRange()
+        public void PopPush_ExceedingBounds_Exception()
         {
             var pool = new SocketAsyncEventArgsPool(1);
 
