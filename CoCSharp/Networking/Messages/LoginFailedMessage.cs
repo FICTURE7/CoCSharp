@@ -18,7 +18,7 @@ namespace CoCSharp.Networking.Messages
         OutdatedContent = 7,
 
         /// <summary>
-        /// Client verision is outdated. This occurs when the client's version is not equal
+        /// Client revision is outdated. This occurs when the client's version is not equal
         /// to the server's expected version.
         /// </summary>
         OutdatedVersion = 8,
@@ -44,7 +44,7 @@ namespace CoCSharp.Networking.Messages
         TakeRest = 12,
 
         /// <summary>
-        /// Account has been locked. It can only be unlocked with a specific code.
+        /// Account has been locked. It can only be unlocked with a specific PIN.
         /// </summary>
         Locked = 13
     };
@@ -143,9 +143,9 @@ namespace CoCSharp.Networking.Messages
             Nonce = reader.ReadBytes(CoCKeyPair.NonceLength);
             PublicKey = reader.ReadBytes(CoCKeyPair.KeyLength);
 
-            Reason = (LoginFailureReason)reader.ReadInt32();
+            Reason = (LoginFailureReason)reader.ReadInt32(); // Returned 2 when data is not valid.
 
-            Unknown1 = reader.ReadString(); // null, outdatedcontent
+            Unknown1 = reader.ReadString(); // null
 
             Hostname = reader.ReadString(); // stage.clashofclans.com
             DownloadRootUrl = reader.ReadString(); // http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/
@@ -157,12 +157,15 @@ namespace CoCSharp.Networking.Messages
 
             //TODO: Implement Compressed String in MessageWriter and MessageReader.
             var fingerprintData = reader.ReadBytes();
-            using (var br = new BinaryReader(new MemoryStream(fingerprintData)))
+            if (fingerprintData != null)
             {
-                var decompressedLength = br.ReadInt32();
-                var compressedFingerprint = br.ReadBytes(fingerprintData.Length - 4);
-                var fingerprintJson = ZlibStream.UncompressString(compressedFingerprint);
-                Fingerprint = Fingerprint.FromJson(fingerprintJson);
+                using (var br = new BinaryReader(new MemoryStream(fingerprintData)))
+                {
+                    var decompressedLength = br.ReadInt32();
+                    var compressedFingerprint = br.ReadBytes(fingerprintData.Length - 4);
+                    var fingerprintJson = ZlibStream.UncompressString(compressedFingerprint);
+                    Fingerprint = Fingerprint.FromJson(fingerprintJson);
+                }
             }
 
             Unknown6 = reader.ReadInt32(); // -1
@@ -193,7 +196,11 @@ namespace CoCSharp.Networking.Messages
 
             writer.Write(Unknown5);
 
-            writer.Write(Fingerprint.ToJson());
+            //TODO: Fix this thing, because its not correctly compressed/not at all.
+            if (Fingerprint != null)
+                writer.Write(Fingerprint.ToJson());
+            else
+                writer.Write(-1);
 
             writer.Write(Unknown5);
             writer.Write(Unknown6);

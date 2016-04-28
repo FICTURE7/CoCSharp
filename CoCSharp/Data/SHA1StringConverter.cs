@@ -38,7 +38,7 @@ namespace CoCSharp.Data
             for (int i = 0; i < byteArray.Length; i++)
                 byteString += byteArray[i].ToString("x2");
 
-            writer.WriteRawValue(byteString);
+            writer.WriteRawValue("\"" + byteString + "\"");
         }
     }
 }

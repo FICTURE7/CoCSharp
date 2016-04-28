@@ -82,6 +82,7 @@ namespace CoCSharp.Csv
         /// <param name="path">Path to the .csv file.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="CsvTable"/> object was disposed.</exception>
         public void Load(string path)
         {
             if (path == null)
@@ -92,13 +93,13 @@ namespace CoCSharp.Csv
         }
 
         /// <summary>
-        /// Reads the specified .csv file from disk and decompresses it if specifed.
+        /// Reads the specified .csv file from disk and decompresses it if specified.
         /// </summary>
         /// <param name="path">Path to the .csv file.</param>
         /// <param name="compressed">Whether the .csv file is compressed or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
-        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="CsvTable"/> object was disposed.</exception>
         public void Load(string path, bool compressed)
         {
             if (path == null)
@@ -114,7 +115,7 @@ namespace CoCSharp.Csv
         /// <param name="bytes">Bytes array of the .csv file.</param>
         /// <exception cref="ArgumentNullException"><paramref name="bytes"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
-        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="CsvTable"/> object was disposed.</exception>
         public void Load(byte[] bytes)
         {
             if (_disposed)
@@ -173,13 +174,13 @@ namespace CoCSharp.Csv
         }
 
         /// <summary>
-        /// Reads the specified .csv file from a byte array and decompresses it if specifed.
+        /// Reads the specified .csv file from a byte array and decompresses it if specified.
         /// </summary>
         /// <param name="bytes">Bytes of the .csv file.</param>
         /// <param name="compressed">Whether the .csv file is compressed or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="bytes"/> is null.</exception>
         /// <exception cref="CsvException">Unexpected data type in CSV table.</exception>
-        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="CsvTable"/> object was disposed.</exception>
         public void Load(byte[] bytes, bool compressed)
         {
             if (bytes == null)
@@ -203,7 +204,7 @@ namespace CoCSharp.Csv
         /// </summary>
         /// <param name="path">Path of the .csv to save to.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
-        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="CsvTable"/> object was disposed.</exception>
         public void Save(string path)
         {
             if (path == null)
@@ -219,7 +220,7 @@ namespace CoCSharp.Csv
         /// <param name="path">Path of the .csv to save to.</param>
         /// <param name="compressed">Whether to compress the file or not.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
-        /// <exception cref="ObjectDisposedException">CsvTable object was disposed.</exception>
+        /// <exception cref="ObjectDisposedException"><see cref="CsvTable"/> object was disposed.</exception>
         public void Save(string path, bool compressed)
         {
             if (_disposed)
@@ -269,7 +270,7 @@ namespace CoCSharp.Csv
         }
 
         /// <summary>
-        /// Releases all unmanged resources and optionally releases managed resources
+        /// Releases all unmanaged resources and optionally releases managed resources
         /// used by the current instance of the <see cref="CsvTable"/> class.
         /// </summary>
         /// <param name="disposing">Releases managed resources if set to <c>true</c>.</param>
@@ -296,7 +297,7 @@ namespace CoCSharp.Csv
             var retBytes = new byte[bytes.Length + 4];
             Buffer.BlockCopy(bytes, 0, retBytes, 0, 9);
 
-            // Fix the header by apending 4 0x00 bytes at offset 9.
+            // Fix the header by spending 4 0x00 bytes at offset 9.
             Buffer.BlockCopy(bytes, 9, retBytes, 13, bytes.Length - 9);
             return LzmaUtils.Decompress(retBytes);
         }
@@ -343,7 +344,7 @@ namespace CoCSharp.Csv
         {
             var indexCR = csv.IndexOf('\r');
 
-            if (indexCR == -1) // unix
+            if (indexCR == -1) // Unix
             {
                 var indexLN = csv.IndexOf('\n');
                 if (indexLN == -1) // no valid ending

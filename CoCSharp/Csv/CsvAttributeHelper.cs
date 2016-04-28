@@ -16,7 +16,7 @@ namespace CoCSharp.Csv
 
         public static string GetPropertyAlias(PropertyInfo property)
         {
-            var attributes = (CsvAliasAttribute[])property.GetCustomAttributes(s_csvAliasType, false);
+            var attributes = (CsvAliasAttribute[])property.GetCustomAttributes(s_csvAliasType, true);
             if (attributes.Length == 0)
                 return property.Name;
             return attributes[0].Alias;

@@ -10,10 +10,10 @@ and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrap
 which is now open source however no decompiled code was used in this project.
 
 ### Notes
-Due to the new encryption update in 8.x.x, a patched version of `libg.so` with the standard public key is needed for
-`CoCSharp.Proxy` and `CoCSharp.Server` to work properly. [Here](https://github.com/clugh/coc-proxy#installation) are the steps needed to patch `libg.so`.
+Due to the encryption update in 8.x.x, a patched version of `libg.so` with the standard public key is needed for
+`CoCSharp.Proxy` and `CoCSharp.Server` to work properly. [Here](https://github.com/clugh/coc-proxy#installation) are the steps needed to patch `libg.so` or you can use [`coc-patcher`](https://github.com/clugh/coc-patcher) a small but great utility made in python by clugh to patch `libg.so` and sign the APK itself.
 
-[`libsodium`](https://github.com/adamcaudill/libsodium-net) also requires the
+[`libsodium-net`](https://github.com/adamcaudill/libsodium-net) also requires the
 [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145), if
 its not installed `Sodium.SodiumCore` will throw a `DllNotFoundException`.
 
@@ -60,15 +60,17 @@ mono --version
 ```
 
 ## Contributing
-Just create a fork and make changes to it, like adding features from Clash of Clans and fixing bugs.
-Follow the code style else I won't merge your pull request, its not that hard to follow ;]. Make your pull
-requests focused and readable. You can also contribute by creating issues and reporting bugs, giving ideas
-for enhancement and by finding issues in the documentation.
+Just create a fork and make changes to it, like adding features from Clash of Clans, fixing bugs and also reporting them
+because we want a solid software right? Follow the code style else I won't merge your pull request,
+its not that hard to follow ;]. Make your pull requests focused and readable. You can also contribute by
+creating issues and reporting bugs, giving ideas for enhancement and by finding issues in the documentation.
 
 You can also contribute by just giving a star or forking us, also by spreading the word about the project. ^^
 
 Am not any merging pull requests like a clan search API which completely drifts away from the goal of this project.
 If you want to make a clan search API, use CoCSharp as a library and go ahead. :]
+
+Contact me via my e-mail, FICTURE7@gmail.com if you have any question.
 
 ### Thanks
 Massive thank you to those [guys](https://github.com/FICTURE7/CoCSharp/blob/rewrite/CONTRIBUTORS) who helped with the project and
@@ -77,10 +79,10 @@ specially the MVPs. :]
 <h2>Projects Using CoC#</h2>
 * [CoCSharp.Server](https://github.com/FICTURE7/CoCSharp/tree/rewrite/CoCSharp.Server): *(Work in progress)*
   * Server that can do some stuff. It also supports the latest 8.x.x encryption. Yey!
-* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/rewrite/CoCSharp.Client): *(Not available)*
+* [CoCSharp.Client](https://github.com/FICTURE7/CoCSharp/tree/rewrite/CoCSharp.Client): *(7.x.x available on `master` branch)*
   * Simple client that can read chat message and send keep alive requests.
 * [CoCSharp.Proxy](https://github.com/FICTURE7/CoCSharp/tree/rewrite/CoCSharp.Proxy): *(Work in progress)*
-  * Proxy that could log parsed and raw decrypted/encrypted packets.
+  * Proxy that logs raw decrypted packets and village JSON layout.
 
 ## Licensing
 CoCSharp is licensed under the permissive [MIT License](http://mit-license.org/).

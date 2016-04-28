@@ -24,7 +24,7 @@ namespace CoCSharp.Test.Data
         }
 
         [Test]
-        public void Constructors_Valid()
+        public void Constructors_ValidArgs()
         {
             var fingerprint = new Fingerprint(_fingerprintPath);
             Assert.AreEqual(681, fingerprint.Files.Length, "Did not fully deserialize the fingerprint file.");
@@ -49,6 +49,30 @@ namespace CoCSharp.Test.Data
             Assert.AreEqual(681, fingerprint.Files.Length, "Did not fully read the fingerprint file.");
             Assert.AreEqual("9d075b9546211da641d06f4c576aa9b9c62212fb", Utils.BytesToString(fingerprint.MasterHash));
             Assert.AreEqual("8.116.5", fingerprint.Version);
+        }
+
+        [Test]
+        public void ToJson_Equality()
+        {
+            // Original fingerprint.
+            var oriFingerprint = new Fingerprint(_fingerprintPath);
+            
+            // Turn the Original fingerprint into a JSON string.
+            var oriJson = oriFingerprint.ToJson();
+
+            // Create a new Fingerprint object from the oriFingerprint.ToJson() string.
+            var newFingerprint = Fingerprint.FromJson(oriJson);
+
+            Assert.AreEqual(oriFingerprint.ComputeMasterHash(), newFingerprint.ComputeMasterHash());
+        }
+
+        [Test]
+        public void ComputeMasterHash_Equality()
+        {
+            var fingerprint = new Fingerprint(_fingerprintPath);
+            var masterHash = fingerprint.ComputeMasterHash();
+            Assert.AreEqual(fingerprint.MasterHash, masterHash);
+            Assert.AreEqual(Utils.BytesToString(fingerprint.MasterHash), Utils.BytesToString(masterHash));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -48,6 +49,7 @@ namespace CoCSharp.Data
         /// <summary>
         /// Gets or sets the of array of <see cref="FingerprintFile"/>.
         /// </summary>
+        [JsonProperty("files")]
         public FingerprintFile[] Files { get; set; }
 
         /// <summary>
@@ -99,7 +101,51 @@ namespace CoCSharp.Data
         /// <returns>A JSON string and indented if specified that represents the current <see cref="Fingerprint"/>.</returns>
         public string ToJson(bool indent)
         {
-            return indent == true ? JsonConvert.SerializeObject(this, Formatting.Indented) : JsonConvert.SerializeObject(this);
+            var jsonStr = string.Empty;
+
+            using (var textWriter = new StringWriter())
+            using (var jsonWriter = new JsonTextWriter(textWriter))
+            {
+                // Turn on indentation if "indent" is set to true.
+                if (indent)
+                {
+                    jsonWriter.Formatting = Formatting.Indented;
+                    jsonWriter.Indentation = 4;
+                }
+
+                jsonWriter.WriteStartObject();
+
+                jsonWriter.WritePropertyName("files");
+                jsonWriter.WriteStartArray();
+
+                for (int i = 0; i < Files.Length; i++)
+                {
+                    jsonWriter.WriteStartObject();
+
+                    jsonWriter.WritePropertyName("sha");
+                    jsonWriter.WriteValue(Utils.BytesToString(Files[i].Hash));
+
+                    jsonWriter.WritePropertyName("path");
+                    jsonWriter.WriteValue(Files[i].Path);
+
+                    jsonWriter.WriteEndObject();
+                }
+
+                jsonWriter.WriteEndArray();
+
+                jsonWriter.WritePropertyName("sha");
+                jsonWriter.WriteValue(Utils.BytesToString(MasterHash));
+
+                jsonWriter.WritePropertyName("version");
+                jsonWriter.WriteValue(Version);
+
+                jsonWriter.WriteEndObject();
+
+                jsonStr = textWriter.ToString();
+            }
+
+            //return indent == true ? JsonConvert.SerializeObject(this, Formatting.Indented) : JsonConvert.SerializeObject(this);
+            return jsonStr;
         }
 
         /// <summary>
@@ -120,7 +166,110 @@ namespace CoCSharp.Data
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentException("Empty JSON value is not valid.", "value");
 
-            return JsonConvert.DeserializeObject<Fingerprint>(value);
+            var fingerprint = new Fingerprint();
+            var fingerprintFiles = new List<FingerprintFile>();
+            var file = new FingerprintFile();
+
+            // Determines if we're inside the "files" array.
+            var inFilesArray = false;
+
+            using (var txtReader = new StringReader(value))
+            using (var jsonReader = new JsonTextReader(txtReader))
+            {
+                // Keep on reading the next JSON token.
+                while (jsonReader.Read())
+                {
+                    switch (jsonReader.TokenType)
+                    {
+                        // If we hit a token of type PropertyName we read its value
+                        // and determine where to assign it.
+                        case JsonToken.PropertyName:
+                            switch ((string)jsonReader.Value)
+                            {
+                                case "files":
+
+                                    if (jsonReader.Read())
+                                    {
+                                        if (jsonReader.TokenType != JsonToken.StartArray)
+                                        {
+                                            // Throw an exception here maybe?
+                                        }
+                                        else
+                                        {
+                                            inFilesArray = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Throw an exception here maybe?
+                                        break;
+                                    }
+
+                                    break;
+
+                                case "file":
+
+                                    if (!inFilesArray)
+                                        break;
+
+                                    file.Path = jsonReader.ReadAsString();
+
+                                    break;
+
+                                case "sha":
+
+                                    // Convert the "sha" string into a byte array.
+                                    var str = jsonReader.ReadAsString();
+                                    if (str == null || str.Length != 40)
+                                        return null;
+
+                                    var bytes = new byte[str.Length / 2];
+                                    for (int i = 0; i < bytes.Length; i++)
+                                        bytes[i] = byte.Parse(str.Substring(i * 2, 2), NumberStyles.HexNumber);
+
+                                    // If we're inside the "files" array assign it to the
+                                    // FingerprintFile.
+                                    if (inFilesArray)
+                                        file.Hash = bytes;
+                                    // If not assign it to the Fingerprint itself.
+                                    else
+                                        fingerprint.MasterHash = bytes;
+
+                                    break;
+
+                                case "version":
+
+                                    fingerprint.Version = jsonReader.ReadAsString();
+
+                                    break;
+                            }
+                            break;
+
+                        case JsonToken.EndObject:
+
+                            // Reset the file object when we hit EndObject token
+                            // to allow new creation of FingerprintFile.
+                            if (inFilesArray)
+                            {
+                                fingerprintFiles.Add(file);
+                                file = new FingerprintFile();
+                            }
+
+                            break;
+
+                        case JsonToken.EndArray:
+
+                            inFilesArray = false;
+
+                            break;
+                    }
+                }
+            }
+
+            fingerprint.Files = fingerprintFiles.ToArray();
+            
+            //return JsonConvert.DeserializeObject<Fingerprint>(value);
+            return fingerprint;
         }
 
         /// <summary>
