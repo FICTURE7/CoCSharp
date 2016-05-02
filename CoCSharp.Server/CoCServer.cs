@@ -1,4 +1,4 @@
-﻿using CoCSharp.Networking;
+﻿using CoCSharp.Network;
 using CoCSharp.Server.Core;
 using CoCSharp.Server.Handlers;
 using CoCSharp.Server.Handlers.Commands;

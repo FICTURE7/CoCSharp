@@ -1,6 +1,6 @@
-﻿using CoCSharp.Networking;
-using CoCSharp.Networking.Cryptography;
-using CoCSharp.Networking.Messages;
+﻿using CoCSharp.Network;
+using CoCSharp.Network.Cryptography;
+using CoCSharp.Network.Messages;
 using System;
 using System.IO;
 using System.Net.Sockets;

@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Logic;
-using CoCSharp.Networking.Messages.Commands;
+using CoCSharp.Network.Messages.Commands;
 
 namespace CoCSharp.Data
 {

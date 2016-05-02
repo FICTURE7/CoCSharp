@@ -1,6 +1,6 @@
 using CoCSharp.Data;
 using CoCSharp.Logic;
-using CoCSharp.Networking.Messages.Commands;
+using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
 
 namespace CoCSharp.Server.Handlers.Commands

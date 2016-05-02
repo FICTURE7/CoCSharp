@@ -1,7 +1,7 @@
 ﻿using CoCSharp.Csv;
 using CoCSharp.Logic;
-using CoCSharp.Networking;
-using CoCSharp.Networking.Messages.Commands;
+using CoCSharp.Network;
+using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
 
 namespace CoCSharp.Server.Handlers.Commands

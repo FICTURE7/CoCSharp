@@ -1,4 +1,4 @@
-﻿using CoCSharp.Networking;
+﻿using CoCSharp.Network;
 using NUnit.Framework;
 using System;
 using System.IO;

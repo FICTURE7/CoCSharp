@@ -1,5 +1,5 @@
-﻿using CoCSharp.Networking;
-using CoCSharp.Networking.Messages;
+﻿using CoCSharp.Network;
+using CoCSharp.Network.Messages;
 using System;
 using System.Diagnostics;
 using System.IO;

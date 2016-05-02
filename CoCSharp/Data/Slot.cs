@@ -1,4 +1,4 @@
-﻿using CoCSharp.Networking;
+﻿using CoCSharp.Network;
 using System;
 
 namespace CoCSharp.Data

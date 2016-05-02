@@ -1,5 +1,5 @@
-﻿using CoCSharp.Networking;
-using CoCSharp.Networking.Messages;
+﻿using CoCSharp.Network;
+using CoCSharp.Network.Messages;
 using NUnit.Framework;
 
 namespace CoCSharp.Test.Networking
