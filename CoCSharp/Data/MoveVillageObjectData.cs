@@ -12,7 +12,7 @@ namespace CoCSharp.Data
     public class MoveVillageObjectData
     {
         /// <summary>
-        /// Intializes a new instance of the <see cref="MoveVillageObjectData"/> class.
+        /// Initializes a new instance of the <see cref="MoveVillageObjectData"/> class.
         /// </summary>
         public MoveVillageObjectData()
         {
