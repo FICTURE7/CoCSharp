@@ -27,7 +27,7 @@ namespace CoCSharp.Test.Data
         public void Constructors_ValidArgs()
         {
             var fingerprint = new Fingerprint(_fingerprintPath);
-            Assert.AreEqual(681, fingerprint.Files.Length, "Did not fully deserialize the fingerprint file.");
+            Assert.AreEqual(681, fingerprint.Count, "Did not fully deserialize the fingerprint file.");
             Assert.AreEqual("9d075b9546211da641d06f4c576aa9b9c62212fb", Utils.BytesToString(fingerprint.MasterHash));
             Assert.AreEqual("8.116.5", fingerprint.Version);
         }
@@ -46,7 +46,7 @@ namespace CoCSharp.Test.Data
             var json = File.ReadAllText(_fingerprintPath);
             var fingerprint = Fingerprint.FromJson(json);
 
-            Assert.AreEqual(681, fingerprint.Files.Length, "Did not fully read the fingerprint file.");
+            Assert.AreEqual(681, fingerprint.Count, "Did not fully read the fingerprint file.");
             Assert.AreEqual("9d075b9546211da641d06f4c576aa9b9c62212fb", Utils.BytesToString(fingerprint.MasterHash));
             Assert.AreEqual("8.116.5", fingerprint.Version);
         }
@@ -56,7 +56,7 @@ namespace CoCSharp.Test.Data
         {
             // Original fingerprint.
             var oriFingerprint = new Fingerprint(_fingerprintPath);
-            
+
             // Turn the Original fingerprint into a JSON string.
             var oriJson = oriFingerprint.ToJson();
 
@@ -67,12 +67,25 @@ namespace CoCSharp.Test.Data
         }
 
         [Test]
+        public void ForEach_Loaded_Iterates()
+        {
+            var fingerprint = new Fingerprint(_fingerprintPath);
+            var index = 0;
+            foreach (var file in fingerprint)
+            {
+                Assert.AreSame(fingerprint[index], file);
+                index++;
+            }
+
+            Assert.AreEqual(index, fingerprint.Count);
+        }
+
+        [Test]
         public void ComputeMasterHash_Equality()
         {
             var fingerprint = new Fingerprint(_fingerprintPath);
             var masterHash = fingerprint.ComputeMasterHash();
             Assert.AreEqual(fingerprint.MasterHash, masterHash);
-            Assert.AreEqual(Utils.BytesToString(fingerprint.MasterHash), Utils.BytesToString(masterHash));
         }
     }
 }

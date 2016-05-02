@@ -167,9 +167,9 @@ namespace CoCSharp.Data
             if (!Directory.Exists(localRootDir))
                 Directory.CreateDirectory(localRootDir);
 
-            for (int i = 0; i < fingerprint.Files.Length; i++)
+            for (int i = 0; i < fingerprint.Count; i++)
             {
-                var file = fingerprint.Files[i];
+                var file = fingerprint[i];
 
                 // Root directory's name of the file's path.
                 var dirName = Path.GetDirectoryName(file.Path);
@@ -203,8 +203,8 @@ namespace CoCSharp.Data
                 {
                     DownloadedCount = i + 1,
                     FileDownloaded = file,
-                    NextDownload = fingerprint.Files[i],
-                    ProgressPercentage = ((i + 1) / (double)fingerprint.Files.Length) * 100,
+                    NextDownload = fingerprint[i],
+                    ProgressPercentage = ((i + 1) / (double)fingerprint.Count) * 100,
                 };
 
                 OnDownloadProgressChanged(args);
