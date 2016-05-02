@@ -12,7 +12,7 @@ namespace CoCSharp.Server.Handlers.Commands
             // Fabulous variable name.
             var sucCommand = (SpeedUpConstructionCommand)command;
             var buildable = client.Avatar.Home.GetVillageObject<Buildable>(sucCommand.BuildableGameID);
-            if (buildable.IsConstructing)
+            if (!buildable.IsConstructing)
             {
                 FancyConsole.WriteLine(BuildableNotInConstructionFormat, client.Avatar.Token, sucCommand.BuildableGameID);
                 return;
