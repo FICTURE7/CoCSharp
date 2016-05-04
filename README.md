@@ -18,17 +18,16 @@ Due to the encryption update in 8.x.x, a patched version of `libg.so` with the s
 its not installed `Sodium.SodiumCore` will throw a `DllNotFoundException`.
 
 ## What can it do?
+* CoCSharp.Data:
+  * Includes classes that defines common Clash of Clans data.
 * CoCSharp.Csv: Clash of Clans format CSV reader.
   * Includes classes for reading CSV files.
-* CoCSharp.Logging: *(Needs to implemented)*
-  * Includes classes to log and dump packet.
 * CoCSharp.Logic: Village object structures and logic.
   * Includes classes for village objects: Village, Trap, Obstacle, Building etc...
-* CoCSharp.Networking: Clash of Clans network protocol implementation.
-  * Includes classes for reading and writing messages.
-  * Includes some classes containing packet definition.
+* CoCSharp.Network: Clash of Clans network protocol implementation.
+  * Includes classes for reading, writing messages & packet definitions.
 * CoCSharp.Networking.Cryptography: Clash of Clans encryption implementation.
-  * Include class for encryption version 7.x.x and 8.x.x version.
+  * Include class for encryption version 7.x.x & 8.x.x version.
 
 ## Compiling
 The simplest way to compile CoCSharp is to open the solution in Visual Studio and pressing `F6` to build the entire
