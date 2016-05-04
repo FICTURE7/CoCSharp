@@ -25,7 +25,7 @@ namespace CoCSharp.Network.Cryptography
         };
 
         /// <summary>
-        /// Gets a new instance of the standard keypair used by custom servers and clients.
+        /// Gets a new instance of the standard key-pair used by custom servers and clients.
         /// </summary>
         /// <remarks>
         /// More information here (https://github.com/FICTURE7/CoCSharp/issues/54#issuecomment-173556064).
@@ -48,14 +48,22 @@ namespace CoCSharp.Network.Cryptography
             {
                 return new byte[]
                 {
-                    0x46, 0x9b, 0x70, 0x4e, 0x7f, 0x60, 0x09, 0xba, 0x8f, 0xc7, 0x2e, 0x9b,
-                    0x5c, 0x86, 0x4c, 0x8e, 0x92, 0x85, 0xa7, 0x55, 0xc5, 0x19, 0x0f, 0x03,
-                    0xf5, 0xc7, 0x48, 0x52, 0xf6, 0xd9, 0xf4, 0x19
+                    // 8.212.12 ->
+                    0x9B, 0x39, 0xB4, 0x40, 0xFF, 0x6C, 0x13, 0xAD, 0x07, 0xB5, 0x06, 0xFC,
+                    0x55, 0xE3, 0x7F, 0x69, 0x85, 0x68, 0x95, 0xC3, 0xFD, 0x5A, 0xB3, 0x59,
+                    0x78, 0xCD, 0xF5, 0xE3, 0x4E, 0xB3, 0x74, 0x71
 
+                    // 8.212.9 ->
+                    //0x46, 0x9b, 0x70, 0x4e, 0x7f, 0x60, 0x09, 0xba, 0x8f, 0xc7, 0x2e, 0x9b,
+                    //0x5c, 0x86, 0x4c, 0x8e, 0x92, 0x85, 0xa7, 0x55, 0xc5, 0x19, 0x0f, 0x03,
+                    //0xf5, 0xc7, 0x48, 0x52, 0xf6, 0xd9, 0xf4, 0x19
+
+                    // 8.212.3 ->
                     //0x15, 0x0C, 0x52, 0xDB, 0x12, 0xBA, 0x1C, 0x9D, 0xD8, 0x09, 0xB8, 0x93,
                     //0x4A, 0x53, 0x5F, 0x42, 0x8A, 0x91, 0xB7, 0xB6, 0x1E, 0x15, 0xAB, 0x46,
                     //0x9E, 0x42, 0xB9, 0x61, 0x4C, 0x76, 0xA3, 0x25,
 
+                    // 8.116.2 ->
                     //0x01, 0xC9, 0x8C, 0x14, 0x3A, 0x84, 0x0D, 0x92, 0xEE, 0x65, 0x69, 0x96,
                     //0xDA, 0xD5, 0xAF, 0x41, 0xDE, 0x5D, 0x1B, 0x8E, 0xBB, 0x28, 0x90, 0x81,
                     //0x36, 0x8B, 0x5C, 0xFD, 0xA9, 0xBD, 0x4A, 0x30
@@ -80,7 +88,7 @@ namespace CoCSharp.Network.Cryptography
         /// </summary>
         /// <param name="direction">Direction of the data.</param>
         /// <param name="keyPair">Public and private key pair to use for encryption.</param>
-        /// <exception cref="ArgumentException">Incorrect direction.</exception>
+        /// <exception cref="ArgumentException"><paramref name="direction"/> is incorrect.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="keyPair"/> is null.</exception>"
         public Crypto8(MessageDirection direction, CoCKeyPair keyPair)
         {
@@ -94,7 +102,7 @@ namespace CoCSharp.Network.Cryptography
         }
 
         /// <summary>
-        /// Gets the current <see cref="CoCKeyPair"/> used by the <see cref="Crypto8"/>.
+        /// Gets the current <see cref="CoCKeyPair"/> used by the <see cref="Crypto8"/> to encrypt or decrypt data.
         /// </summary>
         public CoCKeyPair KeyPair
         {
@@ -188,11 +196,11 @@ namespace CoCSharp.Network.Cryptography
         }
 
         /// <summary>
-        /// Updates the <see cref="Crypto8"/> with the other end's public key according to the
-        /// <see cref="MessageDirection"/> the <see cref="Crypto8"/> was initialized with.
+        /// Updates the <see cref="Crypto8"/> with the other end's public key according to the <see cref="MessageDirection"/>
+        /// the <see cref="Crypto8"/> was initialized with.
         /// </summary>
         /// <remarks>
-        /// The blake2b nonce will be generated as well.
+        /// The Blake2B nonce will be generated depending on the state of the <see cref="Crypto8"/>.
         /// </remarks>
         /// <param name="publicKey">Other end's public key.</param>
         /// <exception cref="ArgumentNullException"><paramref name="publicKey"/> is null.</exception>
