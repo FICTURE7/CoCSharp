@@ -23,7 +23,7 @@ namespace CoCSharp.Network.Messages
         public override ushort ID { get { return 24101; } }
 
         /// <summary>
-        /// Time sinced last visited.
+        /// Time since last visited.
         /// </summary>
         public TimeSpan LastVisit;
 

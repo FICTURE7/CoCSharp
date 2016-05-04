@@ -5,44 +5,52 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 
-namespace CoCSharp.Proxy
+namespace CoCSharp.Server
 {
     public class CoCProxyClient
     {
         public CoCProxyClient(Socket client, Socket server, NetworkManagerAsyncSettings settings)
         {
-            // initiated first because message receive triggers too quickly sometimes
+            // Initiated first because message receive triggers too quickly sometimes.
             var crypto = new Crypto8(MessageDirection.Server);
-            crypto.UpdateSharedKey(Crypto8.SupercellPublicKey);  // use supercell's public key
+            // Configure Crypto with Supercell's public key.
+            // This is step 6. according to clugh's Protocol wiki page.
+            crypto.UpdateSharedKey(Crypto8.SupercellPublicKey);
 
-            // client connection is initiated with standard keys because we are acting as the server
+            // Client connection is initiated with standard keys because we are acting as the server.
             ClientConnection = new NetworkManagerAsync(client, settings);
             ClientConnection.MessageReceived += ClientReceived;
 
-            // server connection is initiated with generated keys because we are acting as the client
+            // Server connection is initiated with generated keys because we are acting as the client.
             ServerConnection = new NetworkManagerAsync(server, settings, crypto);
             ServerConnection.MessageReceived += ServerReceived;
 
             var publicKeyS = Utils.BytesToString(ClientConnection.Crypto.KeyPair.PublicKey);
             var privateKeyS = Utils.BytesToString(ClientConnection.Crypto.KeyPair.PrivateKey);
-            Console.WriteLine("Acting as server with standard \n\tpublickey: {0} \n\tprivatekey: {1}", publicKeyS, privateKeyS);
+            Console.WriteLine("Acting as server with standard \n\tpublic-key: {0} \n\tprivate-key: {1}", publicKeyS, privateKeyS);
 
             var publicKeyC = Utils.BytesToString(ServerConnection.Crypto.KeyPair.PublicKey);
             var privateKeyC = Utils.BytesToString(ServerConnection.Crypto.KeyPair.PrivateKey);
-            Console.WriteLine("Acting as client with generated \n\tpublickey: {0} \n\tprivatekey: {1}", publicKeyC, privateKeyC);
+            Console.WriteLine("Acting as client with generated \n\tpublic-key: {0} \n\tprivate-key: {1}", publicKeyC, privateKeyC);
+
+            _logger = new MessageLogger();
         }
 
-        public NetworkManagerAsync ClientConnection { get; private set; } // connection to client
-        public NetworkManagerAsync ServerConnection { get; private set; } // connection to server
+        // Connection to the client.
+        public NetworkManagerAsync ClientConnection { get; private set; }
+        // Connection to the server.
+        public NetworkManagerAsync ServerConnection { get; private set; }
 
+        private MessageLogger _logger;
         private byte[] _snonce;
         private byte[] _rnonce;
 
         private void ClientReceived(object sender, MessageReceivedEventArgs e)
         {
             // C -> P -> S
+            _logger.Log(e.Message);
 
-            Console.WriteLine("[S < C] => ID:{0} Name:{1}", e.Message.ID, e.Message.GetType().Name);
+            //Console.WriteLine("[S < C] => ID:{0} Name:{1}", e.Message.ID, e.Message.GetType().Name);
             if (!e.MessageFullyRead)
                 Console.WriteLine("        => Did not fully read.");
             if (e.Exception != null)
@@ -66,9 +74,9 @@ namespace CoCSharp.Proxy
                 ServerConnection.Crypto.Encrypt(ref body);
 
                 Console.WriteLine("        => Encrypted LoginRequestMessage with pk {0}", opkStr);
-                Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // header
-                Buffer.BlockCopy(ServerConnection.Crypto.KeyPair.PublicKey, 0, messageBytes, Message.HeaderSize, CoCKeyPair.KeyLength); // gen public key
-                Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize + CoCKeyPair.KeyLength, body.Length); // body
+                Buffer.BlockCopy(e.MessageData, 0, messageBytes, 0, Message.HeaderSize); // Copies the header.
+                Buffer.BlockCopy(ServerConnection.Crypto.KeyPair.PublicKey, 0, messageBytes, Message.HeaderSize, CoCKeyPair.KeyLength); // Copies our generated public key.
+                Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize + CoCKeyPair.KeyLength, body.Length); // Copies the body.
 
                 ServerConnection.Crypto.UpdateNonce(_snonce, UpdateNonceType.Blake);
                 ServerConnection.Crypto.UpdateNonce(_snonce, UpdateNonceType.Encrypt); // set _snonce for crypto to use for later encryption
@@ -92,7 +100,9 @@ namespace CoCSharp.Proxy
         {
             // C <- P <- S
 
-            Console.WriteLine("[S > C] => ID:{0} Name:{1}", e.Message.ID, e.Message.GetType().Name);
+            _logger.Log(e.Message);
+
+            //Console.WriteLine("[S > C] => ID:{0} Name:{1}", e.Message.ID, e.Message.GetType().Name);
             if (!e.MessageFullyRead)
                 Console.WriteLine("        => Warning: Did not fully read message.");
             if (e.Exception != null)

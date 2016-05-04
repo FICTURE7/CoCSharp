@@ -1,4 +1,4 @@
-﻿namespace CoCSharp.Proxy
+﻿namespace CoCSharp.Server
 {
     public static class Utils
     {

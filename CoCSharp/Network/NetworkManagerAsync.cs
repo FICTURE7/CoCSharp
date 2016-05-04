@@ -13,10 +13,10 @@ namespace CoCSharp.Network
     public class NetworkManagerAsync : IDisposable
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
-        /// with the specified <see cref="Socket"/>.
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="Socket"/>.
         /// </summary>
         /// <param name="connection"><see cref="Socket"/> instance.</param>
+        /// 
         /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
         public NetworkManagerAsync(Socket connection)
             : this(connection, NetworkManagerAsyncSettings.DefaultSettings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
@@ -25,14 +25,16 @@ namespace CoCSharp.Network
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
-        /// with the specified <see cref="Socket"/> and <see cref="NetworkManagerAsyncSettings"/>.
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="Socket"/> 
+        /// and <see cref="NetworkManagerAsyncSettings"/>.
         /// </summary>
+        /// 
         /// <param name="connection"><see cref="Socket"/> instance.</param>
         /// <param name="settings">
         /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
         /// object management.
         /// </param>
+        /// 
         /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
         public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings)
@@ -42,16 +44,17 @@ namespace CoCSharp.Network
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
-        /// with the specified <see cref="Socket"/> and <see cref="NetworkManagerAsyncSettings"/> with
-        /// the specified <see cref="Crypto8"/> that will be used to encrypt and decrypt messages.
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="Socket"/>
+        /// and <see cref="NetworkManagerAsyncSettings"/> with the specified <see cref="Crypto8"/> that will be used to encrypt and decrypt messages.
         /// </summary>
+        /// 
         /// <param name="connection"><see cref="Socket"/> instance.</param>
         /// <param name="settings">
         /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
         /// object management.
         /// </param>
         /// <param name="crypto"><see cref="Crypto8"/> instance that will be used to encrypt and decrypt messages.</param>
+        /// 
         /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="crypto"/> is null.</exception>
@@ -108,6 +111,7 @@ namespace CoCSharp.Network
         /// Sends the specified message using the <see cref="Connection"/> socket.
         /// </summary>
         /// <param name="message"><see cref="Message"/> to send.</param>
+        /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="NetworkManagerAsync"/> is disposed.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="message"/> is null.</exception>
         /// <exception cref="InvalidMessageException"><paramref name="message"/> length greater than <see cref="Message.MaxSize"/>.</exception>
@@ -145,7 +149,7 @@ namespace CoCSharp.Network
                         Array.Reverse(len);
 
                     enMessageWriter.Write(message.ID);
-                    enMessageWriter.Write(len, 1, 3); // message len
+                    enMessageWriter.Write(len, 1, 3); // message length
                     enMessageWriter.Write(message.Version);
                     enMessageWriter.Write(body); // encrypted body
 
@@ -276,37 +280,49 @@ namespace CoCSharp.Network
                 var messageEnBody = (byte[])null;
                 var messageDeBody = (byte[])null;
 
-                // after encryption (was added after encryption)
+                // After encryption (was added after the server/client encrypted the data).
                 if (message is LoginRequestMessage) // we're the server
                 {
-                    var publicKey = new byte[CoCKeyPair.KeyLength]; // copy clientKey(pk) from raw message, token.Body[:32]
+                    // Copies clientKey(pk) from raw message -> token.Body[:32].
+                    var publicKey = new byte[CoCKeyPair.KeyLength];
                     Buffer.BlockCopy(token.Body, 0, publicKey, 0, CoCKeyPair.KeyLength);
 
-                    messageEnBody = new byte[token.Length - CoCKeyPair.KeyLength]; // copy remaining bytes token.Body[32:]
+                    // Copies remaining bytes from raw message -> token.Body[32:]
+                    messageEnBody = new byte[token.Length - CoCKeyPair.KeyLength];
                     Buffer.BlockCopy(token.Body, CoCKeyPair.KeyLength, messageEnBody, 0, messageEnBody.Length);
 
                     var lrMessage = message as LoginRequestMessage;
                     lrMessage.PublicKey = publicKey;
-                    Crypto.UpdateSharedKey(publicKey); // update with clientKey(pk), _cryptoState = InitialKey
+
+                    // Should never happen. As the Crypto8 was initiated as the client and
+                    // LoginRequestMessage is sent to the server only.
+                    if (Crypto.Direction == MessageDirection.Server)
+                        Console.WriteLine("Vut Ze Fk m8!?");
+
+                    // Updates with clientKey(pk). _cryptoState = InitialKey
+                    Crypto.UpdateSharedKey(publicKey);
                 }
                 else
                 {
                     messageEnBody = token.Body;
                 }
 
-                messageDeBody = (byte[])messageEnBody.Clone(); // cloning cuz we dont want a reference
+                // Cloning the byte array because we don't want a reference.
+                messageDeBody = (byte[])messageEnBody.Clone();
 
-                var messageData = new byte[token.Length + Message.HeaderSize]; // full message data
+                // Full message data, that is message header including message body.
+                var messageData = new byte[token.Length + Message.HeaderSize];
                 Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
-                if (!(message is SessionSuccessMessage || message is SessionRequestMessage)) // ignore 10100 and 20100 for decryption
+                // Ignore 10100 & 20100 for decryption.
+                if (!(message is SessionSuccessMessage || message is SessionRequestMessage))
                 {
                     try
                     {
                         Crypto.Decrypt(ref messageDeBody);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         // Failed to decrypt the message.
                         OnMessageReceived(new MessageReceivedEventArgs()
@@ -349,24 +365,24 @@ namespace CoCSharp.Network
                     try { message.ReadMessage(reader); }
                     catch (Exception ex) { exception = ex; }
 
-                    // before encryption (was added before encryption)
-                    if (message is LoginRequestMessage) // we're the server
+                    // Before encryption (was added before the server/client encrypted the data).
+                    if (message is LoginRequestMessage) // We're the server.
                     {
                         var lrMessage = message as LoginRequestMessage;
                         Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Decrypt); // update with snonce, decryptnonce = snonce
                         Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Blake);
                     }
-                    else if (message is LoginSuccessMessage) // we're the client
+                    else if (message is LoginSuccessMessage) // We're the client.
                     {
                         var lsMessage = message as LoginSuccessMessage;
                         Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
-                        Crypto.UpdateSharedKey(lsMessage.PublicKey); // update crypto with k
+                        Crypto.UpdateSharedKey(lsMessage.PublicKey); // Update crypto with k.
                     }
-                    else if (message is LoginFailedMessage) // we're the client
+                    else if (message is LoginFailedMessage) // We're the client.
                     {
                         var lfMessage = message as LoginFailedMessage;
                         Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
-                        Crypto.UpdateSharedKey(lfMessage.PublicKey); // update crypto with k
+                        Crypto.UpdateSharedKey(lfMessage.PublicKey); // Update crypto with k.
                     }
 
                     OnMessageReceived(new MessageReceivedEventArgs()
@@ -437,7 +453,7 @@ namespace CoCSharp.Network
         }
 
         /// <summary>
-        /// Releases all unmanged resources and optionally releases managed resources
+        /// Releases all unmanaged resources and optionally releases managed resources
         /// used by the current instance of the <see cref="NetworkManagerAsync"/> class.
         /// </summary>
         /// <param name="disposing">Releases managed resources if set to <c>true</c>.</param>
@@ -454,7 +470,7 @@ namespace CoCSharp.Network
                     catch { }
 
                     Connection.Close();
-                    //Settings.Dipose(); // don't dispose the settings cause there might be other networkmanagers
+                    //Settings.Dipose(); // Don't dispose because we might dispose other NetworkManagers.
                 }
                 _disposed = true;
             }
