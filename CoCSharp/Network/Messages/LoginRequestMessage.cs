@@ -121,7 +121,7 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public string VendorGUID;
         /// <summary>
-        /// Seed that was needed for encryption before updated 8.x.x.
+        /// Seed that was needed for encryption before update 8.x.x.
         /// </summary>
         public int Seed;
         
