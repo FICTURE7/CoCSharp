@@ -22,20 +22,39 @@ namespace CoCSharp.Server
                 Directory.CreateDirectory("messages");
             else
             {
-                Console.Write("Compressing old message dumps...");
                 var files = Directory.GetFiles("messages");
-                using (var messageZip = new ZipFile("messages-" + DateTime.Now.ToString("hh-mm-ss.fff") + ".zip"))
+                if (files.Length != 0)
                 {
-                    messageZip.AddFiles(files);
-                    messageZip.Save();
+                    Console.Write("Compressing old message dumps...");
+                    using (var messageZip = new ZipFile("messages-" + DateTime.Now.ToString("hh-mm-ss.fff") + ".zip"))
+                    {
+                        messageZip.AddFiles(files);
+                        messageZip.Save();
+                    }
+                    Directory.Delete("messages", true);
+                    Console.WriteLine("Done!");
                 }
-                Directory.Delete("messages", true);
-                Console.WriteLine("Done!");
                 Directory.CreateDirectory("messages");
             }
 
             if (!Directory.Exists("villages"))
                 Directory.CreateDirectory("villages");
+            else
+            {
+                var files = Directory.GetFiles("villages");
+                if (files.Length != 0)
+                {
+                    Console.Write("Compressing old message dumps...");
+                    using (var villageZip = new ZipFile("villages-" + DateTime.Now.ToString("hh-mm-ss.fff") + ".zip"))
+                    {
+                        villageZip.AddFiles(files);
+                        villageZip.Save();
+                    }
+                    Directory.Delete("villages", true);
+                    Console.WriteLine("Done!");
+                }
+                Directory.CreateDirectory("villages");
+            }
 
             Proxy = new CoCProxy();
             Proxy.Start(new IPEndPoint(IPAddress.Any, 9339));

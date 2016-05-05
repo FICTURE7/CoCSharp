@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CoCSharp.Proxy
+﻿namespace CoCSharp.Proxy
 {
     public static partial class FancyConsole
     {
