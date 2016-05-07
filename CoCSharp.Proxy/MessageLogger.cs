@@ -19,7 +19,8 @@ namespace CoCSharp.Server
             var type = message.GetType();
             var fields = type.GetFields();
 
-            builder.AppendLine("&(gray)" + type.Name + "&(default):");
+            builder.AppendLine("&(gray)" + type.Name + "&(default) - " + message.ID + ":");
+
             for (int i = 0; i < fields.Length; i++)
             {
                 var fieldName = GetFieldName(fields[i]);
@@ -51,7 +52,7 @@ namespace CoCSharp.Server
 
             if (fieldValue == null)
                 return "&(cyan)null&(default)";
-            else if (fieldType ==typeof(byte) ||
+            else if (fieldType == typeof(byte) ||
                     fieldType == typeof(sbyte) ||
                     fieldType == typeof(short) ||
                     fieldType == typeof(ushort) ||
@@ -65,6 +66,8 @@ namespace CoCSharp.Server
                     fieldType == typeof(TimeSpan) ||
                     fieldType == typeof(DateTime))
                 return "&(green)" + fieldValue + "&(default)";
+            else if (fieldType == typeof(string))
+                return "&(yellow)\"" + fieldValue + "\"&(default)";
 
             return fieldValue.ToString();
         }

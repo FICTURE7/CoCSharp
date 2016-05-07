@@ -130,12 +130,16 @@ namespace CoCSharp.Server
             }
             else
             {
-                if (message is OwnHomeDataMessage)
+                try
                 {
-                    var ohdMessage = message as OwnHomeDataMessage;
-                    File.WriteAllText("villages\\" + DateTime.Now.ToString("hh-mm-ss.fff") + " ownhomedata.json", 
-                                      ohdMessage.OwnAvatarData.OwnVillageData.Home.DeserializedJson);
+                    if (message is OwnHomeDataMessage)
+                    {
+                        var ohdMessage = message as OwnHomeDataMessage;
+                        File.WriteAllText("villages\\" + DateTime.Now.ToString("hh-mm-ss.fff") + " ownhomedata.json",
+                                          ohdMessage.OwnVillageData.Home.DeserializedJson);
+                    }
                 }
+                catch { }
                 messageBytes = new byte[e.MessageData.Length];
 
                 var body = e.MessageBody;
