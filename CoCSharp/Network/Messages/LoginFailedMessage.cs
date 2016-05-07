@@ -92,11 +92,11 @@ namespace CoCSharp.Network.Messages
         /// Download root URL from where all the assets will be downloaded.
         /// </summary>
         public string DownloadRootUrl;
-
         /// <summary>
         /// Unknown string 2.
         /// </summary>
-        public string Unknown2;
+        public string AppStoreUrl;
+
         /// <summary>
         /// Unknown int 3.
         /// </summary>
@@ -150,7 +150,7 @@ namespace CoCSharp.Network.Messages
             Hostname = reader.ReadString(); // stage.clashofclans.com
             DownloadRootUrl = reader.ReadString(); // http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/
 
-            Unknown2 = reader.ReadString(); // market://details?id=com.supercell.clashofclans
+            AppStoreUrl = reader.ReadString(); // market://details?id=com.supercell.clashofclans
             Unknown3 = reader.ReadInt32(); // -1
             Unknown4 = reader.ReadByte(); // 0
             Unknown5 = reader.ReadString(); // ""
@@ -190,7 +190,7 @@ namespace CoCSharp.Network.Messages
             writer.Write(Hostname);
             writer.Write(DownloadRootUrl);
 
-            writer.Write(Unknown2);
+            writer.Write(AppStoreUrl);
             writer.Write(Unknown3);
             writer.Write(Unknown4);
 

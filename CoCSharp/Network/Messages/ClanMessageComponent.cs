@@ -6,12 +6,12 @@ namespace CoCSharp.Network.Messages
     /// Represents an <see cref="Avatar"/>'s clan data sent
     /// in the networking protocol.
     /// </summary>
-    public class ClanMessageData : MessageData
+    public class ClanMessageComponent : MessageComponent
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ClanMessageData"/> class.
+        /// Initializes a new instance of the <see cref="ClanMessageComponent"/> class.
         /// </summary>
-        public ClanMessageData()
+        public ClanMessageComponent()
         {
             // Space
         }

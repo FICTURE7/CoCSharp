@@ -202,9 +202,9 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Returns a JSON string that represents the current <see cref="Village"/>.
+        /// Returns a non-indented JSON string that represents the current <see cref="Village"/>.
         /// </summary>
-        /// <returns>A JSON string that represents the current <see cref="Village"/>.</returns>
+        /// <returns>A non-indented JSON string that represents the current <see cref="Village"/>.</returns>
         public string ToJson()
         {
             return ToJson(false);
@@ -236,7 +236,7 @@ namespace CoCSharp.Logic
             village.DeserializedJson = value;
 
             // Schedule constructions of Village Objects so that
-            // it execute logic.
+            // it executes logic.
             for (int i = 0; i < village.Buildings.Count; i++)
             {
                 var building = village.Buildings[i];

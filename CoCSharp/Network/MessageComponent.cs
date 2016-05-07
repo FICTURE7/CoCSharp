@@ -2,31 +2,33 @@
 
 namespace CoCSharp.Network
 {
+    //TODO: Consider renaming it to 'MessageComponent' instead.
+
     /// <summary>
-    /// Represents a part of a <see cref="Message"/>.
+    /// Represents a part of a <see cref="Message"/>. This can be refereed as 'components'
     /// </summary>
     /// <remarks>
     /// This is to make <see cref="Message"/> implementation
     /// more modular.
     /// </remarks>
-    public abstract class MessageData
+    public abstract class MessageComponent
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageData"/> class.
+        /// Initializes a new instance of the <see cref="MessageComponent"/> class.
         /// </summary>
-        public MessageData()
+        public MessageComponent()
         {
             // Space
         }
 
         /// <summary>
-        /// Reads the <see cref="MessageData"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="MessageComponent"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="MessageData"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="MessageComponent"/>.
         /// </param>
-        /// <exception cref="NotImplementedException"><see cref="ReadMessageData(MessageReader)"/> is not implemented.</exception>
-        public virtual void ReadMessageData(MessageReader reader)
+        /// <exception cref="NotImplementedException"><see cref="ReadMessageComponent(MessageReader)"/> is not implemented.</exception>
+        public virtual void ReadMessageComponent(MessageReader reader)
         {
             throw new NotImplementedException();
         }
@@ -37,8 +39,8 @@ namespace CoCSharp.Network
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="Message"/>.
         /// </param>
-        /// <exception cref="NotImplementedException"><see cref="WriteMessageData(MessageWriter)"/> is not implemented.</exception>
-        public virtual void WriteMessageData(MessageWriter writer)
+        /// <exception cref="NotImplementedException"><see cref="WriteMessageComponent(MessageWriter)"/> is not implemented.</exception>
+        public virtual void WriteMessageComponent(MessageWriter writer)
         {
             throw new NotImplementedException();
         }

@@ -37,7 +37,7 @@ namespace CoCSharp.Network
                     var instance = (Command)Activator.CreateInstance(type);
 
                     // A command with the same ID as instance.ID was already added to the dictionary.
-                    Debug.Assert(!CommandDictionary.ContainsKey(instance.ID));
+                    Debug.Assert(!CommandDictionary.ContainsKey(instance.ID), "CommandDictionary already contains '" + instance.ID + "'.");
                     CommandDictionary.Add(instance.ID, type);
                 }
             }

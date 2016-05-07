@@ -72,15 +72,26 @@ namespace CoCSharp.Server.Handlers
             //server.AvatarManager.SaveAvatar(avatar);
             client.Avatar = avatar;
 
-            var avatarData = new AvatarMessageData(avatar)
+            var villageData = new VillageMessageComponent()
             {
-                //TODO: Properly figure townhall level and alliance castle stuff.
+                HomeID = avatar.ID,
+                ShieldDuration = avatar.ShieldDuration,
+                Unknown2 = 1800,
+                Unknown3 = 69119,
+                Unknown4 = 1200,
+                Unknown5 = 60,
+                Home = avatar.Home,
+            };
+
+            var avatarData = new AvatarMessageComponent(avatar)
+            {
+                //TODO: Properly figure out townhall level and alliance castle stuff.
                 TownHallLevel = 5,
                 AllianceCastleLevel = 1,
                 AllianceCastleTotalCapacity = 10,
                 AllianceCastleUsedCapacity = 0,
 
-                //TODO: Properly store them and calculate them.
+                //TODO: Properly store them.
                 ResourcesCapacity = new ResourceCapacitySlot[]
                 {
                     new ResourceCapacitySlot(3000001, 5000),
@@ -97,9 +108,13 @@ namespace CoCSharp.Server.Handlers
             var ohdMessage = new OwnHomeDataMessage()
             {
                 LastVisit = TimeSpan.FromSeconds(100), //TODO: Implement saving of LastVisit.
-                Unknown1 = -1,
+                Unknown1 = null,
                 Timestamp = DateTime.UtcNow,
-                OwnAvatarData = avatarData
+                OwnVillageData = villageData,
+                OwnAvatarData = avatarData,
+                Unknown4 = 1462629754000,
+                Unknown5 = 1462629754000,
+                Unknown6 = 1462631554000,
             };
 
             client.NetworkManager.SendMessage(lsMessage); // LoginSuccessMessage

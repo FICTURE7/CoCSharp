@@ -87,9 +87,10 @@
     <Compile Include="Data\TrapData.cs" />
     <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
     <Compile Include="Logic\LogicUtils.cs" />
-    <Compile Include="Network\Messages\AvatarMessageData.cs" />
+    <Compile Include="Network\Messages\AttackNpcMessage.cs" />
+    <Compile Include="Network\Messages\AvatarMessageComponent.cs" />
     <Compile Include="Data\BuildingData.cs" />
-    <Compile Include="Network\Messages\ClanMessageData.cs" />
+    <Compile Include="Network\Messages\ClanMessageComponent.cs" />
     <Compile Include="Csv\CsvData.cs" />
     <Compile Include="Data\AssetDownloadCompletedEventArgs.cs" />
     <Compile Include="Data\AssetDownloadProgressChangedEventArgs.cs" />
@@ -122,7 +123,8 @@
     <Compile Include="Network\Messages\Commands\SellDecorationCommand.cs" />
     <Compile Include="Network\Messages\Commands\SpeedUpConstructionCommand.cs" />
     <Compile Include="Network\Messages\Commands\UpgradeMultipleBuildableCommand.cs" />
-    <Compile Include="Network\Messages\VillageMessageData.cs" />
+    <Compile Include="Network\Messages\NpcDataMessage.cs" />
+    <Compile Include="Network\Messages\VillageMessageComponent.cs" />
     <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Logic\Avatar.cs" />
     <Compile Include="Logic\Buildable.cs" />
@@ -144,7 +146,7 @@
     <Compile Include="Network\Cryptography\Crypto8.cs" />
     <Compile Include="Network\Cryptography\UpdateNonceType.cs" />
     <Compile Include="Network\InvalidCommandException.cs" />
-    <Compile Include="Network\MessageData.cs" />
+    <Compile Include="Network\MessageComponent.cs" />
     <Compile Include="Network\MessageDirection.cs" />
     <Compile Include="Network\Messages\ChatMessageClientMessage.cs" />
     <Compile Include="Network\Messages\ChatMessageServerMessage.cs" />

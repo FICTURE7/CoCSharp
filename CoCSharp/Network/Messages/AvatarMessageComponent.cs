@@ -9,40 +9,30 @@ namespace CoCSharp.Network.Messages
     /// Represents an <see cref="Avatar"/>'s data sent in the
     /// networking protocol.
     /// </summary>
-    public class AvatarMessageData : MessageData
+    public class AvatarMessageComponent : MessageComponent
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="AvatarMessageData"/> class.
+        /// Initializes a new instance of the <see cref="AvatarMessageComponent"/> class.
         /// </summary>
-        public AvatarMessageData()
+        public AvatarMessageComponent()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AvatarMessageData"/> class from
+        /// Initializes a new instance of the <see cref="AvatarMessageComponent"/> class from
         /// the specified <see cref="Avatar"/>.
         /// </summary>
         /// <param name="avatar"><see cref="Avatar"/> from which the data will be set.</param>
-        public AvatarMessageData(Avatar avatar)
+        public AvatarMessageComponent(Avatar avatar)
         {
-            OwnVillageData = new VillageMessageData()
-            {
-                UserID = avatar.ID,
-                ShieldDuration = avatar.ShieldDuration,
-                Unknown2 = 1200,
-                Unknown3 = 60,
-                Compressed = true,
-                Home = avatar.Home,
-            };
-
             UserID = avatar.ID;
-            UserID2 = avatar.ID; //TODO: Might be something different.
+            HomeID = avatar.ID;
 
             if (avatar.Alliance != null)
             {
-                OwnClanData = new ClanMessageData()
+                OwnClanData = new ClanMessageComponent()
                 {
                     ID = avatar.Alliance.ID,
                     Name = avatar.Alliance.Name,
@@ -52,7 +42,7 @@ namespace CoCSharp.Network.Messages
                 };
             }
 
-            League = avatar.League;
+            LeagueLevel = avatar.League;
             Name = avatar.Name;
 
             Unknown13 = -1;
@@ -63,18 +53,18 @@ namespace CoCSharp.Network.Messages
             Gems = avatar.Gems;
             FreeGems = avatar.FreeGems;
 
-            Unknown15 = 1200;
-            Unknown16 = 60;
+            Unknown16 = 1200;
+            Unknown17 = 60;
 
             Trophies = avatar.Trophies;
 
-            Unknown20 = 1;
-            Unknown21 = 946720861000;
+            Unknown21 = 1;
+            Unknown22 = 946720861000;
 
             IsNamed = avatar.IsNamed;
 
-            Unknown25 = 1;
             Unknown26 = 1;
+            Unknown27 = 1;
 
             ResourcesCapacity = new ResourceCapacitySlot[0];
             ResourcesAmount = new ResourceAmountSlot[0];
@@ -86,44 +76,36 @@ namespace CoCSharp.Network.Messages
             HeroHealths = new HeroHealthSlot[0];
             HeroStates = new HeroStateSlot[0];
             TutorialProgess = new TutorialProgressSlot[0];
-            Acheivements = new AchievementSlot[0];
-            AcheivementProgress = new AchievementProgessSlot[0];
+            Achievements = new AchievementSlot[0];
+            AchievementProgress = new AchievementProgessSlot[0];
             NpcStars = new NpcStarSlot[0];
             NpcGold = new NpcGoldSlot[0];
             NpcElixir = new NpcElixirSlot[0];
             UnknownSlot1 = new UnknownSlot[0];
             UnknownSlot2 = new UnknownSlot[0];
             UnknownSlot3 = new UnknownSlot[0];
-            UnknownSlot4 = new UnknownSlot[0];
-
-            Unknown30 = 1454783074000;
-            Unknown31 = 1454783074000;
-            Unknown32 = 1454783074000;
         }
         #endregion
 
         #region Fields
         /// <summary>
-        /// Data of the village of the avatar.
+        /// Unknown integer 1.
         /// </summary>
-        public VillageMessageData OwnVillageData;
+        public int Unknown1;
+
         /// <summary>
         /// User ID.
         /// </summary>
         public long UserID;
         /// <summary>
-        /// User ID. Might be current home ID.
+        /// Home ID. Usually same as <see cref="UserID"/>.
         /// </summary>
-        public long UserID2;
+        public long HomeID;
         /// <summary>
         /// Data of the clan of the avatar.
         /// </summary>
-        public ClanMessageData OwnClanData;
+        public ClanMessageComponent OwnClanData;
 
-        /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
         /// <summary>
         /// Unknown integer 2.
         /// </summary>
@@ -176,7 +158,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// League ID.
         /// </summary>
-        public int League;
+        public int LeagueLevel;
         /// <summary>
         /// Alliance castle level.
         /// </summary>
@@ -197,10 +179,12 @@ namespace CoCSharp.Network.Messages
         /// Name of avatar.
         /// </summary>
         public string Name;
+
         /// <summary>
         /// Unknown integer 14.
         /// </summary>
         public int Unknown14; // -1
+
         /// <summary>
         /// Level of avatar.
         /// </summary>
@@ -226,8 +210,9 @@ namespace CoCSharp.Network.Messages
         /// Unknown integer 16.
         /// </summary>
         public int Unknown16; // 60
+
         /// <summary>
-        /// Score.
+        /// Trophies count.
         /// </summary>
         public int Trophies;
 
@@ -247,6 +232,7 @@ namespace CoCSharp.Network.Messages
         /// Number of defenses lost.
         /// </summary> 
         public int DefensesLost; // 0
+
         /// <summary>
         /// Unknown integer 17.
         /// </summary>
@@ -260,21 +246,23 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int Unknown19; // 0
         /// <summary>
-        /// Unknown byte 20.
+        /// Unknown integer 20.
         /// </summary>
-        public byte Unknown20; // 1
+        public int Unknown20; // 1
         /// <summary>
-        /// Unknown long 21.
+        /// Unknown byte 21.
         /// </summary>
-        public long Unknown21;
+        public byte Unknown21;
+
         /// <summary>
         /// Avatar name is set.
         /// </summary>
         public bool IsNamed;
+
         /// <summary>
-        /// Unknown integer 22.
+        /// Unknown long 22.
         /// </summary>
-        public int Unknown22;
+        public long Unknown22;
         /// <summary>
         /// Unknown integer 23.
         /// </summary>
@@ -295,6 +283,10 @@ namespace CoCSharp.Network.Messages
         /// Unknown integer 27.
         /// </summary>
         public int Unknown27;
+        /// <summary>
+        /// Unknown integer 28.
+        /// </summary>
+        public int Unknown28;
 
         /// <summary>
         /// Resources capacity.
@@ -343,11 +335,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Achievements state.
         /// </summary>
-        public AchievementSlot[] Acheivements;
+        public AchievementSlot[] Achievements;
         /// <summary>
         /// Achievement progress.
         /// </summary>
-        public AchievementProgessSlot[] AcheivementProgress;
+        public AchievementProgessSlot[] AchievementProgress;
         /// <summary>
         /// NPC stars.
         /// </summary>
@@ -362,6 +354,11 @@ namespace CoCSharp.Network.Messages
         public NpcElixirSlot[] NpcElixir;
 
         /// <summary>
+        /// Unknown integer 29.
+        /// </summary>
+        public int Unknown29;
+
+        /// <summary>
         /// Unknown slot 1.
         /// </summary>
         public UnknownSlot[] UnknownSlot1;
@@ -373,52 +370,30 @@ namespace CoCSharp.Network.Messages
         /// Unknown slot 3.
         /// </summary>
         public UnknownSlot[] UnknownSlot3;
-        /// <summary>
-        /// Unknown slot 4.
-        /// </summary>
-        public UnknownSlot[] UnknownSlot4;
-
-        /// <summary>
-        /// Unknown integer 28.
-        /// </summary>
-        public int Unknown28;
-        /// <summary>
-        /// Unknown integer 29.
-        /// </summary>
-        public int Unknown29;
-        /// <summary>
-        /// Unknown long 30.
-        /// </summary>
-        public long Unknown30;
-        /// <summary>
-        /// Unknown long 31
-        /// </summary>
-        public long Unknown31;
-        /// <summary>
-        /// Unknown long 32.
-        /// </summary>
-        public long Unknown32;
         #endregion
 
         #region Methods
         /// <summary>
-        /// Reads the <see cref="AvatarMessageData"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="AvatarMessageComponent"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="AvatarMessageData"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="AvatarMessageComponent"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
-        public override void ReadMessageData(MessageReader reader)
+        public override void ReadMessageComponent(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
-            OwnVillageData = new VillageMessageData();
-            OwnVillageData.ReadMessageData(reader);
+            //OwnVillageData = new VillageMessageData();
+            //OwnVillageData.ReadMessageData(reader);
+
+            //var kek = reader.ReadInt32();
+            Unknown1 = reader.ReadInt32();
 
             UserID = reader.ReadInt64();
-            UserID2 = reader.ReadInt64();
+            HomeID = reader.ReadInt64();
             if (reader.ReadBoolean())
             {
-                OwnClanData = new ClanMessageData();
+                OwnClanData = new ClanMessageComponent();
                 OwnClanData.ID = reader.ReadInt64();
                 OwnClanData.Name = reader.ReadString();
                 OwnClanData.Badge = reader.ReadInt32();
@@ -427,7 +402,6 @@ namespace CoCSharp.Network.Messages
                 OwnClanData.Unknown1 = reader.ReadByte(); // Clan war?
             }
 
-            Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
             Unknown3 = reader.ReadInt32();
             Unknown4 = reader.ReadInt32();
@@ -438,26 +412,27 @@ namespace CoCSharp.Network.Messages
             Unknown9 = reader.ReadInt32();
             Unknown10 = reader.ReadInt32();
             Unknown11 = reader.ReadInt32();
+            Unknown12 = reader.ReadInt32();
 
-            Unknown12 = reader.ReadInt32(); // 0 = 8.x.x
-            Unknown13 = reader.ReadInt32(); // -1 = 8.x.x
+            Unknown13 = reader.ReadInt32(); // 0 = 8.x.x
+            Unknown14 = reader.ReadInt32(); // -1 = 8.x.x
 
-            League = reader.ReadInt32();
-            AllianceCastleLevel = reader.ReadInt32(); // might be at wrong offset
+            LeagueLevel = reader.ReadInt32();
+            AllianceCastleLevel = reader.ReadInt32();
             AllianceCastleTotalCapacity = reader.ReadInt32();
             AllianceCastleUsedCapacity = reader.ReadInt32();
             TownHallLevel = reader.ReadInt32();
             Name = reader.ReadString();
 
-            Unknown14 = reader.ReadInt32(); // -1, Facebook ID
+            Unknown15 = reader.ReadInt32(); // -1, Facebook ID
 
             Level = reader.ReadInt32();
             Experience = reader.ReadInt32();
             Gems = reader.ReadInt32();
             FreeGems = reader.ReadInt32();
 
-            Unknown15 = reader.ReadInt32(); // 1200
-            Unknown16 = reader.ReadInt32(); // 60
+            Unknown16 = reader.ReadInt32(); // 1200
+            Unknown17 = reader.ReadInt32(); // 60
 
             Trophies = reader.ReadInt32();
             AttacksWon = reader.ReadInt32();
@@ -465,21 +440,21 @@ namespace CoCSharp.Network.Messages
             DefensesWon = reader.ReadInt32();
             DefensesLost = reader.ReadInt32();
 
-            Unknown17 = reader.ReadInt32();
             Unknown18 = reader.ReadInt32();
             Unknown19 = reader.ReadInt32();
-            Unknown20 = reader.ReadByte(); // 1, might be a bool
-            Unknown21 = reader.ReadInt64(); // 946720861000
+            Unknown20 = reader.ReadInt32();
+            Unknown21 = reader.ReadByte(); // 1, might be a bool
+            Unknown22 = reader.ReadInt64(); // 946720861000
 
             IsNamed = reader.ReadBoolean();
 
-            Unknown22 = reader.ReadInt32();
             Unknown23 = reader.ReadInt32();
             Unknown24 = reader.ReadInt32();
-            Unknown25 = reader.ReadInt32(); // 1
+            Unknown25 = reader.ReadInt32();
+            Unknown26 = reader.ReadInt32(); // 1
 
-            Unknown26 = reader.ReadInt32(); // 1 = 8.x.x
-            Unknown27 = reader.ReadInt32(); // 0 = 8.x.x
+            Unknown27 = reader.ReadInt32(); // 1 = 8.x.x
+            Unknown28 = reader.ReadInt32(); // 0 = 8.x.x
 
             ResourcesCapacity = Slot.ReadSlotArray<ResourceCapacitySlot>(reader);
             ResourcesAmount = Slot.ReadSlotArray<ResourceAmountSlot>(reader);
@@ -492,42 +467,35 @@ namespace CoCSharp.Network.Messages
             HeroStates = Slot.ReadSlotArray<HeroStateSlot>(reader);
             AllianceUnits = Slot.ReadSlotArray<AllianceUnitSlot>(reader);
             TutorialProgess = Slot.ReadSlotArray<TutorialProgressSlot>(reader);
-            Acheivements = Slot.ReadSlotArray<AchievementSlot>(reader);
-            AcheivementProgress = Slot.ReadSlotArray<AchievementProgessSlot>(reader);
+            Achievements = Slot.ReadSlotArray<AchievementSlot>(reader);
+            AchievementProgress = Slot.ReadSlotArray<AchievementProgessSlot>(reader);
             NpcStars = Slot.ReadSlotArray<NpcStarSlot>(reader);
             NpcGold = Slot.ReadSlotArray<NpcGoldSlot>(reader);
             NpcElixir = Slot.ReadSlotArray<NpcElixirSlot>(reader);
 
+            Unknown29 = reader.ReadInt32();
+
             UnknownSlot1 = Slot.ReadSlotArray<UnknownSlot>(reader);
             UnknownSlot2 = Slot.ReadSlotArray<UnknownSlot>(reader);
             UnknownSlot3 = Slot.ReadSlotArray<UnknownSlot>(reader);
-            UnknownSlot4 = Slot.ReadSlotArray<UnknownSlot>(reader); // ID = 37000002, value = 0
-
-            Unknown28 = reader.ReadInt32(); // 0
-            Unknown29 = reader.ReadInt32(); // 0
-            Unknown30 = reader.ReadInt64(); // 1454781274000
-            Unknown31 = reader.ReadInt64(); // 1454781274000
-            Unknown32 = reader.ReadInt64(); // 1454783074000
         }
 
         /// <summary>
-        /// Writes the <see cref="AvatarMessageData"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="AvatarMessageComponent"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="AvatarMessageData"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="AvatarMessageComponent"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="OwnVillageData"/> is null.</exception>
-        public override void WriteMessageData(MessageWriter writer)
+        ///// <exception cref="InvalidOperationException"><see cref="OwnVillageData"/> is null.</exception>
+        public override void WriteMessageComponent(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
-            if (OwnVillageData == null)
-                throw new InvalidOperationException("OwnAvatarData cannot be null.");
 
-            OwnVillageData.WriteMessageData(writer);
+            writer.Write(Unknown1);
 
             writer.Write(UserID);
-            writer.Write(UserID2);
+            writer.Write(HomeID);
             writer.Write(OwnClanData != null);
             if (OwnClanData != null)
             {
@@ -539,7 +507,6 @@ namespace CoCSharp.Network.Messages
                 writer.Write(OwnClanData.Unknown1);
             }
 
-            writer.Write(Unknown1);
             writer.Write(Unknown2);
             writer.Write(Unknown3);
             writer.Write(Unknown4);
@@ -550,26 +517,26 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown9);
             writer.Write(Unknown10);
             writer.Write(Unknown11); // 1
+            writer.Write(Unknown12);
+            writer.Write(Unknown13); // 1 = 8.x.x
+            writer.Write(Unknown14); // 0 = 8.x.x
 
-            writer.Write(Unknown12); // 1 = 8.x.x
-            writer.Write(Unknown13); // 0 = 8.x.x
-
-            writer.Write(League);
+            writer.Write(LeagueLevel);
             writer.Write(AllianceCastleLevel);
             writer.Write(AllianceCastleTotalCapacity);
             writer.Write(AllianceCastleUsedCapacity);
             writer.Write(TownHallLevel);
             writer.Write(Name);
 
-            writer.Write(Unknown13); // -1
+            writer.Write(Unknown15); // -1
 
             writer.Write(Level);
             writer.Write(Experience);
             writer.Write(Gems);
             writer.Write(FreeGems);
 
-            writer.Write(Unknown14); // 1200
-            writer.Write(Unknown15); // 60
+            writer.Write(Unknown16); // 1200
+            writer.Write(Unknown17); // 60
 
             writer.Write(Trophies);
 
@@ -578,21 +545,20 @@ namespace CoCSharp.Network.Messages
             writer.Write(DefensesWon);
             writer.Write(DefensesLost);
 
-            writer.Write(Unknown17);
             writer.Write(Unknown18);
             writer.Write(Unknown19);
-            writer.Write(Unknown20); // 1, might be a bool
-            writer.Write(Unknown21); // 946720861000
+            writer.Write(Unknown20);
+            writer.Write(Unknown21); // 1, might be a bool
+            writer.Write(Unknown22); // 946720861000
 
             writer.Write(IsNamed);
 
-            writer.Write(Unknown22);
             writer.Write(Unknown23);
             writer.Write(Unknown24);
-            writer.Write(Unknown25); // 1
-
-            writer.Write(Unknown26); // 1 = 8.x.x
-            writer.Write(Unknown27); // 0 = 8.x.x
+            writer.Write(Unknown25);
+            writer.Write(Unknown26); // 1
+            writer.Write(Unknown27); // 1 = 8.x.x
+            writer.Write(Unknown28); // 0 = 8.x.x
 
             Slot.WriteSlotArray(writer, ResourcesCapacity);
             Slot.WriteSlotArray(writer, ResourcesAmount);
@@ -604,21 +570,17 @@ namespace CoCSharp.Network.Messages
             Slot.WriteSlotArray(writer, HeroHealths);
             Slot.WriteSlotArray(writer, HeroStates);
             Slot.WriteSlotArray(writer, TutorialProgess);
-            Slot.WriteSlotArray(writer, Acheivements);
-            Slot.WriteSlotArray(writer, AcheivementProgress);
+            Slot.WriteSlotArray(writer, Achievements);
+            Slot.WriteSlotArray(writer, AchievementProgress);
             Slot.WriteSlotArray(writer, NpcStars);
             Slot.WriteSlotArray(writer, NpcGold);
             Slot.WriteSlotArray(writer, NpcElixir);
+
+            writer.Write(Unknown29);
+
             Slot.WriteSlotArray(writer, UnknownSlot1);
             Slot.WriteSlotArray(writer, UnknownSlot2);
             Slot.WriteSlotArray(writer, UnknownSlot3);
-            Slot.WriteSlotArray(writer, UnknownSlot4);
-
-            writer.Write(Unknown28);
-            writer.Write(Unknown29);
-            writer.Write(Unknown30);
-            writer.Write(Unknown31);
-            writer.Write(Unknown32);
         }
         #endregion
     }
