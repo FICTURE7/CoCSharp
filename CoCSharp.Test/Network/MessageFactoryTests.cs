@@ -2,7 +2,7 @@
 using CoCSharp.Network.Messages;
 using NUnit.Framework;
 
-namespace CoCSharp.Test.Networking
+namespace CoCSharp.Test.Network
 {
     [TestFixture]
     public class MessageFactoryTests

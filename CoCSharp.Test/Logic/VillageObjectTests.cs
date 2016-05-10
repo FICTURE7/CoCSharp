@@ -17,11 +17,11 @@ namespace CoCSharp.Test.Logic
             var obj = new TestObject();
 
             // X Coordinate tests.
-            Assert.Throws<ArgumentOutOfRangeException>(() => obj.X = 45);
+            Assert.Throws<ArgumentOutOfRangeException>(() => obj.X = 46);
             Assert.Throws<ArgumentOutOfRangeException>(() => obj.X = -1);
 
             // Y Coordinate tests.
-            Assert.Throws<ArgumentOutOfRangeException>(() => obj.Y = 45);
+            Assert.Throws<ArgumentOutOfRangeException>(() => obj.Y = 46);
             Assert.Throws<ArgumentOutOfRangeException>(() => obj.Y = -1);
         }
 

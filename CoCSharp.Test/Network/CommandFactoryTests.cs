@@ -3,7 +3,7 @@ using CoCSharp.Network.Messages.Commands;
 using NUnit.Framework;
 using System;
 
-namespace CoCSharp.Test.Networking
+namespace CoCSharp.Test.Network
 {
     [TestFixture]
     public class CommandFactoryTests

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Net.Sockets;
 
-namespace CoCSharp.Test.Networking
+namespace CoCSharp.Test.Network
 {
     [TestFixture]
     public class MessageBufferManagerTests
