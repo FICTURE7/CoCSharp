@@ -128,8 +128,6 @@ namespace CoCSharp.Server.Core
 
         private void LoadAvatarData(Hashtable table)
         {
-            CheckHashtable(table);
-
             Avatar.Name = (string)table["Name"];
             Avatar.IsNamed = Convert.ToBoolean(table["IsNamed"]);
             Avatar.ID = Convert.ToInt64(table["ID"]);
@@ -144,14 +142,6 @@ namespace CoCSharp.Server.Core
             Avatar.AttacksLost = Convert.ToInt32(table["AttacksLost"]);
             Avatar.DefensesWon = Convert.ToInt32(table["DefensesWon"]);
             Avatar.DefensesLost = Convert.ToInt32(table["DefensesLost"]);
-        }
-
-        private void CheckHashtable(Hashtable table)
-        {
-            if (table.Count < 13)
-            {
-
-            }
         }
     }
 }

@@ -32,9 +32,9 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public Village NpcVillage;
         /// <summary>
-        /// NPC avatar data.
+        /// Own avatar data.
         /// </summary>
-        public AvatarMessageComponent NpcAvatarData;
+        public AvatarMessageComponent AvatarData;
 
         /// <summary>
         /// Unknown integer 2.
@@ -61,8 +61,8 @@ namespace CoCSharp.Network.Messages
             var villageJson = reader.ReadString();
             NpcVillage = Village.FromJson(villageJson);
 
-            NpcAvatarData = new AvatarMessageComponent();
-            NpcAvatarData.ReadMessageComponent(reader);
+            AvatarData = new AvatarMessageComponent();
+            AvatarData.ReadMessageComponent(reader);
 
             Unknown2 = reader.ReadInt32();
             NpcID = reader.ReadInt32();
@@ -75,18 +75,19 @@ namespace CoCSharp.Network.Messages
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="NpcDataMessage"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="NpcAvatarData"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="AvatarData"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
 
-            if (NpcAvatarData == null)
+            if (AvatarData == null)
                 throw new InvalidOperationException("NpcAvatarData cannot be null.");
 
             writer.Write(Unknown1);
 
-            writer.Write(NpcVillage.ToJson());
-            NpcAvatarData.WriteMessageComponent(writer);
+            var villageJson = NpcVillage.ToJson();
+            writer.Write(villageJson);
+            AvatarData.WriteMessageComponent(writer);
 
             writer.Write(Unknown2);
             writer.Write(NpcID);

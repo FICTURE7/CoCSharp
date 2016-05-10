@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Logic;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace CoCSharp.Server.Core
@@ -9,10 +8,9 @@ namespace CoCSharp.Server.Core
     {
         public AvatarManager()
         {
-            //LoadedAvatars = new Dictionary<string, Avatar>();
+            if (!Directory.Exists(DirectoryPaths.Avatars))
+                Directory.CreateDirectory(DirectoryPaths.Avatars);
         }
-
-        //public Dictionary<string, Avatar> LoadedAvatars { get; private set; }
 
         public Avatar CreateNewAvatar()
         {
@@ -27,18 +25,17 @@ namespace CoCSharp.Server.Core
 
         public Avatar CreateNewAvatar(string token, long id)
         {
-            var vilPath = Path.Combine(CoCServerPaths.Content, "default_village.json");
+            var villagePath = Path.Combine(DirectoryPaths.Content, "starting_village.json");
             var avatar = new Avatar();
             avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
             avatar.ID = id;
             avatar.Level = 10; // bypass tut
-            avatar.Home = Village.FromJson(File.ReadAllText(vilPath));
+            avatar.Home = Village.FromJson(File.ReadAllText(villagePath));
             avatar.Name = "Patrik"; // :]
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
-            //LoadedAvatars.Add(avatar.Token, avatar);
             return avatar;
         }
 
@@ -66,7 +63,7 @@ namespace CoCSharp.Server.Core
 
         public bool Exists(string token)
         {
-            var directories = Directory.GetDirectories(CoCServerPaths.Avatars);
+            var directories = Directory.GetDirectories(DirectoryPaths.Avatars);
             for (int i = 0; i < directories.Length; i++)
             {
                 var directory = Path.GetFileName(directories[i]);

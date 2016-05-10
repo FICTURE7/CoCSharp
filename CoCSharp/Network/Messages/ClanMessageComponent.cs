@@ -36,6 +36,9 @@ namespace CoCSharp.Network.Messages
         /// Clan level.
         /// </summary>
         public int Level;
+
+        // Unknown1 does not actually belong to this component but AvatarMessageComponent.
+
         /// <summary>
         /// Unknown byte 1.
         /// </summary>

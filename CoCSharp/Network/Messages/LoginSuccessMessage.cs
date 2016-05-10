@@ -108,7 +108,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Unknown string 3.
         /// </summary>
-        public string Unknown3; // 8.112.5
+        public string Unknown3; // -1
 
 
         /// <summary>

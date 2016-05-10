@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Logic;
-using CoCSharp.Network;
 using Ionic.Zlib;
 using System;
 using System.IO;
@@ -18,6 +17,28 @@ namespace CoCSharp.Network.Messages
         public VillageMessageComponent()
         {
             // Space
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VillageMessageComponent"/> class from
+        /// the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="avatar"><see cref="Avatar"/> from which the data will be set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="avatar"/> is null.</exception>
+        public VillageMessageComponent(Avatar avatar)
+        {
+            if (avatar == null)
+                throw new ArgumentNullException("avatar");
+
+            HomeID = avatar.ID;
+            ShieldDuration = avatar.ShieldDuration;
+
+            Unknown2 = 1800;
+            //Unknown3 = 69119;
+            Unknown4 = 1200;
+
+            Unknown5 = 60;
+            Home = avatar.Home;
         }
 
         /// <summary>

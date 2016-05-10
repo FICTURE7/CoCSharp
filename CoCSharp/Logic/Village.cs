@@ -12,12 +12,12 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Represents the width of the <see cref="Village"/> layout.
         /// </summary>
-        public const int Width = 44;
+        public const int Width = 45;
 
         /// <summary>
         /// Represents the height of the <see cref="Village"/> layout.
         /// </summary>
-        public const int Height = 44;
+        public const int Height = 45;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Village"/> class.

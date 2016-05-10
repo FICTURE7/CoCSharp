@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Data.Slots;
+using CoCSharp.Network.Messages;
 using System;
 
 namespace CoCSharp.Logic
@@ -78,7 +79,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the level of the <see cref="Avatar"/>.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">Level is less than 1.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is less than 1.</exception>
         public int Level
         {
             get { return _level; }
@@ -86,7 +87,7 @@ namespace CoCSharp.Logic
             {
                 // Clash of Clans crashes when level is less than 1.
                 if (value < 1)
-                    throw new ArgumentOutOfRangeException("Level cannot be less than 1.");
+                    throw new ArgumentOutOfRangeException("value", "value cannot be less than 1.");
 
                 _level = value;
             }
@@ -212,5 +213,28 @@ namespace CoCSharp.Logic
         /// Gets or sets the NPC elixir.
         /// </summary>
         public NpcElixirSlot[] NpcElixir { get; set; }
+
+        /// <summary>
+        /// Gets a new <see cref="Network.Messages.OwnHomeDataMessage"/> for the
+        /// <see cref="Avatar"/>.
+        /// </summary>
+        public OwnHomeDataMessage OwnHomeDataMessage
+        {
+            get
+            {
+                var villageData = new VillageMessageComponent(this);
+                var avatarData = new AvatarMessageComponent(this);
+                var ohdMessage = new OwnHomeDataMessage()
+                {
+                    OwnVillageData = villageData,
+                    OwnAvatarData = avatarData,
+                    Unknown4 = 1462629754000,
+                    Unknown5 = 1462629754000,
+                    Unknown6 = 1462631554000,
+                };
+
+                return ohdMessage;
+            }
+        }
     }
 }

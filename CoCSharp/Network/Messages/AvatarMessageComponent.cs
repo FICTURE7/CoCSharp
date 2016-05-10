@@ -25,8 +25,12 @@ namespace CoCSharp.Network.Messages
         /// the specified <see cref="Avatar"/>.
         /// </summary>
         /// <param name="avatar"><see cref="Avatar"/> from which the data will be set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="avatar"/> is null.</exception>
         public AvatarMessageComponent(Avatar avatar)
         {
+            if (avatar == null)
+                throw new ArgumentNullException("avatar");
+
             UserID = avatar.ID;
             HomeID = avatar.ID;
 
@@ -45,8 +49,9 @@ namespace CoCSharp.Network.Messages
             LeagueLevel = avatar.League;
             Name = avatar.Name;
 
-            Unknown13 = -1;
+            //Unknown13 = -1;
             Unknown14 = -1;
+            Unknown15 = -1;
 
             Experience = avatar.Experience;
             Level = avatar.Level;
@@ -64,23 +69,24 @@ namespace CoCSharp.Network.Messages
             IsNamed = avatar.IsNamed;
 
             Unknown26 = 1;
-            Unknown27 = 1;
+            //Unknown27 = 1;
 
-            ResourcesCapacity = new ResourceCapacitySlot[0];
-            ResourcesAmount = new ResourceAmountSlot[0];
-            Units = new UnitSlot[0];
-            Spells = new SpellSlot[0];
-            UnitUpgrades = new UnitUpgradeSlot[0];
-            SpellUpgrades = new SpellUpgradeSlot[0];
-            HeroUpgrades = new HeroUpgradeSlot[0];
-            HeroHealths = new HeroHealthSlot[0];
-            HeroStates = new HeroStateSlot[0];
-            TutorialProgess = new TutorialProgressSlot[0];
-            Achievements = new AchievementSlot[0];
-            AchievementProgress = new AchievementProgessSlot[0];
-            NpcStars = new NpcStarSlot[0];
-            NpcGold = new NpcGoldSlot[0];
-            NpcElixir = new NpcElixirSlot[0];
+            ResourcesCapacity = avatar.ResourcesCapacity;
+            ResourcesAmount = avatar.ResourcesAmount;
+            Units = avatar.Units;
+            Spells = avatar.Spells;
+            UnitUpgrades = avatar.UnitUpgrades;
+            SpellUpgrades = avatar.SpellUpgrades;
+            HeroUpgrades = avatar.HeroUpgrades;
+            HeroHealths = avatar.HeroHealths;
+            HeroStates = avatar.HeroStates;
+            TutorialProgess = avatar.TutorialProgess;
+            Achievements = avatar.Acheivements;
+            AchievementProgress = avatar.AcheivementProgress;
+            NpcStars = avatar.NpcStars;
+            NpcGold = avatar.NpcGold;
+            NpcElixir = avatar.NpcElixir;
+            
             UnknownSlot1 = new UnknownSlot[0];
             UnknownSlot2 = new UnknownSlot[0];
             UnknownSlot3 = new UnknownSlot[0];
@@ -205,11 +211,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Unknown integer 15.
         /// </summary>
-        public int Unknown15; // 1200
+        public int Unknown15;
         /// <summary>
         /// Unknown integer 16.
         /// </summary>
-        public int Unknown16; // 60
+        public int Unknown16;
 
         /// <summary>
         /// Trophies count.
@@ -383,10 +389,7 @@ namespace CoCSharp.Network.Messages
         public override void ReadMessageComponent(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
-            //OwnVillageData = new VillageMessageData();
-            //OwnVillageData.ReadMessageData(reader);
 
-            //var kek = reader.ReadInt32();
             Unknown1 = reader.ReadInt32();
 
             UserID = reader.ReadInt64();
@@ -452,8 +455,7 @@ namespace CoCSharp.Network.Messages
             Unknown24 = reader.ReadInt32();
             Unknown25 = reader.ReadInt32();
             Unknown26 = reader.ReadInt32(); // 1
-
-            Unknown27 = reader.ReadInt32(); // 1 = 8.x.x
+            Unknown27 = reader.ReadInt32(); // 0 = 8.x.x
             Unknown28 = reader.ReadInt32(); // 0 = 8.x.x
 
             ResourcesCapacity = Slot.ReadSlotArray<ResourceCapacitySlot>(reader);
@@ -487,7 +489,6 @@ namespace CoCSharp.Network.Messages
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="AvatarMessageComponent"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
-        ///// <exception cref="InvalidOperationException"><see cref="OwnVillageData"/> is null.</exception>
         public override void WriteMessageComponent(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
@@ -569,6 +570,7 @@ namespace CoCSharp.Network.Messages
             Slot.WriteSlotArray(writer, HeroUpgrades);
             Slot.WriteSlotArray(writer, HeroHealths);
             Slot.WriteSlotArray(writer, HeroStates);
+            Slot.WriteSlotArray(writer, AllianceUnits);
             Slot.WriteSlotArray(writer, TutorialProgess);
             Slot.WriteSlotArray(writer, Achievements);
             Slot.WriteSlotArray(writer, AchievementProgress);

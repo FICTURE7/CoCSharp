@@ -88,6 +88,7 @@
     <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
     <Compile Include="Logic\LogicUtils.cs" />
     <Compile Include="Network\Messages\AttackNpcMessage.cs" />
+    <Compile Include="Network\Messages\AttackResultMessage.cs" />
     <Compile Include="Network\Messages\AvatarMessageComponent.cs" />
     <Compile Include="Data\BuildingData.cs" />
     <Compile Include="Network\Messages\ClanMessageComponent.cs" />

@@ -22,9 +22,9 @@ namespace CoCSharp.Network.Messages
         public override ushort ID { get { return 14102; } }
 
         /// <summary>
-        /// Subtick. 1/60 seconds since logged in.
+        /// Tick value.
         /// </summary>
-        public int Subtick;
+        public int Tick;
         /// <summary>
         /// Checksum to check if the <see cref="CommandMessage"/> is valid.
         /// </summary>
@@ -46,7 +46,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            Subtick = reader.ReadInt32();
+            Tick = reader.ReadInt32();
             Checksum = reader.ReadInt32();
 
             var length = reader.ReadInt32();
@@ -78,7 +78,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(Subtick);
+            writer.Write(Tick);
             writer.Write(Checksum);
 
             if (Commands == null || Commands.Length == 0)

@@ -21,8 +21,16 @@ namespace CoCSharp.Server
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(100);
 
+            Console.WriteLine("    Loading Avatars...");
             AvatarManager = new AvatarManager();
-            DataManager = new DataManager(); // This bad boi is hitting start performance hard. Need to rework the Csv implementation.
+
+            // This bad boi is hitting start performance hard. Need to rework the CSV implementation.
+            Console.WriteLine("    Loading CSV Data...");
+            DataManager = new DataManager();
+
+            // We're not really loading NPC.
+            NpcManager = new NpcManager();
+
             Clients = new List<CoCRemoteClient>();
             MessageHandlerDictionary = new Dictionary<ushort, MessageHandler>();
             CommandHandlerDictionary = new Dictionary<int, CommandHandler>();
@@ -33,11 +41,13 @@ namespace CoCSharp.Server
             CommandHandlers.RegisterCommandHandlers(this);
         }
 
+        public List<CoCRemoteClient> Clients { get; private set; }
+        public NpcManager NpcManager { get; private set; }
         public AvatarManager AvatarManager { get; private set; }
         public DataManager DataManager { get; private set; }
+
         private Dictionary<int, CommandHandler> CommandHandlerDictionary { get; set; }
         private Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; set; }
-        public List<CoCRemoteClient> Clients { get; private set; }
 
         private readonly Socket _listener;
         private readonly SocketAsyncEventArgsPool _acceptPool;
