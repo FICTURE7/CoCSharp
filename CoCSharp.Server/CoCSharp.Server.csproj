@@ -81,148 +81,148 @@
     <None Include="Content\decos.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc1.json">
+    <None Include="Content\level\npc1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc10.json">
+    <None Include="Content\level\npc10.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc11.json">
+    <None Include="Content\level\npc11.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc12.json">
+    <None Include="Content\level\npc12.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc13.json">
+    <None Include="Content\level\npc13.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc14.json">
+    <None Include="Content\level\npc14.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc15.json">
+    <None Include="Content\level\npc15.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc16.json">
+    <None Include="Content\level\npc16.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc17.json">
+    <None Include="Content\level\npc17.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc18.json">
+    <None Include="Content\level\npc18.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc19.json">
+    <None Include="Content\level\npc19.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc2.json">
+    <None Include="Content\level\npc2.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc20.json">
+    <None Include="Content\level\npc20.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc21.json">
+    <None Include="Content\level\npc21.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc22.json">
+    <None Include="Content\level\npc22.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc23.json">
+    <None Include="Content\level\npc23.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc24.json">
+    <None Include="Content\level\npc24.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc25.json">
+    <None Include="Content\level\npc25.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc26.json">
+    <None Include="Content\level\npc26.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc27.json">
+    <None Include="Content\level\npc27.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc28.json">
+    <None Include="Content\level\npc28.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc29.json">
+    <None Include="Content\level\npc29.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc3.json">
+    <None Include="Content\level\npc3.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc30.json">
+    <None Include="Content\level\npc30.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc31.json">
+    <None Include="Content\level\npc31.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc32.json">
+    <None Include="Content\level\npc32.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc33.json">
+    <None Include="Content\level\npc33.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc34.json">
+    <None Include="Content\level\npc34.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc35.json">
+    <None Include="Content\level\npc35.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc36.json">
+    <None Include="Content\level\npc36.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc37.json">
+    <None Include="Content\level\npc37.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc38.json">
+    <None Include="Content\level\npc38.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc39.json">
+    <None Include="Content\level\npc39.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc4.json">
+    <None Include="Content\level\npc4.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc40.json">
+    <None Include="Content\level\npc40.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc41.json">
+    <None Include="Content\level\npc41.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc42.json">
+    <None Include="Content\level\npc42.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc43.json">
+    <None Include="Content\level\npc43.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc44.json">
+    <None Include="Content\level\npc44.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc45.json">
+    <None Include="Content\level\npc45.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc46.json">
+    <None Include="Content\level\npc46.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc47.json">
+    <None Include="Content\level\npc47.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc48.json">
+    <None Include="Content\level\npc48.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc5.json">
+    <None Include="Content\level\npc5.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc6.json">
+    <None Include="Content\level\npc6.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc7.json">
+    <None Include="Content\level\npc7.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc8.json">
+    <None Include="Content\level\npc8.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\npc\npc9.json">
+    <None Include="Content\level\npc9.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\obstacles.csv">
