@@ -8,7 +8,7 @@ namespace CoCSharp.Test.Network
     public class MessageTests
     {
         [Test]
-        public void GetMessageDirectorion_()
+        public void GetMessageDirection_()
         {
             // NOTE: Test of Message.GetMessageDirection(Message).
             // LoginRequestMessage is sent by the client to the server.

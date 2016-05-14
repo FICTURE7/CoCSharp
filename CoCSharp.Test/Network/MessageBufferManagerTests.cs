@@ -9,7 +9,7 @@ namespace CoCSharp.Test.Network
     public class MessageBufferManagerTests
     {
         [Test]
-        public void TestMessageBufferManagerConstructors()
+        public void Constructors_InvalidArgs()
         {
             var receiveCountEx = Assert.Throws<ArgumentOutOfRangeException>(() => new MessageBufferManager(0, 1, 1));
             Assert.That(receiveCountEx.ParamName == "receiveCount");
@@ -22,7 +22,7 @@ namespace CoCSharp.Test.Network
         }
 
         [Test]
-        public void TestMessageBufferManagerSetBuffer()
+        public void SetBuffer_ExceedingBufferSize_Exception()
         {
             var bufferManager = new MessageBufferManager(64, 64, 65535);
             for (int i = 0; i < 128; i++)

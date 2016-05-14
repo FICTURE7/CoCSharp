@@ -13,7 +13,6 @@ namespace CoCSharp.Server.Handlers
         private static void HandleLoginRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
             //TODO: Implement LoginFailed to old client versions.
-
             var lrMessage = message as LoginRequestMessage;
             var keyPair = Crypto8.GenerateKeyPair();
             var lsMessage = new LoginSuccessMessage()
@@ -93,6 +92,7 @@ namespace CoCSharp.Server.Handlers
                 new UnitSlot(4000006, 999),
                 new UnitSlot(4000007, 999),
                 new UnitSlot(4000008, 999),
+                new UnitSlot(4000009, 999),
             };
             avatar.UnitUpgrades = new UnitUpgradeSlot[]
             {
@@ -105,6 +105,7 @@ namespace CoCSharp.Server.Handlers
                 new UnitUpgradeSlot(4000006, 5),
                 new UnitUpgradeSlot(4000007, 3),
                 new UnitUpgradeSlot(4000008, 4),
+                new UnitUpgradeSlot(4000009, 4),
             };
             avatar.NpcStars = server.NpcManager.CompleteNpcStarList;
 

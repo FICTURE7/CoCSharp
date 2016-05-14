@@ -1,11 +1,10 @@
 ﻿using CoCSharp.Logic;
 using System;
-using System.Collections;
 using System.IO;
-using System.Text;
 
 namespace CoCSharp.Server.Core
 {
+    // Provides method to save or load avatars.
     public class AvatarSave
     {
         // Could take a user token directly instead of using an avatar.
@@ -28,7 +27,7 @@ namespace CoCSharp.Server.Core
         public void Load()
         {
             var state = LoadState.None;
-            var saveDir = Path.Combine("Avatars", Avatar.Token);
+            var saveDir = Path.Combine(DirectoryPaths.Avatars, Avatar.Token);
             var files = Directory.GetFiles(saveDir);
 
             for (int i = 0; i < files.Length; i++)
@@ -39,6 +38,8 @@ namespace CoCSharp.Server.Core
                 switch (fileName)
                 {
                     case "village.json":
+                        
+                        // Load village.json from disk.
                         var homeJson = File.ReadAllText(filePath);
                         var home = Village.FromJson(homeJson);
 
@@ -47,15 +48,12 @@ namespace CoCSharp.Server.Core
                         break;
 
                     case "avatar.dat":
-                        var table = new Hashtable();
-                        var data = File.ReadAllLines(filePath);
-                        for (int j = 0; j < data.Length; j++)
-                        {
-                            var split = data[j].Split('=');
-                            table.Add(split[0], split[1]);
-                        }
 
-                        LoadAvatarData(table);
+                        // Loads avatar.dat from disk.
+                        var data = File.ReadAllText(filePath);
+                        var reader = new SaveReader(data);
+
+                        LoadAvatarData(reader);
                         state |= LoadState.AvatarData;
                         break;
                 }
@@ -107,41 +105,38 @@ namespace CoCSharp.Server.Core
 
         private string SaveAvatarData()
         {
-            var builder = new StringBuilder();
-            builder.AppendFormat("Name={0}\n", Avatar.Name);
-            builder.AppendFormat("IsNamed={0}\n", Avatar.IsNamed);
-            builder.AppendFormat("ID={0}\n", Avatar.ID);
-            builder.AppendFormat("Token={0}\n", Avatar.Token);
-            builder.AppendFormat("League={0}\n", Avatar.League);
-            builder.AppendFormat("Level={0}\n", Avatar.Level);
-            builder.AppendFormat("Experience={0}\n", Avatar.Experience);
-            builder.AppendFormat("Gems={0}\n", Avatar.Gems);
-            builder.AppendFormat("FreeGems={0}\n", Avatar.FreeGems);
-            builder.AppendFormat("Trophies={0}\n", Avatar.Trophies);
-
-            builder.AppendFormat("AttacksWon={0}\n", Avatar.AttacksWon);
-            builder.AppendFormat("AttacksLost={0}\n", Avatar.AttacksLost);
-            builder.AppendFormat("DefensesWon={0}\n", Avatar.DefensesWon);
-            builder.AppendFormat("DefensesLost={0}\n", Avatar.DefensesLost);
-            return builder.ToString();
+            var writer = new SaveWriter();
+            writer.Write("Name", Avatar.Name);
+            writer.Write("IsNamed", Avatar.IsNamed);
+            writer.Write("ID", Avatar.ID);
+            writer.Write("League", Avatar.League);
+            writer.Write("Level", Avatar.Level);
+            writer.Write("Experience", Avatar.Experience);
+            writer.Write("Gems", Avatar.Gems);
+            writer.Write("FreeGems", Avatar.FreeGems);
+            writer.Write("Trophies", Avatar.Trophies);
+            writer.Write("AttacksWon", Avatar.AttacksWon);
+            writer.Write("AttacksLost", Avatar.AttacksLost);
+            writer.Write("DefensesWon", Avatar.DefensesWon);
+            writer.Write("DefensesLost", Avatar.DefensesLost);
+            return writer.ToString();
         }
 
-        private void LoadAvatarData(Hashtable table)
+        private void LoadAvatarData(SaveReader reader)
         {
-            Avatar.Name = (string)table["Name"];
-            Avatar.IsNamed = Convert.ToBoolean(table["IsNamed"]);
-            Avatar.ID = Convert.ToInt64(table["ID"]);
-            Avatar.Token = (string)table["Token"];
-            Avatar.League = Convert.ToInt32(table["League"]);
-            Avatar.Level = Convert.ToInt32(table["Level"]);
-            Avatar.Experience = Convert.ToInt32(table["Experience"]);
-            Avatar.Gems = Convert.ToInt32(table["Gems"]);
-            Avatar.FreeGems = Convert.ToInt32(table["FreeGems"]);
-            Avatar.Trophies = Convert.ToInt32(table["Trophies"]);
-            Avatar.AttacksWon = Convert.ToInt32(table["AttacksWon"]);
-            Avatar.AttacksLost = Convert.ToInt32(table["AttacksLost"]);
-            Avatar.DefensesWon = Convert.ToInt32(table["DefensesWon"]);
-            Avatar.DefensesLost = Convert.ToInt32(table["DefensesLost"]);
+            Avatar.Name = reader.ReadAsString("Name");
+            Avatar.IsNamed = reader.ReadAsBoolean("IsNamed");
+            Avatar.ID = reader.ReadAsLong("ID");
+            Avatar.League = reader.ReadAsInt("League");
+            Avatar.Level = reader.ReadAsInt("Level");
+            Avatar.Experience = reader.ReadAsInt("Experience");
+            Avatar.Gems = reader.ReadAsInt("Gems");
+            Avatar.FreeGems = reader.ReadAsInt("FreeGems");
+            Avatar.Trophies = reader.ReadAsInt("Trophies");
+            Avatar.AttacksWon = reader.ReadAsInt("AttacksWon");
+            Avatar.AttacksLost = reader.ReadAsInt("AttacksLost");
+            Avatar.DefensesWon = reader.ReadAsInt("DefensesWon");
+            Avatar.DefensesLost = reader.ReadAsInt("DefensesLost");
         }
     }
 }

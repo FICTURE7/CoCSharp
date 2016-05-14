@@ -16,6 +16,12 @@ namespace CoCSharp.Test.Logic
             _village = Village.FromJson(json);
         }
 
+        [Test]
+        public void TownHall_VillageContainTownHall_ReturnsTownHall()
+        {
+            Assert.That(_village.TownHall != null);
+        }
+
         #region Village.GetBuilding Tests
 
         [Test]
@@ -32,7 +38,7 @@ namespace CoCSharp.Test.Logic
         }
 
         [Test]
-        public void GetBuilding_ArgsRange_Exception()
+        public void GetBuilding_InvalidArgsRange_Exception()
         {
             // Make sure it throws an exception when the gameId is not in the village.
             var couldNotFindEx = Assert.Throws<ArgumentException>(() => _village.GetBuilding(500000005));

@@ -22,16 +22,16 @@ namespace CoCSharp.Network
         public Message Message { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="System.Exception"/> that occured during
+        /// Gets or sets the <see cref="System.Exception"/> that occurred during
         /// the reading of the <see cref="Network.Message"/>. Returns null if no
-        /// error occured during reading.
+        /// error occurred during reading.
         /// </summary>
         public Exception Exception { get; set; }
 
         /// <summary>
         /// Gets or sets whether the <see cref="Message"/> received was fully read.
         /// </summary>
-        public bool MessageFullyRead { get; set; }
+        public bool MessageFullyRead { get; set; } // TODO: Consider renaming to FullyRead.
 
         /// <summary>
         /// Gets or sets the <see cref="Network.Message"/> bytes body that was decrypted

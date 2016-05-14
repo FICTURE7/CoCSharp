@@ -53,6 +53,7 @@ namespace CoCSharp.Server
         private readonly SocketAsyncEventArgsPool _acceptPool;
         private readonly NetworkManagerAsyncSettings _settings;
 
+        // Starts listening & handling clients async.
         public void Start()
         {
             _listener.Bind(new IPEndPoint(IPAddress.Any, 9339));
@@ -60,16 +61,19 @@ namespace CoCSharp.Server
             StartAccept();
         }
 
+        // Registers the specified MessageHandler for the specific Message.
         public void RegisterMessageHandler(Message message, MessageHandler handler)
         {
             MessageHandlerDictionary.Add(message.ID, handler);
         }
 
+        // Registers the specified CommandHandler for the specific Command.
         public void RegisterCommandHandler(Command command, CommandHandler handler)
         {
             CommandHandlerDictionary.Add(command.ID, handler);
         }
 
+        // Tries to handles the specified Message with the registered MessageHandlers.
         public void HandleMessage(CoCRemoteClient client, Message message)
         {
             try
@@ -84,6 +88,7 @@ namespace CoCSharp.Server
             }
         }
 
+        // Tries to handles the specified Command with the registered CommandHandlers.
         public void HandleCommand(CoCRemoteClient client, Command command)
         {
             try
@@ -98,6 +103,7 @@ namespace CoCSharp.Server
             }
         }
 
+        // Sends a Message to all connected clients.
         public void SendMessageAll(Message message)
         {
             for (int i = 0; i < Clients.Count; i++)
@@ -140,15 +146,18 @@ namespace CoCSharp.Server
             args.Completed -= AcceptOperationCompleted;
             if (args.SocketError != SocketError.Success)
             {
-                StartAccept(); // start accept asap
+                // Start accepting new connection ASAP.
+                StartAccept();
                 ProcessBadAccept(args);
             }
 
-            StartAccept(); // start accept asap
+            // Start accepting new connection ASAP.
+            StartAccept();
 
-            FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> New connection accepted: &(darkcyan){0}&(default).",
+            FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> New connection accepted &(darkcyan){0}&(default).",
                                    args.AcceptSocket.RemoteEndPoint);
             Clients.Add(new CoCRemoteClient(this, args.AcceptSocket, _settings));
+
             args.AcceptSocket = null;
             _acceptPool.Push(args);
         }

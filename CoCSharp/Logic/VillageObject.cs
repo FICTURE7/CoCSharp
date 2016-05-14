@@ -9,6 +9,7 @@ namespace CoCSharp.Logic
     /// </summary>
     public abstract class VillageObject
     {
+        // Represents the Base ID of every game ID & data ID.
         internal const int Base = 1000000;
 
         /// <summary>
@@ -134,13 +135,13 @@ namespace CoCSharp.Logic
         protected abstract Type ExpectedDataType { get; }
 
         /// <summary>
-        /// Returns the data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>. Not the neatest of
-        /// the things.
+        /// Returns the data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.
         /// </summary>
         /// <returns>Data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.</returns>
         public int GetDataID()
         {
-            //TODO: Needs some API Improvement.
+            //TODO: Needs some API improvement because it can accessed from Data.ID & here
+            //however Data can be null.
 
             return _dataID;
         }

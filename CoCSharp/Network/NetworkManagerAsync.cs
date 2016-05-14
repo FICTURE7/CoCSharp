@@ -421,11 +421,12 @@ namespace CoCSharp.Network
 
             //TODO: Better handling, DisconnectedEventArgs
             if (args.SocketError != SocketError.Success)
-                throw new SocketException((int)args.SocketError);
+                OnDisconnected(new DisconnectedEventArgs() { Error = args.SocketError });
 
             if (args.BytesTransferred == 0)
             {
                 _receivePool.Push(args);
+                OnDisconnected(new DisconnectedEventArgs());
                 return;
             }
 
@@ -488,6 +489,20 @@ namespace CoCSharp.Network
         {
             if (MessageReceived != null && !_disposed)
                 MessageReceived(this, e);
+        }
+
+        /// <summary>
+        /// The event raised when <see cref="Connection"/> socket got disconnected.
+        /// </summary>
+        public event EventHandler<DisconnectedEventArgs> Disconnected;
+        /// <summary>
+        /// Use this method to trigger the <see cref="Disconnected"/> event.
+        /// </summary>
+        /// <param name="e">The arguments.</param>
+        protected virtual void OnDisconnected(DisconnectedEventArgs e)
+        {
+            if (Disconnected != null)
+                Disconnected(this, e);
         }
     }
 }

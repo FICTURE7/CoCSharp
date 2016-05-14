@@ -9,13 +9,15 @@ namespace CoCSharp.Logic
     /// </summary>
     public class Village
     {
+        private const int TownHallDataID = 1000001;
+
         /// <summary>
-        /// Represents the width of the <see cref="Village"/> layout.
+        /// Represents the width of a <see cref="Village"/> layout.
         /// </summary>
         public const int Width = 45;
 
         /// <summary>
-        /// Represents the height of the <see cref="Village"/> layout.
+        /// Represents the height of a <see cref="Village"/> layout.
         /// </summary>
         public const int Height = 45;
 
@@ -66,7 +68,46 @@ namespace CoCSharp.Logic
         public List<Decoration> Decorations { get; set; }
 
         /// <summary>
-        /// Gets the JSON from which the <see cref="Village"/> was
+        /// Gets or sets the TownHall <see cref="Building"/> of the <see cref="Village"/>; returns
+        /// null if there is no TownHall in the <see cref="Village"/>.
+        /// </summary>
+        [JsonIgnore]
+        public Building TownHall
+        {
+            get
+            {
+                for (int i = 0; i < Buildings.Count; i++)
+                {
+                    var building = Buildings[i];
+                    if (building.GetDataID() == TownHallDataID)
+                        return building;
+                }
+                return null;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+                if (value.GetDataID() != TownHallDataID)
+                    throw new ArgumentException("value must be a TownHall building, that is a building with Data ID '" + 1000001 + "'.");
+
+                for (int i = 0; i < Buildings.Count; i++)
+                {
+                    var building = Buildings[i];
+                    if (building.GetDataID() == TownHallDataID)
+                    {
+                        // Exit early so it ignores the Building.Add stuff.
+                        building = value;
+                        return;
+                    }
+                }
+
+                Buildings.Add(value);
+            }
+        }
+
+        /// <summary>
+        /// Gets the JSON string from which the <see cref="Village"/> was
         /// deserialized; returns <c>null</c> if the <see cref="Village"/> wasn't deserialized.
         /// </summary>
         [JsonIgnore]

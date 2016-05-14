@@ -46,43 +46,7 @@ namespace CoCSharp.Server.Handlers
         private static void HandleAttackResultMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
             var avatar = client.Avatar;
-            var villageData = new VillageMessageComponent(avatar);
-
-            var avatarData = new AvatarMessageComponent(avatar)
-            {
-                //TODO: Properly figure out townhall level and alliance castle stuff.
-                TownHallLevel = 5,
-                AllianceCastleLevel = 1,
-                AllianceCastleTotalCapacity = 10,
-                AllianceCastleUsedCapacity = 0,
-
-                //TODO: Properly store them.
-                ResourcesCapacity = new ResourceCapacitySlot[]
-                {
-                    new ResourceCapacitySlot(3000001, 5000),
-                    new ResourceCapacitySlot(3000002, 5000)
-                },
-
-                ResourcesAmount = new ResourceAmountSlot[]
-                {
-                    new ResourceAmountSlot(3000001, 100000),
-                    new ResourceAmountSlot(3000002, 100000)
-                },
-
-                NpcStars = server.NpcManager.CompleteNpcStarList
-            };
-
-            var ohdMessage = new OwnHomeDataMessage()
-            {
-                LastVisit = TimeSpan.FromSeconds(100), //TODO: Implement saving of LastVisit.
-                Unknown1 = null,
-                Timestamp = DateTime.UtcNow,
-                OwnVillageData = villageData,
-                OwnAvatarData = avatarData,
-                Unknown4 = 1462629754000,
-                Unknown5 = 1462629754000,
-                Unknown6 = 1462631554000,
-            };
+            var ohdMessage = client.Avatar.OwnHomeDataMessage;
 
             FancyConsole.WriteLine("[&(darkmagenta)Attack&(default)] Account &(darkcyan){0}&(default) returned home.",
                 client.Avatar.Token);

@@ -31,7 +31,21 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the user token of the <see cref="Avatar"/>.
         /// </summary>
-        public string Token { get; set; }
+        /// <exception cref="ArgumentException"><paramref name="value"/> is not a valid token.</exception>
+        public string Token
+        {
+            get
+            {
+                return _token;
+            }
+            set
+            {
+                if (!TokenUtils.CheckToken(value))
+                    throw new ArgumentException("'" + value + "' is not a valid token.");
+                _token = value;
+            }
+        }
+        private string _token;
 
         /// <summary>
         /// Gets or sets the user ID of the <see cref="Avatar"/>.

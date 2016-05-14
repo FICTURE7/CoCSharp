@@ -22,12 +22,16 @@ namespace CoCSharp.Server.Core
 
             var decorationTable = new CsvTable("Content\\decos.csv");
             DecorationsData = CsvConvert.Deserialize<DecorationData>(decorationTable);
+
+            var resourceTable = new CsvTable("Content\\resources.csv");
+            ResourcesData = CsvConvert.Deserialize<ResourceData>(resourceTable);
         }
 
         public BuildingData[] BuildingsData { get; set; }
         public TrapData[] TrapsData { get; set; }
         public ObstacleData[] ObstaclesData { get; private set; }
         public DecorationData[] DecorationsData { get; private set; }
+        public ResourceData[] ResourcesData { get; private set; }
 
         public BuildingData[] FindBuilding(int id)
         {
@@ -57,6 +61,11 @@ namespace CoCSharp.Server.Core
         public DecorationData FindDecoration(int id)
         {
             return DecorationsData.Where(bd => bd.ID == id).FirstOrDefault();
+        }
+
+        public ResourceData FindResource(string tid)
+        {
+            return ResourcesData.Where(rd => rd.TID == tid).FirstOrDefault();
         }
     }
 }

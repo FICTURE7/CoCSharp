@@ -87,6 +87,7 @@
     <Compile Include="Data\TrapData.cs" />
     <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
     <Compile Include="Logic\LogicUtils.cs" />
+    <Compile Include="Network\DisconnectedEventArgs.cs" />
     <Compile Include="Network\Messages\AttackNpcMessage.cs" />
     <Compile Include="Network\Messages\AttackResultMessage.cs" />
     <Compile Include="Network\Messages\AvatarMessageComponent.cs" />

@@ -51,6 +51,8 @@
     <Compile Include="Core\AvatarSave.cs" />
     <Compile Include="Core\DataManager.cs" />
     <Compile Include="Core\NpcManager.cs" />
+    <Compile Include="Core\SaveReader.cs" />
+    <Compile Include="Core\SaveWriter.cs" />
     <Compile Include="DirectoryPaths.cs" />
     <Compile Include="Core\FancyConsole.cs" />
     <Compile Include="Core\FancyConsole.Write.cs" />
@@ -226,6 +228,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\obstacles.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\resources.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\traps.csv">
