@@ -130,15 +130,16 @@ namespace CoCSharp.Csv
             var columnNames = Regex.Split(rows[0], ",");
             var columnTypes = Regex.Split(rows[1], ",");
 
-            // maybe we should check the line ending consistency?
+            // Maybe we should check the line ending consistency?
 
             if (columnNames.Length != columnTypes.Length)
                 throw new CsvException("Invalid number of columnNames and columnTypes.");
 
-            // manipulating directly Table is probably a bad idea
-            // might wanna create a new table
+            // Manipulating directly Table is probably a bad idea
+            // might wanna create a new table.
 
-            for (int i = 0; i < columnNames.Length; i++)  // populates datatable's columns loop
+            // The loop that populates datatable's columns.
+            for (int i = 0; i < columnNames.Length; i++)
             {
                 switch (columnTypes[i])
                 {
@@ -161,7 +162,8 @@ namespace CoCSharp.Csv
                 }
             }
 
-            for (int i = 2; i < rows.Length; i++) // turn empty("") fields to DBNull.Value and add them to table loop
+            // The loop that turns empty("") fields to DBNull.Value and add them to table.
+            for (int i = 2; i < rows.Length; i++)
             {
                 var rowsValues = (object[])Regex.Split(rows[i], ",");
                 var newRowsValues = new object[rowsValues.Length];
@@ -190,7 +192,10 @@ namespace CoCSharp.Csv
             {
                 using (var mem = new MemoryStream())
                 {
-                    mem.Write(bytes, 0, 9); // fix the header
+                    // Fix the header by adding 4 bytes at offset 9.
+                    // TODO: Use Buffer.BlockCopy instead of creating a new stream.
+
+                    mem.Write(bytes, 0, 9);
                     mem.Write(new byte[4], 0, 4);
                     mem.Write(bytes, 9, bytes.Length - 9);
                     Load(LzmaUtils.Decompress(mem.ToArray()));
@@ -228,31 +233,38 @@ namespace CoCSharp.Csv
             if (path == null)
                 throw new ArgumentNullException("path");
 
+            // Write column names.
             var csvBuilder = new StringBuilder();
-            for (int i = 0; i < Table.Columns.Count - 1; i++) // write column names.
+            for (int i = 0; i < Table.Columns.Count - 1; i++)
                 csvBuilder.Append(Columns[i].ColumnName + ",");
             csvBuilder.AppendLine(Columns[Columns.Count - 1].ColumnName);
 
-            for (int i = 0; i < Table.Columns.Count; i++) // write TypesRow
+            // Write column types.
+            for (int i = 0; i < Table.Columns.Count; i++)
             {
-                var format = i == Table.Columns.Count - 1 ? "{0}\r\n" : "{0},"; // check if last in array
+                // Append "\r\n"(new line) if last in array else append ",".
+                var format = i == Table.Columns.Count - 1 ? "{0}\r\n" : "{0},";
                 var dataType = Table.Columns[i].DataType;
                 if (dataType == typeof(int))
                 {
                     csvBuilder.AppendFormat(format, "int");
                     continue;
-                }
+                }// Else
                 csvBuilder.AppendFormat(format, dataType.Name);
             }
 
-            for (int i = 0; i < Table.Rows.Count; i++) // writes all rows
+            // Write all rows.
+            for (int i = 0; i < Table.Rows.Count; i++)
                 csvBuilder.AppendLine(string.Join(",", Table.Rows[i].ItemArray));
 
-            if (compressed) // checks compression
+            // Compress it if specified.
+            if (compressed)
             {
                 var bytes = LzmaUtils.Compress(Encoding.UTF8.GetBytes(csvBuilder.ToString()));
                 using (var mem = new MemoryStream(bytes))
                 {
+                    // Fix the header by removing the 4 bytes at offset 9.
+                    // TODO: Use Buffer.BlockCopy instead of creating new a stream.
                     mem.Write(bytes, 0, 9);
                     mem.Write(bytes, 12, bytes.Length - 13);
                     File.WriteAllBytes(path, mem.ToArray());
@@ -297,7 +309,7 @@ namespace CoCSharp.Csv
             var retBytes = new byte[bytes.Length + 4];
             Buffer.BlockCopy(bytes, 0, retBytes, 0, 9);
 
-            // Fix the header by spending 4 0x00 bytes at offset 9.
+            // Fix the header by adding 4 0x00 bytes at offset 9.
             Buffer.BlockCopy(bytes, 9, retBytes, 13, bytes.Length - 9);
             return LzmaUtils.Decompress(retBytes);
         }
@@ -347,7 +359,7 @@ namespace CoCSharp.Csv
             if (indexCR == -1) // Unix
             {
                 var indexLN = csv.IndexOf('\n');
-                if (indexLN == -1) // no valid ending
+                if (indexLN == -1) // No valid ending
                     throw new FormatException("Unable to identify line ending.");
                 else
                     return "\n";
@@ -356,9 +368,9 @@ namespace CoCSharp.Csv
             {
                 var nextChar = csv[indexCR + 1];
 
-                if (nextChar == '\n') // windows
+                if (nextChar == '\n') // Windows
                     return "\r\n";
-                else // mac
+                else // Mac
                     return "\r";
             }
         }

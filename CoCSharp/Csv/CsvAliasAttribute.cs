@@ -3,7 +3,7 @@
 namespace CoCSharp.Csv
 {
     /// <summary>
-    /// Instruct the <see cref="CsvConvert"/> to serialize the field with the specified
+    /// Instruct the <see cref="CsvConvert"/> to serialize a property with the specified
     /// alias name.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
