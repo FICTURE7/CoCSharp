@@ -60,9 +60,9 @@ namespace CoCSharp.Data
             get
             {
                 if (index < 0)
-                    throw new ArgumentOutOfRangeException("index", "index must be greater than 0.");
+                    throw new ArgumentOutOfRangeException("index", "index must be greater or equal to 0.");
                 if (index > Files.Count - 1)
-                    throw new ArgumentOutOfRangeException("index", "index must be less than Count - 1.");
+                    throw new ArgumentOutOfRangeException("index", "index must be less or equal to Count - 1.");
 
                 return Files[index];
             }
@@ -71,27 +71,56 @@ namespace CoCSharp.Data
                 if (IsReadOnly)
                     throw new InvalidOperationException("Fingerprint object is readonly.");
                 if (index < 0)
-                    throw new ArgumentOutOfRangeException("index", "index must be greater than 0.");
+                    throw new ArgumentOutOfRangeException("index", "index must be greater or equal to 0.");
                 if (index > Files.Count - 1)
-                    throw new ArgumentOutOfRangeException("index", "index must be less than Count - 1.");
+                    throw new ArgumentOutOfRangeException("index", "index must be less or equal to Count - 1.");
 
                 Files[index] = value;
             }
         }
 
-
         /// <summary>
         /// Gets or sets the SHA-1 master hash of the <see cref="Fingerprint"/>.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         [JsonProperty("sha")]
         [JsonConverter(typeof(SHA1StringConverter))]
-        public byte[] MasterHash { get; set; }
+        public byte[] MasterHash
+        {
+            get
+            {
+                return _masterHash;
+            }
+            set
+            {
+                if (IsReadOnly)
+                    throw new InvalidOperationException("Fingerprint object is readonly.");
+
+                _masterHash = value;
+            }
+        }
+        private byte[] _masterHash;
 
         /// <summary>
         /// Gets or sets the version of the <see cref="Fingerprint"/>.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         [JsonProperty("version")]
-        public string Version { get; set; }
+        public string Version
+        {
+            get
+            {
+                return _version;
+            }
+            set
+            {
+                if (IsReadOnly)
+                    throw new InvalidOperationException("Fingerprint object is readonly.");
+
+                _version = value;
+            }
+        }
+        private string _version;
 
         /// <summary>
         /// Gets the number of <see cref="FingerprintFile"/> in the <see cref="Fingerprint"/>.
