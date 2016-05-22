@@ -55,6 +55,7 @@
     <Compile Include="Network\CommandFactoryTests.cs" />
     <Compile Include="Network\MessageBufferManagerTests.cs" />
     <Compile Include="Network\MessageFactoryTests.cs" />
+    <Compile Include="Network\MessageReaderTests.cs" />
     <Compile Include="Network\Messages\Commands\BuyResourcesCommandTests.cs" />
     <Compile Include="Network\MessageTests.cs" />
     <Compile Include="Network\MessageWriterTests.cs" />
@@ -90,6 +91,7 @@
   <ItemGroup>
     <Compile Include="Network\MessageReaderTests.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

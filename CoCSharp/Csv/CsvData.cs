@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Csv
 {
     /// <summary>
-    /// Represents a Clash of Clans .csv file data.
+    /// Represents a Clash of Clans .csv file.
     /// </summary>
     public abstract class CsvData
     {
         /// <summary>
-        /// Gets or sets the data ID of the <see cref="CsvData"/>.
+        /// Gets the data ID of the <see cref="CsvData"/>.
         /// </summary>
         [CsvIgnore]
         public int ID { get { return Index + BaseDataID; } }
