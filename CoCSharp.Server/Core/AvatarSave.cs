@@ -4,13 +4,22 @@ using System.IO;
 
 namespace CoCSharp.Server.Core
 {
-    // Provides method to save or load avatars.
+    // Represents an avatar save file.
     public class AvatarSave
     {
-        // Could take a user token directly instead of using an avatar.
+        // Mostly for saving.
         public AvatarSave(Avatar avatar)
         {
             Avatar = avatar;
+        }
+
+        // Mostly for loading.
+        public AvatarSave(string token)
+        {
+            Avatar = new Avatar()
+            {
+                Token = token
+            };
         }
 
         public Avatar Avatar { get; set; }

@@ -36,7 +36,7 @@ namespace CoCSharp.Network.Messages
 
             if (avatar.Alliance != null)
             {
-                OwnClanData = new ClanMessageComponent()
+                ClanData = new ClanMessageComponent()
                 {
                     ID = avatar.Alliance.ID,
                     Name = avatar.Alliance.Name,
@@ -87,7 +87,7 @@ namespace CoCSharp.Network.Messages
             NpcStars = avatar.NpcStars;
             NpcGold = avatar.NpcGold;
             NpcElixir = avatar.NpcElixir;
-            
+
             UnknownSlot1 = new UnknownSlot[0];
             UnknownSlot2 = new UnknownSlot[0];
             UnknownSlot3 = new UnknownSlot[0];
@@ -111,7 +111,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Data of the clan of the avatar.
         /// </summary>
-        public ClanMessageComponent OwnClanData;
+        public ClanMessageComponent ClanData;
 
         /// <summary>
         /// Unknown integer 2.
@@ -397,13 +397,15 @@ namespace CoCSharp.Network.Messages
             HomeID = reader.ReadInt64();
             if (reader.ReadBoolean())
             {
-                OwnClanData = new ClanMessageComponent();
-                OwnClanData.ID = reader.ReadInt64();
-                OwnClanData.Name = reader.ReadString();
-                OwnClanData.Badge = reader.ReadInt32();
-                OwnClanData.Role = reader.ReadInt32();
-                OwnClanData.Level = reader.ReadInt32();
-                OwnClanData.Unknown1 = reader.ReadByte(); // Clan war?
+                ClanData = new ClanMessageComponent();
+                ClanData.ID = reader.ReadInt64();
+                ClanData.Name = reader.ReadString();
+                ClanData.Badge = reader.ReadInt32();
+                ClanData.Role = reader.ReadInt32();
+                ClanData.Level = reader.ReadInt32();
+                ClanData.Unknown1 = reader.ReadByte(); // Clan war?
+                if (ClanData.Unknown1 == 1)
+                    ClanData.Unknown2 = reader.ReadInt64();
             }
 
             Unknown2 = reader.ReadInt32();
@@ -432,17 +434,17 @@ namespace CoCSharp.Network.Messages
 
             Level = reader.ReadInt32();
             Experience = reader.ReadInt32();
-            Gems = reader.ReadInt32();
-            FreeGems = reader.ReadInt32();
+            Gems = reader.ReadInt32(); // Scrambled when not own avatar data.
+            FreeGems = reader.ReadInt32(); // Scrambled when not own avatar data.
 
-            Unknown16 = reader.ReadInt32(); // 1200
-            Unknown17 = reader.ReadInt32(); // 60
+            Unknown16 = reader.ReadInt32(); // 1200 // Scrambled when not own avatar data.
+            Unknown17 = reader.ReadInt32(); // 60 // Scrambled when not own avatar data.
 
             Trophies = reader.ReadInt32();
             AttacksWon = reader.ReadInt32();
-            AttacksLost = reader.ReadInt32();
+            AttacksLost = reader.ReadInt32(); // Scrambled when not own avatar data.
             DefensesWon = reader.ReadInt32();
-            DefensesLost = reader.ReadInt32();
+            DefensesLost = reader.ReadInt32(); // Scrambled when not own avatar data.
 
             Unknown18 = reader.ReadInt32();
             Unknown19 = reader.ReadInt32();
@@ -453,7 +455,7 @@ namespace CoCSharp.Network.Messages
             IsNamed = reader.ReadBoolean();
 
             Unknown23 = reader.ReadInt32();
-            Unknown24 = reader.ReadInt32();
+            Unknown24 = reader.ReadInt32(); // Scrambled when not own avatar data.
             Unknown25 = reader.ReadInt32();
             Unknown26 = reader.ReadInt32(); // 1
             Unknown27 = reader.ReadInt32(); // 0 = 8.x.x
@@ -498,15 +500,17 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(UserID);
             writer.Write(HomeID);
-            writer.Write(OwnClanData != null);
-            if (OwnClanData != null)
+            writer.Write(ClanData != null);
+            if (ClanData != null)
             {
-                writer.Write(OwnClanData.ID);
-                writer.Write(OwnClanData.Name);
-                writer.Write(OwnClanData.Badge);
-                writer.Write(OwnClanData.Role);
-                writer.Write(OwnClanData.Level);
-                writer.Write(OwnClanData.Unknown1);
+                writer.Write(ClanData.ID);
+                writer.Write(ClanData.Name);
+                writer.Write(ClanData.Badge);
+                writer.Write(ClanData.Role);
+                writer.Write(ClanData.Level);
+                writer.Write(ClanData.Unknown1);
+                if (ClanData.Unknown1 == 1)
+                    writer.Write(ClanData.Unknown2);
             }
 
             writer.Write(Unknown2);

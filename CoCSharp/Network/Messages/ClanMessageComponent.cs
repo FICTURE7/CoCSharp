@@ -37,11 +37,16 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int Level;
 
-        // Unknown1 does not actually belong to this component but AvatarMessageComponent.
+        // Unknown1 & Unknown2 does not actually belong to this component but AvatarMessageComponent.
 
         /// <summary>
         /// Unknown byte 1.
         /// </summary>
         public byte Unknown1;
+
+        /// <summary>
+        /// Unknown long 2.
+        /// </summary>
+        public long Unknown2;
     }
 }

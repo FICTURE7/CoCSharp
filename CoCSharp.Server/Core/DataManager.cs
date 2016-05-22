@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CoCSharp.Server.Core
 {
-    public class DataManager
+    public class DataManager // : IDataManager
     {
         // TODO: Make this safer.
         // TODO: Avoid using LINQ for better performance.

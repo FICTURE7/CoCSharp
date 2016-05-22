@@ -30,8 +30,10 @@ its not installed `Sodium.SodiumCore` will throw a `DllNotFoundException`.
   * Include class for encryption version 7.x.x & 8.x.x version.
 
 ## Compiling
+To be able to run the Post Build properly you must have `mono` in your `PATH` variable.
+
 The simplest way to compile CoCSharp is to open the solution in Visual Studio and pressing `F6` to build the entire
-solution, it will restore the nuget packages as well. Or you could use the latest version of mono to compile CoCSharp.
+solution, it will restore the nuget packages as well. Or you could use the latest version of mono and nuget to compile CoCSharp.
 
 Run the following commands to build CoCSharp with mono.
 

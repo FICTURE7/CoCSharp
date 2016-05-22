@@ -16,6 +16,7 @@ namespace CoCSharp.Server.Core
 
             Table = new Hashtable();
             var lineNum = 0;
+            var sperator = new char[] { '=' };
             using (var reader = new StringReader(saveStr))
             {
                 while (reader.Peek() != -1)
@@ -27,7 +28,7 @@ namespace CoCSharp.Server.Core
                     if (!line.Contains("="))
                         throw new FormatException("Missing '=' operator on line " + lineNum + ".");
 
-                    var split = line.Split('=');
+                    var split = line.Split(sperator, count: 2);
                     //if (split.Length < 2)
                     //    throw new FormatException("Expected a field and a value on line " + lineNum + ".");
 

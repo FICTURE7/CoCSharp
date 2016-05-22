@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace CoCSharp.Server.Core
 {
     // Write stuff to the stdout with more fanciness.
+
+    // TODO: This should form part of CoCSharp.Server.API.
     public static partial class FancyConsole
     {
         static FancyConsole()

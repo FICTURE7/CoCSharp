@@ -92,6 +92,8 @@
     <Compile Include="Network\Messages\AttackResultMessage.cs" />
     <Compile Include="Network\Messages\AvatarMessageComponent.cs" />
     <Compile Include="Data\BuildingData.cs" />
+    <Compile Include="Network\Messages\AvatarProfileRequestMessage.cs" />
+    <Compile Include="Network\Messages\AvatarProfileResponseMessage.cs" />
     <Compile Include="Network\Messages\ClanMessageComponent.cs" />
     <Compile Include="Csv\CsvData.cs" />
     <Compile Include="Data\AssetDownloadCompletedEventArgs.cs" />

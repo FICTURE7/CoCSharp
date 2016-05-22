@@ -5,7 +5,7 @@ using System.IO;
 
 namespace CoCSharp.Server.Core
 {
-    public class NpcManager
+    public class NpcManager // : INpcManager
     {
         private const string NpcVillageFilePrefix = "npc";
 

@@ -9,17 +9,19 @@ namespace CoCSharp.Logic
     /// </summary>
     public class Village
     {
+        //TODO: A new JSON field was introduced in 8.x.x called "id" which represents the instance id of a village object.
+        
         private const int TownHallDataID = 1000001;
 
         /// <summary>
         /// Represents the width of a <see cref="Village"/> layout.
         /// </summary>
-        public const int Width = 45;
+        public const int Width = 48;
 
         /// <summary>
         /// Represents the height of a <see cref="Village"/> layout.
         /// </summary>
-        public const int Height = 45;
+        public const int Height = 48;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Village"/> class.

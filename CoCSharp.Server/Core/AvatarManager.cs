@@ -5,7 +5,8 @@ using System.IO;
 
 namespace CoCSharp.Server.Core
 {
-    // Provides to save & load avatars.
+    // Provides method to save & load avatars.
+    // TODO: Implement thread safety.
     public class AvatarManager // : IAvatarManager
     {
         public AvatarManager()
@@ -18,14 +19,21 @@ namespace CoCSharp.Server.Core
 
         public Dictionary<string, Avatar> LoadedAvatar { get; private set; }
 
+        //// Cache to the path to avatar directories to reduce the number of calls to Directory.GetDirectories().
+        //private Dictionary<string, string> _avatarDirectories;
+
+        private int _maxUserID = 0;
+
         // Creates a new Avatar with a random Token & UserID.
         public Avatar CreateNewAvatar()
         {
+            // Generate a unique token.
             var token = TokenUtils.GenerateToken();
             while (Exists(token))
                 token = TokenUtils.GenerateToken();
 
-            var userID = Utils.Random.Next();
+            // Making searches by UserID easier for the CPU.
+            var userID = ++_maxUserID;
 
             return CreateNewAvatar(token, userID);
         }
@@ -38,17 +46,16 @@ namespace CoCSharp.Server.Core
             avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
             avatar.ID = id;
-            avatar.Level = 10; // bypass tut
+            avatar.Level = 10; // Bypass tut
             avatar.Home = Village.FromJson(File.ReadAllText(villagePath));
             avatar.Name = "Patrik"; // :]
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
-            //LoadedAvatar.Add(token, avatar);
             return avatar;
         }
 
-        // Loads the avatar from disk.
+        // Loads the avatar from disk with the specified token.
         public Avatar LoadAvatar(string token)
         {
             if (!Exists(token))
@@ -59,6 +66,7 @@ namespace CoCSharp.Server.Core
             var avatar = new Avatar() { Token = token };
             var avatarSave = new AvatarSave(avatar);
             avatarSave.Load();
+
             //LoadedAvatars.Add(avatar.Token, avatar);
             return avatar;
         }
