@@ -1,4 +1,4 @@
-using CoCSharp.Data;
+using CoCSharp.Data.Model;
 using CoCSharp.Logic;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
@@ -7,6 +7,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
+        //TODO: Implement all those strings in a class or in a resource file.
         private const string StartedConstructionFormat =
             "[&(darkgreen)Logic&(default)] Construction -> Started for account &(darkcyan){0}&(default) \n\t\tat {1},{2} with lvl {3}";
         private const string FinishedConstructionFormat =
@@ -61,7 +62,7 @@ namespace CoCSharp.Server.Handlers.Commands
             server.RegisterCommandHandler(new RearmTrapCommand(), HandleRearmTrapCommand);
         }
 
-        private static void ConstructionFinished(object sender, ConstructionFinishEventArgs e)
+        private static void ConstructionFinished(object sender, ConstructionFinishedEventArgs e)
         {
             e.BuildableConstructed.ConstructionFinished -= ConstructionFinished;
             var token = e.UserToken as VillageObjectUserToken;

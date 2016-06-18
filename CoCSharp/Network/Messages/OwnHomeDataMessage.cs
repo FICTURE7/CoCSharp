@@ -33,7 +33,7 @@ namespace CoCSharp.Network.Messages
         public string Unknown1; // -1
 
         /// <summary>
-        /// Server local timestamp.
+        /// Server local UTC timestamp.
         /// </summary>
         public DateTime Timestamp;
         /// <summary>

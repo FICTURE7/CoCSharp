@@ -7,12 +7,12 @@ namespace CoCSharp.Logic
     /// <summary>
     /// Provides arguments data for construction finish event. 
     /// </summary>
-    public class ConstructionFinishEventArgs : EventArgs
+    public class ConstructionFinishedEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructionFinishEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="ConstructionFinishedEventArgs"/> class.
         /// </summary>
-        public ConstructionFinishEventArgs()
+        public ConstructionFinishedEventArgs()
         {
             // Space
         }

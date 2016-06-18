@@ -33,7 +33,7 @@ namespace CoCSharp.Network.Messages
             HomeID = avatar.ID;
             ShieldDuration = avatar.ShieldDuration;
 
-            Unknown2 = 1800;
+            //GuardDuration = 1800;
             //Unknown3 = 69119;
             Unknown4 = 1200;
 
@@ -54,11 +54,11 @@ namespace CoCSharp.Network.Messages
         /// Duration of shield.
         /// </summary>
         public TimeSpan ShieldDuration;
-
         /// <summary>
-        /// Unknown integer 2.
+        /// Duration of guard.
         /// </summary>
-        public int Unknown2; // 1800 = 8.x.x
+        public TimeSpan GuardDuration; // 1800 = 8.x.x, GuardDuration?
+
         /// <summary>
         /// Unknown integer 3.
         /// </summary>
@@ -94,7 +94,7 @@ namespace CoCSharp.Network.Messages
             HomeID = reader.ReadInt64();
             ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt32());
 
-            Unknown2 = reader.ReadInt32(); // 1800 = 8.x.x
+            GuardDuration = TimeSpan.FromSeconds(reader.ReadInt32()); // 1800 = 8.x.x
             Unknown3 = reader.ReadInt32(); // 69119 = 8.x.x seems to change, might be a TimeSpan.
             Unknown4 = reader.ReadInt32(); // 1200
             Unknown5 = reader.ReadInt32(); // 60
@@ -136,7 +136,7 @@ namespace CoCSharp.Network.Messages
             writer.Write(HomeID);
             writer.Write((int)ShieldDuration.TotalSeconds);
 
-            writer.Write(Unknown2); // 1800 = 8.x.x
+            writer.Write((int)GuardDuration.TotalSeconds); // 1800 = 8.x.x
             writer.Write(Unknown3); // 69119 = 8.x.x seems to change, might be a TimeSpan.
             writer.Write(Unknown4); // 1200
             writer.Write(Unknown5); // 60

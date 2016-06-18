@@ -316,6 +316,7 @@ namespace CoCSharp.Network
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
                 // Ignore 10100 & 20100 for decryption.
+                // TODO: Ignore message for decryption when Crypto._state == CryptoState.None.
                 if (!(message is SessionSuccessMessage || message is SessionRequestMessage))
                 {
                     try

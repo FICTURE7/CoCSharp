@@ -57,6 +57,7 @@ namespace CoCSharp.Server.Handlers
                     avatar = server.AvatarManager.CreateNewAvatar(lrMessage.UserToken, lrMessage.UserID);
                     FancyConsole.WriteLine("[&(blue)Login&(default)] Unknown avatar -> Created new avatar with &(darkcyan){0}&(default):{1} success.",
                                            avatar.Token, avatar.ID);
+                    server.AvatarManager.SaveAvatar(avatar);
                 }
                 else
                 {

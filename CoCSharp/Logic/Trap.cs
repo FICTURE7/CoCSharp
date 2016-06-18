@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data;
+using CoCSharp.Data.Model;
 using Newtonsoft.Json;
 using System;
 
@@ -12,6 +12,7 @@ namespace CoCSharp.Logic
     {
         internal const int BaseGameID = 504000000;
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class.
         /// </summary>
@@ -52,7 +53,9 @@ namespace CoCSharp.Logic
         {
             // Space
         }
+        #endregion
 
+        #region Fields & Properties
         /// <summary>
         /// Gets the <see cref="Type"/> of the <see cref="CsvData"/> expected
         /// by the <see cref="Trap"/>.
@@ -72,9 +75,10 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets whether the trap needs to be repaired.
         /// </summary>
-        [JsonProperty("needs_repair", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool Broken { get; set; }
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Begins the construction of the <see cref="Trap"/> and increases its level by 1
         /// when done if <see cref="Buildable.IsConstructing"/> is <c>false</c> and <see cref="VillageObject.Data"/>
@@ -121,7 +125,7 @@ namespace CoCSharp.Logic
             InternalCancelScheduleBuild();
 
             ConstructionTEndUnixTimestamp = 0;
-            OnConstructionFinished(new ConstructionFinishEventArgs()
+            OnConstructionFinished(new ConstructionFinishedEventArgs()
             {
                 BuildableConstructed = this,
                 EndTime = endTime,
@@ -142,7 +146,8 @@ namespace CoCSharp.Logic
             if (!IsConstructing)
                 throw new InvalidOperationException("Trap object is not in construction.");
 
-            // Remove the schedule because we don't want it to trigger the events.
+            // Remove the schedule because we don't want it to trigger the events at
+            // the scheduled time.
             InternalCancelScheduleBuild();
             DoConstructionFinished();
         }
@@ -184,12 +189,67 @@ namespace CoCSharp.Logic
             Level++;
             ConstructionTEndUnixTimestamp = 0;
 
-            OnConstructionFinished(new ConstructionFinishEventArgs()
+            OnConstructionFinished(new ConstructionFinishedEventArgs()
             {
                 BuildableConstructed = this,
                 UserToken = UserToken,
                 EndTime = endTime
             });
         }
+
+        internal override void ToJsonWriter(JsonWriter writer)
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("data");
+            writer.WriteValue(DataID);
+
+            if (Broken != default(bool))
+            {
+                writer.WritePropertyName("need_repair");
+                writer.WriteValue(Broken);
+            }
+
+            writer.WritePropertyName("x");
+            writer.WriteValue(X);
+
+            writer.WritePropertyName("y");
+            writer.WriteValue(Y);
+
+            writer.WriteEndObject();
+        }
+
+        internal override void FromJsonReader(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                    break;
+
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    var propertyName = (string)reader.Value;
+                    switch (propertyName)
+                    {
+                        case "data":
+                            DataID = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "needs_repair":
+                            Broken = reader.ReadAsBoolean().Value;
+                            break;
+
+                        case "x":
+                            X = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "y":
+                            Y = reader.ReadAsInt32().Value;
+                            break;
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

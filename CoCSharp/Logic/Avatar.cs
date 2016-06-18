@@ -9,6 +9,8 @@ namespace CoCSharp.Logic
     /// </summary>
     public class Avatar
     {
+        //TODO: Implement PropertyChanged event args.
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Avatar"/> class.
         /// </summary>
@@ -96,7 +98,10 @@ namespace CoCSharp.Logic
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is less than 1.</exception>
         public int Level
         {
-            get { return _level; }
+            get
+            {
+                return _level;
+            }
             set
             {
                 // Clash of Clans crashes when level is less than 1.
@@ -236,6 +241,9 @@ namespace CoCSharp.Logic
         {
             get
             {
+                if (Home == null)
+                    throw new InvalidOperationException("Home cannot be null.");
+
                 var villageData = new VillageMessageComponent(this);
                 var avatarData = new AvatarMessageComponent(this);
                 var ohdMessage = new OwnHomeDataMessage()

@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data;
+using CoCSharp.Data.Model;
 using System.Linq;
 
 namespace CoCSharp.Server.Core

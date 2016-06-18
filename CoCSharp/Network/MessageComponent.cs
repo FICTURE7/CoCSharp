@@ -2,14 +2,11 @@
 
 namespace CoCSharp.Network
 {
-    //TODO: Consider renaming it to 'MessageComponent' instead.
-
     /// <summary>
     /// Represents a part of a <see cref="Message"/>. This can be refereed as 'components'
     /// </summary>
     /// <remarks>
-    /// This is to make <see cref="Message"/> implementation
-    /// more modular.
+    /// This is to make <see cref="Message"/> implementations more modular.
     /// </remarks>
     public abstract class MessageComponent
     {

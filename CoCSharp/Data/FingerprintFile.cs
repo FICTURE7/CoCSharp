@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace CoCSharp.Data
+﻿namespace CoCSharp.Data
 {
     /// <summary>
     /// Represents a file's fingerprint in a <see cref="Fingerprint"/>.
@@ -18,14 +16,11 @@ namespace CoCSharp.Data
         /// <summary>
         /// Gets or sets the SHA-1 hash of the file.
         /// </summary>
-        [JsonProperty("sha")]
-        [JsonConverter(typeof(SHA1StringConverter))]
         public byte[] Hash { get; set; }
 
         /// <summary>
         /// Gets or sets the path of the file.
         /// </summary>
-        [JsonProperty("file")]
         public string Path { get; set; }
     }
 }

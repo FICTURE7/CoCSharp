@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data;
+using CoCSharp.Data.Model;
+using Newtonsoft.Json;
 using System;
 
 namespace CoCSharp.Logic
@@ -11,10 +12,12 @@ namespace CoCSharp.Logic
     {
         internal const int BaseGameID = 506000000;
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="Decoration"/> class.
         /// </summary>
-        public Decoration() : base()
+        public Decoration() 
+            : base()
         {
             // Space
         }
@@ -25,11 +28,14 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Decoration(int x, int y) : base(x, y)
+        public Decoration(int x, int y) 
+            : base(x, y)
         {
             // Space
         }
+        #endregion
 
+        #region Fields & Properties
         /// <summary>
         /// Gets the <see cref="Type"/> of the <see cref="CsvData"/> expected
         /// by the <see cref="Decoration"/>.
@@ -45,5 +51,52 @@ namespace CoCSharp.Logic
                 return typeof(DecorationData);
             }
         }
+        #endregion
+
+        #region Methods
+        internal override void ToJsonWriter(JsonWriter writer)
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("data");
+            writer.WriteValue(DataID);
+
+            writer.WritePropertyName("x");
+            writer.WriteValue(X);
+
+            writer.WritePropertyName("y");
+            writer.WriteValue(Y);
+
+            writer.WriteEndObject();
+        }
+
+        internal override void FromJsonReader(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                    break;
+
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    var propertyName = (string)reader.Value;
+                    switch (propertyName)
+                    {
+                        case "data":
+                            DataID = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "x":
+                            X = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "y":
+                            Y = reader.ReadAsInt32().Value;
+                            break;
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

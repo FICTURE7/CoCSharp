@@ -9,14 +9,16 @@ namespace CoCSharp.Logic
     public abstract class Buildable : VillageObject
     {
         /// <summary>
-        /// Level at which a building is not constructed. This field is readonly.
+        /// Level at which a <see cref="Buildable"/> is not constructed. This field is readonly.
         /// </summary>
         public static readonly int NotConstructedLevel = -1;
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="Buildable"/> class.
         /// </summary>
-        public Buildable() : base()
+        public Buildable()
+            : base()
         {
             _level = NotConstructedLevel;
         }
@@ -26,7 +28,8 @@ namespace CoCSharp.Logic
         /// with the specified user token object.
         /// </summary>
         /// <param name="userToken">User token associated with this <see cref="Buildable"/>.</param>
-        public Buildable(object userToken) : this()
+        public Buildable(object userToken)
+            : this()
         {
             UserToken = userToken;
         }
@@ -37,7 +40,8 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Buildable(int x, int y) : base(x, y)
+        public Buildable(int x, int y)
+            : base(x, y)
         {
             _level = NotConstructedLevel;
         }
@@ -49,25 +53,28 @@ namespace CoCSharp.Logic
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Buildable"/>.</param>
-        public Buildable(int x, int y, object userToken) : this(x, y)
+        public Buildable(int x, int y, object userToken)
+            : this(x, y)
         {
             UserToken = userToken;
         }
+        #endregion
 
+        #region Fields & Properties
         /// <summary>
         /// Gets or sets the user token associated with the <see cref="Buildable"/>.
         /// </summary>
         /// <remarks>
-        /// This object is reference in the <see cref="ConstructionFinishEventArgs.UserToken"/>.
+        /// Reference to the object in <see cref="ConstructionFinishedEventArgs.UserToken"/>.
         /// </remarks>
-        [JsonIgnore]
         public object UserToken { get; set; }
 
+        // Level of the Buildable object.
+        private int _level;
         /// <summary>
         /// Gets or sets the level of the <see cref="Buildable"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is less than -1.</exception>
-        [JsonProperty("lvl")]
         public int Level
         {
             get
@@ -83,13 +90,9 @@ namespace CoCSharp.Logic
             }
         }
 
-        // Level of the Buildable object.
-        private int _level;
-
         /// <summary>
         /// Gets whether the <see cref="Buildable"/> object is in construction.
         /// </summary>
-        [JsonIgnore]
         public bool IsConstructing
         {
             get
@@ -102,7 +105,6 @@ namespace CoCSharp.Logic
         /// Gets the duration of the construction of the <see cref="Buildable"/> object.
         /// </summary>
         /// <exception cref="InvalidOperationException">The <see cref="Buildable"/> object is not in construction.</exception>
-        [JsonIgnore]
         public TimeSpan ConstructionDuration
         {
             get
@@ -118,7 +120,6 @@ namespace CoCSharp.Logic
         /// Gets or sets the UTC time at which the construction of the <see cref="Buildable"/> object will end.
         /// </summary>
         /// <exception cref="InvalidOperationException">The <see cref="Buildable"/> object is not in construction.</exception>
-        [JsonIgnore]
         public DateTime ConstructionEndTime
         {
             get
@@ -140,8 +141,7 @@ namespace CoCSharp.Logic
         }
 
         // Duration of construction in seconds. Everything is handled from here.
-        [JsonProperty("const_t", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private int ConstructionTSeconds
+        internal int ConstructionTSeconds
         {
             get
             {
@@ -165,9 +165,10 @@ namespace CoCSharp.Logic
         }
 
         // Date of when the construction is going to end in UNIX timestamps.
-        [JsonProperty("const_t_end", DefaultValueHandling = DefaultValueHandling.Ignore)]
         internal int ConstructionTEndUnixTimestamp { get; set; }
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Begins the construction of the <see cref="Buildable"/> and increases its level by 1
         /// when done.
@@ -188,15 +189,16 @@ namespace CoCSharp.Logic
         /// <summary>
         /// The event raised when the <see cref="Building"/> construction is finished.
         /// </summary>
-        public event EventHandler<ConstructionFinishEventArgs> ConstructionFinished;
+        public event EventHandler<ConstructionFinishedEventArgs> ConstructionFinished;
         /// <summary>
         /// Use this method to trigger the <see cref="ConstructionFinished"/> event.
         /// </summary>
         /// <param name="e">The arguments data.</param>
-        protected virtual void OnConstructionFinished(ConstructionFinishEventArgs e)
+        protected virtual void OnConstructionFinished(ConstructionFinishedEventArgs e)
         {
             if (ConstructionFinished != null)
                 ConstructionFinished(this, e);
         }
+        #endregion
     }
 }

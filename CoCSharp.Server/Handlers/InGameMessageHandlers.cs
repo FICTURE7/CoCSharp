@@ -1,9 +1,6 @@
-﻿using CoCSharp.Data.Slots;
-using CoCSharp.Network;
+﻿using CoCSharp.Network;
 using CoCSharp.Network.Messages;
 using CoCSharp.Server.Core;
-using System;
-using System.IO;
 
 namespace CoCSharp.Server.Handlers
 {

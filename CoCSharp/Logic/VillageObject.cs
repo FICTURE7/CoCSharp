@@ -9,13 +9,12 @@ namespace CoCSharp.Logic
     /// </summary>
     public abstract class VillageObject
     {
+        //TODO: Make the constructor internal.
+
         // Represents the Base ID of every game ID & data ID.
         internal const int Base = 1000000;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VillageObject"/> class.
-        /// </summary>
-        public VillageObject()
+        internal VillageObject()
         {
             // Space
         }
@@ -38,7 +37,6 @@ namespace CoCSharp.Logic
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Width.</exception>
-        [JsonProperty("x")]
         public int X
         {
             get { return _x; }
@@ -58,7 +56,6 @@ namespace CoCSharp.Logic
         /// Gets or sets the y coordinate of the <see cref="VillageObject"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Height.</exception>
-        [JsonProperty("y")]
         public int Y
         {
             get { return _y; }
@@ -82,7 +79,6 @@ namespace CoCSharp.Logic
         /// regularly to keep up with the current game state.
         /// </remarks>
         /// <exception cref="ArgumentException"><paramref name="value"/> is not type of expected type.</exception>
-        [JsonIgnore]
         public CsvData Data
         {
             get
@@ -100,31 +96,31 @@ namespace CoCSharp.Logic
                     if (type != ExpectedDataType)
                         throw new ArgumentException("Expected value to in the type of '" + ExpectedDataType + "'.", "value");
 
-                    _dataID = value.ID;
+                    _dataId = value.ID;
                 }
                 else
-                    _dataID = 0;
+                    _dataId = 0;
 
                 _data = value;
             }
         }
 
         // Data associated with the object.
-        [JsonIgnore]
         private CsvData _data;
 
-        // This is mostly for testing.
         internal int DataID
         {
             get
             {
-                return _dataID;
+                return _dataId;
+            }
+            set
+            {
+                _dataId = value;
             }
         }
-
         // ID of _data;
-        [JsonProperty("data")]
-        private int _dataID;
+        private int _dataId;
 
         //TODO: Turn this into an abstract function.
 
@@ -141,9 +137,19 @@ namespace CoCSharp.Logic
         public int GetDataID()
         {
             //TODO: Needs some API improvement because it can accessed from Data.ID & here
-            //however Data can be null.
+            // however Data can be null.
 
-            return _dataID;
+            return _dataId;
+        }
+
+        internal virtual void ToJsonWriter(JsonWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal virtual void FromJsonReader(JsonReader reader)
+        {
+            throw new NotImplementedException();
         }
     }
 }

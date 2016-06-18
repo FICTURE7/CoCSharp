@@ -13,5 +13,25 @@ namespace CoCSharp.Server
                 str += bytes[i].ToString("x2");
             return str;
         }
+
+        internal static string GetDirectoryToken(string directory)
+        {
+            var seperator = directory.IndexOf("-") + 1;
+            if (seperator == -1)
+                return null;
+
+            var token = directory.Substring(seperator, directory.Length - seperator);
+            return token;
+        }
+
+        internal static string GetDirectoryUserID(string directory)
+        {
+            var seperator = directory.IndexOf("-");
+            if (seperator == -1)
+                return null;
+
+            var userIDStr = directory.Substring(0, seperator);
+            return userIDStr;
+        }
     }
 }

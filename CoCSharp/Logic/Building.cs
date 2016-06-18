@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data;
+using CoCSharp.Data.Model;
 using Newtonsoft.Json;
 using System;
 
@@ -12,6 +12,7 @@ namespace CoCSharp.Logic
     {
         internal const int BaseGameID = 500000000;
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class.
         /// </summary>
@@ -52,19 +53,9 @@ namespace CoCSharp.Logic
         {
             // Space
         }
+        #endregion
 
-        /// <summary>
-        /// Gets or sets whether the <see cref="Building"/> is locked.
-        /// </summary>
-        [JsonProperty("locked", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        public bool IsLocked
-        {
-            get { return _isLocked; }
-            set { _isLocked = value; }
-        }
-        // Building is locked. Mainly for Alliance Castle.
-        private bool _isLocked;
-
+        #region Fields & Properties
         /// <summary>
         /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected
         /// by the <see cref="Building"/>.
@@ -81,6 +72,25 @@ namespace CoCSharp.Logic
             }
         }
 
+        // Building is locked. Mainly for Alliance Castle.
+        private bool _isLocked;
+        /// <summary>
+        /// Gets or sets whether the <see cref="Building"/> is locked.
+        /// </summary>
+        public bool IsLocked
+        {
+            get
+            {
+                return _isLocked;
+            }
+            set
+            {
+                _isLocked = value;
+            }
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Begins the construction of the <see cref="Building"/> and increases its level by 1
         /// when done if <see cref="Buildable.IsConstructing"/> is <c>false</c> and <see cref="VillageObject.Data"/>
@@ -125,7 +135,7 @@ namespace CoCSharp.Logic
             InternalCancelScheduleBuild();
 
             ConstructionTEndUnixTimestamp = 0;
-            OnConstructionFinished(new ConstructionFinishEventArgs()
+            OnConstructionFinished(new ConstructionFinishedEventArgs()
             {
                 BuildableConstructed = this,
                 EndTime = endTime,
@@ -189,12 +199,115 @@ namespace CoCSharp.Logic
             Level++;
             ConstructionTEndUnixTimestamp = 0;
 
-            OnConstructionFinished(new ConstructionFinishEventArgs()
+            OnConstructionFinished(new ConstructionFinishedEventArgs()
             {
                 BuildableConstructed = this,
                 UserToken = UserToken,
                 EndTime = endTime
             });
         }
+
+        internal override void ToJsonWriter(JsonWriter writer)
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("data");
+            writer.WriteValue(DataID);
+
+            writer.WritePropertyName("lvl");
+            writer.WriteValue(Level);
+
+            if (IsLocked != default(bool))
+            {
+                writer.WritePropertyName("locked");
+                writer.WriteValue(IsLocked);
+            }
+
+            if (ConstructionTEndUnixTimestamp != default(int))
+            {
+                writer.WritePropertyName("const_t_end");
+                writer.WriteValue(ConstructionTEndUnixTimestamp);
+            }
+
+            if (ConstructionTSeconds != default(int))
+            {
+                writer.WritePropertyName("const_t");
+                writer.WriteValue(ConstructionTSeconds);
+            }
+
+            writer.WritePropertyName("x");
+            writer.WriteValue(X);
+
+            writer.WritePropertyName("y");
+            writer.WriteValue(Y);
+
+            writer.WriteEndObject();
+        }
+
+        // Reads the Building from a JsonReader.
+        internal override void FromJsonReader(JsonReader reader)
+        {
+            // const_t_end value.
+            var constTimeEnd = -1;
+            // const_t value.
+            var constTime = -1;
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                    break;
+
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    var propertyName = (string)reader.Value;
+                    switch (propertyName)
+                    {
+                        case "data":
+                            DataID = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "lvl":
+                            Level = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "locked":
+                            IsLocked = reader.ReadAsBoolean().Value;
+                            break;
+
+                        case "const_t_end":
+                            constTimeEnd = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "const_t":
+                            constTime = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "x":
+                            X = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "y":
+                            Y = reader.ReadAsInt32().Value;
+                            break;
+                    }
+                }
+            }
+
+            // Try to use const_t if we was not able to get const_t_end's value.
+            if (constTimeEnd == -1)
+            {
+                // We don't have const_t either so we can exit early.
+                if (constTime == -1)
+                    return;
+
+                ConstructionEndTime = DateTime.UtcNow.AddSeconds(constTime);
+            }
+            else
+            {
+                if (constTimeEnd > 0)
+                    ConstructionTEndUnixTimestamp = constTimeEnd;
+            }
+        }
+        #endregion
     }
 }

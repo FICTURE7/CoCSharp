@@ -9,6 +9,8 @@ namespace CoCSharp.Logic
     // construction time etc.
     internal static class LogicScheduler
     {
+        //TODO: Consider pooling Schedule object to reduce GC pressure.
+
         static LogicScheduler()
         {
             s_lock = new object();
@@ -137,7 +139,7 @@ namespace CoCSharp.Logic
                 UserToken = userToken;
             }
 
-            // Action to call when the When DateTime was reached.
+            // Logic Action to call when the When DateTime was reached.
             public Action Logic { get; set; }
 
             // DateTime at which to call the Logic Action.
@@ -149,7 +151,7 @@ namespace CoCSharp.Logic
             // State whether the logic has been cancelled.
             public bool Cancelled { get; set; }
 
-            // Something to identify to schedule.
+            // Something to identify the schedule.
             public object UserToken { get; set; }
 
             public override string ToString()

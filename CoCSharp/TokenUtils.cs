@@ -11,12 +11,14 @@
         private const int TokenLength = 40;
 
         /// <summary>
-        /// Determinces if the specified string token is valid.
+        /// Determines if the specified string token is valid.
         /// </summary>
         /// <param name="token">Token to check.</param>
         /// <returns>Returns <c>true</c> if <paramref name="token"/> is valid.</returns>
         public static bool CheckToken(string token)
         {
+            if (token == null)
+                return false;
             if (token.Length != 40)
                 return false;
 

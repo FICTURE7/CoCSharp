@@ -23,8 +23,13 @@ namespace CoCSharp.Server
         }
 
         public Avatar Avatar { get; set; }
+
+        internal AvatarSave Save { get; set; }
+
         public Socket Connection { get; private set; }
+
         public NetworkManagerAsync NetworkManager { get; private set; }
+
         public byte[] SessionKey { get; private set; }
 
         private readonly CoCServer _server;

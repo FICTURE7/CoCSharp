@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data;
+using CoCSharp.Data.Model;
 using Newtonsoft.Json;
 using System;
 
@@ -12,6 +12,7 @@ namespace CoCSharp.Logic
     {
         internal const int BaseGameID = 503000000;
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="Obstacle"/> class.
         /// </summary>
@@ -52,7 +53,9 @@ namespace CoCSharp.Logic
         {
             UserToken = userToken;
         }
+        #endregion
 
+        #region Fields & Properties
         /// <summary>
         /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected
         /// by the <see cref="Obstacle"/>.
@@ -73,31 +76,30 @@ namespace CoCSharp.Logic
         /// Gets or sets the user token associated with the <see cref="VillageObject"/>.
         /// </summary>
         /// <remarks>
-        /// This object is referenced in the <see cref="ConstructionFinishEventArgs.UserToken"/>.
+        /// This object is referenced in the <see cref="ConstructionFinishedEventArgs.UserToken"/>.
         /// </remarks>
-        [JsonIgnore]
         public object UserToken { get; set; }
 
         /// <summary>
         /// Gets whether the <see cref="Obstacle"/> is being cleared.
         /// </summary>
-        [JsonIgnore]
         public bool IsClearing
         {
-            get { return ClearTSeconds > 0; }
+            get
+            {
+                return ClearTSeconds > 0;
+            }
         }
 
         /// <summary>
         /// Gets or sets the loot multiplier of the <see cref="Obstacle"/>.
         /// </summary>
-        [JsonProperty("loot_multiply_ver", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int LootMultiplier { get; set; }
 
         /// <summary>
         /// Gets the duration of the clearing of the <see cref="Obstacle"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>false</c>.</exception>
-        [JsonIgnore]
         public TimeSpan ClearDuration
         {
             get
@@ -114,7 +116,6 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>false</c>.</exception>
         /// <exception cref="ArgumentException"><paramref name="value"/>'s kind is not <see cref="DateTimeKind.Utc"/>.</exception>
-        [JsonIgnore]
         public DateTime ClearEndTime
         {
             get
@@ -135,7 +136,6 @@ namespace CoCSharp.Logic
         }
 
         // Seconds remaining to clear to the obstacle.
-        [JsonProperty("clear_t", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private int ClearTSeconds
         {
             get
@@ -160,14 +160,14 @@ namespace CoCSharp.Logic
                 _clearTime = value;
             }
         }
-
         // Duration of clearing, its pointless but just keeping it.
         private int _clearTime;
 
         // End time of the clearing of the obstacle in UNIX timestamps.
-        [JsonIgnore]
         private int ClearTEndUnixTimestamp { get; set; }
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Begins the clearing of the <see cref="Obstacle"/> if <see cref="IsClearing"/> is <c>false</c>
         /// and <see cref="VillageObject.Data"/> is not null; otherwise 
@@ -268,5 +268,64 @@ namespace CoCSharp.Logic
 
             OnClearingFinished(args);
         }
+
+        internal override void ToJsonWriter(JsonWriter writer)
+        {
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("data");
+            writer.WriteValue(DataID);
+
+            if (ClearTSeconds != default(int))
+            {
+                writer.WritePropertyName("clear_t");
+                writer.WriteValue(ClearTSeconds);
+            }
+
+            writer.WritePropertyName("x");
+            writer.WriteValue(X);
+
+            writer.WritePropertyName("y");
+            writer.WriteValue(Y);
+
+            writer.WriteEndObject();
+        }
+
+        internal override void FromJsonReader(JsonReader reader)
+        {
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndObject)
+                    break;
+
+                if (reader.TokenType == JsonToken.PropertyName)
+                {
+                    var propertyName = (string)reader.Value;
+                    switch (propertyName)
+                    {
+                        case "data":
+                            DataID = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "clear_t":
+                            ClearTSeconds = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "x":
+                            X = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "y":
+                            Y = reader.ReadAsInt32().Value;
+                            break;
+
+                        case "loot_multiply_ver":
+                            LootMultiplier = reader.ReadAsInt32().Value;
+                            break;
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

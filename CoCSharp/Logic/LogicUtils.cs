@@ -20,7 +20,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Calculates the amount of experience gained for the specified duration.
         /// </summary>
-        /// <param name="duration">Duration of the construction.</param>
+        /// <param name="duration">Duration of the operation.</param>
         /// <returns>Experience gained.</returns>
         public static int CalculateExperience(TimeSpan duration)
         {

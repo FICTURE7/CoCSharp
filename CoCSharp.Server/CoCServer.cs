@@ -64,12 +64,26 @@ namespace CoCSharp.Server
         // Registers the specified MessageHandler for the specific Message.
         public void RegisterMessageHandler(Message message, MessageHandler handler)
         {
+            if (message == null)
+                throw new ArgumentNullException("message");
+            if (handler == null)
+                throw new ArgumentNullException("handler");
+            if (MessageHandlerDictionary.ContainsKey(message.ID))
+                throw new ArgumentException("Already contain handler for message '" + message.ID + "'.", "message");
+
             MessageHandlerDictionary.Add(message.ID, handler);
         }
 
         // Registers the specified CommandHandler for the specific Command.
         public void RegisterCommandHandler(Command command, CommandHandler handler)
         {
+            if (command == null)
+                throw new ArgumentNullException("message");
+            if (handler == null)
+                throw new ArgumentNullException("handler");
+            if (CommandHandlerDictionary.ContainsKey(command.ID))
+                throw new ArgumentException("Already contain handler for message '" + command.ID + "'.", "message");
+
             CommandHandlerDictionary.Add(command.ID, handler);
         }
 

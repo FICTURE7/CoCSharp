@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Collections;
 
 namespace CoCSharp.Data
 {
@@ -83,8 +83,6 @@ namespace CoCSharp.Data
         /// Gets or sets the SHA-1 master hash of the <see cref="Fingerprint"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
-        [JsonProperty("sha")]
-        [JsonConverter(typeof(SHA1StringConverter))]
         public byte[] MasterHash
         {
             get
@@ -105,7 +103,6 @@ namespace CoCSharp.Data
         /// Gets or sets the version of the <see cref="Fingerprint"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
-        [JsonProperty("version")]
         public string Version
         {
             get
@@ -132,9 +129,7 @@ namespace CoCSharp.Data
         /// </summary>
         public bool IsReadOnly { get; set; }
 
-        [JsonProperty("files")]
         private List<FingerprintFile> Files { get; set; }
-
         /// <summary>
         /// Computes the master hash of the overall fingerprint file.
         /// </summary>
@@ -254,10 +249,10 @@ namespace CoCSharp.Data
                         // If we hit a token of type PropertyName we read its value
                         // and determine where to assign it.
                         case JsonToken.PropertyName:
-                            switch ((string)jsonReader.Value)
+                            var propertyName = (string)jsonReader.Value;
+                            switch (propertyName)
                             {
                                 case "files":
-
                                     if (jsonReader.Read())
                                     {
                                         if (jsonReader.TokenType != JsonToken.StartArray)
@@ -274,20 +269,16 @@ namespace CoCSharp.Data
                                         // Throw an exception here maybe?
                                         break;
                                     }
-
                                     break;
 
                                 case "file":
-
                                     if (!inFilesArray)
                                         break;
 
                                     file.Path = jsonReader.ReadAsString();
-
                                     break;
 
                                 case "sha":
-
                                     // Convert the "sha" string into a byte array.
                                     var str = jsonReader.ReadAsString();
                                     if (str == null || str.Length != 40)
@@ -304,19 +295,15 @@ namespace CoCSharp.Data
                                     // If not assign it to the Fingerprint itself.
                                     else
                                         fingerprint.MasterHash = bytes;
-
                                     break;
 
                                 case "version":
-
                                     fingerprint.Version = jsonReader.ReadAsString();
-
                                     break;
                             }
                             break;
 
                         case JsonToken.EndObject:
-
                             // Reset the file object when we hit EndObject token
                             // to allow new creation of FingerprintFile.
                             if (inFilesArray)
@@ -324,21 +311,16 @@ namespace CoCSharp.Data
                                 fingerprintFiles.Add(file);
                                 file = new FingerprintFile();
                             }
-
                             break;
 
                         case JsonToken.EndArray:
-
                             inFilesArray = false;
-
                             break;
                     }
                 }
             }
 
             fingerprint.Files = fingerprintFiles;
-
-            //return JsonConvert.DeserializeObject<Fingerprint>(value);
             return fingerprint;
         }
 
