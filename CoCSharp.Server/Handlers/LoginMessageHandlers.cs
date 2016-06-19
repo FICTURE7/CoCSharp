@@ -12,7 +12,9 @@ namespace CoCSharp.Server.Handlers
     {
         private static void HandleLoginRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
-            //TODO: Implement LoginFailed to old client versions.
+            //TODO: Send LoginFailed to old client versions.
+            //TODO: Check if the client has sent SessionRequestMessage first.
+
             var lrMessage = message as LoginRequestMessage;
             var keyPair = Crypto8.GenerateKeyPair();
             var lsMessage = new LoginSuccessMessage()
@@ -35,11 +37,12 @@ namespace CoCSharp.Server.Handlers
                 DateJoined = DateTime.Now, //TODO: Implement saving of DateJoined.
                 Unknown2 = 0,
                 GooglePlusID = null,
-                CountryCode = "OI" //TODO: Return Country code of IP Instead.
+                CountryCode = "OI" //TODO: Return Country code of IP.
             };
 
             var avatar = (Avatar)null;
-            if (lrMessage.UserID == 0 && lrMessage.UserToken == null) // new account
+            // Create a new account.
+            if (lrMessage.UserID == 0 && lrMessage.UserToken == null)
             {
                 avatar = server.AvatarManager.CreateNewAvatar();
                 FancyConsole.WriteLine("[&(blue)Login&(default)] Created new avatar &(darkcyan){0}&(default):{1} success.",
@@ -55,6 +58,12 @@ namespace CoCSharp.Server.Handlers
                 if (!server.AvatarManager.Exists(lrMessage.UserToken))
                 {
                     avatar = server.AvatarManager.CreateNewAvatar(lrMessage.UserToken, lrMessage.UserID);
+                    if (avatar == null)
+                    {
+                        // Should send a LoginFailedMessage telling the client to clear its data.
+                        return;
+                    }
+
                     FancyConsole.WriteLine("[&(blue)Login&(default)] Unknown avatar -> Created new avatar with &(darkcyan){0}&(default):{1} success.",
                                            avatar.Token, avatar.ID);
                     server.AvatarManager.SaveAvatar(avatar);
@@ -62,6 +71,12 @@ namespace CoCSharp.Server.Handlers
                 else
                 {
                     avatar = server.AvatarManager.LoadAvatar(lrMessage.UserToken);
+                    if (avatar == null)
+                    {
+                        // Should send a LoginFailedMessage telling the client to clear its data.
+                        return;
+                    }
+
                     FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} success.",
                                            avatar.Token, avatar.ID);
                 }

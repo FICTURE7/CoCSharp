@@ -35,6 +35,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteDB, Version=1.0.4.0, Culture=neutral, PublicKeyToken=5c2fff750805920e, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.1.0.4\lib\net40\LiteDB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,11 +52,8 @@
     <Compile Include="CoCRemoteClient.cs" />
     <Compile Include="CoCServer.cs" />
     <Compile Include="Core\AvatarManager.cs" />
-    <Compile Include="Core\AvatarSave.cs" />
     <Compile Include="Core\DataManager.cs" />
     <Compile Include="Core\NpcManager.cs" />
-    <Compile Include="Core\SaveReader.cs" />
-    <Compile Include="Core\SaveWriter.cs" />
     <Compile Include="DirectoryPaths.cs" />
     <Compile Include="Core\FancyConsole.cs" />
     <Compile Include="Core\FancyConsole.Write.cs" />
@@ -237,6 +238,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="Handlers\Commands\CommandHandlers.BuyResources.cs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">

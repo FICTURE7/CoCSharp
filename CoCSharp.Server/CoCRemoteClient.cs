@@ -24,7 +24,7 @@ namespace CoCSharp.Server
 
         public Avatar Avatar { get; set; }
 
-        internal AvatarSave Save { get; set; }
+        //internal AvatarSave Save { get; set; }
 
         public Socket Connection { get; private set; }
 
