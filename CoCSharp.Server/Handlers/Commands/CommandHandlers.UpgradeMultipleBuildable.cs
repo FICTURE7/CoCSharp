@@ -14,7 +14,7 @@ namespace CoCSharp.Server.Handlers.Commands
             for (int i = 0; i < umbCommand.BuildingsGameID.Length; i++)
             {
                 var gameId = umbCommand.BuildingsGameID[i];
-                var token = new VillageObjectUserToken(server, client);
+                var token = new VillageObjectToken(server, client);
                 var buildable = client.Avatar.Home.GetVillageObject<Buildable>(gameId);
                 var data = server.DataManager.FindBuilding(buildable.GetDataID(), buildable.Level + 1);
 

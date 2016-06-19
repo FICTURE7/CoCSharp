@@ -10,13 +10,11 @@ namespace CoCSharp.Server.Handlers.Commands
         private static void HandleBuyBuildingCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var bbCommand = (BuyBuildingCommand)command;
-            var token = new VillageObjectUserToken(server, client);
+            var token = new VillageObjectToken(server, client);
             var data = server.DataManager.FindBuilding(bbCommand.BuildingDataID, 0);
-            var building = new Building(bbCommand.X, bbCommand.Y, token);
-            client.Avatar.Home.Buildings.Add(building);
+            var building = new Building(client.Avatar.Home, bbCommand.X, bbCommand.Y, token);
 
             building.ConstructionFinished += ConstructionFinished;
-
             building.Data = data;
             building.BeginConstruction();
 

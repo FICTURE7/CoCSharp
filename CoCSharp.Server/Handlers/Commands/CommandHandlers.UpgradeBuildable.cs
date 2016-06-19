@@ -11,7 +11,7 @@ namespace CoCSharp.Server.Handlers.Commands
         public static void HandleUpgradeBuildableCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var ubCommand = (UpgradeBuildableCommand)command;
-            var token = new VillageObjectUserToken(server, client);
+            var token = new VillageObjectToken(server, client);
             var buildable = client.Avatar.Home.GetVillageObject<Buildable>(ubCommand.BuildableGameID);
             if (buildable.IsConstructing)
             {

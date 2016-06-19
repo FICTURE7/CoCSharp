@@ -12,7 +12,7 @@ namespace CoCSharp.Server.Handlers.Commands
             var deco = client.Avatar.Home.GetDecoration(sdCommand.DecorationGameID);
 
             //TODO: Improve API to allow removal of VillageObject with there game IDs.
-            client.Avatar.Home.Decorations.Remove(deco);
+            //client.Avatar.Home.Decorations.Remove(deco);
 
             FancyConsole.WriteLine(SoldDecorationFormat, sdCommand.DecorationGameID, client.Avatar.Token, deco.X, deco.Y);
         }

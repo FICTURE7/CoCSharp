@@ -9,7 +9,7 @@ namespace CoCSharp.Server.Handlers.Commands
         private static void HandleClearObstacleCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var coCommand = command as ClearObstacleCommand;
-            var token = new VillageObjectUserToken(server, client);
+            var token = new VillageObjectToken(server, client);
             var obstacle = client.Avatar.Home.GetObstacle(coCommand.ObstacleGameID);
             var data = server.DataManager.FindObstacle(obstacle.GetDataID());
 

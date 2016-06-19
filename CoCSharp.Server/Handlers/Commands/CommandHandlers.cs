@@ -65,7 +65,7 @@ namespace CoCSharp.Server.Handlers.Commands
         private static void ConstructionFinished(object sender, ConstructionFinishedEventArgs e)
         {
             e.BuildableConstructed.ConstructionFinished -= ConstructionFinished;
-            var token = e.UserToken as VillageObjectUserToken;
+            var token = e.UserToken as VillageObjectToken;
             var buildable = e.BuildableConstructed;
             var client = token.Client;
             var server = token.Server;
@@ -82,12 +82,13 @@ namespace CoCSharp.Server.Handlers.Commands
                 exp = LogicUtils.CalculateExperience(data.BuildTime);
             }
 
-            client.Avatar.Experience += exp;
-
             if (e.WasCancelled)
                 FancyConsole.WriteLine(CancelledConstructionFormat, client.Avatar.Token, buildable.X, buildable.Y, buildable.Level);
             else
+            {
                 FancyConsole.WriteLine(FinishedConstructionFormat, client.Avatar.Token, buildable.X, buildable.Y, buildable.Level);
+                client.Avatar.Experience += exp;
+            }
 
             server.AvatarManager.SaveAvatar(client.Avatar);
         }
@@ -96,7 +97,7 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             e.ClearedObstacle.ClearingFinished -= ClearingFinished;
 
-            var token = e.UserToken as VillageObjectUserToken;
+            var token = e.UserToken as VillageObjectToken;
             var obstacle = e.ClearedObstacle;
             var client = token.Client;
             var server = token.Server;

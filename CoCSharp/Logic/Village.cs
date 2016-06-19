@@ -68,7 +68,7 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Gets or sets the TownHall <see cref="Building"/> of the <see cref="Village"/>; returns
-        /// null if there is no TownHall in the <see cref="Village"/>.
+        /// <c>null</c> if there is no TownHall in the <see cref="Village"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
         /// <exception cref="ArgumentException"><paramref name="value"/> Data ID is not 1000001.</exception>
@@ -303,7 +303,7 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <param name="value">JSON string that represents the <see cref="Village"/>.</param>
         /// <returns>A <see cref="Village"/> that is deserialized from the specified JSON string.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null or empty.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null or whitespace.</exception>
         public static Village FromJson(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -425,9 +425,9 @@ namespace CoCSharp.Logic
 
                 if (reader.TokenType == JsonToken.StartObject)
                 {
-                    building = new Building();
+                    building = new Building(village);
                     building.FromJsonReader(reader);
-                    village.Buildings.Add(building);
+                    //village.Buildings.Add(building);
 
                     building = null;
                 }
@@ -449,9 +449,9 @@ namespace CoCSharp.Logic
 
                 if (reader.TokenType == JsonToken.StartObject)
                 {
-                    obstacle = new Obstacle();
+                    obstacle = new Obstacle(village);
                     obstacle.FromJsonReader(reader);
-                    village.Obstacles.Add(obstacle);
+                    //village.Obstacles.Add(obstacle);
 
                     obstacle = null;
                 }
@@ -473,9 +473,9 @@ namespace CoCSharp.Logic
 
                 if (reader.TokenType == JsonToken.StartObject)
                 {
-                    trap = new Trap();
+                    trap = new Trap(village);
                     trap.FromJsonReader(reader);
-                    village.Traps.Add(trap);
+                    //village.Traps.Add(trap);
 
                     trap = null;
                 }
@@ -497,9 +497,9 @@ namespace CoCSharp.Logic
 
                 if (reader.TokenType == JsonToken.StartObject)
                 {
-                    decoration = new Decoration();
+                    decoration = new Decoration(village);
                     decoration.FromJsonReader(reader);
-                    village.Decorations.Add(decoration);
+                    //village.Decorations.Add(decoration);
 
                     decoration = null;
                 }

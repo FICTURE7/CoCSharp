@@ -1,9 +1,9 @@
 ﻿namespace CoCSharp.Server.Handlers
 {
-    public class VillageObjectUserToken
+    public class VillageObjectToken
     {
         // A way to figure which avatar to save on events.
-        public VillageObjectUserToken(CoCServer server, CoCRemoteClient client)
+        public VillageObjectToken(CoCServer server, CoCRemoteClient client)
         {
             Server = server;
             Client = client;

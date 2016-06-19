@@ -14,44 +14,49 @@ namespace CoCSharp.Logic
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Trap"/> class.
+        /// Initializes a new instance of the <see cref="Trap"/> class with the specified
+        /// <see cref="Village"/> which contains the <see cref="Trap"/>.
         /// </summary>
-        public Trap() : base()
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
+        public Trap(Village village) : base(village)
         {
-            // Space
+            village.Traps.Add(this);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Trap"/> class
-        /// with the specified user token object.
+        /// Initializes a new instance of the <see cref="Trap"/> class with the specified 
+        /// <see cref="Village"/> which contains the <see cref="Trap"/> and user token object.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
-        public Trap(object userToken) : base(userToken)
+        public Trap(Village village, object userToken) : base(village, userToken)
         {
-            // Space
+            village.Traps.Add(this);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified
-        /// X coordinate and Y coordinate.
+        /// <see cref="Village"/> which contains the <see cref="Trap"/>, X coordinate and Y coordinate.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Trap(int x, int y) : base(x, y)
+        public Trap(Village village, int x, int y) : base(village, x, y)
         {
-            // Space
+            village.Traps.Add(this);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified
-        /// X coordinate, Y coordinate and user token object.
+        /// <see cref="Village"/> which contains the <see cref="Trap"/>, X coordinate, Y coordinate and user token object.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
-        public Trap(int x, int y, object userToken) : base(x, y, userToken)
+        public Trap(Village village, int x, int y, object userToken) : base(village, x, y, userToken)
         {
-            // Space
+            village.Traps.Add(this);
         }
         #endregion
 

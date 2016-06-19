@@ -14,7 +14,8 @@ namespace CoCSharp.Test.Logic
         // Test the X and Y property of a village object.
         public void XY_PositionOutOfVillageBounds_Exception()
         {
-            var obj = new TestObject();
+            var village = new Village();
+            var obj = new Building(village);
 
             // X Coordinate tests.
             Assert.Throws<ArgumentOutOfRangeException>(() => obj.X = Village.Width + 1);
@@ -76,7 +77,9 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void Data_UnexpectedType_Exception()
         {
-            var testObj = new TestObject();
+            var village = new Village();
+            var testObj = new Building(village);
+
             Assert.Throws<ArgumentException>(() => testObj.Data = new ResourceData());
             Assert.That(testObj.DataID == 0);
 
@@ -89,17 +92,6 @@ namespace CoCSharp.Test.Logic
 
             testObj.Data = null;
             Assert.That(testObj.DataID == 0);
-        }
-
-        private class TestObject : VillageObject
-        {
-            protected override Type ExpectedDataType
-            {
-                get
-                {
-                    return typeof(BuildingData);
-                }
-            }
         }
     }
 }

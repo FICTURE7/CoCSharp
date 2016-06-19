@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 
 namespace CoCSharp.Logic
 {
@@ -14,47 +13,22 @@ namespace CoCSharp.Logic
         public static readonly int NotConstructedLevel = -1;
 
         #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Buildable"/> class.
-        /// </summary>
-        public Buildable()
-            : base()
+        internal Buildable(Village village) : base(village)
         {
             _level = NotConstructedLevel;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Buildable"/> class
-        /// with the specified user token object.
-        /// </summary>
-        /// <param name="userToken">User token associated with this <see cref="Buildable"/>.</param>
-        public Buildable(object userToken)
-            : this()
+        internal Buildable(Village village, object userToken) : this(village)
         {
             UserToken = userToken;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Buildable"/> class with the specified
-        /// X coordinate and Y coordinate.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        public Buildable(int x, int y)
-            : base(x, y)
+        internal Buildable(Village village, int x, int y) : base(village, x, y)
         {
             _level = NotConstructedLevel;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Buildable"/> class with the specified
-        /// X coordinate, Y coordinate and user token object.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <param name="userToken">User token associated with this <see cref="Buildable"/>.</param>
-        public Buildable(int x, int y, object userToken)
-            : this(x, y)
+        internal Buildable(Village village, int x, int y, object userToken) : this(village, x, y)
         {
             UserToken = userToken;
         }

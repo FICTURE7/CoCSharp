@@ -14,24 +14,25 @@ namespace CoCSharp.Logic
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Decoration"/> class.
+        /// Initializes a new instance of the <see cref="Decoration"/> class with the specified
+        /// <see cref="Village"/> which contains the <see cref="Decoration"/>.
         /// </summary>
-        public Decoration() 
-            : base()
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Decoration"/>.</param>
+        public Decoration(Village village) : base(village)
         {
-            // Space
+            village.Decorations.Add(this);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Decoration"/> class with the specified
-        /// X coordinate and Y coordinate.
+        /// <see cref="Village"/> which contains the <see cref="Decoration"/>, X coordinate and Y coordinate.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Decoration"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Decoration(int x, int y) 
-            : base(x, y)
+        public Decoration(Village village, int x, int y)  : base(village, x, y)
         {
-            // Space
+            village.Decorations.Add(this);
         }
         #endregion
 

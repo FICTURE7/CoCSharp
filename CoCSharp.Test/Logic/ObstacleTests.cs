@@ -7,11 +7,19 @@ namespace CoCSharp.Test.Logic
     [TestFixture]
     public class ObstacleTests
     {
+        private Village _village;
         private Obstacle _obstacle;
 
         public ObstacleTests()
         {
-            _obstacle = new Obstacle();
+            _village = new Village();
+            _obstacle = new Obstacle(_village);
+        }
+
+        [Test]
+        public void Was_AddedToVillage()
+        {
+            Assert.That(_village.Obstacles.Contains(_obstacle));
         }
 
         [Test]
@@ -37,6 +45,7 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void ClearEndTime_InvalidDateTimeKind_Exception()
         {
+            // Should throw an InvalidOperationException when DateTimeKind is not of DateTimeKind.Utc.
             Assert.Throws<ArgumentException>(() => _obstacle.ClearEndTime = DateTime.Now.AddSeconds(10));
         }
 

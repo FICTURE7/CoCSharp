@@ -25,7 +25,7 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void TownHall_ChangeTownHall_ReferenceChanges()
         {
-            var th = new Building(14, 14)
+            var th = new Building(_village, 14, 14)
             {
                 DataID = 1000001
             };

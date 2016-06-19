@@ -11,9 +11,8 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var bdCommand = (BuyDecorationCommand)command;
             var data = server.DataManager.FindDecoration(bdCommand.DecorationDataID);
-            var deco = new Decoration(bdCommand.X, bdCommand.Y);
+            var deco = new Decoration(client.Avatar.Home, bdCommand.X, bdCommand.Y);
             deco.Data = data;
-            client.Avatar.Home.Decorations.Add(deco);
 
             FancyConsole.WriteLine(BoughtDecorationFormat, bdCommand.DecorationDataID, client.Avatar.Token, bdCommand.X, bdCommand.Y);
         }

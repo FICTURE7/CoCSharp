@@ -6,6 +6,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
+        //TODO: Rename because its no necessarily a construction.
         private static void HandleCancelConstructionCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var ccCommand = (CancelConsturctionCommand)command;

@@ -14,44 +14,49 @@ namespace CoCSharp.Logic
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class.
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified
+        /// <see cref="Village"/> which contains the <see cref="Building"/>.
         /// </summary>
-        public Building() : base()
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
+        public Building(Village village) : base(village)
         {
-            // Space
+            village.Buildings.Add(this);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class
-        /// with the specified user token object.
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified 
+        /// <see cref="Village"/> which contains the <see cref="Building"/> and user token object.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        public Building(object userToken) : base(userToken)
+        public Building(Village village, object userToken) : base(village, userToken)
         {
-            // Space
+            village.Buildings.Add(this);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified
-        /// X coordinate and Y coordinate.
+        /// <see cref="Village"/> which contains the <see cref="Building"/>, X coordinate and Y coordinate.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Building(int x, int y) : base(x, y)
+        public Building(Village village, int x, int y) : base(village, x, y)
         {
-            // Space
+            village.Buildings.Add(this);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified
-        /// X coordinate, Y coordinate and user token object.
+        /// <see cref="Village"/> which contains the <see cref="Building"/>, X coordinate, Y coordinate and user token object.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        public Building(int x, int y, object userToken) : base(x, y, userToken)
+        public Building(Village village, int x, int y, object userToken) : base(village, x, y, userToken)
         {
-            // Space
+            village.Buildings.Add(this);
         }
         #endregion
 

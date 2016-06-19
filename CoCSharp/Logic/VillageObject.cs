@@ -14,32 +14,45 @@ namespace CoCSharp.Logic
         // Represents the Base ID of every game ID & data ID.
         internal const int Base = 1000000;
 
-        internal VillageObject()
+        #region Constructors
+        internal VillageObject(Village village)
         {
-            // Space
+            _village = village;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VillageObject"/> class with
-        /// the specified X coordinate and Y coordinate.
-        /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="x"/> is not between 0 and Village.Width.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="y"/> is not between 0 and Village.Height.</exception>
-        public VillageObject(int x, int y)
+        internal VillageObject(Village village, int x, int y) : this(village)
         {
             X = x;
             Y = y;
         }
+        #endregion
 
+        #region Fields & Properties
+        // Village in which the VillageObject is in.
+        private Village _village;
+        /// <summary>
+        /// Gets the <see cref="Logic.Village"/> in which the current <see cref="VillageObject"/> is in.
+        /// </summary>
+        public Village Village
+        {
+            get
+            {
+                return _village;
+            }
+        }
+
+        // X coordinate of object.
+        private int _x;
         /// <summary>
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Width.</exception>
         public int X
         {
-            get { return _x; }
+            get
+            {
+                return _x;
+            }
             set
             {
                 if (value < 0 || value > Village.Width)
@@ -49,16 +62,18 @@ namespace CoCSharp.Logic
             }
         }
 
-        // X coordinate of object.
-        private int _x;
-
+        // Y coordinate of object.
+        private int _y;
         /// <summary>
         /// Gets or sets the y coordinate of the <see cref="VillageObject"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Height.</exception>
         public int Y
         {
-            get { return _y; }
+            get
+            {
+                return _y;
+            }
             set
             {
                 if (value < 0 || value > Village.Height)
@@ -68,9 +83,8 @@ namespace CoCSharp.Logic
             }
         }
 
-        // Y coordinate of object.
-        private int _y;
-
+        // Data associated with the object.
+        private CsvData _data;
         /// <summary>
         /// Gets or sets the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.
         /// </summary>
@@ -87,7 +101,7 @@ namespace CoCSharp.Logic
             }
             set
             {
-                // Update _dataID with the provided data.
+                // Update _dataId with the provided data.
                 if (value != null)
                 {
                     var type = value.GetType();
@@ -99,15 +113,16 @@ namespace CoCSharp.Logic
                     _dataId = value.ID;
                 }
                 else
+                {
                     _dataId = 0;
+                }
 
                 _data = value;
             }
         }
 
-        // Data associated with the object.
-        private CsvData _data;
-
+        // ID of _data;
+        private int _dataId;
         internal int DataID
         {
             get
@@ -119,17 +134,15 @@ namespace CoCSharp.Logic
                 _dataId = value;
             }
         }
-        // ID of _data;
-        private int _dataId;
-
-        //TODO: Turn this into an abstract function.
 
         /// <summary>
         /// Gets the <see cref="Type"/> of the <see cref="CsvData"/> expected
         /// by the <see cref="VillageObject"/>.
         /// </summary>
         protected abstract Type ExpectedDataType { get; }
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Returns the data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.
         /// </summary>
@@ -137,7 +150,7 @@ namespace CoCSharp.Logic
         public int GetDataID()
         {
             //TODO: Needs some API improvement because it can accessed from Data.ID & here
-            // however Data can be null.
+            // however Data can be null. Could be improved by creating a NullData object.
 
             return _dataId;
         }
@@ -153,5 +166,6 @@ namespace CoCSharp.Logic
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

@@ -14,44 +14,53 @@ namespace CoCSharp.Logic
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Obstacle"/> class.
+        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
+        /// <see cref="Village"/> which contains the <see cref="Obstacle"/>.
         /// </summary>
-        public Obstacle() : base()
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
+        public Obstacle(Village village) : base(village)
         {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Obstacle"/> class
-        /// with the specified user token object.
-        /// </summary>
-        /// <param name="userToken">User token associated with this <see cref="Obstacle"/>.</param>
-        public Obstacle(object userToken)
-        {
-            UserToken = userToken;
+            village.Obstacles.Add(this);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
-        /// X coordinate and Y coordinate.
+        /// <see cref="Village"/> which contains the <see cref="Obstacle"/> and user token object.
         /// </summary>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        public Obstacle(int x, int y) : base(x, y)
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
+        /// <param name="userToken">User token associated with this <see cref="Obstacle"/>.</param>
+        public Obstacle(Village village, object userToken) : base(village)
         {
-            // Space
+            UserToken = userToken;
+
+            village.Obstacles.Add(this);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
-        /// X coordinate, Y coordinate and user token object.
+        /// <see cref="Village"/> which contains the <see cref="Obstacle"/>, X coordinate and Y coordinate.
         /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        public Obstacle(Village village, int x, int y) : base(village, x, y)
+        {
+            village.Obstacles.Add(this);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
+        /// <see cref="Village"/> which contains the <see cref="Obstacle"/>, X coordinate, Y coordinate and user token object.
+        /// </summary>
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Obstacle"/>.</param>
-        public Obstacle(int x, int y, object userToken) : base(x, y)
+        public Obstacle(Village village, int x, int y, object userToken) : base(village, x, y)
         {
             UserToken = userToken;
+
+            village.Obstacles.Add(this);
         }
         #endregion
 

@@ -88,10 +88,13 @@ namespace CoCSharp.Logic
         {
             while (true)
             {
-                s_stopwatch.Restart();
+                // Might not need a lock here, because this code
+                // is run by only one thread that is t_worker.
 
                 lock(s_lock)
                 {
+                    s_stopwatch.Restart();
+
                     for (int i = 0; i < s_scheduleList.Count; i++)
                     {
                         var schedule = s_scheduleList[i];
@@ -121,9 +124,9 @@ namespace CoCSharp.Logic
                             break;
                         }
                     }
-                }
 
-                s_stopwatch.Stop();
+                    s_stopwatch.Stop();
+                }
                 Thread.Sleep(100);
             }
         }
