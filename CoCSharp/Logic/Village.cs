@@ -70,7 +70,8 @@ namespace CoCSharp.Logic
         /// Gets or sets the TownHall <see cref="Building"/> of the <see cref="Village"/>; returns
         /// null if there is no TownHall in the <see cref="Village"/>.
         /// </summary>
-        [JsonIgnore]
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="value"/> Data ID is not 1000001.</exception>
         public Building TownHall
         {
             get
@@ -81,6 +82,7 @@ namespace CoCSharp.Logic
                     if (building.GetDataID() == TownHallDataID)
                         return building;
                 }
+
                 return null;
             }
             set
@@ -90,17 +92,20 @@ namespace CoCSharp.Logic
                 if (value.GetDataID() != TownHallDataID)
                     throw new ArgumentException("value must be a TownHall building, that is a building with Data ID '1000001'.");
 
+                // Look for a TownHall Building in the village
+                // If we find it, we change its reference to value.
                 for (int i = 0; i < Buildings.Count; i++)
                 {
                     var building = Buildings[i];
                     if (building.GetDataID() == TownHallDataID)
                     {
                         // Exit early so it ignores the Building.Add below.
-                        building = value;
+                        Buildings[i] = value;
                         return;
                     }
                 }
 
+                // If we did not find any TownHall we add it to the village.
                 Buildings.Add(value);
             }
         }
@@ -109,7 +114,6 @@ namespace CoCSharp.Logic
         /// Gets the JSON string from which the <see cref="Village"/> was
         /// deserialized; returns <c>null</c> if the <see cref="Village"/> wasn't deserialized.
         /// </summary>
-        [JsonIgnore]
         public string DeserializedJson { get; private set; }
 
         #region Potential Private Methods
@@ -257,12 +261,17 @@ namespace CoCSharp.Logic
         /// <returns>A JSON string and indented if specified that represents the current <see cref="Village"/>.</returns>
         public string ToJson(bool indent)
         {
-            //return indent == true ? JsonConvert.SerializeObject(this, Formatting.Indented) : JsonConvert.SerializeObject(this);
             var jsonStr = string.Empty;
 
             using (var textWriter = new StringWriter())
             using (var jsonWriter = new JsonTextWriter(textWriter))
             {
+                if (indent)
+                {
+                    jsonWriter.Formatting = Formatting.Indented;
+                    jsonWriter.Indentation = 4;
+                }
+
                 jsonWriter.WriteStartObject();
 
                 jsonWriter.WritePropertyName("exp_ver");

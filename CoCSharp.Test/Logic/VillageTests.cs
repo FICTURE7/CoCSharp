@@ -22,6 +22,18 @@ namespace CoCSharp.Test.Logic
             Assert.That(_village.TownHall != null);
         }
 
+        [Test]
+        public void TownHall_ChangeTownHall_ReferenceChanges()
+        {
+            var th = new Building(14, 14)
+            {
+                DataID = 1000001
+            };
+
+            _village.TownHall = th;
+            Assert.AreSame(_village.TownHall, th);
+        }
+
         #region Village.GetBuilding Tests
 
         [Test]

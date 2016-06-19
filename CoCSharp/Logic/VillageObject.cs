@@ -142,11 +142,13 @@ namespace CoCSharp.Logic
             return _dataId;
         }
 
+        // Writes the current VillageObject to the JsonWriter.
         internal virtual void ToJsonWriter(JsonWriter writer)
         {
             throw new NotImplementedException();
         }
 
+        // Reads the current VillageObject to the JsonReader.
         internal virtual void FromJsonReader(JsonReader reader)
         {
             throw new NotImplementedException();
