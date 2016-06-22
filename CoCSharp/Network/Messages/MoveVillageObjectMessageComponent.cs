@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Logic;
+using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 
 namespace CoCSharp.Data
@@ -9,12 +10,12 @@ namespace CoCSharp.Data
     /// Represents data about move village object sent
     /// in <see cref="MoveVillageObjectCommand"/> and <see cref="MoveMultipleVillageObjectCommand"/>.
     /// </summary>
-    public class MoveVillageObjectData
+    public class MoveVillageObjectMessageComponent : MessageComponent
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MoveVillageObjectData"/> class.
+        /// Initializes a new instance of the <see cref="MoveVillageObjectMessageComponent"/> class.
         /// </summary>
-        public MoveVillageObjectData()
+        public MoveVillageObjectMessageComponent()
         {
             // Space
         }

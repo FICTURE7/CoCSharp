@@ -24,7 +24,7 @@ namespace CoCSharp.Csv
 
         public static bool IsIgnored(PropertyInfo property)
         {
-            return property.GetCustomAttributes(s_csvIgnoreType, false).Length > 0;
+            return property.GetCustomAttribute(s_csvIgnoreType) != null;
         }
     }
 }

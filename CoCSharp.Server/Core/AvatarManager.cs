@@ -12,7 +12,7 @@ namespace CoCSharp.Server.Core
 
         public AvatarManager()
         {
-            _liteDb = new LiteDatabase("avatarsdb.db");
+            _liteDb = new LiteDatabase("avatars_db.db");
 
             // Had to downgrade to LiteDB 1.0.4 because
             // we need to prevent the object mapper from mapping the
@@ -81,6 +81,7 @@ namespace CoCSharp.Server.Core
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
+            _avatarCollection.Insert(avatar);
             return avatar;
         }
 

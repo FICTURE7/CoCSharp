@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CoCSharp.Data.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -109,13 +110,6 @@ namespace CoCSharp.Logic
                 Buildings.Add(value);
             }
         }
-
-        /// <summary>
-        /// Gets the JSON string from which the <see cref="Village"/> was
-        /// deserialized; returns <c>null</c> if the <see cref="Village"/> wasn't deserialized.
-        /// </summary>
-        public string DeserializedJson { get; private set; }
-
         #region Potential Private Methods
 
         // These methods becomes pointless to be public be cause
@@ -344,8 +338,6 @@ namespace CoCSharp.Logic
                     }
                 }
             }
-
-            village.DeserializedJson = value;
 
             // Schedule constructions of Village Objects so that
             // it executes logic.

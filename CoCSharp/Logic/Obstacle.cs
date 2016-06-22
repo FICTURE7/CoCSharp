@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data.Model;
+using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
 

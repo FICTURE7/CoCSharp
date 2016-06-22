@@ -23,7 +23,7 @@ namespace CoCSharp.Csv
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvTable"/> class and 
-        /// reads the specified .csv file and parses it.
+        /// reads the specified .csv file and parses it without decompressing it.
         /// </summary>
         /// <param name="path">Path to the .csv file.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>

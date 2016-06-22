@@ -1,4 +1,4 @@
-using CoCSharp.Data.Model;
+using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;

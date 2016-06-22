@@ -1,6 +1,6 @@
 ﻿using CoCSharp.Csv;
 
-namespace CoCSharp.Data.Model
+namespace CoCSharp.Data.Models
 {
     /// <summary>
     /// Defines data from the logic/decos.csv file.

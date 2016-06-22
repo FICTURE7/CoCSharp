@@ -1,6 +1,6 @@
 ﻿using CoCSharp.Csv;
 
-namespace CoCSharp.Data.Model
+namespace CoCSharp.Data.Models
 {
     /// <summary>
     /// Defines data from logic/resources.csv.
@@ -51,7 +51,8 @@ namespace CoCSharp.Data.Model
         /// <summary>
         /// Gets or sets the HUD instance name.
         /// </summary>
-        public string HudInstanceName { get; set; }
+        [CsvAlias("HudInstanceName")]
+        public string HUDInstanceName { get; set; }
         /// <summary>
         /// Gets or sets the Cap full TID.
         /// </summary>

@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data.Model;
+using CoCSharp.Data.Models;
 using System.Linq;
 
 namespace CoCSharp.Server.Core
@@ -63,9 +63,9 @@ namespace CoCSharp.Server.Core
             return DecorationsData.Where(bd => bd.ID == id).FirstOrDefault();
         }
 
-        public ResourceData FindResource(string tid)
+        public ResourceData FindResource(string name)
         {
-            return ResourcesData.Where(rd => rd.TID == tid).FirstOrDefault();
+            return ResourcesData.Where(rd => rd.Name == name).FirstOrDefault();
         }
     }
 }

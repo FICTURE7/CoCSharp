@@ -25,7 +25,7 @@ namespace CoCSharp.Network.Messages.Commands
         /// <summary>
         /// Data about the move command.
         /// </summary>
-        public MoveVillageObjectData MoveData;
+        public MoveVillageObjectMessageComponent MoveData;
 
         /// <summary>
         /// Unknown integer 1.
@@ -43,7 +43,7 @@ namespace CoCSharp.Network.Messages.Commands
         {
             ThrowIfReaderNull(reader);
 
-            MoveData = new MoveVillageObjectData();
+            MoveData = new MoveVillageObjectMessageComponent();
             MoveData.X = reader.ReadInt32();
             MoveData.Y = reader.ReadInt32();
             MoveData.VillageObjectGameID = reader.ReadInt32();

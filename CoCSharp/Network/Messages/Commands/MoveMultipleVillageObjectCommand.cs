@@ -26,7 +26,7 @@ namespace CoCSharp.Network.Messages.Commands
         /// <summary>
         /// Data about the moves command.
         /// </summary>
-        public MoveVillageObjectData[] MovesData;
+        public MoveVillageObjectMessageComponent[] MovesData;
 
         /// <summary>
         /// Unknown integer 1.
@@ -48,10 +48,10 @@ namespace CoCSharp.Network.Messages.Commands
             if (count < 0)
                 throw new InvalidCommandException("Length of MovesData cannot be less than 0.", this);
 
-            MovesData = new MoveVillageObjectData[count];
+            MovesData = new MoveVillageObjectMessageComponent[count];
             for (int i = 0; i < count; i++)
             {
-                var data = new MoveVillageObjectData();
+                var data = new MoveVillageObjectMessageComponent();
                 data.X = reader.ReadInt32();
                 data.Y = reader.ReadInt32();
                 data.VillageObjectGameID = reader.ReadInt32();

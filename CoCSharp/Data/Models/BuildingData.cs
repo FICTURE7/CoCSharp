@@ -1,7 +1,7 @@
 ﻿using CoCSharp.Csv;
 using System;
 
-namespace CoCSharp.Data.Model
+namespace CoCSharp.Data.Models
 {
     /// <summary>
     /// Defines data from the logic/buildings.csv file.
