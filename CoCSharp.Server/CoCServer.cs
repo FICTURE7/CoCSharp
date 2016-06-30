@@ -1,4 +1,6 @@
-﻿using CoCSharp.Network;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Models;
+using CoCSharp.Network;
 using CoCSharp.Server.Core;
 using CoCSharp.Server.Handlers;
 using CoCSharp.Server.Handlers.Commands;
@@ -24,9 +26,15 @@ namespace CoCSharp.Server
             Console.WriteLine("    Loading Avatars...");
             AvatarManager = new AvatarManager();
 
-            // This bad boi is hitting start performance hard. Need to rework the CSV implementation.
             Console.WriteLine("    Loading CSV Data...");
-            DataManager = new DataManager();
+            AssetManager = new AssetManager(DirectoryPaths.Content);
+            AssetManager.LoadCsv<BuildingData>("buildings.csv");
+            AssetManager.LoadCsv<TrapData>("traps.csv");
+            AssetManager.LoadCsv<ObstacleData>("obstacles.csv");
+            AssetManager.LoadCsv<DecorationData>("decos.csv");
+            AssetManager.LoadCsv<ResourceData>("resources.csv");
+
+            AssetManager.Default = AssetManager;
 
             // We're not really loading NPC.
             NpcManager = new NpcManager();
@@ -44,7 +52,7 @@ namespace CoCSharp.Server
         public List<CoCRemoteClient> Clients { get; private set; }
         public NpcManager NpcManager { get; private set; }
         public AvatarManager AvatarManager { get; private set; }
-        public DataManager DataManager { get; private set; }
+        public AssetManager AssetManager { get; private set; }
 
         private Dictionary<int, CommandHandler> CommandHandlerDictionary { get; set; }
         private Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; set; }
@@ -179,6 +187,7 @@ namespace CoCSharp.Server
         private void ProcessBadAccept(SocketAsyncEventArgs args)
         {
             args.AcceptSocket.Close();
+            args.AcceptSocket = null;
             _acceptPool.Push(args);
         }
 

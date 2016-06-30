@@ -1,4 +1,6 @@
-﻿using CoCSharp.Data.Models;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Models;
+using CoCSharp.Data.Slots;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,8 @@ namespace CoCSharp.Logic
         //TODO: A new JSON field was introduced in 8.x.x called "id" which represents the instance id of a village object.
         //TODO: Implement VillageObjectCollection class.
 
+        #region Constants
+        //TODO: Use an AssetManager with a TID to figure this thing out.
         private const int TownHallDataID = 1000001;
 
         /// <summary>
@@ -25,17 +29,31 @@ namespace CoCSharp.Logic
         /// Represents the height of a <see cref="Village"/> layout.
         /// </summary>
         public const int Height = 48;
+        #endregion
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="Village"/> class.
         /// </summary>
         public Village()
         {
+            // Use default AssetManager if its not null.
+            if (AssetManager.Default != null)
+                AssetManager = AssetManager.Default;
+
             Buildings = new List<Building>();
             Obstacles = new List<Obstacle>();
             Traps = new List<Trap>();
             Decorations = new List<Decoration>();
         }
+        #endregion
+
+        #region Fields & Properties
+        /// <summary>
+        /// Gets or sets the <see cref="AssetManager"/> from which data will be
+        /// used.
+        /// </summary>
+        public AssetManager AssetManager { get; set; }
 
         /// <summary>
         /// Gets or sets the experience version? (Not completely sure if thats its full name).
@@ -110,6 +128,9 @@ namespace CoCSharp.Logic
                 Buildings.Add(value);
             }
         }
+        #endregion
+
+        #region Methods
         #region Potential Private Methods
 
         // These methods becomes pointless to be public be cause
@@ -240,6 +261,88 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
+        /// Returns a <see cref="ResourceCapacitySlot"/> array which represents the resource capacity of
+        /// the specified <see cref="ResourceData"/> array for the current <see cref="Village"/>.
+        /// </summary>
+        /// <param name="resourceData"><see cref="ResourceData"/> array whose element's capacity will be calculated.</param>
+        /// <returns>
+        /// A <see cref="ResourceCapacitySlot"/> array which represents the resource capacity of
+        /// the specified <see cref="ResourceData"/> array for the current <see cref="Village"/>.
+        /// </returns>
+        public ResourceCapacitySlot[] GetResourceCapacity(ResourceData[] resourceData)
+        {
+            // Dictionary associating resource TIDs with their data ID.
+            var resourceId = new Dictionary<string, int>();
+            // Set resourceId up.
+            for (int i = 0; i < resourceData.Length; i++)
+            {
+                var data = resourceData[i];
+                // Ignore if we already have a ResourceData with the same TID.
+                if (resourceId.ContainsKey(data.TID))
+                    continue;
+
+                resourceId.Add(data.TID, data.ID);
+            }
+
+            var capacitySlot = new List<ResourceCapacitySlot>();
+
+            // Total capacity.
+            var gold = 0;
+            var elixir = 0;
+            var darkElixir = 0;
+            var warGold = 0;
+            var warElixir = 0;
+            var warDarkElixir = 0;
+
+            for (int i = 0; i < Buildings.Count; i++)
+            {
+                var building = Buildings[i];
+                // Ignore the building if its locked (from village.json). E.g: Clan Castle level 0.
+                if (building.IsLocked)
+                    continue;
+
+                // If the building does not have any data,
+                // we ignore it.
+                if (building.Data == null)
+                    continue;
+
+                var data = (BuildingData)building.Data;
+
+                // Ignore the building if its locked (from building.csv). E.g: Clan Castle level 0.
+                if (data.Locked)
+                    continue;
+
+                if (data.MaxStoredGold > 0)
+                    gold += data.MaxStoredGold;
+                if (data.MaxStoredWarGold > 0)
+                    warGold += data.MaxStoredWarGold;
+                if (data.MaxStoredElixir > 0)
+                    elixir += data.MaxStoredElixir;
+                if (data.MaxStoredWarElixir > 0)
+                    warElixir += data.MaxStoredWarElixir;
+                if (data.MaxStoredDarkElixir > 0)
+                    darkElixir += data.MaxStoredDarkElixir;
+                if (data.MaxStoredWarDarkElixir > 0)
+                    warDarkElixir += data.MaxStoredWarDarkElixir;
+            }
+
+            if (gold > 0)
+                capacitySlot.Add(new ResourceCapacitySlot(resourceId["TID_GOLD"], gold));
+            if (warGold > 0)
+                capacitySlot.Add(new ResourceCapacitySlot(resourceId["TID_WAR_GOLD"], warGold));
+            if (elixir > 0)
+                capacitySlot.Add(new ResourceCapacitySlot(resourceId["TID_ELIXIR"], elixir));
+            if (warElixir > 0)
+                capacitySlot.Add(new ResourceCapacitySlot(resourceId["TID_WAR_ELIXIR"], warElixir));
+            if (darkElixir > 0)
+                capacitySlot.Add(new ResourceCapacitySlot(resourceId["TID_DARK_ELIXIR"], darkElixir));
+            if (warDarkElixir > 0)
+                capacitySlot.Add(new ResourceCapacitySlot(resourceId["TID_WAR_DARK_ELIXIR"], warDarkElixir));
+
+            return capacitySlot.ToArray();
+        }
+
+        /// <summary>
         /// Returns a non-indented JSON string that represents the current <see cref="Village"/>.
         /// </summary>
         /// <returns>A non-indented JSON string that represents the current <see cref="Village"/>.</returns>
@@ -341,11 +444,12 @@ namespace CoCSharp.Logic
 
             // Schedule constructions of Village Objects so that
             // it executes logic.
-            ScheduleVillageObjects(village);
+            UpdateVillageObjects(village);
 
             return village;
         }
 
+        #region Json Writing
         private void WriteBuildingArray(JsonWriter writer)
         {
             if (writer == null)
@@ -401,7 +505,9 @@ namespace CoCSharp.Logic
             }
             writer.WriteEndArray();
         }
+        #endregion
 
+        #region Json Reading
         private static void ReadBuildingArray(JsonReader reader, Village village)
         {
             // Make sure we are in an array first.
@@ -497,9 +603,25 @@ namespace CoCSharp.Logic
                 }
             }
         }
+        #endregion
 
-        private static void ScheduleVillageObjects(Village village)
+        private static void UpdateVillageObjects(Village village)
         {
+            var assetManager = village.AssetManager;
+
+            var setBuildings = false;
+            var setTraps = false;
+            var setObstacles = false;
+            var setDecorations = false;
+
+            if (assetManager != null)
+            {
+                setBuildings = assetManager.IsCsvLoaded<BuildingData>();
+                setTraps = assetManager.IsCsvLoaded<TrapData>();
+                setObstacles = assetManager.IsCsvLoaded<ObstacleData>();
+                setDecorations = assetManager.IsCsvLoaded<DecorationData>();
+            }
+
             for (int i = 0; i < village.Buildings.Count; i++)
             {
                 var building = village.Buildings[i];
@@ -507,6 +629,10 @@ namespace CoCSharp.Logic
                 // If the building is in construction, schedule it with its current loaded construction time.
                 if (building.IsConstructing)
                     building.InternalScheduleBuild();
+
+                // Update the building.Data reference to the corresponding one in AssetManager.
+                if (setBuildings)
+                    building.Data = assetManager.SearchCsv<BuildingData>(building.DataID, building.Level);
             }
 
             for (int i = 0; i < village.Traps.Count; i++)
@@ -516,6 +642,10 @@ namespace CoCSharp.Logic
                 // If the trap is in construction, schedule it with its current loaded construction time.
                 if (trap.IsConstructing)
                     trap.InternalScheduleBuild();
+
+                // Update the trap.Data reference to the corresponding one in AssetManager.
+                if (setTraps)
+                    trap.Data = assetManager.SearchCsv<TrapData>(trap.DataID, trap.Level);
             }
 
             for (int i = 0; i < village.Obstacles.Count; i++)
@@ -525,9 +655,22 @@ namespace CoCSharp.Logic
                 // If the obstacle is being cleared, schedule it with its current loaded clear time.
                 if (obstacle.IsClearing)
                     obstacle.InternalScheduleClearing();
+
+                // Update the trap.Data reference to the corresponding one in AssetManager.
+                if (setObstacles)
+                    obstacle.Data = assetManager.SearchCsv<ObstacleData>(obstacle.DataID, 0);
             }
 
             // No need to schedule decorations because their constructions are instant.
+            for (int i = 0; i < village.Decorations.Count; i++)
+            {
+                var deco = village.Decorations[i];
+
+                // Update the trap.Data reference to the corresponding one in AssetManager.
+                if (setDecorations)
+                    deco.Data = assetManager.SearchCsv<DecorationData>(deco.DataID, 0);
+            }
         }
+        #endregion
     }
 }

@@ -28,10 +28,6 @@ namespace CoCSharp.Data.Models
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// Gets or sets TID.
-        /// </summary>
-        public string TID { get; set; }
-        /// <summary>
         /// Gets or sets Info TID.
         /// </summary>
         public string InfoTID { get; set; }

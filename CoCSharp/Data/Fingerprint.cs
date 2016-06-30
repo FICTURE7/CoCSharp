@@ -39,11 +39,11 @@ namespace CoCSharp.Data
             if (!File.Exists(path))
                 throw new FileNotFoundException("Could not find file '" + Path.GetFullPath(path) + "'.");
 
-            Files = new List<FingerprintFile>();
+            _files = new List<FingerprintFile>();
             var json = File.ReadAllText(path);
             var fingerprint = FromJson(json);
 
-            Files = fingerprint.Files;
+            _files = fingerprint._files;
             MasterHash = fingerprint.MasterHash;
             Version = fingerprint.Version;
         }
@@ -61,10 +61,10 @@ namespace CoCSharp.Data
             {
                 if (index < 0)
                     throw new ArgumentOutOfRangeException("index", "index must be greater or equal to 0.");
-                if (index > Files.Count - 1)
+                if (index > _files.Count - 1)
                     throw new ArgumentOutOfRangeException("index", "index must be less or equal to Count - 1.");
 
-                return Files[index];
+                return _files[index];
             }
             set
             {
@@ -72,13 +72,14 @@ namespace CoCSharp.Data
                     throw new InvalidOperationException("Fingerprint object is readonly.");
                 if (index < 0)
                     throw new ArgumentOutOfRangeException("index", "index must be greater or equal to 0.");
-                if (index > Files.Count - 1)
+                if (index > _files.Count - 1)
                     throw new ArgumentOutOfRangeException("index", "index must be less or equal to Count - 1.");
 
-                Files[index] = value;
+                _files[index] = value;
             }
         }
 
+        private byte[] _masterHash;
         /// <summary>
         /// Gets or sets the SHA-1 master hash of the <see cref="Fingerprint"/>.
         /// </summary>
@@ -97,8 +98,8 @@ namespace CoCSharp.Data
                 _masterHash = value;
             }
         }
-        private byte[] _masterHash;
 
+        private string _version;
         /// <summary>
         /// Gets or sets the version of the <see cref="Fingerprint"/>.
         /// </summary>
@@ -117,19 +118,25 @@ namespace CoCSharp.Data
                 _version = value;
             }
         }
-        private string _version;
 
         /// <summary>
         /// Gets the number of <see cref="FingerprintFile"/> in the <see cref="Fingerprint"/>.
         /// </summary>
-        public int Count { get { return Files.Count; } }
+        public int Count
+        {
+            get
+            {
+                return _files.Count;
+            }
+        }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="Fingerprint"/> is read only.
+        /// Gets or sets a value indicating whether the <see cref="Fingerprint"/> is read only.
         /// </summary>
         public bool IsReadOnly { get; set; }
 
-        private List<FingerprintFile> Files { get; set; }
+        private List<FingerprintFile> _files;
+
         /// <summary>
         /// Computes the master hash of the overall fingerprint file.
         /// </summary>
@@ -139,9 +146,9 @@ namespace CoCSharp.Data
             var hashes = new StringBuilder();
 
             // Appends all hashes of the FingerprintFiles into hex-strings.
-            for (int i = 0; i < Files.Count; i++)
+            for (int i = 0; i < _files.Count; i++)
             {
-                var hash = Utils.BytesToString(Files[i].Hash);
+                var hash = InternalUtils.BytesToString(_files[i].Hash);
                 hashes.Append(hash);
             }
 
@@ -183,15 +190,15 @@ namespace CoCSharp.Data
                 jsonWriter.WritePropertyName("files");
                 jsonWriter.WriteStartArray();
 
-                for (int i = 0; i < Files.Count; i++)
+                for (int i = 0; i < _files.Count; i++)
                 {
                     jsonWriter.WriteStartObject();
 
                     jsonWriter.WritePropertyName("sha");
-                    jsonWriter.WriteValue(Utils.BytesToString(Files[i].Hash));
+                    jsonWriter.WriteValue(InternalUtils.BytesToString(_files[i].Hash));
 
                     jsonWriter.WritePropertyName("path");
-                    jsonWriter.WriteValue(Files[i].Path);
+                    jsonWriter.WriteValue(_files[i].Path);
 
                     jsonWriter.WriteEndObject();
                 }
@@ -199,7 +206,7 @@ namespace CoCSharp.Data
                 jsonWriter.WriteEndArray();
 
                 jsonWriter.WritePropertyName("sha");
-                jsonWriter.WriteValue(Utils.BytesToString(MasterHash));
+                jsonWriter.WriteValue(InternalUtils.BytesToString(MasterHash));
 
                 jsonWriter.WritePropertyName("version");
                 jsonWriter.WriteValue(Version);
@@ -320,7 +327,7 @@ namespace CoCSharp.Data
                 }
             }
 
-            fingerprint.Files = fingerprintFiles;
+            fingerprint._files = fingerprintFiles;
             return fingerprint;
         }
 
@@ -374,7 +381,7 @@ namespace CoCSharp.Data
                 }
             }
 
-            fingerprint.Files = fingerprintFiles;
+            fingerprint._files = fingerprintFiles;
             fingerprint.MasterHash = fingerprint.ComputeMasterHash();
             fingerprint.Version = version;
 
@@ -394,11 +401,11 @@ namespace CoCSharp.Data
             if (item == null)
                 throw new ArgumentNullException("item");
 
-            Files.Add(item);
+            _files.Add(item);
         }
 
         /// <summary>
-        /// Removes the first occurrence <see cref="FingerprintFile"/> to the <see cref="Fingerprint"/>.
+        /// Removes the first occurrence of a specific <see cref="FingerprintFile"/> from the <see cref="Fingerprint"/>.
         /// </summary>
         /// <param name="item">The <see cref="FingerprintFile"/> to remove from the <see cref="Fingerprint"/>.</param>
         /// <returns>Returns <c>true</c> if <paramref name="item"/> was successfully removed; otherwise, <c>false</c>.</returns>
@@ -411,7 +418,7 @@ namespace CoCSharp.Data
             if (item == null)
                 throw new ArgumentNullException("item");
 
-            return Files.Remove(item);
+            return _files.Remove(item);
         }
 
         /// <summary>
@@ -423,7 +430,7 @@ namespace CoCSharp.Data
             if (IsReadOnly)
                 throw new InvalidOperationException("Fingerprint object is readonly.");
 
-            Files.Clear();
+            _files.Clear();
         }
 
         /// <summary>
@@ -437,7 +444,7 @@ namespace CoCSharp.Data
             if (item == null)
                 throw new ArgumentNullException("item");
 
-            return Files.Contains(item);
+            return _files.Contains(item);
         }
 
         /// <summary>
@@ -446,23 +453,26 @@ namespace CoCSharp.Data
         /// <param name="array">
         /// The one-dimensional <see cref="Array"/> that is the destination of the elements copied from <see cref="Fingerprint"/>.
         /// </param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex"/> exceeds the bounds of <paramref name="array"/>.</exception>
         public void CopyTo(FingerprintFile[] array, int arrayIndex)
         {
             if (array == null)
                 throw new ArgumentNullException("array");
+            if (arrayIndex < 0 || arrayIndex > array.Length - 1)
+                throw new ArgumentOutOfRangeException("arrayIndex exceeds the bounds of array.", "arrayIndex");
 
-            Files.CopyTo(array, arrayIndex);
+            _files.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through the <see cref="FingerprintFile"/>.
+        /// Returns an enumerator that iterates through the <see cref="Fingerprint"/>.
         /// </summary>
         /// <returns>An <see cref="IEnumerable{FingerprintFile}"/> for the <see cref="Fingerprint"/>.</returns>
         public IEnumerator<FingerprintFile> GetEnumerator()
         {
-            return new Enumerator(Files.ToArray());
+            return new Enumerator(_files.ToArray());
         }
 
         IEnumerator IEnumerable.GetEnumerator()

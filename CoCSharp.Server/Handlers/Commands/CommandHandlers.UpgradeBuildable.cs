@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Csv;
+using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
@@ -22,11 +23,11 @@ namespace CoCSharp.Server.Handlers.Commands
             var data = (CsvData)null;
             if (buildable is Building)
             {
-                data = server.DataManager.FindBuilding(buildable.GetDataID(), buildable.Level + 1);
+                data = server.AssetManager.SearchCsv<BuildingData>(buildable.GetDataID(), buildable.Level + 1);
             }
             else if (buildable is Trap)
             {
-                data = server.DataManager.FindTrap(buildable.GetDataID(), buildable.Level + 1);
+                data = server.AssetManager.SearchCsv<TrapData>(buildable.GetDataID(), buildable.Level + 1);
             }
 
             buildable.ConstructionFinished += ConstructionFinished;

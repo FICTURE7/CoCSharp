@@ -1,7 +1,9 @@
-﻿using CoCSharp.Logic;
+﻿using System;
+using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
+using CoCSharp.Data.Models;
 
 namespace CoCSharp.Server.Handlers.Commands
 {
@@ -11,7 +13,7 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var btCommand = (BuyTrapCommand)command;
             var token = new VillageObjectToken(server, client);
-            var data = server.DataManager.FindTrap(btCommand.TrapDataID, 0);
+            var data = server.AssetManager.SearchCsv<TrapData>(btCommand.TrapDataID, 0);
             var trap = new Trap(client.Avatar.Home, btCommand.X, btCommand.Y, token);
 
             trap.ConstructionFinished += ConstructionFinished;

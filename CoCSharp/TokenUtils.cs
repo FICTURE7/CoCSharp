@@ -39,7 +39,7 @@
         {
             var token = string.Empty;
             for (int i = 0; i < TokenLength; i++)
-                token += TokenCharacters[Utils.Random.Next(TokenCharacters.Length - 1)];
+                token += TokenCharacters[InternalUtils.Random.Next(TokenCharacters.Length - 1)];
             return token;
         }
     }

@@ -43,7 +43,7 @@ namespace CoCSharp.Data
         {
             if (masterHash == null)
                 throw new ArgumentNullException("masterHash");
-            if (!Utils.IsValidHexString(masterHash))
+            if (!InternalUtils.IsValidHexString(masterHash))
                 throw new ArgumentException("masterHash must be a valid hex-string.", "masterHash");
             if (masterHash.Length != 40)
                 throw new ArgumentOutOfRangeException("masterHash", "masterHash must be 40 characters long.");
@@ -192,7 +192,7 @@ namespace CoCSharp.Data
 
                         // If the existing file have the same SHA1 as the one in the fingerprint
                         // we continue and ignore it.
-                        if (Utils.CompareByteArray(existingFileHash, file.Hash))
+                        if (InternalUtils.CompareByteArray(existingFileHash, file.Hash))
                             continue;
                     }
                 }

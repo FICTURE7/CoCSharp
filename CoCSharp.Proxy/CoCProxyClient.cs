@@ -135,8 +135,8 @@ namespace CoCSharp.Server
                     if (message is OwnHomeDataMessage)
                     {
                         var ohdMessage = message as OwnHomeDataMessage;
-                        File.WriteAllText("villages\\" + DateTime.Now.ToString("hh-mm-ss.fff") + " ownhomedata.json",
-                                          ohdMessage.OwnVillageData.Home.DeserializedJson);
+                        //File.WriteAllText("villages\\" + DateTime.Now.ToString("hh-mm-ss.fff") + " ownhomedata.json",
+                        //                  ohdMessage.OwnVillageData.Home.DeserializedJson);
                     }
                 }
                 catch { }

@@ -11,6 +11,6 @@ namespace CoCSharp.Test
         public static string ContentDirectory { get { return _contentDirectory; } }
 
         private static readonly string _csvDirectory = Path.Combine(_baseDirectory, "csv");
-        public static string CsvDirecotry { get { return _csvDirectory; } }
+        public static string CsvDirectory { get { return _csvDirectory; } }
     }
 }

@@ -14,7 +14,7 @@ namespace CoCSharp.Csv
 
         public string PropertyName { get; set; }
 
-        public bool Ignore { get; set; }
+        public Type PropertyType { get; set; }
 
         public MethodInfo Getter { get; set; }
 

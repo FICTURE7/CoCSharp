@@ -5,7 +5,7 @@ using System.Net.Sockets;
 
 namespace CoCSharp
 {
-    internal static class Utils
+    internal static class InternalUtils
     {
         public static Random Random = new Random();
 

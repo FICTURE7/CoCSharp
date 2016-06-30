@@ -9,6 +9,8 @@ namespace CoCSharp.Logic
     /// </summary>
     public abstract class VillageObject
     {
+        //TODO: Make it reusable.
+
         // Represents the Base ID of every game ID & data ID.
         internal const int Base = 1000000;
 

@@ -8,6 +8,8 @@ namespace CoCSharp.Data
     /// </summary>
     public abstract class Slot
     {
+        //TODO: Add range check of slot id.
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Slot"/> class.
         /// </summary>

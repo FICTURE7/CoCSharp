@@ -1,4 +1,5 @@
-﻿using CoCSharp.Network;
+﻿using CoCSharp.Data.Models;
+using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
 
@@ -11,7 +12,7 @@ namespace CoCSharp.Server.Handlers.Commands
             var coCommand = command as ClearObstacleCommand;
             var token = new VillageObjectToken(server, client);
             var obstacle = client.Avatar.Home.GetObstacle(coCommand.ObstacleGameID);
-            var data = server.DataManager.FindObstacle(obstacle.GetDataID());
+            var data = server.AssetManager.SearchCsv<ObstacleData>(obstacle.GetDataID(), 0);
 
             obstacle.UserToken = token;
             obstacle.Data = data;

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 
-namespace CoCSharp.Test.Data
+namespace CoCSharp.Test.Csv
 {
     [TestFixture]
     public class CsvTableTests
@@ -12,7 +12,8 @@ namespace CoCSharp.Test.Data
         [Test]
         public void Compression_Equality()
         {
-            var originalbytes = File.ReadAllBytes(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Content/csv/com_buildings.csv"));
+            var tablePath = Path.Combine(TestUtils.CsvDirectory, "buildings.csv");
+            var originalbytes = File.ReadAllBytes(tablePath);
 
             // Decompress the original bytes.
             var deBytes = CsvTable.Decompress(originalbytes);

@@ -1,4 +1,5 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Data.Models;
+using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
@@ -11,7 +12,7 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var bbCommand = (BuyBuildingCommand)command;
             var token = new VillageObjectToken(server, client);
-            var data = server.DataManager.FindBuilding(bbCommand.BuildingDataID, 0);
+            var data = server.AssetManager.SearchCsv<BuildingData>(bbCommand.BuildingDataID, 0);
             var building = new Building(client.Avatar.Home, bbCommand.X, bbCommand.Y, token);
 
             building.ConstructionFinished += ConstructionFinished;

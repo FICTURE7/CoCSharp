@@ -27,10 +27,6 @@ namespace CoCSharp.Data.Models
         /// <summary>
         /// Gets or sets the TID.
         /// </summary>
-        public string TID { get; set; }
-        /// <summary>
-        /// Gets or sets the TID.
-        /// </summary>
         public string SWF { get; set; }
         /// <summary>
         /// Gets or sets the Collect effect.

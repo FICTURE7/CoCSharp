@@ -104,7 +104,7 @@ namespace CoCSharp.Logic
             }
             set
             {
-                // Clash of Clans crashes when level is less than 1.
+                // Clash of Clans client crashes when level is less than 1.
                 if (value < 1)
                     throw new ArgumentOutOfRangeException("value", "value cannot be less than 1.");
 
@@ -237,6 +237,7 @@ namespace CoCSharp.Logic
         /// Gets a new <see cref="Network.Messages.OwnHomeDataMessage"/> for the
         /// <see cref="Avatar"/>.
         /// </summary>
+        /// <exception cref="InvalidOperationException"><see cref="Home"/> is null.</exception>
         public OwnHomeDataMessage OwnHomeDataMessage
         {
             get

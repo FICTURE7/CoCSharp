@@ -8,10 +8,11 @@ namespace CoCSharp.Server.Core
     // Provides method to save & load avatars.
     public class AvatarManager
     {
-        //TODO: Cache starting_village.json
-
         public AvatarManager()
         {
+            var villagePath = Path.Combine(DirectoryPaths.Content, "starting_village.json");
+            _startingVillage = File.ReadAllText(villagePath);
+
             _liteDb = new LiteDatabase("avatars_db.db");
 
             // Had to downgrade to LiteDB 1.0.4 because
@@ -33,6 +34,7 @@ namespace CoCSharp.Server.Core
             _avatarCollection.EnsureIndex("Token", unique: true);
         }
 
+        private string _startingVillage;
         private LiteDatabase _liteDb;
         private LiteCollection<Avatar> _avatarCollection;
 
@@ -43,14 +45,13 @@ namespace CoCSharp.Server.Core
             while (_avatarCollection.Exists(ava => ava.Token == token))
                 token = TokenUtils.GenerateToken();
 
-            var villagePath = Path.Combine(DirectoryPaths.Content, "starting_village.json");
-            var villageJson = File.ReadAllText(villagePath);
             var avatar = new Avatar();
 
             avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
-            avatar.Level = 10; // Skip the tutorials.
-            avatar.Home = Village.FromJson(villageJson);
+            // Skip the tutorials.
+            avatar.Level = 10;
+            avatar.Home = Village.FromJson(_startingVillage);
             avatar.Name = "Patrik"; // :]
             avatar.Gems = 300;
             avatar.FreeGems = 300;
@@ -68,15 +69,13 @@ namespace CoCSharp.Server.Core
             if (Exists(id))
                 return null;
 
-            var villagePath = Path.Combine(DirectoryPaths.Content, "starting_village.json");
-            var villageJson = File.ReadAllText(villagePath);
             var avatar = new Avatar();
 
             avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
             avatar.ID = id;
             avatar.Level = 10; // Skip the tutorials.
-            avatar.Home = Village.FromJson(villageJson);
+            avatar.Home = Village.FromJson(_startingVillage);
             avatar.Name = "Patrik"; // :]
             avatar.Gems = 300;
             avatar.FreeGems = 300;

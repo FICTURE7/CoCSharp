@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace CoCSharp.Csv
@@ -16,22 +17,33 @@ namespace CoCSharp.Csv
                 throw new ArgumentNullException("type");
 
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var propertyMaps = new PropertyMap[properties.Length];
+            var propertyMaps = new List<PropertyMap>();
             for (int i = 0; i < properties.Length; i++)
             {
                 var property = properties[i];
+                // If we need to ignore it, don't add the property to the map.
+                if (CsvAttributeHelper.IsIgnored(property))
+                    continue;
+                // If it does not have a setter, we ignore it.
+                var setter = property.GetSetMethod(true);
+                if (setter == null)
+                    continue;
+                // If it does not have a getter, we ignore it.
+                var getter = property.GetGetMethod(true);
+                if (getter == null)
+                    continue;
 
                 var map = new PropertyMap();
                 map.Name = CsvAttributeHelper.GetPropertyAlias(property);
-                map.Ignore = CsvAttributeHelper.IsIgnored(property);
                 map.PropertyName = property.Name;
-                map.Getter = property.GetGetMethod(true);
-                map.Setter = property.GetSetMethod(true);
+                map.PropertyType = property.PropertyType;
+                map.Getter = getter;
+                map.Setter = setter;
                 map.DeclaringType = property.DeclaringType;
 
-                propertyMaps[i] = map;
+                propertyMaps.Add(map);
             }
-            return propertyMaps;
+            return propertyMaps.ToArray();
         }
     }
 }

@@ -75,6 +75,7 @@
     <Compile Include="Csv\Compression\ICoder.cs" />
     <Compile Include="Csv\Compression\LzmaUtils.cs" />
     <Compile Include="Csv\CsvAttributeHelper.cs" />
+    <Compile Include="Csv\CsvDataCollection.cs" />
     <Compile Include="Csv\CsvException.cs" />
     <Compile Include="Csv\CsvIgnoreAttribute.cs" />
     <Compile Include="Csv\CsvAliasAttribute.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Csv\PropertyMap.cs" />
     <Compile Include="Csv\ObjectMapper.cs" />
     <Compile Include="Data\AssetDownloader.cs" />
+    <Compile Include="Data\AssetManager.cs" />
     <Compile Include="Data\Models\DecorationData.cs" />
     <Compile Include="Data\Models\ObstacleData.cs" />
     <Compile Include="Data\Models\TrapData.cs" />
@@ -167,7 +169,7 @@
     <Compile Include="Network\Messages\OwnHomeDataMessage.cs" />
     <Compile Include="Network\MessageToken.cs" />
     <Compile Include="TokenUtils.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="InternalUtils.cs" />
     <Compile Include="Network\Cryptography\CoCCrypto.cs" />
     <Compile Include="Network\InvalidMessageException.cs" />
     <Compile Include="Network\Message.cs" />

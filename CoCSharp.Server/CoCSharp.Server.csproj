@@ -52,7 +52,6 @@
     <Compile Include="CoCRemoteClient.cs" />
     <Compile Include="CoCServer.cs" />
     <Compile Include="Core\AvatarManager.cs" />
-    <Compile Include="Core\DataManager.cs" />
     <Compile Include="Core\NpcManager.cs" />
     <Compile Include="DirectoryPaths.cs" />
     <Compile Include="Core\FancyConsole.cs" />

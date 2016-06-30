@@ -16,6 +16,7 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
+        #region Fields & Properties
         internal override int BaseDataID
         {
             get { return 1000000; }
@@ -24,7 +25,7 @@ namespace CoCSharp.Data.Models
         /// <summary>
         /// Gets or sets the Name of building.
         /// </summary>
-        [CsvAlias("          ")]  // its named like this in buildings.csv
+        [CsvAlias("          ")]  // Its named like this in buildings.csv.
         public string Name { get; set; }
         /// <summary>
         /// Gets or sets the TID Instructor.
@@ -35,10 +36,6 @@ namespace CoCSharp.Data.Models
         /// Gets or sets the Instructor weight.
         /// </summary>
         public int InstructorWeight { get; set; }
-        /// <summary>
-        /// Gets or sets the TID.
-        /// </summary>
-        public string TID { get; set; }
         /// <summary>
         /// Gets or sets the Info TID.
         /// </summary>
@@ -488,5 +485,6 @@ namespace CoCSharp.Data.Models
         /// Gets or sets Aim rotate step,
         /// </summary>
         public int AimRotateStep { get; set; }
+        #endregion
     }
 }

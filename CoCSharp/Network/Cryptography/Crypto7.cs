@@ -88,8 +88,8 @@ namespace CoCSharp.Network.Cryptography
         /// <returns>The random byte array.</returns>
         public static byte[] GenerateNonce()
         {
-            var buffer = new byte[Utils.Random.Next(15, 25)];
-            Utils.Random.NextBytes(buffer);
+            var buffer = new byte[InternalUtils.Random.Next(15, 25)];
+            InternalUtils.Random.NextBytes(buffer);
             return buffer;
         }
 

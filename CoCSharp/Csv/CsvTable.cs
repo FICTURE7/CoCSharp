@@ -13,6 +13,8 @@ namespace CoCSharp.Csv
     /// </summary>
     public class CsvTable : IDisposable
     {
+        //TODO: Add auto detection of compression.
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvTable"/> class.
         /// </summary>
@@ -163,7 +165,9 @@ namespace CoCSharp.Csv
             }
 
             // The loop that turns empty("") fields to DBNull.Value and add them to table.
-            for (int i = 2; i < rows.Length; i++)
+            // Check if the last row is empty, if it is, we ignore it.
+            var count = rows[rows.Length - 1] == string.Empty ? rows.Length - 1 : rows.Length;
+            for (int i = 2; i < count; i++)
             {
                 var rowsValues = (object[])Regex.Split(rows[i], ",");
                 var newRowsValues = new object[rowsValues.Length];
