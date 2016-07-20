@@ -126,11 +126,11 @@ namespace CoCSharp.Server.Core
             if (string.IsNullOrWhiteSpace(token))
                 return null;
 
-            //return _avatarCollection.FindOne(ava => ava.Token == token);
+            return _avatarCollection.FindOne(ava => ava.Token == token);
 
-            var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
-            File.WriteAllText(avatar.Token + ".json", avatar.Home.ToJson());
-            return avatar;
+            //var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
+            //File.WriteAllText(avatar.Token + ".json", avatar.Home.ToJson());
+            //return avatar;
         }
 
         public void SaveAvatar(Avatar avatar)
