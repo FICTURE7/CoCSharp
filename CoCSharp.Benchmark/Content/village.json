@@ -1,0 +1,523 @@
+{
+    "account_flags": 0,
+    "active_layout": 0,
+    "android_client": true,
+    "bool_layout_edit_shown_erase": false,
+    "buildings": [
+        {
+            "data": 1000001,
+            "id": 500000000,
+            "lvl": 0,
+            "x": 24,
+            "y": 23
+        },
+        {
+            "data": 1000004,
+            "id": 500000001,
+            "lvl": 0,
+            "x": 23,
+            "y": 19,
+            "res_time": 8627
+        },
+        {
+            "data": 1000000,
+            "id": 500000002,
+            "lvl": 0,
+            "x": 29,
+            "y": 22,
+            "units": [
+
+            ]
+        },
+        {
+            "data": 1000015,
+            "id": 500000003,
+            "lvl": 0,
+            "x": 21,
+            "y": 23
+        },
+        {
+            "data": 1000014,
+            "id": 500000004,
+            "lvl": 0,
+            "locked": true,
+            "x": 28,
+            "y": 35
+        }
+    ],
+    "cooldowns": [
+
+    ],
+    "decos": [
+
+    ],
+    "exp_ver": 1,
+    "last_alliance_level": 1,
+    "last_league_rank": 0,
+    "last_league_shuffle": 0,
+    "last_news_seen": -1,
+    "last_season_seen": -1,
+    "layout_state": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "newShopBuildings": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "newShopDecos": [
+        1,
+        4,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "newShopTraps": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ],
+    "obstacles": [
+        {
+            "data": 8000007,
+            "id": 503000000,
+            "x": 6,
+            "y": 16,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000007,
+            "id": 503000001,
+            "x": 18,
+            "y": 36,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000008,
+            "id": 503000002,
+            "x": 7,
+            "y": 9,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000003,
+            "x": 35,
+            "y": 5,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000006,
+            "id": 503000004,
+            "x": 18,
+            "y": 44,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000000,
+            "id": 503000005,
+            "x": 23,
+            "y": 4,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000008,
+            "id": 503000006,
+            "x": 18,
+            "y": 25,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000007,
+            "x": 43,
+            "y": 21,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000007,
+            "id": 503000008,
+            "x": 7,
+            "y": 4,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000003,
+            "id": 503000009,
+            "x": 34,
+            "y": 12,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000004,
+            "id": 503000010,
+            "x": 24,
+            "y": 12,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000008,
+            "id": 503000011,
+            "x": 37,
+            "y": 24,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000012,
+            "x": 23,
+            "y": 42,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000003,
+            "id": 503000013,
+            "x": 32,
+            "y": 37,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000014,
+            "x": 5,
+            "y": 32,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000015,
+            "x": 11,
+            "y": 13,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000016,
+            "x": 4,
+            "y": 20,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000002,
+            "id": 503000017,
+            "x": 5,
+            "y": 37,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000002,
+            "id": 503000018,
+            "x": 8,
+            "y": 24,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000002,
+            "id": 503000019,
+            "x": 10,
+            "y": 36,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000008,
+            "id": 503000020,
+            "x": 5,
+            "y": 43,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000001,
+            "id": 503000021,
+            "x": 11,
+            "y": 5,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000001,
+            "id": 503000022,
+            "x": 16,
+            "y": 38,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000001,
+            "id": 503000023,
+            "x": 10,
+            "y": 41,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000007,
+            "id": 503000024,
+            "x": 4,
+            "y": 12,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000004,
+            "id": 503000025,
+            "x": 12,
+            "y": 26,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000004,
+            "id": 503000026,
+            "x": 8,
+            "y": 29,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000003,
+            "id": 503000027,
+            "x": 40,
+            "y": 25,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000028,
+            "x": 37,
+            "y": 38,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000029,
+            "x": 42,
+            "y": 14,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000001,
+            "id": 503000030,
+            "x": 17,
+            "y": 18,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000001,
+            "id": 503000031,
+            "x": 42,
+            "y": 5,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000012,
+            "id": 503000032,
+            "x": 27,
+            "y": 33,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000012,
+            "id": 503000033,
+            "x": 41,
+            "y": 8,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000010,
+            "id": 503000034,
+            "x": 29,
+            "y": 41,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000010,
+            "id": 503000035,
+            "x": 17,
+            "y": 4,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000013,
+            "id": 503000036,
+            "x": 42,
+            "y": 43,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000013,
+            "id": 503000037,
+            "x": 16,
+            "y": 12,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000014,
+            "id": 503000038,
+            "x": 13,
+            "y": 20,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000014,
+            "id": 503000039,
+            "x": 29,
+            "y": 10,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000006,
+            "id": 503000040,
+            "x": 43,
+            "y": 30,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000011,
+            "id": 503000041,
+            "x": 26,
+            "y": 37,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000011,
+            "id": 503000042,
+            "x": 27,
+            "y": 40,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000000,
+            "id": 503000043,
+            "x": 30,
+            "y": 38,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000000,
+            "id": 503000044,
+            "x": 28,
+            "y": 38,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000000,
+            "id": 503000045,
+            "x": 29,
+            "y": 33,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000007,
+            "id": 503000046,
+            "x": 26,
+            "y": 35,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000001,
+            "id": 503000047,
+            "x": 31,
+            "y": 34,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000014,
+            "id": 503000048,
+            "x": 31,
+            "y": 32,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000049,
+            "x": 42,
+            "y": 35,
+            "loot_multiply_ver": 1
+        },
+        {
+            "data": 8000005,
+            "id": 503000050,
+            "x": 16,
+            "y": 30,
+            "loot_multiply_ver": 1
+        }
+    ],
+    "respawnVars": {
+        "secondsFromLastRespawn": 0,
+        "respawnSeed": -212853765,
+        "obstacleClearCounter": 0,
+        "time_to_gembox_drop": 421200,
+        "time_in_gembox_period": 183600
+    },
+    "traps": [
+
+    ],
+    "war_base": false,
+    "war_tutorials_seen": 0
+}
