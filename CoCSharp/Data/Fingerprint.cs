@@ -175,7 +175,7 @@ namespace CoCSharp.Data
         {
             var jsonStr = string.Empty;
 
-            using (var textWriter = new StringWriter())
+            var textWriter = new StringWriter();
             using (var jsonWriter = new JsonTextWriter(textWriter))
             {
                 // Turn on indentation if "indent" is set to true.
@@ -230,13 +230,8 @@ namespace CoCSharp.Data
         /// <exception cref="ArgumentException"><paramref name="value"/> is empty.</exception>
         public static Fingerprint FromJson(string value)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
-
-            // Could use string.IsNullOrWhiteSpace to check if its null as well.
-            // But just to be specific about the exception type.
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Empty JSON value is not valid.", "value");
+                throw new ArgumentNullException("value");
 
             var fingerprint = new Fingerprint();
             var fingerprintFiles = new List<FingerprintFile>();

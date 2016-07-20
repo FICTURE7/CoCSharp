@@ -11,15 +11,45 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var ccCommand = (CancelConsturctionCommand)command;
             var villageObject = client.Avatar.Home.GetVillageObject(ccCommand.VillageObjectID);
-            if (villageObject is Buildable)
+            if (villageObject is Trap)
             {
-                var buildable = villageObject as Buildable;
-                buildable.CancelConstruction();
+                var trap = (Trap)villageObject;
+                if (trap.IsConstructing)
+                {
+                    trap.CancelConstruction();
+                }
+                else
+                {
+                    // OutOfSync.
+                }
+            }
+            else if (villageObject is Building)
+            {
+                var building = (Building)villageObject;
+                if (building.IsConstructing)
+                {
+                    building.CancelConstruction();
+                }
+                else
+                {
+                    // OutOfSync.
+                }
             }
             else if (villageObject is Obstacle)
             {
-                var obstacle = villageObject as Obstacle;
-                obstacle.CancelClearing();
+                var obstacle = (Obstacle)villageObject;
+                if (obstacle.IsClearing)
+                {
+                    obstacle.CancelClearing();
+                }
+                else
+                {
+                    // OutOfSync.
+                }
+            }
+            else
+            {
+                // Unknown Cancellable VillageObject. 
             }
         }
     }

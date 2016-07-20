@@ -23,7 +23,7 @@ namespace CoCSharp.Network.Messages.Commands
         public override int ID { get { return 502; } }
 
         /// <summary>
-        /// Game ID of the <see cref="Buildable"/> that was upgraded.
+        /// Game ID of the <see cref="Buildable{TCsvData}"/> that was upgraded.
         /// </summary>
         public int BuildableGameID;
 

@@ -45,12 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Csv\CsvConvertTests.cs" />
     <Compile Include="Csv\CsvDataCollectionTests.cs" />
+    <Compile Include="Csv\CsvDataSubCollectionTests.cs" />
     <Compile Include="Data\AssetDownloaderTests.cs" />
     <Compile Include="Csv\CsvTableTests.cs" />
     <Compile Include="Data\FingerprintTests.cs" />
     <Compile Include="Logic\LogicSchedulerTests.cs" />
     <Compile Include="Logic\ObstacleTests.cs" />
+    <Compile Include="Logic\BuildingTests.cs" />
+    <Compile Include="Logic\VillageObjectCollectionTests.cs" />
     <Compile Include="Logic\VillageObjectTests.cs" />
     <Compile Include="Logic\VillageTests.cs" />
     <Compile Include="Network\CommandFactoryTests.cs" />
@@ -72,16 +76,28 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\csv\buildings.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\csv\com_buildings.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\csv\decos.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\csv\obstacles.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\csv\traps.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\fingerprint.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\starting_home.json">
+    <None Include="Content\layouts\starting_home.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\test_village.json">
+    <None Include="Content\layouts\test_village.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

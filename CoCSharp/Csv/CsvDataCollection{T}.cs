@@ -6,8 +6,7 @@ namespace CoCSharp.Csv
 {
     /// <summary>
     /// Represents a collection of <see cref="CsvDataSubCollection{TCsvData}"/> where each
-    /// <see cref="CsvDataSubCollection{TCsvData}"/> have a unique <see cref="CsvDataSubCollection{TCsvData}.ID"/>
-    /// and <see cref="CsvDataSubCollection{TCsvData}.TID"/>.
+    /// <see cref="CsvDataSubCollection{TCsvData}"/> have a unique <see cref="CsvDataSubCollection{TCsvData}.ID"/>.
     /// </summary>
     /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> to store.</typeparam>
     public class CsvDataCollection<TCsvData> : ICollection<CsvDataSubCollection<TCsvData>> where TCsvData : CsvData, new()
@@ -18,27 +17,7 @@ namespace CoCSharp.Csv
         /// </summary>
         public CsvDataCollection()
         {
-            var weakRef = (WeakReference<TCsvData>)null;
-            // If we don't have any weak references to the TCsvData instance,
-            // we create a new instance and add its weak reference to the dictionary.
-            if (!CsvDataSubCollection<TCsvData>.s_sampleInstances.TryGetValue(typeof(TCsvData), out weakRef))
-            {
-                _instance = new TCsvData();
-
-                weakRef = new WeakReference<TCsvData>(_instance);
-                CsvDataSubCollection<TCsvData>.s_sampleInstances.Add(typeof(TCsvData), weakRef);
-            }
-            else
-            {
-                // If we don't manage to get the weak reference's target object
-                // we create a new instance and update the weak reference.
-                // Likely to happen when the GC kicked in.
-                if (!weakRef.TryGetTarget(out _instance))
-                {
-                    _instance = new TCsvData();
-                    weakRef.SetTarget(_instance);
-                }
-            }
+            _instance = CsvData.GetInstance<TCsvData>();
 
             _subCollections = new CsvDataSubCollection<TCsvData>[48];
             _indexes = new int[48];
@@ -87,9 +66,6 @@ namespace CoCSharp.Csv
                 if (index > _subCollections.Length - 1)
                     return null;
 
-                if (_subCollections[index] == null)
-                    return null;
-
                 return _subCollections[index];
             }
             set
@@ -121,12 +97,12 @@ namespace CoCSharp.Csv
                 // Otherwise we're adding something.
                 else
                 {
-                    for (int i = 0; i < _count; i++)
-                    {
-                        var subCol = _subCollections[_indexes[i]];
-                        if (subCol.TID == value.TID)
-                            throw new ArgumentException("Each CsvDataSubCollection in a CsvDataCollection must have a unique pair of ID and TID.", "value");
-                    }
+                    //for (int i = 0; i < _count; i++)
+                    //{
+                    //    var subCol = _subCollections[_indexes[i]];
+                    //    if (subCol.TID == value.TID)
+                    //        throw new ArgumentException("Each CsvDataSubCollection in a CsvDataCollection must have a unique pair of ID and TID.", "value");
+                    //}
 
                     if (_count > _indexes.Length - 1)
                         Array.Resize(ref _indexes, _indexes.Length + 8);
@@ -177,14 +153,14 @@ namespace CoCSharp.Csv
 
                 // Look for items with the same ID
                 // If we find one we replace its reference.
-                for (int i = 0; i < _count; i++)
-                {
-                    if (_subCollections[_indexes[i]].TID == textId)
-                    {
-                        _subCollections[_indexes[i]] = value;
-                        return;
-                    }
-                }
+                //for (int i = 0; i < _count; i++)
+                //{
+                //    if (_subCollections[_indexes[i]].TID == textId)
+                //    {
+                //        _subCollections[_indexes[i]] = value;
+                //        return;
+                //    }
+                //}
 
                 // Otherwise we add it to the collection at its Index.
 
@@ -226,7 +202,7 @@ namespace CoCSharp.Csv
         /// <exception cref="ArgumentNullException"><paramref name="subCollection"/> is null.</exception>
         /// <exception cref="ArgumentException">
         /// The <see cref="CsvDataCollection{TCsvData}"/> already contains a <see cref="CsvDataSubCollection{TCsvData}"/> with the same
-        /// ID or TID.
+        /// ID.
         /// </exception>
         public void Add(CsvDataSubCollection<TCsvData> subCollection)
         {
@@ -246,16 +222,16 @@ namespace CoCSharp.Csv
                 // Look through the array at its index
                 // to look for item with the same Data ID.
                 if (_subCollections[subCollection.Index] != null)
-                    throw new ArgumentException("Each CsvDataSubCollection in a CsvDataCollection must have a unique pair of ID and TID.", "subCollection");
+                    throw new ArgumentException("Each CsvDataSubCollection in a CsvDataCollection must have a unique ID.", "subCollection");
 
                 // Look through the collection and search for
                 // items with the same TID.
-                for (int i = 0; i < _count; i++)
-                {
-                    var subCol = _subCollections[_indexes[i]];
-                    if (subCol.TID == subCollection.TID)
-                        throw new ArgumentException("Each CsvDataSubCollection in a CsvDataCollection must have a unique pair of ID and TID.", "subCollection");
-                }
+                //for (int i = 0; i < _count; i++)
+                //{
+                //    var subCol = _subCollections[_indexes[i]];
+                //    if (subCol.TID == subCollection.TID)
+                //        throw new ArgumentException("Each CsvDataSubCollection in a CsvDataCollection must have a unique pair of ID and TID.", "subCollection");
+                //}
             }
 
             if (_count > _indexes.Length - 1)
@@ -284,7 +260,7 @@ namespace CoCSharp.Csv
             if (subCollection.Index > _subCollections.Length - 1)
                 return false;
 
-            if (_subCollections[subCollection.Index] == null || _subCollections[subCollection.Index] != subCollection)
+            if (_subCollections[subCollection.Index] != subCollection)
                 return false;
 
             _subCollections[subCollection.Index] = null;
@@ -346,6 +322,7 @@ namespace CoCSharp.Csv
         /// Returns <c>true</c> if the <see cref="CsvDataSubCollection{TCsvData}"/> with the specified text ID
         /// was successfully removed; otherwise, <c>false</c>.
         /// </returns>
+        /// 
         /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="tid"/> is null.</exception>
         public bool Remove(string tid)
@@ -355,6 +332,7 @@ namespace CoCSharp.Csv
             if (tid == null)
                 throw new ArgumentNullException("tid");
 
+            var removed = false;
             for (int i = 0; i < _count; i++)
             {
                 if (_subCollections[_indexes[i]].TID == tid)
@@ -362,10 +340,10 @@ namespace CoCSharp.Csv
                     _subCollections[_indexes[i]] = null;
                     _indexes[i] = 0;
                     _count--;
-                    return true;
+                    removed = true;
                 }
             }
-            return false;
+            return removed;
         }
 
         /// <summary>
@@ -404,8 +382,7 @@ namespace CoCSharp.Csv
             if (subCollection.Index > _subCollections.Length - 1)
                 return false;
 
-            // NOTE: Could have reduced this if statement.
-            if (_subCollections[subCollection.Index] == null || _subCollections[subCollection.Index] != subCollection)
+            if (_subCollections[subCollection.Index] != subCollection)
                 return false;
 
             return true;

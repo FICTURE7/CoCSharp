@@ -23,20 +23,26 @@ namespace CoCSharp.Server
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(100);
 
-            Console.WriteLine("    Loading Avatars...");
+            Console.WriteLine("-> Setting up AvatarManager...");
             AvatarManager = new AvatarManager();
 
-            Console.WriteLine("    Loading CSV Data...");
+            Console.WriteLine("-> Setting up AssetManager...");
             AssetManager = new AssetManager(DirectoryPaths.Content);
+
+            Console.WriteLine("     > Loading buildings.csv...");
             AssetManager.LoadCsv<BuildingData>("buildings.csv");
+            Console.WriteLine("     > Loading traps.csv...");
             AssetManager.LoadCsv<TrapData>("traps.csv");
+            Console.WriteLine("     > Loading obstacles.csv...");
             AssetManager.LoadCsv<ObstacleData>("obstacles.csv");
+            Console.WriteLine("     > Loading decos.csv...");
             AssetManager.LoadCsv<DecorationData>("decos.csv");
+            Console.WriteLine("     > Loading resources.csv...");
             AssetManager.LoadCsv<ResourceData>("resources.csv");
 
-            AssetManager.Default = AssetManager;
+            AssetManager.DefaultInstance = AssetManager;
 
-            // We're not really loading NPC.
+            Console.WriteLine("-> Setting up NpcManager...");
             NpcManager = new NpcManager();
 
             Clients = new List<CoCRemoteClient>();
@@ -103,12 +109,12 @@ namespace CoCSharp.Server
                 var handler = (MessageHandler)null;
                 if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
                     handler(this, client, message);
-            }
+        }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception occurred while handling message: {0}\r\n\t{1}", message.GetType().Name, ex);
             }
-        }
+}
 
         // Tries to handles the specified Command with the registered CommandHandlers.
         public void HandleCommand(CoCRemoteClient client, Command command)

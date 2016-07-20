@@ -24,7 +24,7 @@ namespace CoCSharp.Network.Messages.Commands
         public override int ID { get { return 504; } }
 
         /// <summary>
-        /// Game ID of the <see cref="Buildable"/> whose
+        /// Game ID of the <see cref="Buildable{TCsvData}"/> whose
         /// construction was speed up.
         /// </summary>
         public int BuildableGameID;

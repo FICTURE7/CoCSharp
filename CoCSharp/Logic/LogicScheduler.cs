@@ -34,11 +34,10 @@ namespace CoCSharp.Logic
             if (utcWhen.Kind != DateTimeKind.Utc)
                 throw new ArgumentException("Kind of utcWhen must be Utc.", "utcWhen");
 
+            var schedule = (Schedule)null;
+            var index = 0;
             lock (s_lock)
             {
-                var schedule = (Schedule)null;
-                var index = 0;
-
                 // Sort the schedule list in order of DateTime, earliest to latest.
                 // Iterate through the schedule list and find the index of the schedule.
                 for (int i = 0; i < s_scheduleList.Count; i++)
@@ -70,7 +69,7 @@ namespace CoCSharp.Logic
             if (userToken == null)
                 throw new ArgumentNullException("userToken");
 
-            lock(s_lock)
+            lock (s_lock)
             {
                 for (int i = 0; i < s_scheduleList.Count; i++)
                 {
@@ -91,7 +90,7 @@ namespace CoCSharp.Logic
                 // Might not need a lock here, because this code
                 // is run by only one thread that is t_worker.
 
-                lock(s_lock)
+                lock (s_lock)
                 {
                     s_stopwatch.Restart();
 

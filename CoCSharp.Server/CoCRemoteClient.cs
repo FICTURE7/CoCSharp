@@ -11,7 +11,7 @@ namespace CoCSharp.Server
     {
         public CoCRemoteClient(CoCServer server, Socket connection, NetworkManagerAsyncSettings settings)
         {
-            _server = server;
+            Server = server;
 
             Connection = connection;
             SessionKey = null;
@@ -21,14 +21,10 @@ namespace CoCSharp.Server
         }
 
         public Avatar Avatar { get; set; }
-
+        public CoCServer Server { get; private set; }
         public Socket Connection { get; private set; }
-
         public NetworkManagerAsync NetworkManager { get; private set; }
-
         public byte[] SessionKey { get; set; }
-
-        private readonly CoCServer _server;
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
@@ -43,14 +39,20 @@ namespace CoCSharp.Server
                 return;
             }
 
-            _server.HandleMessage(this, e.Message);
+            Server.HandleMessage(this, e.Message);
         }
 
         private void OnDisconnected(object sender, DisconnectedEventArgs e)
         {
+            // Push the VillageObjects to the VillageObjectPool.
+            if (Avatar != null && Avatar.Home != null)
+            {
+                Avatar.Home.Dispose();
+            }
+
             // Dereference the client object so that it gets picked up
             // by the GarbageCollector.
-            _server.Clients.Remove(this);
+            Server.Clients.Remove(this);
             FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> Avatar &(darkcyan){0}&(default) disconnected.",
                                    Avatar == null ? Connection.RemoteEndPoint.ToString() : Avatar.Token);
         }

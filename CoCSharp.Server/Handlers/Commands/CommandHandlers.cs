@@ -1,3 +1,4 @@
+using CoCSharp.Csv;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 using CoCSharp.Network.Messages.Commands;
@@ -7,6 +8,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
+        #region Constants
         //TODO: Implement all those strings in a class or in a resource file.
         private const string StartedConstructionFormat =
             "[&(darkgreen)Logic&(default)] Construction -> Started for account &(darkcyan){0}&(default) \n\t\tat {1},{2} with lvl {3}";
@@ -36,6 +38,7 @@ namespace CoCSharp.Server.Handlers.Commands
             "[&(darkgreen)Logic&(default)] Decoration -> Bought &(darkcyan){0}&(default) for account &(darkcyan){1}&(default) \n\t\tat {2},{3}";
         private const string SoldDecorationFormat =
             "[&(darkgreen)Logic&(default)] Decoration -> Sold &(darkcyan){0}&(default) for account &(darkcyan){1}&(default) \n\t\tat {2},{3}";
+        #endregion
 
         //TODO: Send an OutOfSyncMessage when things seems wrong.
         //TODO: Consume resources and all that fancy stuff.
@@ -62,57 +65,63 @@ namespace CoCSharp.Server.Handlers.Commands
             server.RegisterCommandHandler(new RearmTrapCommand(), HandleRearmTrapCommand);
         }
 
-        private static void ConstructionFinished(object sender, ConstructionFinishedEventArgs e)
+        public static void BuildingConstructionFinished(object sender, ConstructionFinishedEventArgs<BuildingData> e)
         {
-            e.BuildableConstructed.ConstructionFinished -= ConstructionFinished;
-            var token = e.UserToken as VillageObjectToken;
-            var buildable = e.BuildableConstructed;
-            var client = token.Client;
-            var server = token.Server;
-
-            var exp = 0;
-            if (buildable is Building)
-            {
-                var data = (BuildingData)buildable.Data;
-                exp = LogicUtils.CalculateExperience(data.BuildTime);
-            }
-            else if (buildable is Trap)
-            {
-                var data = (TrapData)buildable.Data;
-                exp = LogicUtils.CalculateExperience(data.BuildTime);
-            }
+            var building = (Building)e.BuildableConstructed;
+            var client = (CoCRemoteClient)e.UserToken;
 
             if (e.WasCancelled)
-                FancyConsole.WriteLine(CancelledConstructionFormat, client.Avatar.Token, buildable.X, buildable.Y, buildable.Level);
+            {
+                FancyConsole.WriteLine(CancelledConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+            }
             else
             {
-                FancyConsole.WriteLine(FinishedConstructionFormat, client.Avatar.Token, buildable.X, buildable.Y, buildable.Level);
+                FancyConsole.WriteLine(FinishedConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+
+                var exp = LogicUtils.CalculateExperience(building.Data.BuildTime);
                 client.Avatar.Experience += exp;
             }
 
-            server.AvatarManager.SaveAvatar(client.Avatar);
+            client.Server.AvatarManager.SaveAvatar(client.Avatar);
         }
 
-        private static void ClearingFinished(object sender, ClearingFinishedEventArgs e)
+        public static void TrapConstructionFinished(object sende, ConstructionFinishedEventArgs<TrapData> e)
         {
-            e.ClearedObstacle.ClearingFinished -= ClearingFinished;
+            var trap = (Trap)e.BuildableConstructed;
+            var client = (CoCRemoteClient)e.UserToken;
 
-            var token = e.UserToken as VillageObjectToken;
-            var obstacle = e.ClearedObstacle;
-            var client = token.Client;
-            var server = token.Server;
-
-            var data = (ObstacleData)e.ClearedObstacle.Data;
-            var exp = LogicUtils.CalculateExperience(data.ClearTime);
-
-            client.Avatar.Experience += exp;
             if (e.WasCancelled)
-                FancyConsole.WriteLine(CancelledClearObstacleFormat, client.Avatar.Token, obstacle.X, obstacle.Y);
+            {
+                FancyConsole.WriteLine(CancelledConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
+            }
             else
-                FancyConsole.WriteLine(FinishedClearObstacleFormat, client.Avatar.Token, obstacle.X, obstacle.Y);
+            {
+                FancyConsole.WriteLine(FinishedConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
 
-            client.Avatar.Home.Obstacles.Remove(obstacle);
-            server.AvatarManager.SaveAvatar(client.Avatar);
+                var exp = LogicUtils.CalculateExperience(trap.Data.BuildTime);
+                client.Avatar.Experience += exp;
+            }
+
+            client.Server.AvatarManager.SaveAvatar(client.Avatar);
+        }
+
+        public static void ObstacleClearingFinished(object sender, ClearingFinishedEventArgs e)
+        {
+            var obstacle = e.ClearedObstacle;
+            var client = (CoCRemoteClient)e.UserToken;
+
+            if (e.WasCancelled)
+            {
+                FancyConsole.WriteLine(CancelledClearObstacleFormat, client.Avatar.Token, obstacle.X, obstacle.Y);
+            }
+            else
+            {
+                FancyConsole.WriteLine(FinishedClearObstacleFormat, client.Avatar.Token, obstacle.X, obstacle.Y);
+                var exp = LogicUtils.CalculateExperience(obstacle.Data.ClearTime);
+                client.Avatar.Experience += exp;
+            }
+
+            client.Server.AvatarManager.SaveAvatar(client.Avatar);
         }
     }
 }

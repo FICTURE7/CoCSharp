@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Csv;
+using System;
 
 namespace CoCSharp.Logic
 {
@@ -7,10 +8,10 @@ namespace CoCSharp.Logic
     /// <summary>
     /// Provides arguments data for construction finish event. 
     /// </summary>
-    public class ConstructionFinishedEventArgs : EventArgs
+    public class ConstructionFinishedEventArgs<TCsvData> : EventArgs where TCsvData : CsvData, new()
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructionFinishedEventArgs"/> class.
+        /// Initializes a new instance of the <see cref="ConstructionFinishedEventArgs{TCsvData}"/> class.
         /// </summary>
         public ConstructionFinishedEventArgs()
         {
@@ -20,12 +21,12 @@ namespace CoCSharp.Logic
         private DateTime _endTime;
 
         /// <summary>
-        /// Gets or sets the <see cref="Buildable"/> that was constructed.
+        /// Gets or sets the <see cref="Buildable{TCsvData}"/> that was constructed.
         /// </summary>
-        public Buildable BuildableConstructed { get; set; }
+        public Buildable<TCsvData> BuildableConstructed { get; set; }
 
         /// <summary>
-        /// Gets or sets when the construction of the <see cref="Buildable"/> was finished.
+        /// Gets or sets when the construction of the <see cref="Buildable{TCsvData}"/> was finished.
         /// </summary>
         /// <remarks>
         /// The <see cref="DateTimeKind"/> of the value specified must of <see cref="DateTimeKind.Utc"/>.
@@ -48,13 +49,13 @@ namespace CoCSharp.Logic
 
         //TODO: Implement an enum for this instead.
         /// <summary>
-        /// Gets or sets whether the construction of the <see cref="Buildable"/> was cancelled,
-        /// that is when <see cref="Buildable.CancelConstruction"/> is called.
+        /// Gets or sets whether the construction of the <see cref="Buildable{TCsvData}"/> was cancelled,
+        /// that is when <see cref="Buildable{TCsvData}.CancelConstruction"/> is called.
         /// </summary>
         public bool WasCancelled { get; set; }
 
         /// <summary>
-        /// Gets or sets the user token object associated with the <see cref="Buildable"/> that was
+        /// Gets or sets the user token object associated with the <see cref="Buildable{TCsvData}"/> that was
         /// constructed.
         /// </summary>
         public object UserToken { get; set; }

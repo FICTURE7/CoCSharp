@@ -1,23 +1,43 @@
-﻿using CoCSharp.Csv;
+﻿using CoCSharp.Data;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading;
 
 namespace CoCSharp.Logic
 {
     /// <summary>
-    /// Represents an object in a <see cref="Village"/>.
+    /// Represents an object in a <see cref="Logic.Village"/>.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}")]
     public abstract class VillageObject
     {
         //TODO: Make it reusable.
-
+        #region Constants
         // Represents the Base ID of every game ID & data ID.
         internal const int Base = 1000000;
+
+        internal static int s_rested = 0;
+        internal static int s_created = 0;
+
+        private static readonly PropertyChangedEventArgs s_xChanged = new PropertyChangedEventArgs("X");
+        private static readonly PropertyChangedEventArgs s_yChanged = new PropertyChangedEventArgs("Y");
+        #endregion
 
         #region Constructors
         internal VillageObject(Village village)
         {
-            _village = village;
+            if (village == null)
+                throw new ArgumentNullException("village");
+
+            _components = new Dictionary<Type, LogicComponent>();
+
+            // Setter of Village property will call RegisterVillageObject.
+            Village = village;
+
+            Interlocked.Increment(ref s_created);
         }
 
         internal VillageObject(Village village, int x, int y) : this(village)
@@ -28,6 +48,25 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
+        // Amount of time the VillageObject was pushed back to the pool.
+        private int _count;
+        // Amount of time the VillageObject was reused.
+        internal int _recycled;
+
+        // TODO: Switch to an array.
+        // Dictionary/List of LogicComponent in the Village Object.
+        private Dictionary<Type, LogicComponent> _components;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        public bool IsPropertyChangedEnabled { get; set; }
+
+        /// <summary>
+        /// The event raised when a property value has changed.
+        /// </summary>
+        public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+
         // Village in which the VillageObject is in.
         private Village _village;
         /// <summary>
@@ -38,6 +77,30 @@ namespace CoCSharp.Logic
             get
             {
                 return _village;
+            }
+            internal set
+            {
+                _village = value;
+                RegisterVillageObject();
+            }
+        }
+
+        // ID of the VillageObject (IDs above or equal to 500000000). E.g: 500000001
+        // This value should be relative to the Village the VillageObject is in.
+        private int _instanceId;
+        /// <summary>
+        /// Gets or sets the instance/game ID of the <see cref="VillageObject"/>.
+        /// </summary>
+        public int ID
+        {
+            get
+            {
+                return _instanceId;
+            }
+            protected set
+            {
+                // TODO: Check range of ID.
+                _instanceId = value;
             }
         }
 
@@ -58,7 +121,11 @@ namespace CoCSharp.Logic
                 if (value < 0 || value > Village.Width)
                     throw new ArgumentOutOfRangeException("value", "value must be between 0 and Village.Width.");
 
+                if (_x == value)
+                    return;
+
                 _x = value;
+                OnPropertyChanged(s_xChanged);
             }
         }
 
@@ -79,92 +146,102 @@ namespace CoCSharp.Logic
                 if (value < 0 || value > Village.Height)
                     throw new ArgumentOutOfRangeException("value", "value must be between 0 and Village.Height.");
 
+                if (_y == value)
+                    return;
+
                 _y = value;
-            }
-        }
-
-        // Data associated with the object.
-        private CsvData _data;
-        /// <summary>
-        /// Gets or sets the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.
-        /// </summary>
-        /// <remarks>
-        /// This is needed for handling of construction, upgrading and other game logic actions. It must be updated
-        /// regularly to keep up with the current game state.
-        /// </remarks>
-        /// <exception cref="ArgumentException"><paramref name="value"/> is not type of expected type.</exception>
-        public CsvData Data
-        {
-            get
-            {
-                return _data;
-            }
-            set
-            {
-                // Update _dataId with the provided data.
-                if (value != null)
-                {
-                    var type = value.GetType();
-
-                    // Make sure its of the expected type.
-                    if (type != ExpectedDataType)
-                        throw new ArgumentException("Expected value to in the type of '" + ExpectedDataType + "'.", "value");
-
-                    _dataId = value.ID;
-                }
-                else
-                {
-                    _dataId = 0;
-                }
-
-                _data = value;
-            }
-        }
-
-        // ID of _data;
-        private int _dataId;
-        internal int DataID
-        {
-            get
-            {
-                return _dataId;
-            }
-            set
-            {
-                _dataId = value;
+                OnPropertyChanged(s_yChanged);
             }
         }
 
         /// <summary>
-        /// Gets the <see cref="Type"/> of the <see cref="CsvData"/> expected
-        /// by the <see cref="VillageObject"/>.
+        /// Gets the <see cref="Data.AssetManager"/> of <see cref="Village"/>.
         /// </summary>
-        protected abstract Type ExpectedDataType { get; }
+        protected AssetManager AssetManager
+        {
+            get
+            {
+                return Village.AssetManager;
+            }
+        }
         #endregion
 
         #region Methods
+        #region Component
         /// <summary>
-        /// Returns the data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.
+        /// 
         /// </summary>
-        /// <returns>Data ID of the <see cref="CsvData"/> associated with the <see cref="VillageObject"/>.</returns>
-        public int GetDataID()
+        /// <typeparam name="T"></typeparam>
+        public void AddComponent<T>() where T : LogicComponent
         {
-            //TODO: Needs some API improvement because it can accessed from Data.ID & here
-            // however Data can be null. Could be improved by creating a NullData object.
+            var type = typeof(T);
+            if (_components.ContainsKey(type))
+                throw new ArgumentException("LogicComponent of type T was already added to the VillageObject.", "T");
 
-            return _dataId;
+            var instance = (T)Activator.CreateInstance(type, true);
+            instance._vilObject = this;
+
+            _components.Add(type, instance);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public bool RemoveComponent<T>() where T : LogicComponent
+        {
+            var type = typeof(T);
+            return _components.Remove(type);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T GetComponent<T>() where T : LogicComponent
+        {
+            var type = typeof(T);
+            var instance = (LogicComponent)null;
+            _components.TryGetValue(type, out instance);
+            return (T)instance;
+        }
+        #endregion
+
+        // Calls the PropertyChanged event.
+        internal void OnPropertyChanged(PropertyChangedEventArgs args)
+        {
+            if (PropertyChanged != null && IsPropertyChangedEnabled)
+                PropertyChanged(this, args);
+        }
+
+        // Resets the VillageObject so that it can be reused.
+        internal virtual void ResetVillageObject()
+        {
+            Interlocked.Increment(ref s_rested);
+
+            _village = default(Village);
+            _instanceId = default(int);
+            _x = default(int);
+            _y = default(int);
+        }
+
+        // Register the VillageObject to its Village.
+        internal abstract void RegisterVillageObject();
 
         // Writes the current VillageObject to the JsonWriter.
-        internal virtual void ToJsonWriter(JsonWriter writer)
-        {
-            throw new NotImplementedException();
-        }
+        internal abstract void ToJsonWriter(JsonWriter writer);
 
         // Reads the current VillageObject to the JsonReader.
-        internal virtual void FromJsonReader(JsonReader reader)
+        internal abstract void FromJsonReader(JsonReader reader);
+
+        internal void PushToPool()
         {
-            throw new NotImplementedException();
+            // Set village to null, so it can get picked up by the GC.
+            _village = null;
+            VillageObjectPool.Push(this);
+            _count++;
         }
         #endregion
     }

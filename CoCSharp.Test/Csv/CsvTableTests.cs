@@ -12,7 +12,7 @@ namespace CoCSharp.Test.Csv
         [Test]
         public void Compression_Equality()
         {
-            var tablePath = Path.Combine(TestUtils.CsvDirectory, "buildings.csv");
+            var tablePath = Path.Combine(TestUtils.CsvDirectory, "com_buildings.csv");
             var originalbytes = File.ReadAllBytes(tablePath);
 
             // Decompress the original bytes.

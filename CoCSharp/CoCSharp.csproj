@@ -75,7 +75,8 @@
     <Compile Include="Csv\Compression\ICoder.cs" />
     <Compile Include="Csv\Compression\LzmaUtils.cs" />
     <Compile Include="Csv\CsvAttributeHelper.cs" />
-    <Compile Include="Csv\CsvDataCollection.cs" />
+    <Compile Include="Csv\CsvDataCollection{T}.cs" />
+    <Compile Include="Csv\CsvDataSubCollection{T}.cs" />
     <Compile Include="Csv\CsvException.cs" />
     <Compile Include="Csv\CsvIgnoreAttribute.cs" />
     <Compile Include="Csv\CsvAliasAttribute.cs" />
@@ -89,7 +90,13 @@
     <Compile Include="Data\Models\ObstacleData.cs" />
     <Compile Include="Data\Models\TrapData.cs" />
     <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
+    <Compile Include="Logic\Components\UnitProductionComponent.cs" />
+    <Compile Include="Logic\Components\UnitStorageComponent.cs" />
+    <Compile Include="Logic\LogicComponent.cs" />
+    <Compile Include="Logic\LogicOperations.cs" />
     <Compile Include="Logic\LogicUtils.cs" />
+    <Compile Include="Logic\VillageObjectPool.cs" />
+    <Compile Include="Logic\VillageObject{T}.cs" />
     <Compile Include="Network\DisconnectedEventArgs.cs" />
     <Compile Include="Network\Messages\AttackNpcMessage.cs" />
     <Compile Include="Network\Messages\AttackResultMessage.cs" />
@@ -134,7 +141,7 @@
     <Compile Include="Network\Messages\VillageMessageComponent.cs" />
     <Compile Include="DateTimeConverter.cs" />
     <Compile Include="Logic\Avatar.cs" />
-    <Compile Include="Logic\Buildable.cs" />
+    <Compile Include="Logic\Buildable{T}.cs" />
     <Compile Include="Logic\Building.cs" />
     <Compile Include="Logic\Clan.cs" />
     <Compile Include="Logic\ConstructionFinishedEventArgs.cs" />

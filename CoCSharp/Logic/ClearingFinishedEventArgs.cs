@@ -13,17 +13,16 @@ namespace CoCSharp.Logic
         public ClearingFinishedEventArgs()
         {
             // Space
-        }
-
-        private DateTime _endTime;
+        }        
 
         /// <summary>
         /// Gets or sets the <see cref="Obstacle"/> that was cleared.
         /// </summary>
         public Obstacle ClearedObstacle { get; set; }
 
+        private DateTime _endTime;
         /// <summary>
-        /// 
+        /// Gets or sets the UTC time at which the obstacle clearing operation was finished.
         /// </summary>
         public DateTime EndTime
         {

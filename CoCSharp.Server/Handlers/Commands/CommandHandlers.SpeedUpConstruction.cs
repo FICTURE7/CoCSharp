@@ -2,6 +2,7 @@
 using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
+using System.Diagnostics;
 
 namespace CoCSharp.Server.Handlers.Commands
 {
@@ -11,13 +12,38 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             // Fabulous variable name.
             var sucCommand = (SpeedUpConstructionCommand)command;
-            var buildable = client.Avatar.Home.GetVillageObject<Buildable>(sucCommand.BuildableGameID);
-            if (!buildable.IsConstructing)
+
+            var villageObject = client.Avatar.Home.GetVillageObject(sucCommand.BuildableGameID);
+            Debug.Assert(villageObject.ID == sucCommand.BuildableGameID);
+
+            if (villageObject is Building)
             {
-                FancyConsole.WriteLine(BuildableNotInConstructionFormat, client.Avatar.Token, sucCommand.BuildableGameID);
-                return;
+                var building = (Building)villageObject;
+                if (building.IsConstructing)
+                {
+                    building.SpeedUpConstruction();
+                }
+                else
+                {
+                    // OutOfSync.
+                }
             }
-            buildable.SpeedUpConstruction();
+            else if (villageObject is Trap)
+            {
+                var trap = (Trap)villageObject;
+                if (trap.IsConstructing)
+                {
+                    trap.SpeedUpConstruction();
+                }
+                else
+                {
+                    // OutOfSync.
+                }
+            }
+            else
+            {
+                // Unknown SpeedUpable VillageObject.
+            }
         }
     }
 }

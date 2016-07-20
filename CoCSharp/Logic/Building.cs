@@ -2,81 +2,86 @@
 using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic
 {
     /// <summary>
     /// Represents an in-game Clash of Clans building.
     /// </summary>
-    public class Building : Buildable
+    public class Building : Buildable<BuildingData>
     {
+        #region Constants
         internal const int BaseGameID = 500000000;
 
+        private static readonly PropertyChangedEventArgs s_isLockedChanged = new PropertyChangedEventArgs("IsLocked");
+        #endregion
+
         #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified
-        /// <see cref="Village"/> which contains the <see cref="Building"/>.
-        /// </summary>
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
-        public Building(Village village) : base(village)
+        // Constructor that FromJsonReader method is going to use.
+        internal Building(Village village) : base(village)
         {
-            village.Buildings.Add(this);
+            // Space
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> containing the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
+        public Building(Village village, BuildingData data) : base(village, data)
+        {
+            CheckAndSetTownHall();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified 
-        /// <see cref="Village"/> which contains the <see cref="Building"/> and user token object.
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and user token object.
         /// </summary>
+        /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        public Building(Village village, object userToken) : base(village, userToken)
+        public Building(Village village, BuildingData data, object userToken) : base(village, data, userToken)
         {
-            village.Buildings.Add(this);
+            CheckAndSetTownHall();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified
-        /// <see cref="Village"/> which contains the <see cref="Building"/>, X coordinate and Y coordinate.
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
+        /// and <see cref="BuildingData"/> which is associated with it, X coordinate and Y coordinate.
         /// </summary>
+        /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Building(Village village, int x, int y) : base(village, x, y)
+        public Building(Village village, BuildingData data, int x, int y) : base(village, data, x, y)
         {
-            village.Buildings.Add(this);
+            CheckAndSetTownHall();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified
-        /// <see cref="Village"/> which contains the <see cref="Building"/>, X coordinate, Y coordinate and user token object.
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
+        /// and <see cref="BuildingData"/> which is associated with it, X coordinate, Y coordinate and user token object.
         /// </summary>
+        /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        public Building(Village village, int x, int y, object userToken) : base(village, x, y, userToken)
+        public Building(Village village, BuildingData data, int x, int y, object userToken) : base(village, data, x, y, userToken)
         {
-            village.Buildings.Add(this);
+            CheckAndSetTownHall();
         }
         #endregion
 
         #region Fields & Properties
-        /// <summary>
-        /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected
-        /// by the <see cref="Building"/>.
-        /// </summary>
-        /// <remarks>
-        /// This is needed to make sure that the user provides a proper <see cref="CsvData"/> type
-        /// for the <see cref="VillageObject"/>.
-        /// </remarks>
-        protected override Type ExpectedDataType
-        {
-            get
-            {
-                return typeof(BuildingData);
-            }
-        }
-
         // Building is locked. Mainly for Alliance Castle.
         private bool _isLocked;
         /// <summary>
@@ -90,57 +95,67 @@ namespace CoCSharp.Logic
             }
             set
             {
+                if (_isLocked == value)
+                    return;
+
+                OnPropertyChanged(s_isLockedChanged);
                 _isLocked = value;
             }
         }
         #endregion
 
         #region Methods
+        #region Construction
         /// <summary>
         /// Begins the construction of the <see cref="Building"/> and increases its level by 1
-        /// when done if <see cref="Buildable.IsConstructing"/> is <c>false</c> and <see cref="VillageObject.Data"/>
-        /// is not null; otherwise it throws an <see cref="InvalidOperationException"/>.
+        /// when done if <see cref="Buildable{TCsvData}.IsConstructing"/> is <c>false</c>; otherwise it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable.IsConstructing"/> is <c>true</c>.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="VillageObject.Data"/> is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Buildable{BuildingData}.IsConstructing"/> is <c>true</c>.</exception>
         public override void BeginConstruction()
         {
+            // Make sure that we not constructing a building that is already in construction.
             if (IsConstructing)
                 throw new InvalidOperationException("Building object is already in construction.");
-            if (Data == null)
-                throw new InvalidOperationException("Building.Data cannot be null.");
+            if (!CanUpgrade)
+                throw new InvalidOperationException("Building object is maxed or TownHall level too low.");
 
-            var data = GetBuildingData();
+            Debug.Assert(Data != null);
+            Debug.Assert(_nextUpgrade != null);
+
+            var buildData = _isConstructed ? _nextUpgrade : Data;
+            var startTime = DateTime.UtcNow;
 
             // No need to schedule construction logic if its construction is instant. (Walls)
-            if (data.BuildTime.TotalSeconds == 0)
+            if (buildData.BuildTime == InstantConstructionTime)
             {
                 DoConstructionFinished();
                 return;
             }
 
-            var constructionTime = DateTime.UtcNow.Add(data.BuildTime);
+            var constructionTime = startTime.Add(buildData.BuildTime);
             ConstructionEndTime = constructionTime;
 
-            InternalScheduleBuild();
+            ScheduleBuild();
         }
 
         /// <summary>
-        /// Cancel the construction of the <see cref="Building"/> if <see cref="Buildable.IsConstructing"/> is <c>true</c>; otherwise
+        /// Cancel the construction of the <see cref="Building"/> if <see cref="Buildable{TCsvData}.IsConstructing"/> is <c>true</c>; otherwise
         /// it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable.IsConstructing"/> is <c>false</c>.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Buildable{TCsvData}.IsConstructing"/> is <c>false</c>.</exception>
         public override void CancelConstruction()
         {
+            // Make sure that we not canceling construction of a building that is not in construction.
             if (!IsConstructing)
                 throw new InvalidOperationException("Building object is not in construction.");
 
             var endTime = DateTime.UtcNow;
 
-            InternalCancelScheduleBuild();
+            // Remove the schedule because we don't want it to trigger the events anymore.
+            CancelScheduleBuild();
 
             ConstructionTEndUnixTimestamp = 0;
-            OnConstructionFinished(new ConstructionFinishedEventArgs()
+            OnConstructionFinished(new ConstructionFinishedEventArgs<BuildingData>()
             {
                 BuildableConstructed = this,
                 EndTime = endTime,
@@ -151,76 +166,103 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Speeds up the construction of the <see cref="Building"/> and increases its level by 1
-        /// instantly if <see cref="Buildable.IsConstructing"/> is <c>true</c>; otherwise it throws an
+        /// instantly if <see cref="Buildable{TCsvData}.IsConstructing"/> is <c>true</c>; otherwise it throws an
         /// <see cref="InvalidOperationException"/>.
         /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable.IsConstructing"/> is <c>false</c>.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="Buildable{TCsvData}.IsConstructing"/> is <c>false</c>.</exception>
         public override void SpeedUpConstruction()
         {
             // Make sure that we not speeding up construction of a building that is not in construction.
             if (!IsConstructing)
                 throw new InvalidOperationException("Building object is not in construction.");
 
-            // Remove the schedule because we don't want it to trigger the events.
-            InternalCancelScheduleBuild();
+            // Remove the schedule because we don't want it to trigger the events anymore.
+            CancelScheduleBuild();
             DoConstructionFinished();
         }
 
-        /// <summary>
-        /// Returns the associated <see cref="CsvData"/> with the <see cref="Building"/> as
-        /// a <see cref="BuildingData"/>.
-        /// </summary>
-        /// <returns>Associated <see cref="CsvData"/> with the <see cref="Building"/> as a <see cref="BuildingData"/>.</returns>
-        /// <exception cref="InvalidOperationException"><see cref="VillageObject.Data"/> is null.</exception>
-        public BuildingData GetBuildingData()
-        {
-            if (Data == null)
-                throw new InvalidOperationException("Building.Data is null.");
-
-            return (BuildingData)Data;
-        }
-
-
-        // Schedules the construction logic at ConstructionEndTime.
-        internal void InternalScheduleBuild()
-        {
-            // Schedule it with the userToken as this object so that it can be cancelled later.
-            LogicScheduler.ScheduleLogic(DoConstructionFinished, ConstructionEndTime, userToken: this);
-        }
-
-        // Cancels the construction of the logic associated with this object as userToken.
-        internal void InternalCancelScheduleBuild()
-        {
-            LogicScheduler.CancelSchedule(this);
-        }
-
-        // Called by the LogicScheduler when the constructionTime has been reached
-        // or by the SpeedUpConstruction() method.
-        private void DoConstructionFinished()
+        internal override void DoConstructionFinished()
         {
             var endTime = DateTime.UtcNow;
 
-            // Increase level if construction finished successfully.
-            Level++;
-            ConstructionTEndUnixTimestamp = 0;
+            if (!_isConstructed)
+            {
+                // If the building is not constructed (level -1) yet we don't update the Data.
+                _isConstructed = true;
+            }
+            else
+            {
+                // Increase level if construction finished successfully.
+                var dataId = Data.ID;
+                var lvl = Data.Level + 1;
 
-            OnConstructionFinished(new ConstructionFinishedEventArgs()
+                //UpdateData(dataId, lvl);
+                _data = _nextUpgrade;
+                UpdateCanUpgade();
+            }
+
+            ConstructionTEndUnixTimestamp = 0;
+            OnConstructionFinished(new ConstructionFinishedEventArgs<BuildingData>()
             {
                 BuildableConstructed = this,
                 UserToken = UserToken,
                 EndTime = endTime
             });
+
+            _scheduled = false;
         }
 
+        internal override bool CanUpgradeCheckTownHallLevel()
+        {
+            Debug.Assert(_nextUpgrade != null);
+
+            if (_nextUpgrade.TID == "TID_BUILDING_TOWN_HALL")
+                return true;
+
+            var th = Village.TownHall;
+            if (th == null)
+                throw new InvalidOperationException("Village does not contain a TownHall.");
+
+            // TownHallLevel field is not a zero-based so we subtract 1.
+            if (th.Data.Level >= _nextUpgrade.TownHallLevel - 1)
+                return true;
+
+            return false;
+        }
+        #endregion
+
+        internal override void ResetVillageObject()
+        {
+            base.ResetVillageObject();
+            _isLocked = default(bool);
+        }
+
+        internal override void RegisterVillageObject()
+        {
+            ID = BaseGameID + Village.Buildings.Count;
+            Village.Buildings.Add(this);
+        }
+
+        #region Json Reading/Writing
         internal override void ToJsonWriter(JsonWriter writer)
         {
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(DataID);
+            writer.WriteValue(Data.ID);
+
+            writer.WritePropertyName("id");
+            writer.WriteValue(ID);
 
             writer.WritePropertyName("lvl");
-            writer.WriteValue(Level);
+            if (IsConstructing && Data.Level == 0)
+            {
+                writer.WriteValue(NotConstructedLevel);
+            }
+            else
+            {
+                writer.WriteValue(Data.Level);
+            }
 
             if (IsLocked != default(bool))
             {
@@ -249,13 +291,19 @@ namespace CoCSharp.Logic
             writer.WriteEndObject();
         }
 
-        // Reads the Building from a JsonReader.
         internal override void FromJsonReader(JsonReader reader)
         {
+            var instance = CsvData.GetInstance<BuildingData>();
             // const_t_end value.
             var constTimeEnd = -1;
             // const_t value.
             var constTime = -1;
+
+            var dataId = -1;
+            var dataIdSet = false;
+
+            var lvl = -1;
+            var lvlSet = false;
 
             while (reader.Read())
             {
@@ -267,12 +315,18 @@ namespace CoCSharp.Logic
                     var propertyName = (string)reader.Value;
                     switch (propertyName)
                     {
+                        case "id":
+                            // Ignore it for now.
+                            break;
+
                         case "data":
-                            DataID = reader.ReadAsInt32().Value;
+                            dataId = reader.ReadAsInt32().Value;
+                            dataIdSet = true;
                             break;
 
                         case "lvl":
-                            Level = reader.ReadAsInt32().Value;
+                            lvl = reader.ReadAsInt32().Value;
+                            lvlSet = true;
                             break;
 
                         case "locked":
@@ -298,7 +352,32 @@ namespace CoCSharp.Logic
                 }
             }
 
-            // Try to use const_t if we was not able to get const_t_end's value.
+            if (!dataIdSet)
+                throw new InvalidOperationException("Building JSON does not contain a 'data' field.");
+            if (!lvlSet)
+                throw new InvalidOperationException("Building JSON does not contain a 'lvl' field.");
+
+            // If its not constructed yet, the level is -1,
+            // therefore it must be a lvl 0 building.
+            if (lvl == NotConstructedLevel)
+            {
+                _isConstructed = false;
+                lvl = 0;
+            }
+            else
+            {
+                _isConstructed = true;
+            }
+
+            if (instance.InvalidDataID(dataId))
+                throw new InvalidOperationException("Building JSON contained an invalid BuildingData ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
+
+            UpdateData(dataId, lvl);
+            // Check if the current building is a townhall.
+            // If yes set Village.TownHall to this building.
+            CheckAndSetTownHall();
+
+            // Try to use const_t if we were not able to get const_t_end's value.
             if (constTimeEnd == -1)
             {
                 // We don't have const_t either so we can exit early.
@@ -309,9 +388,32 @@ namespace CoCSharp.Logic
             }
             else
             {
-                if (constTimeEnd > 0)
+                if (constTimeEnd > DateTimeConverter.UnixUtcNow + 100)
+                {
                     ConstructionTEndUnixTimestamp = constTimeEnd;
+                }
+                else
+                {
+                    // Date at which building construction was going to end has passed.
+                    DoConstructionFinished();
+                    return;
+                }
             }
+
+            ScheduleBuild();
+        }
+        #endregion
+
+        internal static Building GetInstance(Village village)
+        {
+            var obj = (VillageObject)null;
+            if (VillageObjectPool.TryPop(BaseGameID, out obj))
+            {
+                obj.Village = village;
+                return (Building)obj;
+            }
+
+            return new Building(village);
         }
         #endregion
     }

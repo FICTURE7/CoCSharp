@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CoCSharp.Csv
 {
@@ -8,14 +9,9 @@ namespace CoCSharp.Csv
     /// Represents a collection of <see cref="CsvData"/>.
     /// </summary>
     /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> to store.</typeparam>
+    [DebuggerDisplay("Count = {Count}, TID = {TID}, ID = {ID}")]
     public class CsvDataSubCollection<TCsvData> : ICollection<TCsvData> where TCsvData : CsvData, new()
     {
-        #region Constants
-        // Contains instances of TCsvData.
-        // To reduce the amount of _instance object duplicates.
-        internal static Dictionary<Type, WeakReference<TCsvData>> s_sampleInstances = new Dictionary<Type, WeakReference<TCsvData>>();
-        #endregion
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvDataSubCollection{TCsvData}"/> class with the specified
@@ -32,27 +28,7 @@ namespace CoCSharp.Csv
         /// </param>
         public CsvDataSubCollection(int id, string tid)
         {
-            var weakRef = (WeakReference<TCsvData>)null;
-            // If we don't have any weak references to the TCsvData instance,
-            // we create a new instance and add its weak reference to the dictionary.
-            if (!s_sampleInstances.TryGetValue(typeof(TCsvData), out weakRef))
-            {
-                _instance = new TCsvData();
-
-                weakRef = new WeakReference<TCsvData>(_instance);
-                s_sampleInstances.Add(typeof(TCsvData), weakRef);
-            }
-            else
-            {
-                // If we don't manage to get the weak reference's target object
-                // we create a new instance and update the weak reference.
-                // Likely to happen when the GC kicked in.
-                if (!weakRef.TryGetTarget(out _instance))
-                {
-                    _instance = new TCsvData();
-                    weakRef.SetTarget(_instance);
-                }
-            }
+            _instance = CsvData.GetInstance<TCsvData>();
 
             if (_instance.InvalidDataID(id))
                 throw new ArgumentOutOfRangeException("id", _instance.GetArgsOutOfRangeMessage("id"));
@@ -294,7 +270,7 @@ namespace CoCSharp.Csv
             if (data.Level > _array.Length - 1)
                 return false;
 
-            if (_array[data.Level] == null || _array[data.Level] != data)
+            if (_array[data.Level] != data)
                 return false;
 
             data._isInCollection = false;
@@ -399,7 +375,7 @@ namespace CoCSharp.Csv
             if (data.Level > _array.Length - 1)
                 return false;
 
-            if (_array[data.Level] == null || _array[data.Level] != data)
+            if (_array[data.Level] != data)
                 return false;
 
             return true;

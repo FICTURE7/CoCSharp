@@ -36,8 +36,8 @@ namespace CoCSharp.Test.Data
         public void FromJson_InvalidArgs_Exception()
         {
             Assert.Throws<ArgumentNullException>(() => Fingerprint.FromJson(null));
-            Assert.Throws<ArgumentException>(() => Fingerprint.FromJson(string.Empty));
-            Assert.Throws<ArgumentException>(() => Fingerprint.FromJson("   "));
+            Assert.Throws<ArgumentNullException>(() => Fingerprint.FromJson(string.Empty));
+            Assert.Throws<ArgumentNullException>(() => Fingerprint.FromJson("   "));
         }
 
         [Test]

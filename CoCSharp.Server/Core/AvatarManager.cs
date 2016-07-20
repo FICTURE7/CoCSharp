@@ -1,4 +1,6 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Data;
+using CoCSharp.Logic;
+using CoCSharp.Server.Handlers.Commands;
 using LiteDB;
 using System;
 using System.IO;
@@ -21,12 +23,27 @@ namespace CoCSharp.Server.Core
             _liteDb.Mapper.RegisterType
             (
                 serialize: (village) => village.ToJson(),
-                deserialize: (bson) => Village.FromJson(bson)
+                deserialize: (bson) =>
+                {
+                    var village = Village.FromJson(bson);
+
+                    for (int i = 0; i < village.Buildings.Count; i++)
+                        village.Buildings[i].ConstructionFinished += CommandHandlers.BuildingConstructionFinished;
+
+                    for (int i = 0; i < village.Obstacles.Count; i++)
+                        village.Obstacles[i].ClearingFinished += CommandHandlers.ObstacleClearingFinished;
+
+                    for (int i = 0; i < village.Traps.Count; i++)
+                        village.Traps[i].ConstructionFinished += CommandHandlers.TrapConstructionFinished;
+
+                    return village;
+                }
             );
+
             // LiteDB does not support Int64 auto-id. So implement our own.
             _liteDb.Mapper.RegisterAutoId
             (
-                isEmpty: (value) => value == 0,
+                isEmpty: (value) => value == default(long),
                 newId: (collection) => collection.Max("_id").AsInt64 + 1L
             );
 
@@ -56,6 +73,7 @@ namespace CoCSharp.Server.Core
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
+            // Avatar.ID will be automatically incremented by LiteDB.
             _avatarCollection.Insert(avatar);
             return avatar;
         }
@@ -74,7 +92,8 @@ namespace CoCSharp.Server.Core
             avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
             avatar.ID = id;
-            avatar.Level = 10; // Skip the tutorials.
+            // Skip the tutorials.
+            avatar.Level = 10;
             avatar.Home = Village.FromJson(_startingVillage);
             avatar.Name = "Patrik"; // :]
             avatar.Gems = 300;
@@ -107,7 +126,11 @@ namespace CoCSharp.Server.Core
             if (string.IsNullOrWhiteSpace(token))
                 return null;
 
-            return _avatarCollection.FindOne(ava => ava.Token == token);
+            //return _avatarCollection.FindOne(ava => ava.Token == token);
+
+            var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
+            File.WriteAllText(avatar.Token + ".json", avatar.Home.ToJson());
+            return avatar;
         }
 
         public void SaveAvatar(Avatar avatar)

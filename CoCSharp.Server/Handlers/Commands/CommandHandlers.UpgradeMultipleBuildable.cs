@@ -3,6 +3,7 @@ using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
+using System.Diagnostics;
 
 namespace CoCSharp.Server.Handlers.Commands
 {
@@ -15,17 +16,44 @@ namespace CoCSharp.Server.Handlers.Commands
             for (int i = 0; i < umbCommand.BuildingsGameID.Length; i++)
             {
                 var gameId = umbCommand.BuildingsGameID[i];
-                var token = new VillageObjectToken(server, client);
-                var buildable = client.Avatar.Home.GetVillageObject<Buildable>(gameId);
-                var data = server.AssetManager.SearchCsv<BuildingData>(buildable.GetDataID(), buildable.Level + 1);
+                var villageObject = client.Avatar.Home.GetVillageObject(gameId);
 
-                buildable.UserToken = token;
-                buildable.Data = data;
-                buildable.BeginConstruction();
+                Debug.Assert(villageObject.ID == gameId);
 
-                buildable.ConstructionFinished += ConstructionFinished;
-
-                FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, buildable.X, buildable.Y, buildable.Level);
+                if (villageObject is Building)
+                {
+                    var building = (Building)villageObject;
+                    if (!building.IsConstructing)
+                    {
+                        building.UserToken = client;
+                        building.BeginConstruction();
+                        FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+                    }
+                    else
+                    {
+                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, gameId);
+                        // OutOfSync.
+                    }
+                }
+                else if (villageObject is Trap)
+                {
+                    var trap = (Trap)villageObject;
+                    if (!trap.IsConstructing)
+                    {
+                        trap.UserToken = client;
+                        trap.BeginConstruction();
+                        FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
+                    }
+                    else
+                    {
+                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, gameId);
+                        // OutOfSync.
+                    }
+                }
+                else
+                {
+                    // Unknown Buildable object.
+                }
             }
         }
     }

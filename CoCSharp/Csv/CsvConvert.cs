@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CoCSharp.Csv
 {
@@ -197,18 +198,20 @@ namespace CoCSharp.Csv
             var parentObj = (TCsvData)null;
             // Hashtable of property name and parameters(property values).
             var parentCache = new Hashtable();
-            var dataCollection = new CsvDataCollection<TCsvData>();
+            var collection = new CsvDataCollection<TCsvData>();
+            var subCollection = (CsvDataSubCollection<TCsvData>)null;
 
             //var getterCalls = 0;
             //var setterCalls = 0;
             var index = -1;
             var level = -1;
 
-            for(int i = 0; i < rows.Count; i++)
+            for (int i = 0; i < rows.Count; i++)
             {
                 // We create a new instance of the Type T.
                 var childObj = new TCsvData();
                 var curRow = rows[i];
+                var isParent = false;
 
                 // Set Properties value loop.
                 for (int j = 0; j < propertyMap.Length; j++)
@@ -290,20 +293,20 @@ namespace CoCSharp.Csv
                         }
                     }
 
-                    var mustSet = false;
+                    var set = false;
                     if (returnType.IsValueType)
                     {
                         if (!parameters[0].Equals(defaultValue))
-                            mustSet = true;
+                            set = true;
                     }
                     else
                     {
-                        mustSet = parameters[0] != null;
+                        set = parameters[0] != null;
                     }
 
                     // If the property value is not a default value then
                     // we set it.
-                    if (mustSet)
+                    if (set)
                     {
                         //setterCalls++;
                         property.Setter.Invoke(childObj, parameters);
@@ -312,7 +315,7 @@ namespace CoCSharp.Csv
                     // Check if the property' name == "Name" and if the property's value is not null.
                     // If it meets the conditions then it is a parent.
                     // Because parents and children share the same name.
-                    var isParent = property.PropertyName == "Name" && value != DBNull.Value;
+                    isParent = property.PropertyName == "Name" && value != DBNull.Value;
                     if (isParent)
                     {
                         // Increase the index because its a new parent.
@@ -323,17 +326,26 @@ namespace CoCSharp.Csv
                         parentObj = childObj;
                         // Reset cache when we hit a new parent.
                         parentCache.Clear();
+
+                        if (subCollection != null)
+                            collection.Add(subCollection);
+
+                        subCollection = new CsvDataSubCollection<TCsvData>(parentObj.ID + index, parentObj.TID);
                     }
                 }
 
                 childObj.Index = index;
                 childObj.Level = ++level;
-                dataCollection.Add(childObj);
+                subCollection.Add(childObj);
             }
 
             //Console.WriteLine(getterCalls);
             //Console.WriteLine(setterCalls);
-            return dataCollection;
+
+            // Last subCollection does not get added
+            // so we add it here.
+            collection.Add(subCollection); 
+            return collection;
         }
     }
 }

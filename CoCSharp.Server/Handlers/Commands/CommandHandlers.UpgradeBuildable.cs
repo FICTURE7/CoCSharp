@@ -4,39 +4,53 @@ using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
+using System.Diagnostics;
 
 namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        public static void HandleUpgradeBuildableCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleUpgradeBuildableCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var ubCommand = (UpgradeBuildableCommand)command;
-            var token = new VillageObjectToken(server, client);
-            var buildable = client.Avatar.Home.GetVillageObject<Buildable>(ubCommand.BuildableGameID);
-            if (buildable.IsConstructing)
+
+            var villageObject = client.Avatar.Home.GetVillageObject(ubCommand.BuildableGameID);
+            Debug.Assert(villageObject.ID == ubCommand.BuildableGameID);
+
+            if (villageObject is Building)
             {
-                FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, ubCommand.BuildableGameID);
-                return;
+                var building = (Building)villageObject;
+                if (!building.IsConstructing)
+                {
+                    building.UserToken = client;
+                    building.BeginConstruction();
+                    FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+                }
+                else
+                {
+                    FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, ubCommand.BuildableGameID);
+                    // OutOfSync.
+                }
             }
-
-            var data = (CsvData)null;
-            if (buildable is Building)
+            else if (villageObject is Trap)
             {
-                data = server.AssetManager.SearchCsv<BuildingData>(buildable.GetDataID(), buildable.Level + 1);
+                var trap = (Trap)villageObject;
+                if (!trap.IsConstructing)
+                {
+                    trap.UserToken = client;
+                    trap.BeginConstruction();
+                    FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
+                }
+                else
+                {
+                    FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, ubCommand.BuildableGameID);
+                    // OutOfSync.
+                }
             }
-            else if (buildable is Trap)
+            else
             {
-                data = server.AssetManager.SearchCsv<TrapData>(buildable.GetDataID(), buildable.Level + 1);
+                // Unknown Buildable object.
             }
-
-            buildable.ConstructionFinished += ConstructionFinished;
-
-            buildable.UserToken = token;
-            buildable.Data = data;
-            buildable.BeginConstruction();
-
-            FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, buildable.X, buildable.Y, buildable.Level);
         }
     }
 }

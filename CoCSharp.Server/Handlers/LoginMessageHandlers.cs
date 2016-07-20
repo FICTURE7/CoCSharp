@@ -20,7 +20,7 @@ namespace CoCSharp.Server.Handlers
             if (client.SessionKey == null)
             {
                 var loginFailed = new LoginFailedMessage();
-                client.NetworkManager.SendMessage(loginFailed);
+                client.NetworkManager.SendMessage(loginFailed);       
                 return;
             }
 
@@ -53,6 +53,7 @@ namespace CoCSharp.Server.Handlers
 
             var avatar = (Avatar)null;
             var avatarManager = server.AvatarManager;
+
             // When UserID == 0 and UserToken == null, it means we should create a new account.
             if (lrMessage.UserID == 0 && lrMessage.UserToken == null)
             {
@@ -102,45 +103,25 @@ namespace CoCSharp.Server.Handlers
                 lsMessage.UserToken = avatar.Token;
             }
 
-            var home = avatar.Home;
-            var dataManager = server.AssetManager;
+            var avatarVillage = avatar.Home;
+            var assetManager = server.AssetManager;
             var npcManager = server.NpcManager;
 
-            avatar.NpcStars = npcManager.CompleteNpcStarList;
-            //avatar.ResourcesCapacity = home.GetResourceCapacity(dataManager.ResourcesData);
+            //Profiler.Start("Avatar.UpdateSlots");
+            //avatar.UpdateSlots(assetManager);
+            //Profiler.Stop("Avatar.UpdateSlots");
+            avatar.ResourcesCapacity = new ResourceCapacitySlot[]
+            {
+                new ResourceCapacitySlot(3000000, 1000),
+                new ResourceCapacitySlot(3000001, 1000),
+            };
+
             avatar.ResourcesAmount = new ResourceAmountSlot[]
             {
-                new ResourceAmountSlot(3000001, 100000),
-                new ResourceAmountSlot(3000002, 100000)
+                new ResourceAmountSlot(3000000, 1000),
+                new ResourceAmountSlot(3000001, 1000),
             };
-
-            avatar.Units = new UnitSlot[]
-            {
-                new UnitSlot(4000000, 999),
-                new UnitSlot(4000001, 999),
-                new UnitSlot(4000002, 999),
-                new UnitSlot(4000003, 999),
-                new UnitSlot(4000004, 999),
-                new UnitSlot(4000005, 999),
-                new UnitSlot(4000006, 999),
-                new UnitSlot(4000007, 999),
-                new UnitSlot(4000008, 999),
-                new UnitSlot(4000009, 999),
-            };
-
-            avatar.UnitUpgrades = new UnitUpgradeSlot[]
-            {
-                new UnitUpgradeSlot(4000000, 6),
-                new UnitUpgradeSlot(4000001, 6),
-                new UnitUpgradeSlot(4000002, 6),
-                new UnitUpgradeSlot(4000003, 6),
-                new UnitUpgradeSlot(4000004, 5),
-                new UnitUpgradeSlot(4000005, 5),
-                new UnitUpgradeSlot(4000006, 5),
-                new UnitUpgradeSlot(4000007, 3),
-                new UnitUpgradeSlot(4000008, 4),
-                new UnitUpgradeSlot(4000009, 4),
-            };
+            avatar.NpcStars = npcManager.CompleteNpcStarList;
 
             var ohdMessage = avatar.OwnHomeDataMessage;
             client.Avatar = avatar;

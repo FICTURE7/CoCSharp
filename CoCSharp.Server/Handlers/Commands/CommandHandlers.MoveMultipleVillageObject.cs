@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
+using System.Diagnostics;
 
 namespace CoCSharp.Server.Handlers.Commands
 {
@@ -14,6 +15,9 @@ namespace CoCSharp.Server.Handlers.Commands
                 var moveData = mmvCommand.MovesData[i];
                 var gameId = moveData.VillageObjectGameID;
                 var villageObject = client.Avatar.Home.GetVillageObject(gameId);
+
+                Debug.Assert(villageObject.ID == gameId);
+
                 villageObject.X = moveData.X;
                 villageObject.Y = moveData.Y;
 

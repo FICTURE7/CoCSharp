@@ -2,90 +2,99 @@
 using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic
 {
     /// <summary>
     /// Represents a Clash of Clans obstacle.
     /// </summary>
-    public class Obstacle : VillageObject
+    public class Obstacle : VillageObject<ObstacleData>
     {
+        #region Constants
         internal const int BaseGameID = 503000000;
 
+        private static readonly PropertyChangedEventArgs s_lootMultiplierChanged = new PropertyChangedEventArgs("LootMultiplier");
+
+        /// <summary/>
+        protected internal static readonly TimeSpan InstantClearTime = new TimeSpan(0);
+        #endregion
+
         #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
-        /// <see cref="Village"/> which contains the <see cref="Obstacle"/>.
-        /// </summary>
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
-        public Obstacle(Village village) : base(village)
+        // Constructor that FromJsonReader method is going to use.
+        internal Obstacle(Village village) : base(village)
         {
-            village.Obstacles.Add(this);
+            // Space
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Obstacle"/> and <see cref="ObstacleData"/> which is associated with it.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> containing the <see cref="Obstacle"/>.</param>
+        /// <param name="data"><see cref="ObstacleData"/> which is associated with this <see cref="Obstacle"/>.</param>
+        public Obstacle(Village village, ObstacleData data) : base(village, data)
+        {
+            // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
-        /// <see cref="Village"/> which contains the <see cref="Obstacle"/> and user token object.
+        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Obstacle"/> and <see cref="ObstacleData"/> which is associated with it and user token object.
         /// </summary>
+        /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
+        /// <param name="data"><see cref="ObstacleData"/> which is associated with this <see cref="Obstacle"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Obstacle"/>.</param>
-        public Obstacle(Village village, object userToken) : base(village)
+        public Obstacle(Village village, ObstacleData data, object userToken) : base(village, data)
         {
             UserToken = userToken;
-
-            village.Obstacles.Add(this);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
-        /// <see cref="Village"/> which contains the <see cref="Obstacle"/>, X coordinate and Y coordinate.
+        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified <see cref="Village"/> containing the <see cref="Obstacle"/>
+        /// and <see cref="ObstacleData"/> which is associated with it, X coordinate and Y coordinate.
         /// </summary>
+        /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
+        /// <param name="data"><see cref="ObstacleData"/> which is associated with this <see cref="Obstacle"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Obstacle(Village village, int x, int y) : base(village, x, y)
+        public Obstacle(Village village, ObstacleData data, int x, int y) : base(village, data, x, y)
         {
-            village.Obstacles.Add(this);
+            // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
-        /// <see cref="Village"/> which contains the <see cref="Obstacle"/>, X coordinate, Y coordinate and user token object.
+        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified <see cref="Village"/> containing the <see cref="Obstacle"/>
+        /// and <see cref="ObstacleData"/> which is associated with it, X coordinate, Y coordinate and user token object.
         /// </summary>
+        /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
+        /// <param name="data"><see cref="ObstacleData"/> which is associated with this <see cref="Obstacle"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Obstacle"/>.</param>
-        public Obstacle(Village village, int x, int y, object userToken) : base(village, x, y)
+        public Obstacle(Village village, ObstacleData data, int x, int y, object userToken) : base(village, data, x, y)
         {
             UserToken = userToken;
-
-            village.Obstacles.Add(this);
         }
         #endregion
 
         #region Fields & Properties
         /// <summary>
-        /// Gets or sets the <see cref="Type"/> of the <see cref="CsvData"/> expected
-        /// by the <see cref="Obstacle"/>.
+        /// The event raised when the clearing of the <see cref="Obstacle"/> is finished.
         /// </summary>
-        /// <remarks>
-        /// This is needed to make sure that the user provides a proper <see cref="CsvData"/> type
-        /// for the <see cref="VillageObject"/>.
-        /// </remarks>
-        protected override Type ExpectedDataType
-        {
-            get
-            {
-                return typeof(ObstacleData);
-            }
-        }
+        public event EventHandler<ClearingFinishedEventArgs> ClearingFinished;
 
         /// <summary>
         /// Gets or sets the user token associated with the <see cref="VillageObject"/>.
         /// </summary>
         /// <remarks>
-        /// This object is referenced in the <see cref="ConstructionFinishedEventArgs.UserToken"/>.
+        /// This object is referenced in the <see cref="ConstructionFinishedEventArgs{ObstacleData}.UserToken"/>.
         /// </remarks>
         public object UserToken { get; set; }
 
@@ -100,10 +109,25 @@ namespace CoCSharp.Logic
             }
         }
 
+        private int _lootMultiplier;
         /// <summary>
         /// Gets or sets the loot multiplier of the <see cref="Obstacle"/>.
         /// </summary>
-        public int LootMultiplier { get; set; }
+        public int LootMultiplier
+        {
+            get
+            {
+                return _lootMultiplier;
+            }
+            set
+            {
+                if (_lootMultiplier == value)
+                    return;
+
+                OnPropertyChanged(s_lootMultiplierChanged);
+                _lootMultiplier = value;
+            }
+        }
 
         /// <summary>
         /// Gets the duration of the clearing of the <see cref="Obstacle"/>.
@@ -164,43 +188,40 @@ namespace CoCSharp.Logic
             }
             set
             {
-                // Json.Net will set this value by reading it from a Json string or whatever.
                 ClearTEndUnixTimestamp = (DateTimeConverter.UnixUtcNow + value);
-                _clearTime = value;
             }
         }
-        // Duration of clearing, its pointless but just keeping it.
-        private int _clearTime;
 
         // End time of the clearing of the obstacle in UNIX timestamps.
         private int ClearTEndUnixTimestamp { get; set; }
+
+        // Determines whether the Obstacle is scheduled.
+        private bool _scheduled;
         #endregion
 
         #region Methods
+        #region Clearing
         /// <summary>
         /// Begins the clearing of the <see cref="Obstacle"/> if <see cref="IsClearing"/> is <c>false</c>
-        /// and <see cref="VillageObject.Data"/> is not null; otherwise 
+        /// and <see cref="VillageObject{ObstacleData}.Data"/> is not null; otherwise 
         /// it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>true</c>.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="VillageObject.Data"/> is <c>null</c>.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="VillageObject{ObstacleData}.Data"/> is <c>null</c>.</exception>
         public void BeginClearing()
         {
             if (IsClearing)
                 throw new InvalidOperationException("Obstacle object is already clearing.");
-            if (Data == null)
-                throw new InvalidOperationException("Obstacle.Data cannot be null.");
 
-            var data = GetObstacleData();
-
-            if (data.ClearTime == TimeSpan.FromSeconds(0))
+            Debug.Assert(Data != null);
+            if (Data.ClearTime == InstantClearTime)
             {
                 DoClearingFinished();
                 return;
             }
 
-            ClearEndTime = DateTime.UtcNow.Add(data.ClearTime);
-            InternalScheduleClearing();
+            ClearEndTime = DateTime.UtcNow.Add(Data.ClearTime);
+            ScheduleClearing();
         }
 
         /// <summary>
@@ -215,7 +236,7 @@ namespace CoCSharp.Logic
 
             var endTime = DateTime.UtcNow;
 
-            InternalCancelScheduleBuild();
+            CancelScheduleClearing();
 
             ClearTEndUnixTimestamp = 0;
             OnClearingFinished(new ClearingFinishedEventArgs()
@@ -228,24 +249,6 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Returns the associated <see cref="CsvData"/> with the <see cref="Obstacle"/> as
-        /// a <see cref="ObstacleData"/>.
-        /// </summary>
-        /// <returns>Associated <see cref="CsvData"/> with the <see cref="Obstacle"/> as a <see cref="ObstacleData"/>.</returns>
-        /// <exception cref="InvalidOperationException"><see cref="VillageObject.Data"/> is null.</exception>
-        public ObstacleData GetObstacleData()
-        {
-            if (Data == null)
-                throw new InvalidOperationException("Obstacle.Data is null.");
-
-            return (ObstacleData)Data;
-        }
-
-        /// <summary>
-        /// The event raised when the clearing of the <see cref="Obstacle"/> is finished.
-        /// </summary>
-        public event EventHandler<ClearingFinishedEventArgs> ClearingFinished;
-        /// <summary>
         /// Use this method to trigger the <see cref="ClearingFinished"/> event.
         /// </summary>
         /// <param name="e">The arguments data.</param>
@@ -255,14 +258,20 @@ namespace CoCSharp.Logic
                 ClearingFinished(this, e);
         }
 
-        internal void InternalScheduleClearing()
+        internal void ScheduleClearing()
         {
+            Debug.Assert(!_scheduled);
+
             LogicScheduler.ScheduleLogic(DoClearingFinished, ClearEndTime, userToken: this);
+            _scheduled = true;
         }
 
-        internal void InternalCancelScheduleBuild()
+        internal void CancelScheduleClearing()
         {
+            Debug.Assert(_scheduled);
+
             LogicScheduler.CancelSchedule(this);
+            _scheduled = false;
         }
 
         private void DoClearingFinished()
@@ -275,15 +284,39 @@ namespace CoCSharp.Logic
                 UserToken = UserToken
             };
 
+            var index = ID - BaseGameID;
+            Village.Obstacles.RemoveAt(index);
+            PushToPool();
+
             OnClearingFinished(args);
+
+            _scheduled = false;
+        }
+        #endregion
+
+        internal override void ResetVillageObject()
+        {
+            base.ResetVillageObject();
+            _lootMultiplier = default(int);
+            ClearTEndUnixTimestamp = default(int);
         }
 
+        internal override void RegisterVillageObject()
+        {
+            ID = BaseGameID + Village.Obstacles.Count;
+            Village.Obstacles.Add(this);
+        }
+
+        #region Json Reading/Writing
         internal override void ToJsonWriter(JsonWriter writer)
         {
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(DataID);
+            writer.WriteValue(Data.ID);
+
+            writer.WritePropertyName("id");
+            writer.WriteValue(ID);
 
             if (ClearTSeconds != default(int))
             {
@@ -297,11 +330,24 @@ namespace CoCSharp.Logic
             writer.WritePropertyName("y");
             writer.WriteValue(Y);
 
+            if (LootMultiplier != default(int))
+            {
+                writer.WritePropertyName("loot_multiply_ver");
+                writer.WriteValue(LootMultiplier);
+            }
+
             writer.WriteEndObject();
         }
 
         internal override void FromJsonReader(JsonReader reader)
         {
+            var instance = CsvData.GetInstance<ObstacleData>();
+            // clear_t value.
+            var clearTime = -1;
+
+            var dataId = -1;
+            var dataIdSet = false;
+
             while (reader.Read())
             {
                 if (reader.TokenType == JsonToken.EndObject)
@@ -313,11 +359,12 @@ namespace CoCSharp.Logic
                     switch (propertyName)
                     {
                         case "data":
-                            DataID = reader.ReadAsInt32().Value;
+                            dataId = reader.ReadAsInt32().Value;
+                            dataIdSet = true;
                             break;
 
                         case "clear_t":
-                            ClearTSeconds = reader.ReadAsInt32().Value;
+                            clearTime = reader.ReadAsInt32().Value;
                             break;
 
                         case "x":
@@ -334,6 +381,38 @@ namespace CoCSharp.Logic
                     }
                 }
             }
+
+            if (!dataIdSet)
+                throw new InvalidOperationException("Obstacle JSON does not contain 'data' field.");
+
+            if (instance.InvalidDataID(dataId))
+                throw new InvalidOperationException("Obstacle JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
+
+            // No need to cache the sub-collection the ObstacleData is in, because we can't upgrade Obstacles.
+            var data = AssetManager.SearchCsvNoCheck<ObstacleData>(dataId, 0);
+            if (data == null)
+                throw new InvalidOperationException("Could not find ObstacleData with ID '" + dataId + "'.");
+
+            _data = data;
+
+            if (clearTime == -1)
+                return;
+
+            ClearTSeconds = clearTime;
+            ScheduleClearing();
+        }
+        #endregion
+
+        internal static Obstacle GetInstance(Village village)
+        {
+            var obj = (VillageObject)null;
+            if (VillageObjectPool.TryPop(BaseGameID, out obj))
+            {
+                obj.Village = village;
+                return (Obstacle)obj;
+            }
+
+            return new Obstacle(village);
         }
         #endregion
     }

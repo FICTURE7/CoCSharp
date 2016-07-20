@@ -6,6 +6,8 @@ namespace CoCSharp.Csv
 {
     internal class ObjectMapper
     {
+        private const string TIDName = "TID";
+
         public ObjectMapper()
         {
             // Space
@@ -41,7 +43,11 @@ namespace CoCSharp.Csv
                 map.Setter = setter;
                 map.DeclaringType = property.DeclaringType;
 
-                propertyMaps.Add(map);
+                // Make sure TID property is first.
+                if (map.Name == TIDName)
+                    propertyMaps.Insert(0, map);
+                else
+                    propertyMaps.Add(map);
             }
             return propertyMaps.ToArray();
         }

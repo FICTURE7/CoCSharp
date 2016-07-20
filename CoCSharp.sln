@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp", "CoCSharp\CoCSharp.csproj", "{7481E33E-B214-421B-8F9B-A812958395DD}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,6 +15,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostBuild", "PostBuild\PostBuild.csproj", "{A6CA6697-2A7D-4012-84F7-A0E9E7ABB289}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp.Test", "CoCSharp.Test\CoCSharp.Test.csproj", "{A10E17E7-2B42-4A02-900B-B91E3950F80C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp.Benchmark", "CoCSharp.Benchmark\CoCSharp.Benchmark.csproj", "{EACF0AE5-D485-41C4-A164-BB5268D45CC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +44,10 @@ Global
 		{A10E17E7-2B42-4A02-900B-B91E3950F80C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A10E17E7-2B42-4A02-900B-B91E3950F80C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A10E17E7-2B42-4A02-900B-B91E3950F80C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EACF0AE5-D485-41C4-A164-BB5268D45CC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EACF0AE5-D485-41C4-A164-BB5268D45CC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EACF0AE5-D485-41C4-A164-BB5268D45CC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EACF0AE5-D485-41C4-A164-BB5268D45CC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

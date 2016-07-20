@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 
 // Make sure that we can test it.
 [assembly: InternalsVisibleTo("CoCSharp.Test")]
+[assembly: InternalsVisibleTo("CoCSharp.Benchmark")]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information

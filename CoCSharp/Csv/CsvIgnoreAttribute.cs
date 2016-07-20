@@ -3,7 +3,7 @@
 namespace CoCSharp.Csv
 {
     /// <summary>
-    /// Instructs the <see cref="CsvConvert"/> to not serialize the member.
+    /// Instructs the <see cref="CsvConvert"/> to not serialize the member. This class cannot be inherited.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class CsvIgnoreAttribute : Attribute

@@ -18,7 +18,7 @@ namespace CoCSharp.Server.Handlers.Commands
             if (embeddedCommand == null)
                 return;
 
-            server.HandleCommand(client, command);
+            server.HandleCommand(client, embeddedCommand);
         }
     }
 }

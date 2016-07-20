@@ -1,5 +1,6 @@
 # Prefs
 *.suo
+*.vsp
 
 # Build
 bin/
