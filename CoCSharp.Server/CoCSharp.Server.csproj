@@ -70,7 +70,6 @@
     <Compile Include="Handlers\Commands\CommandHandlers.SpeedUpConstruction.cs" />
     <Compile Include="Handlers\Commands\CommandHandlers.UpgradeBuildable.cs" />
     <Compile Include="Handlers\Commands\CommandHandlers.UpgradeMultipleBuildable.cs" />
-    <Compile Include="Handlers\VillageObjectUserToken.cs" />
     <Compile Include="Handlers\InGameMessageHandlers.cs" />
     <Compile Include="Handlers\LoginMessageHandlers.cs" />
     <Compile Include="Program.cs" />

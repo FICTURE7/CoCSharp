@@ -19,7 +19,7 @@ namespace CoCSharp.Server
     {
         public CoCServer()
         {
-            _settings = new NetworkManagerAsyncSettings(50, 50);
+            _settings = new NetworkManagerAsyncSettings(64, 64);
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(100);
 

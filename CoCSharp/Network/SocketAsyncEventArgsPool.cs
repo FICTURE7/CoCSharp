@@ -32,7 +32,7 @@ namespace CoCSharp.Network
             lock (_lock)
             {
                 if (_pool.Count == 0)
-                    throw new InvalidOperationException("Pool empty.");
+                    return null;
 
                 return _pool.Pop();
             }
@@ -45,9 +45,6 @@ namespace CoCSharp.Network
 
             lock (_lock)
             {
-                if (Count >= Capacity)
-                    throw new InvalidOperationException("Cannot push args because the SocketAsyncEventArgsPool has reached it capacity.");
-
                 _pool.Push(args);
             }
         }

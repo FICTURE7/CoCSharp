@@ -11,7 +11,7 @@ namespace CoCSharp.Network
     public sealed class NetworkManagerAsyncSettings : IDisposable
     {
         /// <summary>
-        /// Initailizes a new instance of the <see cref="NetworkManagerAsync"/> class
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
         /// with default settings.
         /// </summary>
         public NetworkManagerAsyncSettings() 

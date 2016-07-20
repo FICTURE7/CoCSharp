@@ -75,8 +75,14 @@ namespace CoCSharp.Network
             _receivePool = Settings.ReceivePool;
             _sendPool = Settings.SendPool;
 
-            //TODO: If _receivePool.Pop() returns null we're done. =[
-            StartReceive(_receivePool.Pop());
+            var args = _receivePool.Pop();
+            if (args == null)
+            {
+                args = new SocketAsyncEventArgs();
+                args.SetBuffer(new byte[65535], 0, 65535);
+                MessageReceiveToken.Create(args);
+            }
+            StartReceive(args);
         }
 
         private bool _disposed;
@@ -155,6 +161,12 @@ namespace CoCSharp.Network
 
                     var messageData = ((MemoryStream)enMessageWriter.BaseStream).ToArray();
                     var args = _sendPool.Pop();
+                    if (args == null)
+                    {
+                        args = new SocketAsyncEventArgs();
+                        args.SetBuffer(new byte[65535], 0, 65535);
+                        MessageSendToken.Create(args);
+                    }
                     var token = args.UserToken as MessageSendToken;
                     token.ID = message.ID;
                     token.Length = body.Length;
