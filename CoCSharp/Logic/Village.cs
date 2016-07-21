@@ -320,7 +320,7 @@ namespace CoCSharp.Logic
                 WriteTrapArray(jsonWriter);
 
                 jsonWriter.WritePropertyName("decos");
-                WriteTrapArray(jsonWriter);
+                WriteDecorationArray(jsonWriter);
 
                 jsonWriter.WriteEndObject();
 
