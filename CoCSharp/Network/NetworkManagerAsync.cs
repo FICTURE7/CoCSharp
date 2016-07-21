@@ -72,8 +72,8 @@ namespace CoCSharp.Network
             Crypto = crypto;
             Statistics = new NetworkManagerAsyncStatistics();
 
-            _receivePool = Settings.ReceivePool;
-            _sendPool = Settings.SendPool;
+            _receivePool = Settings._receivePool;
+            _sendPool = Settings._sendPool;
 
             var args = _receivePool.Pop();
             if (args == null)

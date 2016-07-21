@@ -45,6 +45,10 @@ namespace CoCSharp.Network
 
             lock (_lock)
             {
+                // Resize the capacity of the pool.
+                if (Count >= Capacity)
+                    Capacity++;
+
                 _pool.Push(args);
             }
         }

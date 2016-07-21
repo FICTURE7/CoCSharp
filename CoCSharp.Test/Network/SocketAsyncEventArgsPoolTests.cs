@@ -34,17 +34,24 @@ namespace CoCSharp.Test.Network
         }
 
         [Test]
-        public void PopPush_ExceedingBounds_Exception()
+        public void Pop_PoolEmpty_RetusnNull()
         {
             var pool = new SocketAsyncEventArgsPool(1);
+            var args = pool.Pop();
+            Assert.Null(args);
+        }
 
-            // Populate the pool with one extra.
-            pool.Push(new SocketAsyncEventArgs());
-            Assert.Throws<InvalidOperationException>(() => pool.Push(new SocketAsyncEventArgs()));
+        [Test]
+        public void Push__ExceedCapacity__Pushed_And_CapacityResized()
+        {
+            var pool = new SocketAsyncEventArgsPool(1);
+            var args = new SocketAsyncEventArgs();
 
-            // Remove all th args with one extra.
-            pool.Pop();
-            Assert.Throws<InvalidOperationException>(() => pool.Pop());
+            pool.Push(args);
+            Assert.AreEqual(1, pool.Capacity);
+
+            pool.Push(args);
+            Assert.AreEqual(2, pool.Capacity);
         }
     }
 }
