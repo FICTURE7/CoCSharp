@@ -33,8 +33,6 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("data");
 
             _data = data;
-            //CheckAndSetTownHall();
-
             _baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
         }
 
@@ -44,8 +42,6 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("data");
 
             _data = data;
-            //CheckAndSetTownHall();
-
             _baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
         }
         #endregion
@@ -77,22 +73,6 @@ namespace CoCSharp.Logic
 
                 OnPropertyChanged(s_dataChanged);
                 _data = value;
-            }
-        }
-        #endregion
-
-        #region Methods
-        // Determines if the current VillageObject is a TownHall building based on Data.TID
-        // and set the townhall of the Village to this VillageObject. 
-        internal void CheckAndSetTownHall()
-        {           
-            if (Data.TID == "TID_BUILDING_TOWN_HALL")
-            {
-                // A Village cannot contain more than 1 townhall.
-                if (Village._townhall != null)
-                    throw new InvalidOperationException("Village already contains a TownHall.");
-
-                Village._townhall = this;
             }
         }
         #endregion

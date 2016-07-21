@@ -119,8 +119,7 @@ namespace CoCSharp.Logic
             if (!CanUpgrade)
                 throw new InvalidOperationException("Building object is maxed or TownHall level too low.");
 
-            Debug.Assert(Data != null);
-            Debug.Assert(_nextUpgrade != null);
+            Debug.Assert(Data != null && _nextUpgrade != null);
 
             var buildData = _isConstructed ? _nextUpgrade : Data;
             var startTime = DateTime.UtcNow;
@@ -214,17 +213,20 @@ namespace CoCSharp.Logic
 
         internal override bool CanUpgradeCheckTownHallLevel()
         {
-            Debug.Assert(_nextUpgrade != null);
+            Debug.Assert(_nextUpgrade != null && Data != null);
+
 
             if (_nextUpgrade.TID == "TID_BUILDING_TOWN_HALL")
                 return true;
+
+            var buildData = _isConstructed ? _nextUpgrade : Data;
 
             var th = Village.TownHall;
             if (th == null)
                 throw new InvalidOperationException("Village does not contain a TownHall.");
 
             // TownHallLevel field is not a zero-based so we subtract 1.
-            if (th.Data.Level >= _nextUpgrade.TownHallLevel - 1)
+            if (th.Data.Level >= buildData.TownHallLevel - 1)
                 return true;
 
             return false;
@@ -403,6 +405,20 @@ namespace CoCSharp.Logic
             ScheduleBuild();
         }
         #endregion
+
+        // Determines if the current VillageObject is a TownHall building based on Data.TID
+        // and set the townhall of the Village to this VillageObject. 
+        internal void CheckAndSetTownHall()
+        {
+            if (Data.TID == "TID_BUILDING_TOWN_HALL")
+            {
+                // A Village cannot contain more than 1 townhall.
+                if (Village.TownHall != null)
+                    throw new InvalidOperationException("Village already contains a TownHall.");
+
+                Village.TownHall = this;
+            }
+        }
 
         internal static Building GetInstance(Village village)
         {

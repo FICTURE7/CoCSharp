@@ -109,24 +109,23 @@ namespace CoCSharp.Logic
         /// </summary>
         public List<Decoration> Decorations { get; set; }
 
-        internal VillageObject _townhall;
+        internal Building _townhall;
         /// <summary>
         /// Gets or sets the TownHall <see cref="Building"/> of the <see cref="Village"/>; returns
         /// <c>null</c> if there is no TownHall in the <see cref="Village"/>.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="value"/> Data ID is not 1000001.</exception>
         public Building TownHall
         {
             get
             {
-                return (Building)_townhall;
+                return _townhall;
             }
             internal set
             {
                 _townhall = value;
+                _townhall.ConstructionFinished += OnTownHallConstructionFinished;
             }
-        }
+        }       
         #endregion
 
         #region Methods
@@ -486,7 +485,7 @@ namespace CoCSharp.Logic
                     // If we do not have the townhall building yet to figure if we can upgrade or not
                     // we add the building to the list of buildings whose CanUpgrade value will be
                     // updated at the end of the array read.
-                    if (village._townhall == null)
+                    if (village.TownHall == null)
                     {
                         list.Add(building);
                     }
@@ -499,7 +498,7 @@ namespace CoCSharp.Logic
                 }
             }
 
-            if (village._townhall == null)
+            if (village.TownHall == null)
                 throw new InvalidOperationException("Village does not contain a TownHall building.");
 
             for (int i = 0; i < list.Count; i++)
@@ -551,7 +550,7 @@ namespace CoCSharp.Logic
                     trap.FromJsonReader(reader);
 
                     // Refer to ReadBuildingArray.
-                    if (village._townhall == null)
+                    if (village.TownHall == null)
                     {
                         list.Add(trap);
                     }
@@ -591,6 +590,19 @@ namespace CoCSharp.Logic
             }
         }
         #endregion
+
+        // Called when ever the TownHall has been upgraded.
+        // To update the CanUpgrade flags of Buildings and Traps.
+        private void OnTownHallConstructionFinished(object sender, ConstructionFinishedEventArgs<BuildingData> e)
+        {
+            if (e.WasCancelled == true)
+                return;
+
+            for (int i = 0; i < Buildings.Count; i++)
+                Buildings[i].UpdateCanUpgade();
+            for (int i = 0; i < Traps.Count; i++)
+                Traps[i].UpdateCanUpgade();
+        }
         #endregion
     }
 }

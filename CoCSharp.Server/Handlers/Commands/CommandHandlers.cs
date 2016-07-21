@@ -1,4 +1,3 @@
-using CoCSharp.Csv;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 using CoCSharp.Network.Messages.Commands;
@@ -70,8 +69,15 @@ namespace CoCSharp.Server.Handlers.Commands
             var building = (Building)e.BuildableConstructed;
             var client = (CoCRemoteClient)e.UserToken;
 
+            // Can happen when the buildings were scheduled automatically on load.
+            if (client == null)
+            {
+                return;
+            }
+
             if (e.WasCancelled)
             {
+
                 FancyConsole.WriteLine(CancelledConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
             }
             else

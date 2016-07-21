@@ -119,8 +119,7 @@ namespace CoCSharp.Logic
             if (!CanUpgrade)
                 throw new InvalidOperationException("Trap object is maxed or TownHall level is too low.");
 
-            Debug.Assert(Data != null);
-            Debug.Assert(_nextUpgrade != null);
+            Debug.Assert(Data != null && _nextUpgrade != null);
 
             var buildData = _isConstructed ? _nextUpgrade : Data;
             var startTime = DateTime.UtcNow;
@@ -213,14 +212,15 @@ namespace CoCSharp.Logic
 
         internal override bool CanUpgradeCheckTownHallLevel()
         {
-            Debug.Assert(_nextUpgrade != null);
+            Debug.Assert(_nextUpgrade != null && Data != null);
 
+            var buildData = _isConstructed ? _nextUpgrade : Data;
             var th = Village.TownHall;
             if (th == null)
                 throw new InvalidOperationException("Village does not contain a TownHall.");
 
             // TownHallLevel field is not a zero-based so we subtract 1.
-            if (th.Data.Level >= _nextUpgrade.TownHallLevel - 1)
+            if (th.Data.Level >= buildData.TownHallLevel - 1)
                 return true;
 
             return false;
@@ -294,10 +294,10 @@ namespace CoCSharp.Logic
             var constTimeEnd = -1;
             // const_t value.
             var constTime = -1;
-            
+
             var dataId = -1;
             var dataIdSet = false;
-            
+
             var lvl = -1;
             var lvlSet = false;
 
@@ -368,7 +368,7 @@ namespace CoCSharp.Logic
             if (instance.InvalidDataID(dataId))
                 throw new InvalidOperationException("Trap JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
-            UpdateData(dataId, lvl);           
+            UpdateData(dataId, lvl);
 
             // Try to use const_t if we were not able to get const_t_end's value.
             if (constTimeEnd == -1)

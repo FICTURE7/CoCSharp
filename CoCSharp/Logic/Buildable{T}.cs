@@ -255,7 +255,9 @@ namespace CoCSharp.Logic
             var nextLvl = Data.Level + 1;
             _nextUpgrade = _collectionCache[nextLvl];
 
-            if (_nextUpgrade == null)
+            var data = _isConstructed ? _nextUpgrade : Data;
+            // Theirs no upgrade left.
+            if (data == null)
             {
                 _canUpgrade = false;
             }
