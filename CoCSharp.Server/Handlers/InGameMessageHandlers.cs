@@ -1,4 +1,6 @@
-﻿using CoCSharp.Network;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Models;
+using CoCSharp.Network;
 using CoCSharp.Network.Messages;
 using CoCSharp.Server.Core;
 
@@ -99,6 +101,71 @@ namespace CoCSharp.Server.Handlers
         {
             var cmcMessage = message as ChatMessageClientMessage;
             var cmsMessage = new ChatMessageServerMessage();
+            if (cmcMessage.Message[0] == '/')
+            {
+                var cmd = cmcMessage.Message.Substring(1);
+                cmsMessage.Name = "Server";
+                switch (cmd)
+                {
+                    case "addgems":
+                        client.Avatar.Gems += 500;
+                        client.Avatar.FreeGems += 500;
+
+                        cmsMessage.Message = "Added 500 gems.";
+                        client.NetworkManager.SendMessage(cmsMessage);
+
+                        //var ohdMessage = client.Avatar.OwnHomeDataMessage;
+                        client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+                        return;
+
+                    case "clearobstacles":
+                        var count = client.Avatar.Home.Obstacles.Count;
+                        client.Avatar.Home.Obstacles.Clear();
+
+                        //var ohdMessage = client.Avatar.OwnHomeDataMessage;
+                        client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+
+                        cmsMessage.Message = "Cleared " + count + " obstacles.";
+                        client.NetworkManager.SendMessage(cmsMessage);
+                        return;
+
+                    case "max":
+                        var countBuilding = client.Avatar.Home.Buildings.Count;
+                        for (int i = 0; i < countBuilding; i++)
+                        {
+                            var building = client.Avatar.Home.Buildings[i];
+                            var collection = AssetManager.DefaultInstance.SearchCsv<BuildingData>(building.Data.ID);
+                            var data = collection[collection.Count - 1];
+                            if (building.IsConstructing)
+                                building.CancelConstruction();
+
+                            building.Data = data;
+                        }
+
+                        var countTraps = client.Avatar.Home.Traps.Count;
+                        for (int i = 0; i < countTraps; i++)
+                        {
+                            var trap = client.Avatar.Home.Traps[i];
+                            var collection = AssetManager.DefaultInstance.SearchCsv<TrapData>(trap.Data.ID);
+                            var data = collection[collection.Count - 1];
+                            if (trap.IsConstructing)
+                                trap.CancelConstruction();
+
+                            trap.Data = data;
+                        }
+
+                        cmsMessage.Message = "Maxed " + countBuilding + " buildings and " + countTraps + " traps.";
+                        client.NetworkManager.SendMessage(cmsMessage);
+
+                        client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+                        return;
+
+                    default:
+                        cmsMessage.Message = "Unknown command.";
+                        client.NetworkManager.SendMessage(cmsMessage);
+                        return;
+                }
+            }
 
             //TODO: Set alliance and all that jazz.
 
