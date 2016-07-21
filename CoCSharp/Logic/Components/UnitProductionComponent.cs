@@ -8,6 +8,8 @@ namespace CoCSharp.Logic.Components
     /// </summary>
     public class UnitProductionComponent : LogicComponent
     {
+        internal const int ID = 0;
+
         internal UnitProductionComponent()
         {
             // Space
@@ -18,6 +20,14 @@ namespace CoCSharp.Logic.Components
             get
             {
                 return "unit_prod";
+            }
+        }
+
+        internal override int ComponentID
+        {
+            get
+            {
+                return ID;
             }
         }
 

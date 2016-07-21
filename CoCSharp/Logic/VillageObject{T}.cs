@@ -79,22 +79,6 @@ namespace CoCSharp.Logic
                 _data = value;
             }
         }
-
-        //TODO: Remove this thing.
-        // ID of _data;
-        private int _dataId;
-        [Obsolete]
-        internal int DataID
-        {
-            get
-            {
-                return _dataId;
-            }
-            set
-            {
-                _dataId = value;
-            }
-        }
         #endregion
 
         #region Methods

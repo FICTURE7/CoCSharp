@@ -32,7 +32,7 @@ namespace CoCSharp.Logic
             if (village == null)
                 throw new ArgumentNullException("village");
 
-            _components = new Dictionary<Type, LogicComponent>();
+            _components = new LogicComponent[8];
 
             // Setter of Village property will call RegisterVillageObject.
             Village = village;
@@ -48,14 +48,12 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
+        // Array containing the LogicComponent attached to this VillageObject.
+        private readonly LogicComponent[] _components;
         // Amount of time the VillageObject was pushed back to the pool.
         private int _count;
         // Amount of time the VillageObject was reused.
         internal int _recycled;
-
-        // TODO: Switch to an array.
-        // Dictionary/List of LogicComponent in the Village Object.
-        private Dictionary<Type, LogicComponent> _components;
 
         /// <summary>
         /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
@@ -168,44 +166,53 @@ namespace CoCSharp.Logic
 
         #region Methods
         #region Component
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        public void AddComponent<T>() where T : LogicComponent
+        // Adds the specified component to the VillageObject.
+        internal void AddComponent(LogicComponent component)
         {
-            var type = typeof(T);
-            if (_components.ContainsKey(type))
-                throw new ArgumentException("LogicComponent of type T was already added to the VillageObject.", "T");
+            component._vilObject = this;
+            _components[component.ComponentID] = component;
+        }
 
-            var instance = (T)Activator.CreateInstance(type, true);
-            instance._vilObject = this;
+        // Removes the component of the specified type from the VillageObject.
+        // NOTE: This thing should not be called in normal cases. Unless pushing back to pool.
+        internal bool RemoveComponent(int componentId)
+        {
+            var remove = _components[componentId] != null;
+            if (remove)
+            {
+                LogicComponentPool.Push(_components[componentId]);
+                _components[componentId] = null;
+            }
+            return remove;
+        }
 
-            _components.Add(type, instance);
+        // Returns the LogicComponent with the specified component ID.
+        internal LogicComponent GetComponent(int componentId)
+        {
+            return _components[componentId];
         }
 
         /// <summary>
-        /// 
+        /// Gets the instance of the specified <typeparamref name="TLogicComponent"/> attached to this
+        /// <see cref="VillageObject"/>; returns null if no instance of the specified <typeparamref name="TLogicComponent"/>
+        /// was found.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public bool RemoveComponent<T>() where T : LogicComponent
-        {
-            var type = typeof(T);
-            return _components.Remove(type);
-        }
-
-        /// <summary>
         /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public T GetComponent<T>() where T : LogicComponent
+        /// <typeparam name="TLogicComponent">Type of <see cref="LogicComponent"/> to retrieve.</typeparam>
+        /// <returns>
+        /// Instance of the specified <typeparamref name="TLogicComponent"/>; returns null if no instance of the 
+        /// specified <typeparamref name="TLogicComponent"/> was found.
+        /// </returns>
+        public TLogicComponent GetComponent<TLogicComponent>() where TLogicComponent : LogicComponent
         {
-            var type = typeof(T);
-            var instance = (LogicComponent)null;
-            _components.TryGetValue(type, out instance);
-            return (T)instance;
+            var type = typeof(TLogicComponent);
+            for (int i = 0; i < _components.Length; i++)
+            {
+                if (_components[i] != null && _components[i].GetType() == type)
+                    return (TLogicComponent)_components[i];
+            }
+            
+            return null;
         }
         #endregion
 

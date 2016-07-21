@@ -93,6 +93,7 @@
     <Compile Include="Logic\Components\UnitProductionComponent.cs" />
     <Compile Include="Logic\Components\UnitStorageComponent.cs" />
     <Compile Include="Logic\LogicComponent.cs" />
+    <Compile Include="Logic\LogicComponentPool.cs" />
     <Compile Include="Logic\LogicOperations.cs" />
     <Compile Include="Logic\LogicUtils.cs" />
     <Compile Include="Logic\VillageObjectPool.cs" />

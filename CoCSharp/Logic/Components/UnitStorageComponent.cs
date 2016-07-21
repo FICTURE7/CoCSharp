@@ -8,11 +8,26 @@ namespace CoCSharp.Logic.Components
     /// </summary>
     public class UnitStorageComponent : LogicComponent
     {
+        internal const int ID = 1;
+
+        internal UnitStorageComponent()
+        {
+            // Space
+        }
+
         internal override string ComponentName
         {
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        internal override int ComponentID
+        {
+            get
+            {
+                return ID;
             }
         }
 

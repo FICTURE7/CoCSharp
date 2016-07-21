@@ -6,15 +6,13 @@ namespace CoCSharp.Logic
     // VillageObject.PushToPool will push the VillageObject here.
     internal static class VillageObjectPool
     {
-        private const int PoolSize = 8;
-
-        //internal static int s_popped = 0;
+        private const int PoolArraySize = 8;
 
         static VillageObjectPool()
         {
             // Initialize a pool array of 8 element, each representing a VillageObject type.
-            _pools = new ConcurrentBag<VillageObject>[PoolSize];
-            for (int i = 0; i < PoolSize; i++)
+            _pools = new ConcurrentBag<VillageObject>[PoolArraySize];
+            for (int i = 0; i < PoolArraySize; i++)
                 _pools[i] = new ConcurrentBag<VillageObject>();
         }
 
@@ -23,30 +21,31 @@ namespace CoCSharp.Logic
             get
             {
                 var sum = 0;
-                for (int i = 0; i < PoolSize; i++)
+                for (int i = 0; i < PoolArraySize; i++)
                     sum += _pools[i].Count;
                 return sum;
             }
         }
 
-        private static ConcurrentBag<VillageObject>[] _pools;
+        private static readonly ConcurrentBag<VillageObject>[] _pools;
 
         // Pushes the specified VillageObject to the corresponding pool.
         public static void Push(VillageObject obj)
         {
-            GetPool(obj.ID).Add(obj);          
+            GetPool(obj.ID).Add(obj);
         }
 
         // Tries to get the VillageObject with the corresponding game ID.
         public static bool TryPop(int gameId, out VillageObject obj)
         {
+            //return GetPool(gameId).TryTake(out obj);
+
             obj = default(VillageObject);
             var success = GetPool(gameId).TryTake(out obj);
             if (success)
             {
                 obj._recycled++;
                 obj.ResetVillageObject();
-                //s_popped++;
             }
 
             return success;

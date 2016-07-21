@@ -17,13 +17,13 @@ namespace CoCSharp.Benchmark.Test
 
         private readonly string _villageJson;
 
-        public override int Count
-        {
-            get
-            {
-                return 500;
-            }
-        }
+        //public override int Count
+        //{
+        //    get
+        //    {
+        //        return 500;
+        //    }
+        //}
 
         private List<WeakReference> _refs;
         private Village _village;
