@@ -369,6 +369,7 @@ namespace CoCSharp.Logic
                 throw new InvalidOperationException("Trap JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
             UpdateData(dataId, lvl);
+            UpdateCanUpgade();
 
             // Try to use const_t if we were not able to get const_t_end's value.
             if (constTimeEnd == -1)

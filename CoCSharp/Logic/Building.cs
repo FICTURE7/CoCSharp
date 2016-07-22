@@ -375,6 +375,8 @@ namespace CoCSharp.Logic
                 throw new InvalidOperationException("Building JSON contained an invalid BuildingData ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
             UpdateData(dataId, lvl);
+            UpdateCanUpgade();
+
             // Check if the current building is a townhall.
             // If yes set Village.TownHall to this building.
             CheckAndSetTownHall();
