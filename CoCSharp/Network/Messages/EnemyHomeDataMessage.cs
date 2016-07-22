@@ -20,7 +20,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="EnemyHomeDataMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 0; } }
+        public override ushort ID { get { return 24107; } }
 
         /// <summary>
         /// Time since last visit.
