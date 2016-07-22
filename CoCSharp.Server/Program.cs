@@ -1,5 +1,10 @@
-﻿using System;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Models;
+using CoCSharp.Network;
+using CoCSharp.Network.Messages;
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 namespace CoCSharp.Server
@@ -23,7 +28,23 @@ namespace CoCSharp.Server
             stopwatch.Stop();
 
             Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
+
+            //TODO: Don't waste this thread making it sleep forever, instead use it for a queue save system.
             Thread.Sleep(Timeout.Infinite);
+        }
+
+        public static void m()
+        {
+            AssetManager.DefaultInstance = new AssetManager("Content");
+            AssetManager.DefaultInstance.LoadCsv<BuildingData>("buildings.csv");
+            AssetManager.DefaultInstance.LoadCsv<ObstacleData>("obstacles.csv");
+            AssetManager.DefaultInstance.LoadCsv<TrapData>("traps.csv");
+            AssetManager.DefaultInstance.LoadCsv<DecorationData>("decos.csv");
+
+            var bytes = File.ReadAllBytes("dump");
+            var reader = new MessageReader(new MemoryStream(bytes));
+            var message = new EnemyHomeDataMessage();
+            message.ReadMessage(reader);
         }
     }
 }

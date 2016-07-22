@@ -108,7 +108,7 @@ namespace CoCSharp.Network.Messages
                 if (homeData.Length != 0)
                 {
                     // Use a BinaryReader for little-endian reading.
-                    using (var mem = new MemoryStream(homeData))
+                    var mem = new MemoryStream(homeData);
                     using (var br = new BinaryReader(mem))
                     {
                         var decompressedLength = br.ReadInt32();
@@ -146,7 +146,7 @@ namespace CoCSharp.Network.Messages
                 writer.Write(true);
 
                 // Uses BinaryWriter for little-endian writing.
-                using (var mem = new MemoryStream())
+                var mem = new MemoryStream();
                 using (var bw = new BinaryWriter(mem))
                 {
                     var homeJson = Home.ToJson();

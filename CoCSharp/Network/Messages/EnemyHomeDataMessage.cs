@@ -49,6 +49,8 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public AvatarMessageComponent OwnAvatarData;
 
+        public int Unknown6;
+        public int Unknown5;
         /// <summary>
         /// Unknown integer 2.
         /// </summary>
@@ -115,7 +117,7 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown1);
 
-            writer.Write(DateTimeConverter.ToUnixTimestamp(Timestamp));
+            writer.Write((int)DateTimeConverter.ToUnixTimestamp(Timestamp));
             EnemyVillageData.WriteMessageComponent(writer);
             EnemyAvatarData.WriteMessageComponent(writer);
             OwnAvatarData.WriteMessageComponent(writer);

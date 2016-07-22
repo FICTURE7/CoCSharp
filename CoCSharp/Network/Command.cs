@@ -24,7 +24,7 @@ namespace CoCSharp.Network
         /// <summary>
         /// Gets or sets the ID of the <see cref="Command"/>.
         /// </summary>
-        public virtual int ID { get; set; } //TODO: Might have some sort of error in the API here('set') 
+        public abstract int ID { get; }
 
         /// <summary>
         /// Reads the <see cref="Command"/> from the specified <see cref="MessageReader"/>.

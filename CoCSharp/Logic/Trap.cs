@@ -298,8 +298,8 @@ namespace CoCSharp.Logic
             var dataId = -1;
             var dataIdSet = false;
 
-            var lvl = -1;
-            var lvlSet = false;
+            var lvl = 0;
+            //var lvlSet = false;
 
             while (reader.Read())
             {
@@ -322,7 +322,7 @@ namespace CoCSharp.Logic
 
                         case "lvl":
                             lvl = reader.ReadAsInt32().Value;
-                            lvlSet = true;
+                            //lvlSet = true;
                             break;
 
                         case "needs_repair":
@@ -350,8 +350,6 @@ namespace CoCSharp.Logic
 
             if (!dataIdSet)
                 throw new InvalidOperationException("Trap JSON does not contain a 'data' field.");
-            if (!lvlSet)
-                throw new InvalidOperationException("Trap JSON does not contain a 'lvl' field.");
 
             // If its not constructed yet, the level is -1,
             // therefore it must be a lvl 0 building.

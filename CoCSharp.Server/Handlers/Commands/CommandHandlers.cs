@@ -62,6 +62,8 @@ namespace CoCSharp.Server.Handlers.Commands
             server.RegisterCommandHandler(new ClearObstacleCommand(), HandleClearObstacleCommand);
 
             server.RegisterCommandHandler(new RearmTrapCommand(), HandleRearmTrapCommand);
+
+            server.RegisterCommandHandler(new MatchmakingCommand(), HandleMatchmakingCommand);
         }
 
         public static void BuildingConstructionFinished(object sender, ConstructionFinishedEventArgs<BuildingData> e)

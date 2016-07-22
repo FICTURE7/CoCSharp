@@ -140,5 +140,11 @@ namespace CoCSharp.Server.Core
             if (!_avatarCollection.Update(avatar))
                 _avatarCollection.Insert(avatar);
         }
+
+        public Avatar GetRandomAvatar(long excludeId)
+        {
+            var ava = _avatarCollection.FindOne(Query.And(Query.Between("_id", _avatarCollection.Min(), _avatarCollection.Max()), Query.Not("_id", excludeId)));
+            return ava;
+        }
     }
 }

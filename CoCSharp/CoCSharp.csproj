@@ -111,6 +111,8 @@
     <Compile Include="Data\AssetDownloadProgressChangedEventArgs.cs" />
     <Compile Include="Data\Fingerprint.cs" />
     <Compile Include="Data\FingerprintFile.cs" />
+    <Compile Include="Network\Messages\Commands\MatchmakingCommand.cs" />
+    <Compile Include="Network\Messages\Commands\RemoveShieldCommand.cs" />
     <Compile Include="Network\Messages\EnemyHomeDataMessage.cs" />
     <Compile Include="Network\Messages\MoveVillageObjectMessageComponent.cs" />
     <Compile Include="Data\Slots\AchievementProgessSlot.cs" />
