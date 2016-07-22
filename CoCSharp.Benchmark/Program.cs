@@ -1,7 +1,6 @@
 ﻿using CoCSharp.Benchmark.Test;
 using CoCSharp.Data;
 using CoCSharp.Data.Models;
-using CoCSharp.Logic;
 using System;
 using System.Threading;
 
