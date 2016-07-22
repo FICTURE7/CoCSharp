@@ -47,7 +47,7 @@ namespace CoCSharp.Benchmark
             // ~0.00021ms with array implementation.
             // ~0.00050ms with dictionary(Type,int) with array implementation.
             Run<VillageObject_AddComponent>();
-
+            
             Console.WriteLine();
             Console.WriteLine("Benchmark done!");
             Console.ReadLine();

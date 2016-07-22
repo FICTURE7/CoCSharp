@@ -41,7 +41,7 @@ namespace CoCSharp.Server
         // Connection to the server.
         public NetworkManagerAsync ServerConnection { get; private set; }
 
-        private MessageLogger _logger;
+        private readonly MessageLogger _logger;
         private byte[] _snonce;
         private byte[] _rnonce;
 

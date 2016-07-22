@@ -21,7 +21,10 @@ namespace CoCSharp.Server.Handlers
 
             var npcVillage = server.NpcManager.LoadNpc(anMessage.NpcID);
             if (npcVillage == null)
-                return; // TODO: Throw out of sync here or OwnHome?
+            {
+                client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+                return;
+            }
 
             var avatar = new AvatarMessageComponent(client.Avatar)
             {
