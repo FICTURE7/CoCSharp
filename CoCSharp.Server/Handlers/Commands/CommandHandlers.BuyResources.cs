@@ -13,7 +13,7 @@ namespace CoCSharp.Server.Handlers.Commands
 
             //TODO: Add amount to resource and all that jazz.
             FancyConsole.WriteLine("[&(darkgreen)Logic&(default)] Bought resource -> {1} for account &(darkcyan){0}&(default) \n\t\tAmount: {2}",
-                  client.Avatar.Token, brCommand.ResourceDataID, brCommand.ResourceAmount);
+                  client.Token, brCommand.ResourceDataID, brCommand.ResourceAmount);
 
             if (embeddedCommand == null)
                 return;

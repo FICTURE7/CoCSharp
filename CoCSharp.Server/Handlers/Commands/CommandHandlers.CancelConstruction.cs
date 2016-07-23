@@ -10,7 +10,7 @@ namespace CoCSharp.Server.Handlers.Commands
         private static void HandleCancelConstructionCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var ccCommand = (CancelConsturctionCommand)command;
-            var villageObject = client.Avatar.Home.GetVillageObject(ccCommand.VillageObjectID);
+            var villageObject = client.Home.GetVillageObject(ccCommand.VillageObjectID);
             if (villageObject is Trap)
             {
                 var trap = (Trap)villageObject;

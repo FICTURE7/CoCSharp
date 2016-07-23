@@ -1,8 +1,11 @@
 ﻿using CoCSharp.Data;
+using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using CoCSharp.Server.Handlers.Commands;
 using LiteDB;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace CoCSharp.Server.Core
@@ -40,6 +43,23 @@ namespace CoCSharp.Server.Core
                 }
             );
 
+            RegisterSlotCollection<ResourceCapacitySlot>();
+            RegisterSlotCollection<ResourceAmountSlot>();
+            RegisterSlotCollection<UnitSlot>();
+            RegisterSlotCollection<SpellSlot>();
+            RegisterSlotCollection<UnitUpgradeSlot>();
+            RegisterSlotCollection<SpellUpgradeSlot>();
+            RegisterSlotCollection<HeroUpgradeSlot>();
+            RegisterSlotCollection<HeroHealthSlot>();
+            RegisterSlotCollection<HeroStateSlot>();
+            RegisterSlotCollection<AllianceUnitSlot>();
+            RegisterSlotCollection<TutorialProgressSlot>();
+            RegisterSlotCollection<AchievementSlot>();
+            RegisterSlotCollection<AchievementProgessSlot>();
+            RegisterSlotCollection<NpcStarSlot>();
+            RegisterSlotCollection<NpcGoldSlot>();
+            RegisterSlotCollection<NpcElixirSlot>();
+
             // LiteDB does not support Int64 auto-id. So implement our own.
             _liteDb.Mapper.RegisterAutoId
             (
@@ -47,15 +67,15 @@ namespace CoCSharp.Server.Core
                 newId: (collection) => collection.Max("_id").AsInt64 + 1L
             );
 
-            _avatarCollection = _liteDb.GetCollection<Avatar>("avatars");
+            _avatarCollection = _liteDb.GetCollection<CoCRemoteClient>("avatars");
             _avatarCollection.EnsureIndex("Token", unique: true);
         }
 
         private string _startingVillage;
         private LiteDatabase _liteDb;
-        private LiteCollection<Avatar> _avatarCollection;
+        private LiteCollection<CoCRemoteClient> _avatarCollection;
 
-        public Avatar CreateNewAvatar()
+        public CoCRemoteClient CreateNewAvatar()
         {
             // Generate a token & make sure its unique.
             var token = TokenUtils.GenerateToken();
@@ -73,9 +93,15 @@ namespace CoCSharp.Server.Core
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
+            for (int i = 0; i < 10; i++)
+                avatar.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
+
+            var client = new CoCRemoteClient();
+            client.SetFromAvatar(avatar);
+
             // Avatar.ID will be automatically incremented by LiteDB.
-            _avatarCollection.Insert(avatar);
-            return avatar;
+            _avatarCollection.Insert(client);
+            return client;
         }
 
         public Avatar CreateNewAvatar(string token, long id)
@@ -93,13 +119,19 @@ namespace CoCSharp.Server.Core
             avatar.Token = token;
             avatar.ID = id;
             // Skip the tutorials.
-            avatar.Level = 10;
+            avatar.Level = 9;
             avatar.Home = Village.FromJson(_startingVillage);
             avatar.Name = "Patrik"; // :]
             avatar.Gems = 300;
             avatar.FreeGems = 300;
 
-            _avatarCollection.Insert(avatar);
+            for (int i = 0; i < 10; i++)
+                avatar.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
+
+            var client = new CoCRemoteClient();
+            client.SetFromAvatar(avatar);
+
+            _avatarCollection.Insert(client);
             return avatar;
         }
 
@@ -121,7 +153,7 @@ namespace CoCSharp.Server.Core
             return _avatarCollection.Exists(ava => ava.ID == id);
         }
 
-        public Avatar LoadAvatar(string token)
+        public CoCRemoteClient LoadAvatar(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
                 return null;
@@ -133,7 +165,7 @@ namespace CoCSharp.Server.Core
             //return avatar;
         }
 
-        public void SaveAvatar(Avatar avatar)
+        public void SaveAvatar(CoCRemoteClient avatar)
         {
             // If we don't have the avatar in the db
             // we add it to the db.
@@ -158,6 +190,15 @@ namespace CoCSharp.Server.Core
                 j++;
             }
             return choosenOne;
+        }
+
+        private void RegisterSlotCollection<T>() where T : Slot, new()
+        {
+            _liteDb.Mapper.RegisterType
+            (
+                serialize: (collection) => _liteDb.Mapper.Serialize(collection.ToArray()),
+                deserialize: (bson) => new SlotCollection<T>(_liteDb.Mapper.Deserialize<T[]>(bson))
+            );
         }
     }
 }

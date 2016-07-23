@@ -20,7 +20,7 @@ namespace CoCSharp.Server.Handlers
             if (client.SessionKey == null)
             {
                 var loginFailed = new LoginFailedMessage();
-                client.NetworkManager.SendMessage(loginFailed);       
+                client.NetworkManager.SendMessage(loginFailed);
                 return;
             }
 
@@ -64,6 +64,7 @@ namespace CoCSharp.Server.Handlers
                 lsMessage.UserID = avatar.ID;
                 lsMessage.UserID1 = avatar.ID;
                 lsMessage.UserToken = avatar.Token;
+                client.SetFromAvatar(avatar);
             }
             else
             {
@@ -83,7 +84,8 @@ namespace CoCSharp.Server.Handlers
 
                     FancyConsole.WriteLine("[&(blue)Login&(default)] Unknown avatar -> Created new avatar with &(darkcyan){0}&(default):{1} success.",
                                            avatar.Token, avatar.ID);
-                    avatarManager.SaveAvatar(avatar);
+                    client.SetFromAvatar(avatar);
+                    avatarManager.SaveAvatar(client);
                 }
                 else
                 {
@@ -96,6 +98,7 @@ namespace CoCSharp.Server.Handlers
 
                     FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} success.",
                                            avatar.Token, avatar.ID);
+                    client.SetFromAvatar(avatar);
                 }
 
                 lsMessage.UserID = avatar.ID;
@@ -115,7 +118,6 @@ namespace CoCSharp.Server.Handlers
             //avatar.NpcStars = npcManager.CompleteNpcStarList;
 
             var ohdMessage = avatar.OwnHomeDataMessage;
-            client.Avatar = avatar;
             client.NetworkManager.SendMessage(lsMessage); // LoginSuccessMessage
             client.NetworkManager.SendMessage(ohdMessage); // OwnHomeDataMessage
         }

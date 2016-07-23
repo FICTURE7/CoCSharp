@@ -13,7 +13,7 @@ namespace CoCSharp.Server.Handlers.Commands
             // Fabulous variable name.
             var sucCommand = (SpeedUpConstructionCommand)command;
 
-            var villageObject = client.Avatar.Home.GetVillageObject(sucCommand.BuildableGameID);
+            var villageObject = client.Home.GetVillageObject(sucCommand.BuildableGameID);
             Debug.Assert(villageObject.ID == sucCommand.BuildableGameID);
 
             if (villageObject is Building)

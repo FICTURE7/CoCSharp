@@ -12,13 +12,13 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var btCommand = (BuyTrapCommand)command;
             var data = server.AssetManager.SearchCsv<TrapData>(btCommand.TrapDataID, 0);
-            var trap = new Trap(client.Avatar.Home, data, btCommand.X, btCommand.Y);
+            var trap = new Trap(client.Home, data, btCommand.X, btCommand.Y);
 
             trap.UserToken = client;
             trap.ConstructionFinished += TrapConstructionFinished;
             trap.BeginConstruction();
 
-            FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, btCommand.X, btCommand.Y, trap.Data.Level);
+            FancyConsole.WriteLine(StartedConstructionFormat, client.Token, btCommand.X, btCommand.Y, trap.Data.Level);
         }
     }
 }

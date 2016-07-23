@@ -10,14 +10,14 @@ namespace CoCSharp.Server.Handlers.Commands
         private static void HandleRearmTrapCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var rtCommand = (RearmTrapCommand)command;
-            var trap = client.Avatar.Home.GetTrap(rtCommand.TrapGameID);
+            var trap = client.Home.GetTrap(rtCommand.TrapGameID);
 
             Debug.Assert(trap.ID == rtCommand.TrapGameID);
 
             if (trap.Broken == true)
             {
                 trap.Broken = false;
-                FancyConsole.WriteLine(RearmedTrapFormat, rtCommand.TrapGameID, client.Avatar.Token, trap.X, trap.Y);
+                FancyConsole.WriteLine(RearmedTrapFormat, rtCommand.TrapGameID, client.Token, trap.X, trap.Y);
             }
         }
     }

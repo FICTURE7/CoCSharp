@@ -16,7 +16,7 @@ namespace CoCSharp.Server.Handlers.Commands
             for (int i = 0; i < umbCommand.BuildingsGameID.Length; i++)
             {
                 var gameId = umbCommand.BuildingsGameID[i];
-                var villageObject = client.Avatar.Home.GetVillageObject(gameId);
+                var villageObject = client.Home.GetVillageObject(gameId);
 
                 Debug.Assert(villageObject.ID == gameId);
 
@@ -27,11 +27,11 @@ namespace CoCSharp.Server.Handlers.Commands
                     {
                         building.UserToken = client;
                         building.BeginConstruction();
-                        FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+                        FancyConsole.WriteLine(StartedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
                     }
                     else
                     {
-                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, gameId);
+                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Token, gameId);
                         // OutOfSync.
                     }
                 }
@@ -42,11 +42,11 @@ namespace CoCSharp.Server.Handlers.Commands
                     {
                         trap.UserToken = client;
                         trap.BeginConstruction();
-                        FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
+                        FancyConsole.WriteLine(StartedConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
                     }
                     else
                     {
-                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, gameId);
+                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Token, gameId);
                         // OutOfSync.
                     }
                 }

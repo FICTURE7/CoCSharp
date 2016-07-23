@@ -2,6 +2,7 @@
 using CoCSharp.Data.Models;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
+using CoCSharp.Server.Core;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -41,10 +42,12 @@ namespace CoCSharp.Server
             AssetManager.DefaultInstance.LoadCsv<TrapData>("traps.csv");
             AssetManager.DefaultInstance.LoadCsv<DecorationData>("decos.csv");
 
-            var bytes = File.ReadAllBytes("dump");
-            var reader = new MessageReader(new MemoryStream(bytes));
-            var message = new EnemyHomeDataMessage();
-            message.ReadMessage(reader);
+            var manager = new AvatarManager();
+            var ava = manager.CreateNewAvatar();
+            ava.Units.Add(new Data.Slots.UnitSlot(100, 100));
+
+            manager.SaveAvatar(ava);
+            var kek = manager.LoadAvatar(ava.Token);
         }
     }
 }

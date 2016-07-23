@@ -14,14 +14,14 @@ namespace CoCSharp.Server.Handlers.Commands
             {
                 var moveData = mmvCommand.MovesData[i];
                 var gameId = moveData.VillageObjectGameID;
-                var villageObject = client.Avatar.Home.GetVillageObject(gameId);
+                var villageObject = client.Home.GetVillageObject(gameId);
 
                 Debug.Assert(villageObject.ID == gameId);
 
                 villageObject.X = moveData.X;
                 villageObject.Y = moveData.Y;
 
-                FancyConsole.WriteLine(MoveVillageObjectFormat, gameId, client.Avatar.Token, villageObject.X, villageObject.Y);
+                FancyConsole.WriteLine(MoveVillageObjectFormat, gameId, client.Token, villageObject.X, villageObject.Y);
             }
         }
     }

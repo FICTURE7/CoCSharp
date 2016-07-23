@@ -10,14 +10,14 @@ namespace CoCSharp.Server.Handlers.Commands
         private static void HandleClearObstacleCommand(CoCServer server, CoCRemoteClient client, Command command)
         {
             var coCommand = command as ClearObstacleCommand;
-            var obstacle = client.Avatar.Home.GetObstacle(coCommand.ObstacleGameID);
+            var obstacle = client.Home.GetObstacle(coCommand.ObstacleGameID);
 
             Debug.Assert(obstacle.ID == coCommand.ObstacleGameID);
 
             obstacle.UserToken = client;
             obstacle.BeginClearing();
 
-            FancyConsole.WriteLine(StartedClearObstacleFormat, client.Avatar.Token, obstacle.X, obstacle.Y);
+            FancyConsole.WriteLine(StartedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var ubCommand = (UpgradeBuildableCommand)command;
 
-            var villageObject = client.Avatar.Home.GetVillageObject(ubCommand.BuildableGameID);
+            var villageObject = client.Home.GetVillageObject(ubCommand.BuildableGameID);
             Debug.Assert(villageObject.ID == ubCommand.BuildableGameID);
 
             if (villageObject is Building)
@@ -24,11 +24,11 @@ namespace CoCSharp.Server.Handlers.Commands
                 {
                     building.UserToken = client;
                     building.BeginConstruction();
-                    FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+                    FancyConsole.WriteLine(StartedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
                 }
                 else
                 {
-                    FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, ubCommand.BuildableGameID);
+                    FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Token, ubCommand.BuildableGameID);
                     // OutOfSync.
                 }
             }
@@ -39,11 +39,11 @@ namespace CoCSharp.Server.Handlers.Commands
                 {
                     trap.UserToken = client;
                     trap.BeginConstruction();
-                    FancyConsole.WriteLine(StartedConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
+                    FancyConsole.WriteLine(StartedConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
                 }
                 else
                 {
-                    FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Avatar.Token, ubCommand.BuildableGameID);
+                    FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Token, ubCommand.BuildableGameID);
                     // OutOfSync.
                 }
             }

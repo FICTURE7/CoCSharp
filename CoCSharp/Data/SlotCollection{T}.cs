@@ -19,6 +19,11 @@ namespace CoCSharp.Data
         {
             _slots = new List<TSlot>(4);
         }
+
+        public SlotCollection(IEnumerable<TSlot> enumerable)
+        {
+            _slots = new List<TSlot>(enumerable);
+        }
         #endregion
 
         #region Fields & Properties

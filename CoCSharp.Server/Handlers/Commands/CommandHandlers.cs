@@ -80,17 +80,17 @@ namespace CoCSharp.Server.Handlers.Commands
             if (e.WasCancelled)
             {
 
-                FancyConsole.WriteLine(CancelledConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+                FancyConsole.WriteLine(CancelledConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
             }
             else
             {
-                FancyConsole.WriteLine(FinishedConstructionFormat, client.Avatar.Token, building.X, building.Y, building.Data.Level);
+                FancyConsole.WriteLine(FinishedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
 
                 var exp = LogicUtils.CalculateExperience(building.Data.BuildTime);
-                client.Avatar.Experience += exp;
+                client.Experience += exp;
             }
 
-            client.Server.AvatarManager.SaveAvatar(client.Avatar);
+            client.Server.AvatarManager.SaveAvatar(client);
         }
 
         public static void TrapConstructionFinished(object sende, ConstructionFinishedEventArgs<TrapData> e)
@@ -100,17 +100,17 @@ namespace CoCSharp.Server.Handlers.Commands
 
             if (e.WasCancelled)
             {
-                FancyConsole.WriteLine(CancelledConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
+                FancyConsole.WriteLine(CancelledConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
             }
             else
             {
-                FancyConsole.WriteLine(FinishedConstructionFormat, client.Avatar.Token, trap.X, trap.Y, trap.Data.Level);
+                FancyConsole.WriteLine(FinishedConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
 
                 var exp = LogicUtils.CalculateExperience(trap.Data.BuildTime);
-                client.Avatar.Experience += exp;
+                client.Experience += exp;
             }
 
-            client.Server.AvatarManager.SaveAvatar(client.Avatar);
+            client.Server.AvatarManager.SaveAvatar(client);
         }
 
         public static void ObstacleClearingFinished(object sender, ClearingFinishedEventArgs e)
@@ -120,16 +120,16 @@ namespace CoCSharp.Server.Handlers.Commands
 
             if (e.WasCancelled)
             {
-                FancyConsole.WriteLine(CancelledClearObstacleFormat, client.Avatar.Token, obstacle.X, obstacle.Y);
+                FancyConsole.WriteLine(CancelledClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
             }
             else
             {
-                FancyConsole.WriteLine(FinishedClearObstacleFormat, client.Avatar.Token, obstacle.X, obstacle.Y);
+                FancyConsole.WriteLine(FinishedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
                 var exp = LogicUtils.CalculateExperience(obstacle.Data.ClearTime);
-                client.Avatar.Experience += exp;
+                client.Experience += exp;
             }
 
-            client.Server.AvatarManager.SaveAvatar(client.Avatar);
+            client.Server.AvatarManager.SaveAvatar(client);
         }
     }
 }

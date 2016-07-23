@@ -22,11 +22,11 @@ namespace CoCSharp.Server.Handlers
             var npcVillage = server.NpcManager.LoadNpc(anMessage.NpcID);
             if (npcVillage == null)
             {
-                client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+                client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
                 return;
             }
 
-            var avatar = new AvatarMessageComponent(client.Avatar)
+            var avatar = new AvatarMessageComponent(client)
             {
                 AllianceCastleLevel = 1,
                 AllianceCastleTotalCapacity = 10,
@@ -39,18 +39,18 @@ namespace CoCSharp.Server.Handlers
             ndMessage.NpcID = anMessage.NpcID;
 
             FancyConsole.WriteLine("[&(darkmagenta)Attack&(default)] Account &(darkcyan){0}&(default) attacked NPC &(darkcyan){1}&(default).",
-                client.Avatar.Token, anMessage.NpcID);
+                client.Token, anMessage.NpcID);
 
             client.NetworkManager.SendMessage(ndMessage);
         }
 
         private static void HandleAttackResultMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
-            var avatar = client.Avatar;
-            var ohdMessage = client.Avatar.OwnHomeDataMessage;
+            var avatar = client;
+            var ohdMessage = client.OwnHomeDataMessage;
 
             FancyConsole.WriteLine("[&(darkmagenta)Attack&(default)] Account &(darkcyan){0}&(default) returned home.",
-                client.Avatar.Token);
+                client.Token);
 
             client.NetworkManager.SendMessage(ohdMessage);
         }
@@ -58,8 +58,8 @@ namespace CoCSharp.Server.Handlers
         private static void HandleAvatarProfileRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
             var aprMessage = new AvatarProfileResponseMessage();
-            aprMessage.Village = client.Avatar.Home;
-            aprMessage.AvatarData = new AvatarMessageComponent(client.Avatar);
+            aprMessage.Village = client.Home;
+            aprMessage.AvatarData = new AvatarMessageComponent(client);
 
             //aprMessage.AvatarData.Unknown13 = 2; // League
             //aprMessage.AvatarData.Unknown14 = 13;
@@ -77,7 +77,7 @@ namespace CoCSharp.Server.Handlers
             //};
 
             FancyConsole.WriteLine("[&(darkmagenta)Avatar&(default)] Profile &(darkcyan){0}&(default) was requested.",
-                client.Avatar.Token);
+                client.Token);
 
             client.NetworkManager.SendMessage(aprMessage);
         }
@@ -96,8 +96,28 @@ namespace CoCSharp.Server.Handlers
 
                     server.HandleCommand(client, cmd);
                 }
-                server.AvatarManager.SaveAvatar(client.Avatar);
+                server.AvatarManager.SaveAvatar(client);
             }
+        }
+
+        private static void HandleChangeAvatarNameRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
+        {
+            var careqMessage = (ChangeAvatarNameRequestMessage)message;
+            client.Name = careqMessage.NewName;
+            client.IsNamed = true;
+
+            var count = client.TutorialProgess.Count;
+            for (int i = count; i < count + 3; i++)
+                client.TutorialProgess.Add(new Data.Slots.TutorialProgressSlot(21000000 + i));
+
+            var caresMessage = new ChangeAvatarNameResponseMessage();
+            caresMessage.Unknown1 = 3;
+            caresMessage.NewName = careqMessage.NewName;
+            caresMessage.Unknown3 = 1;
+            caresMessage.Unknown4 = -1;
+            client.NetworkManager.SendMessage(caresMessage);
+
+            server.AvatarManager.SaveAvatar(client);
         }
 
         private static void HandleChatMessageClientMessageMessage(CoCServer server, CoCRemoteClient client, Message message)
@@ -111,37 +131,37 @@ namespace CoCSharp.Server.Handlers
                 switch (cmd)
                 {
                     case "help":
-                        cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /max, /populatedb";
+                        cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /max";
                         client.NetworkManager.SendMessage(cmsMessage);
                         break;
 
                     case "addgems":
-                        client.Avatar.Gems += 500;
-                        client.Avatar.FreeGems += 500;
+                        client.Gems += 500;
+                        client.FreeGems += 500;
 
                         cmsMessage.Message = "Added 500 gems.";
                         client.NetworkManager.SendMessage(cmsMessage);
 
                         //var ohdMessage = client.Avatar.OwnHomeDataMessage;
-                        client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
                         return;
 
                     case "clearobstacles":
-                        var count = client.Avatar.Home.Obstacles.Count;
-                        client.Avatar.Home.Obstacles.Clear();
+                        var count = client.Home.Obstacles.Count;
+                        client.Home.Obstacles.Clear();
 
                         //var ohdMessage = client.Avatar.OwnHomeDataMessage;
-                        client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
 
                         cmsMessage.Message = "Cleared " + count + " obstacles.";
                         client.NetworkManager.SendMessage(cmsMessage);
                         return;
 
                     case "max":
-                        var countBuilding = client.Avatar.Home.Buildings.Count;
+                        var countBuilding = client.Home.Buildings.Count;
                         for (int i = 0; i < countBuilding; i++)
                         {
-                            var building = client.Avatar.Home.Buildings[i];
+                            var building = client.Home.Buildings[i];
                             var collection = AssetManager.DefaultInstance.SearchCsv<BuildingData>(building.Data.ID);
                             var data = collection[collection.Count - 1];
                             if (building.IsConstructing)
@@ -150,10 +170,10 @@ namespace CoCSharp.Server.Handlers
                             building.Data = data;
                         }
 
-                        var countTraps = client.Avatar.Home.Traps.Count;
+                        var countTraps = client.Home.Traps.Count;
                         for (int i = 0; i < countTraps; i++)
                         {
-                            var trap = client.Avatar.Home.Traps[i];
+                            var trap = client.Home.Traps[i];
                             var collection = AssetManager.DefaultInstance.SearchCsv<TrapData>(trap.Data.ID);
                             var data = collection[collection.Count - 1];
                             if (trap.IsConstructing)
@@ -165,7 +185,7 @@ namespace CoCSharp.Server.Handlers
                         cmsMessage.Message = "Maxed " + countBuilding + " buildings and " + countTraps + " traps.";
                         client.NetworkManager.SendMessage(cmsMessage);
 
-                        client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
+                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
                         return;
 
                     case "populatedb":
@@ -187,10 +207,10 @@ namespace CoCSharp.Server.Handlers
 
             //TODO: Set alliance and all that jazz.
 
-            cmsMessage.Level = client.Avatar.Level;
-            cmsMessage.CurrentUserID = client.Avatar.ID;
-            cmsMessage.UserID = client.Avatar.ID;
-            cmsMessage.Name = client.Avatar.Name;
+            cmsMessage.Level = client.Level;
+            cmsMessage.CurrentUserID = client.ID;
+            cmsMessage.UserID = client.ID;
+            cmsMessage.Name = client.Name;
             cmsMessage.Message = cmcMessage.Message;
 
             server.SendMessageAll(cmsMessage);
@@ -204,6 +224,7 @@ namespace CoCSharp.Server.Handlers
             server.RegisterMessageHandler(new AttackResultMessage(), HandleAttackResultMessage);
             server.RegisterMessageHandler(new ChatMessageClientMessage(), HandleChatMessageClientMessageMessage);
             server.RegisterMessageHandler(new AvatarProfileRequestMessage(), HandleAvatarProfileRequestMessage);
+            server.RegisterMessageHandler(new ChangeAvatarNameRequestMessage(), HandleChangeAvatarNameRequestMessage);
         }
     }
 }
