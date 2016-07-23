@@ -48,9 +48,7 @@ namespace CoCSharp.Network.Messages
         /// Own avatar data.
         /// </summary>
         public AvatarMessageComponent OwnAvatarData;
-
-        public int Unknown6;
-        public int Unknown5;
+        
         /// <summary>
         /// Unknown integer 2.
         /// </summary>
