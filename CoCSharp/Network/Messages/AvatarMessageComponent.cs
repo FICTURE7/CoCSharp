@@ -72,7 +72,6 @@ namespace CoCSharp.Network.Messages
             Unknown26 = 1;
             //Unknown27 = 1;
 
-            ResourcesCapacity = avatar.ResourcesCapacity;
             ResourcesAmount = avatar.ResourcesAmount;
             Units = avatar.Units;
             Spells = avatar.Spells;
@@ -88,9 +87,9 @@ namespace CoCSharp.Network.Messages
             NpcGold = avatar.NpcGold;
             NpcElixir = avatar.NpcElixir;
 
-            UnknownSlot1 = new UnknownSlot[0];
-            UnknownSlot2 = new UnknownSlot[0];
-            UnknownSlot3 = new UnknownSlot[0];
+            UnknownSlot1 = new SlotCollection<UnknownSlot>();
+            UnknownSlot2 = new SlotCollection<UnknownSlot>();
+            UnknownSlot3 = new SlotCollection<UnknownSlot>();
         }
         #endregion
 
@@ -298,67 +297,67 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Resources capacity.
         /// </summary>
-        public ResourceCapacitySlot[] ResourcesCapacity;
+        public SlotCollection<ResourceCapacitySlot> ResourcesCapacity;
         /// <summary>
         /// Resources amount.
         /// </summary>
-        public ResourceAmountSlot[] ResourcesAmount;
+        public SlotCollection<ResourceAmountSlot> ResourcesAmount;
         /// <summary>
         /// Units.
         /// </summary>
-        public UnitSlot[] Units;
+        public SlotCollection<UnitSlot> Units;
         /// <summary>
         /// Spells.
         /// </summary>
-        public SpellSlot[] Spells;
+        public SlotCollection<SpellSlot> Spells;
         /// <summary>
         /// Unit upgrades level.
         /// </summary>
-        public UnitUpgradeSlot[] UnitUpgrades;
+        public SlotCollection<UnitUpgradeSlot> UnitUpgrades;
         /// <summary>
         /// Spell upgrades level.
         /// </summary>
-        public SpellUpgradeSlot[] SpellUpgrades;
+        public SlotCollection<SpellUpgradeSlot> SpellUpgrades;
         /// <summary>
         /// Hero upgrades level.
         /// </summary>
-        public HeroUpgradeSlot[] HeroUpgrades;
+        public SlotCollection<HeroUpgradeSlot> HeroUpgrades;
         /// <summary>
         /// Hero healths.
         /// </summary>
-        public HeroHealthSlot[] HeroHealths;
+        public SlotCollection<HeroHealthSlot> HeroHealths;
         /// <summary>
         /// Hero states.
         /// </summary>
-        public HeroStateSlot[] HeroStates;
+        public SlotCollection<HeroStateSlot> HeroStates;
         /// <summary>
         /// Alliance units
         /// </summary>
-        public AllianceUnitSlot[] AllianceUnits;
+        public SlotCollection<AllianceUnitSlot> AllianceUnits;
         /// <summary>
         /// Tutorial progress.
         /// </summary>
-        public TutorialProgressSlot[] TutorialProgess;
+        public SlotCollection<TutorialProgressSlot> TutorialProgess;
         /// <summary>
         /// Achievements state.
         /// </summary>
-        public AchievementSlot[] Achievements;
+        public SlotCollection<AchievementSlot> Achievements;
         /// <summary>
         /// Achievement progress.
         /// </summary>
-        public AchievementProgessSlot[] AchievementProgress;
+        public SlotCollection<AchievementProgessSlot> AchievementProgress;
         /// <summary>
         /// NPC stars.
         /// </summary>
-        public NpcStarSlot[] NpcStars;
+        public SlotCollection<NpcStarSlot> NpcStars;
         /// <summary>
         /// NPC gold.
         /// </summary>
-        public NpcGoldSlot[] NpcGold;
+        public SlotCollection<NpcGoldSlot> NpcGold;
         /// <summary>
         /// NPC elixir.
         /// </summary>
-        public NpcElixirSlot[] NpcElixir;
+        public SlotCollection<NpcElixirSlot> NpcElixir;
 
         /// <summary>
         /// Unknown integer 29.
@@ -368,15 +367,15 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Unknown slot 1.
         /// </summary>
-        public UnknownSlot[] UnknownSlot1;
+        public SlotCollection<UnknownSlot> UnknownSlot1;
         /// <summary>
         /// Unknown slot 2.
         /// </summary>
-        public UnknownSlot[] UnknownSlot2;
+        public SlotCollection<UnknownSlot> UnknownSlot2;
         /// <summary>
         /// Unknown slot 3.
         /// </summary>
-        public UnknownSlot[] UnknownSlot3;
+        public SlotCollection<UnknownSlot> UnknownSlot3;
         #endregion
 
         #region Methods
@@ -461,28 +460,28 @@ namespace CoCSharp.Network.Messages
             Unknown27 = reader.ReadInt32(); // 0 = 8.x.x
             Unknown28 = reader.ReadInt32(); // 0 = 8.x.x
 
-            ResourcesCapacity = Slot.ReadSlotArray<ResourceCapacitySlot>(reader);
-            ResourcesAmount = Slot.ReadSlotArray<ResourceAmountSlot>(reader);
-            Units = Slot.ReadSlotArray<UnitSlot>(reader);
-            Spells = Slot.ReadSlotArray<SpellSlot>(reader);
-            UnitUpgrades = Slot.ReadSlotArray<UnitUpgradeSlot>(reader);
-            SpellUpgrades = Slot.ReadSlotArray<SpellUpgradeSlot>(reader);
-            HeroUpgrades = Slot.ReadSlotArray<HeroUpgradeSlot>(reader);
-            HeroHealths = Slot.ReadSlotArray<HeroHealthSlot>(reader);
-            HeroStates = Slot.ReadSlotArray<HeroStateSlot>(reader);
-            AllianceUnits = Slot.ReadSlotArray<AllianceUnitSlot>(reader);
-            TutorialProgess = Slot.ReadSlotArray<TutorialProgressSlot>(reader);
-            Achievements = Slot.ReadSlotArray<AchievementSlot>(reader);
-            AchievementProgress = Slot.ReadSlotArray<AchievementProgessSlot>(reader);
-            NpcStars = Slot.ReadSlotArray<NpcStarSlot>(reader);
-            NpcGold = Slot.ReadSlotArray<NpcGoldSlot>(reader);
-            NpcElixir = Slot.ReadSlotArray<NpcElixirSlot>(reader);
+            ResourcesCapacity = reader.Read<ResourceCapacitySlot>();
+            ResourcesAmount = reader.Read<ResourceAmountSlot>();
+            Units = reader.Read<UnitSlot>();
+            Spells = reader.Read<SpellSlot>();
+            UnitUpgrades = reader.Read<UnitUpgradeSlot>();
+            SpellUpgrades = reader.Read<SpellUpgradeSlot>();
+            HeroUpgrades = reader.Read<HeroUpgradeSlot>();
+            HeroHealths = reader.Read<HeroHealthSlot>();
+            HeroStates = reader.Read<HeroStateSlot>();
+            AllianceUnits = reader.Read<AllianceUnitSlot>();
+            TutorialProgess = reader.Read<TutorialProgressSlot>();
+            Achievements = reader.Read<AchievementSlot>();
+            AchievementProgress = reader.Read<AchievementProgessSlot>();
+            NpcStars = reader.Read<NpcStarSlot>();
+            NpcGold = reader.Read<NpcGoldSlot>();
+            NpcElixir = reader.Read<NpcElixirSlot>();
 
             Unknown29 = reader.ReadInt32();
 
-            UnknownSlot1 = Slot.ReadSlotArray<UnknownSlot>(reader);
-            UnknownSlot2 = Slot.ReadSlotArray<UnknownSlot>(reader);
-            UnknownSlot3 = Slot.ReadSlotArray<UnknownSlot>(reader);
+            UnknownSlot1 = reader.Read<UnknownSlot>();
+            UnknownSlot2 = reader.Read<UnknownSlot>();
+            UnknownSlot3 = reader.Read<UnknownSlot>();
         }
 
         /// <summary>
@@ -566,28 +565,28 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown27); // 1 = 8.x.x
             writer.Write(Unknown28); // 0 = 8.x.x
 
-            Slot.WriteSlotArray(writer, ResourcesCapacity);
-            Slot.WriteSlotArray(writer, ResourcesAmount);
-            Slot.WriteSlotArray(writer, Units);
-            Slot.WriteSlotArray(writer, Spells);
-            Slot.WriteSlotArray(writer, UnitUpgrades);
-            Slot.WriteSlotArray(writer, SpellUpgrades);
-            Slot.WriteSlotArray(writer, HeroUpgrades);
-            Slot.WriteSlotArray(writer, HeroHealths);
-            Slot.WriteSlotArray(writer, HeroStates);
-            Slot.WriteSlotArray(writer, AllianceUnits);
-            Slot.WriteSlotArray(writer, TutorialProgess);
-            Slot.WriteSlotArray(writer, Achievements);
-            Slot.WriteSlotArray(writer, AchievementProgress);
-            Slot.WriteSlotArray(writer, NpcStars);
-            Slot.WriteSlotArray(writer, NpcGold);
-            Slot.WriteSlotArray(writer, NpcElixir);
+            writer.Write(ResourcesCapacity);
+            writer.Write(ResourcesAmount);
+            writer.Write(Units);
+            writer.Write(Spells);
+            writer.Write(UnitUpgrades);
+            writer.Write(SpellUpgrades);
+            writer.Write(HeroUpgrades);
+            writer.Write(HeroHealths);
+            writer.Write(HeroStates);
+            writer.Write(AllianceUnits);
+            writer.Write(TutorialProgess);
+            writer.Write(Achievements);
+            writer.Write(AchievementProgress);
+            writer.Write(NpcStars);
+            writer.Write(NpcGold);
+            writer.Write(NpcElixir);
 
             writer.Write(Unknown29);
 
-            Slot.WriteSlotArray(writer, UnknownSlot1);
-            Slot.WriteSlotArray(writer, UnknownSlot2);
-            Slot.WriteSlotArray(writer, UnknownSlot3);
+            writer.Write(UnknownSlot1);
+            writer.Write(UnknownSlot2);
+            writer.Write(UnknownSlot3);
         }
         #endregion
     }

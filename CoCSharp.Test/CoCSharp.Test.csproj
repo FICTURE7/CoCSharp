@@ -51,6 +51,7 @@
     <Compile Include="Data\AssetDownloaderTests.cs" />
     <Compile Include="Csv\CsvTableTests.cs" />
     <Compile Include="Data\FingerprintTests.cs" />
+    <Compile Include="Data\SlotCollectionTests.cs" />
     <Compile Include="Logic\ComponentTests.cs" />
     <Compile Include="Logic\LogicSchedulerTests.cs" />
     <Compile Include="Logic\ObstacleTests.cs" />

@@ -1,4 +1,5 @@
-﻿using CoCSharp.Network;
+﻿using CoCSharp.Data.Models;
+using CoCSharp.Network;
 using System;
 
 namespace CoCSharp.Data.Slots
@@ -6,7 +7,7 @@ namespace CoCSharp.Data.Slots
     /// <summary>
     /// Represents a Clash of Clans npc elixir slot.
     /// </summary>
-    public class NpcElixirSlot : Slot
+    public class NpcElixirSlot : Slot<ResourceData>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NpcElixirSlot"/> class.
@@ -28,10 +29,24 @@ namespace CoCSharp.Data.Slots
             Elixir = elixir;
         }
 
+        private int _id;
         /// <summary>
         /// Gets or sets the NPC ID.
         /// </summary>
-        public int ID { get; set; }
+        public int ID
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                if (_instance.InvalidDataID(value))
+                    throw new ArgumentOutOfRangeException("value", _instance.GetArgsOutOfRangeMessage("value"));
+
+                _id = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the looted elixir amount.

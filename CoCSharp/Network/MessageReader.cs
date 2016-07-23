@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Data;
+using System;
 using System.IO;
 using System.Text;
 
@@ -136,10 +137,36 @@ namespace CoCSharp.Network
             var length = ReadInt32();
             if (length == -1)
                 return null;
-
+            
             CheckLength(length, "string");
             var buffer = ReadBytes(length);
             return Encoding.UTF8.GetString(buffer);
+        }
+
+        /// <summary>
+        /// Reads a <see cref="SlotCollection{TSlot}"/> from the current stream.
+        /// </summary>
+        /// <typeparam name="TSlot">Type of <see cref="Slot"/> to read.</typeparam>
+        /// <returns>A <see cref="SlotCollection{TSlot}"/> read from the current stream.</returns>
+        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
+        /// <exception cref="InvalidMessageException">Slot collection length is invalid.</exception>
+        public SlotCollection<TSlot> Read<TSlot>() where TSlot : Slot, new()
+        {
+            CheckDispose();
+
+            var count = ReadInt32();
+            if (count < 0)
+                throw new InvalidMessageException("Invalid slot array size: " + count);
+
+            var collection = new SlotCollection<TSlot>();            
+            for (int i = 0; i < count; i++)
+            {
+                var instance = new TSlot();
+                instance.ReadSlot(this);
+
+                collection.Add(instance);
+            }
+            return collection;
         }
 
         /// <summary>

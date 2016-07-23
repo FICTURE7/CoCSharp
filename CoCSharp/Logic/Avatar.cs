@@ -41,6 +41,23 @@ namespace CoCSharp.Logic
         {
             // If _level is less that 1 then the client crashes.
             _level = 1;
+
+            ResourcesCapacity = new SlotCollection<ResourceCapacitySlot>();
+            ResourcesAmount = new SlotCollection<ResourceAmountSlot>();
+            Units = new SlotCollection<UnitSlot>();
+            Spells = new SlotCollection<SpellSlot>();
+            UnitUpgrades = new SlotCollection<UnitUpgradeSlot>();
+            SpellUpgrades = new SlotCollection<SpellUpgradeSlot>();
+            HeroUpgrades = new SlotCollection<HeroUpgradeSlot>();
+            HeroHealths = new SlotCollection<HeroHealthSlot>();
+            HeroStates = new SlotCollection<HeroStateSlot>();
+            AllianceUnits = new SlotCollection<AllianceUnitSlot>();
+            TutorialProgess = new SlotCollection<TutorialProgressSlot>();
+            Acheivements = new SlotCollection<AchievementSlot>();
+            AcheivementProgress = new SlotCollection<AchievementProgessSlot>();
+            NpcStars = new SlotCollection<NpcStarSlot>();
+            NpcGold = new SlotCollection<NpcGoldSlot>();
+            NpcElixir = new SlotCollection<NpcElixirSlot>();
         }
         #endregion
 
@@ -430,82 +447,82 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the resources capacity.
         /// </summary>
-        public ResourceCapacitySlot[] ResourcesCapacity { get; set; }
+        public SlotCollection<ResourceCapacitySlot> ResourcesCapacity { get; set; }
 
         /// <summary>
         /// Gets or sets the amount of resources available.
         /// </summary>
-        public ResourceAmountSlot[] ResourcesAmount { get; set; }
+        public SlotCollection<ResourceAmountSlot> ResourcesAmount { get; set; }
 
         /// <summary>
         /// Gets or sets the units available.
         /// </summary>
-        public UnitSlot[] Units { get; set; }
+        public SlotCollection<UnitSlot> Units { get; set; }
 
         /// <summary>
         /// Gets or sets the spells available.
         /// </summary>
-        public SpellSlot[] Spells { get; set; }
+        public SlotCollection<SpellSlot> Spells { get; set; }
 
         /// <summary>
         /// Gets or sets the units upgrades.
         /// </summary>
-        public UnitUpgradeSlot[] UnitUpgrades { get; set; }
+        public SlotCollection<UnitUpgradeSlot> UnitUpgrades { get; set; }
 
         /// <summary>
         /// Gets or sets the spells upgrades.
         /// </summary>
-        public SpellUpgradeSlot[] SpellUpgrades { get; set; }
+        public SlotCollection<SpellUpgradeSlot> SpellUpgrades { get; set; }
 
         /// <summary>
         /// Gets or sets the heroes upgrades.
         /// </summary>
-        public HeroUpgradeSlot[] HeroUpgrades { get; set; }
+        public SlotCollection<HeroUpgradeSlot> HeroUpgrades { get; set; }
 
         /// <summary>
         /// Gets or sets the heroes health.
         /// </summary>
-        public HeroHealthSlot[] HeroHealths { get; set; }
+        public SlotCollection<HeroHealthSlot> HeroHealths { get; set; }
 
         /// <summary>
         /// Gets or sets the heroes states.
         /// </summary>
-        public HeroStateSlot[] HeroStates { get; set; }
+        public SlotCollection<HeroStateSlot> HeroStates { get; set; }
 
         /// <summary>
         /// Gets or sets the alliance units.
         /// </summary>
-        public AllianceUnitSlot[] AllianceUnits { get; set; }
+        public SlotCollection<AllianceUnitSlot> AllianceUnits { get; set; }
 
         /// <summary>
         /// Get or sets the tutorial progress.
         /// </summary>
-        public TutorialProgressSlot[] TutorialProgess { get; set; }
+        public SlotCollection<TutorialProgressSlot> TutorialProgess { get; set; }
 
         /// <summary>
         /// Gets or sets the achievements state.
         /// </summary>
-        public AchievementSlot[] Acheivements { get; set; }
+        public SlotCollection<AchievementSlot> Acheivements { get; set; }
 
         /// <summary>
         /// Gets or sets the achievements progress.
         /// </summary>
-        public AchievementProgessSlot[] AcheivementProgress { get; set; }
+        public SlotCollection<AchievementProgessSlot> AcheivementProgress { get; set; }
 
         /// <summary>
         /// Gets or sets the NPC stars.
         /// </summary>
-        public NpcStarSlot[] NpcStars { get; set; }
+        public SlotCollection<NpcStarSlot> NpcStars { get; set; }
 
         /// <summary>
         /// Gets or sets the NPC gold.
         /// </summary>
-        public NpcGoldSlot[] NpcGold { get; set; }
+        public SlotCollection<NpcGoldSlot> NpcGold { get; set; }
 
         /// <summary>
         /// Gets or sets the NPC elixir.
         /// </summary>
-        public NpcElixirSlot[] NpcElixir { get; set; }
+        public SlotCollection<NpcElixirSlot> NpcElixir { get; set; }
 
         /// <summary>
         /// Gets a new <see cref="Network.Messages.OwnHomeDataMessage"/> for the
@@ -573,7 +590,7 @@ namespace CoCSharp.Logic
                 if (building.Data == null)
                     continue;
 
-                var data = (BuildingData)building.Data;
+                var data = building.Data;
 
                 // Ignore the building if its locked (from building.csv). E.g: Clan Castle level 0.
                 if (data.Locked)
@@ -606,7 +623,7 @@ namespace CoCSharp.Logic
             if (warDarkElixir > 0)
                 capacitySlot.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0).ID, warDarkElixir));
 
-            ResourcesCapacity = capacitySlot.ToArray();
+            //ResourcesCapacity = capacitySlot.ToArray();
         }
 
         /// <summary>

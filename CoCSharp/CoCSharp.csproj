@@ -89,6 +89,8 @@
     <Compile Include="Data\Models\DecorationData.cs" />
     <Compile Include="Data\Models\ObstacleData.cs" />
     <Compile Include="Data\Models\TrapData.cs" />
+    <Compile Include="Data\Slot.cs" />
+    <Compile Include="Data\SlotCollection{T}.cs" />
     <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
     <Compile Include="Logic\Components\UnitProductionComponent.cs" />
     <Compile Include="Logic\Components\UnitStorageComponent.cs" />
@@ -127,7 +129,7 @@
     <Compile Include="Data\Slots\ResourceAmountSlot.cs" />
     <Compile Include="Data\Models\ResourceData.cs" />
     <Compile Include="Data\Slots\ResourceCapacitySlot.cs" />
-    <Compile Include="Data\Slot.cs" />
+    <Compile Include="Data\Slot{T}.cs" />
     <Compile Include="Data\Slots\SpellSlot.cs" />
     <Compile Include="Data\Slots\SpellUpgradeSlot.cs" />
     <Compile Include="Data\Slots\TutorialProgressSlot.cs" />

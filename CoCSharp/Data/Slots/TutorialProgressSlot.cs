@@ -4,7 +4,7 @@ using System;
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
-    /// Represents a Clash of Clans tutorial(misison) progress slot.
+    /// Represents a Clash of Clans tutorial(mission) progress slot.
     /// </summary>
     public class TutorialProgressSlot : Slot
     {

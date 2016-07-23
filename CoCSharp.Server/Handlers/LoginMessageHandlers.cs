@@ -110,18 +110,9 @@ namespace CoCSharp.Server.Handlers
             //Profiler.Start("Avatar.UpdateSlots");
             //avatar.UpdateSlots(assetManager);
             //Profiler.Stop("Avatar.UpdateSlots");
-            avatar.ResourcesCapacity = new ResourceCapacitySlot[]
-            {
-                new ResourceCapacitySlot(3000000, 1000),
-                new ResourceCapacitySlot(3000001, 1000),
-            };
-
-            avatar.ResourcesAmount = new ResourceAmountSlot[]
-            {
-                new ResourceAmountSlot(3000000, 1000),
-                new ResourceAmountSlot(3000001, 1000),
-            };
-            avatar.NpcStars = npcManager.CompleteNpcStarList;
+            avatar.ResourcesCapacity.Add(new ResourceCapacitySlot(3000000, 1000));
+            avatar.ResourcesCapacity.Add(new ResourceCapacitySlot(3000001, 1000));
+            //avatar.NpcStars = npcManager.CompleteNpcStarList;
 
             var ohdMessage = avatar.OwnHomeDataMessage;
             client.Avatar = avatar;

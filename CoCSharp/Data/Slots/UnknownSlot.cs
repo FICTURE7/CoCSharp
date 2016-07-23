@@ -9,7 +9,7 @@ namespace CoCSharp.Data.Slots
     public class UnknownSlot : Slot
     {
         /// <summary>
-        /// Initalizes a new instance of the <see cref="UnknownSlot"/> class.
+        /// Initializes a new instance of the <see cref="UnknownSlot"/> class.
         /// </summary>
         public UnknownSlot()
         {

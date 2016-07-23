@@ -110,6 +110,11 @@ namespace CoCSharp.Server.Handlers
                 cmsMessage.Name = "Server";
                 switch (cmd)
                 {
+                    case "help":
+                        cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /max, /populatedb";
+                        client.NetworkManager.SendMessage(cmsMessage);
+                        break;
+
                     case "addgems":
                         client.Avatar.Gems += 500;
                         client.Avatar.FreeGems += 500;
@@ -163,10 +168,20 @@ namespace CoCSharp.Server.Handlers
                         client.NetworkManager.SendMessage(client.Avatar.OwnHomeDataMessage);
                         return;
 
+                    case "populatedb":
+                        for (int i = 0; i < 50; i++)
+                        {
+                            server.AvatarManager.CreateNewAvatar();
+                        }
+
+                        cmsMessage.Message = "Created 50 new avatar.";
+                        client.NetworkManager.SendMessage(cmsMessage);
+                        break;
+
                     default:
                         cmsMessage.Message = "Unknown command.";
                         client.NetworkManager.SendMessage(cmsMessage);
-                        return;
+                        goto case "help";
                 }
             }
 

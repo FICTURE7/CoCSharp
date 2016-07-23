@@ -25,6 +25,43 @@ namespace CoCSharp.Data
         private List<TSlot> _slots;
 
         /// <summary>
+        /// Gets or sets the <typeparamref name="TSlot"/> at the specified index.
+        /// </summary>
+        /// <param name="index">Index at which to read.</param>
+        /// <returns>The <typeparamref name="TSlot"/> at the specified index.</returns>
+        public TSlot this[int index]
+        {
+            get
+            {
+                return _slots[index];
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("index");
+
+                if (index > Count - 1)
+                {
+                    _slots.Add(value);
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value));
+                    return;
+                }
+
+                var oldItem = _slots[index];
+                if (oldItem == null)
+                {
+                    _slots.Add(value);
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value));
+                }
+                else
+                {
+                    _slots[index] = value;
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, oldItem));
+                }
+            }
+        }
+
+        /// <summary>
         /// Raised when a <typeparamref name="TSlot"/> is added, removed or when the <see cref="SlotCollection{TSlot}"/> is cleared.
         /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -61,8 +98,8 @@ namespace CoCSharp.Data
             if (slot == null)
                 throw new ArgumentNullException("slot");
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, slot));
             _slots.Add(slot);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, slot));
         }
 
         /// <summary>
@@ -96,8 +133,8 @@ namespace CoCSharp.Data
             if (IsReadOnly)
                 throw new InvalidOperationException("SlotCollection object is readonly.");
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             _slots.Clear();
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         /// <summary>
@@ -126,6 +163,15 @@ namespace CoCSharp.Data
         public void CopyTo(TSlot[] array, int arrayIndex)
         {
             _slots.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Copies the element of the <see cref="SlotCollection{TSlot}"/> to a new array.
+        /// </summary>
+        /// <returns>Array containing the copied <see cref="SlotCollection{TSlot}"/>.</returns>
+        public TSlot[] ToArray()
+        {
+            return _slots.ToArray();
         }
 
         /// <summary>
