@@ -143,8 +143,21 @@ namespace CoCSharp.Server.Core
 
         public Avatar GetRandomAvatar(long excludeId)
         {
-            var ava = _avatarCollection.FindOne(Query.And(Query.Between("_id", _avatarCollection.Min(), _avatarCollection.Max()), Query.Not("_id", excludeId)));
-            return ava;
+            var count = _avatarCollection.Count();
+            var avatars = _avatarCollection.Find(Query.Not("_id", excludeId));
+            var choosenOne = (Avatar)null;
+            var i = Utils.Random.Next(count);
+            var j = 0;
+            foreach (var avatar in avatars)
+            {
+                if (i == j)
+                {
+                    choosenOne = avatar;
+                    break;
+                }
+                j++;
+            }
+            return choosenOne;
         }
     }
 }
