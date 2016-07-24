@@ -87,8 +87,8 @@ namespace CoCSharp.Logic
                 if (_name == value)
                     return;
 
-                OnPropertyChanged(s_namedChanged);
                 _name = value;
+                OnPropertyChanged(s_namedChanged);
             }
         }
 
@@ -107,8 +107,8 @@ namespace CoCSharp.Logic
                 if (_isNamed == value)
                     return;
 
-                OnPropertyChanged(s_isNamedChanged);
                 _isNamed = value;
+                OnPropertyChanged(s_isNamedChanged);
             }
         }
 
@@ -133,8 +133,8 @@ namespace CoCSharp.Logic
                 if (_token == value)
                     return;
 
-                OnPropertyChanged(s_tokenChanged);
                 _token = value;
+                OnPropertyChanged(s_tokenChanged);
             }
         }
 
@@ -154,8 +154,8 @@ namespace CoCSharp.Logic
                 if (_id == value)
                     return;
 
-                OnPropertyChanged(s_idChanged);
                 _id = value;
+                OnPropertyChanged(s_idChanged);
             }
         }
 
@@ -194,8 +194,8 @@ namespace CoCSharp.Logic
                 if (_shieldEndTime == value)
                     return;
 
-                OnPropertyChanged(s_shieldEndTimeChanged);
                 _shieldEndTime = value;
+                OnPropertyChanged(s_shieldEndTimeChanged);
             }
         }
 
@@ -214,8 +214,8 @@ namespace CoCSharp.Logic
                 if (_home == value)
                     return;
 
-                OnPropertyChanged(s_homeChanged);
                 _home = value;
+                OnPropertyChanged(s_homeChanged);
             }
         }
 
@@ -234,8 +234,8 @@ namespace CoCSharp.Logic
                 if (_alliance == value)
                     return;
 
-                OnPropertyChanged(s_allianceChanged);
                 _alliance = value;
+                OnPropertyChanged(s_allianceChanged);
             }
         }
 
@@ -254,8 +254,8 @@ namespace CoCSharp.Logic
                 if (_league == value)
                     return;
 
-                OnPropertyChanged(s_leagueChanged);
                 _league = value;
+                OnPropertyChanged(s_leagueChanged);
             }
         }
 
@@ -279,8 +279,8 @@ namespace CoCSharp.Logic
                 if (value < 1)
                     throw new ArgumentOutOfRangeException("value", "value cannot be less than 1.");
 
-                OnPropertyChanged(s_levelChanged);
                 _level = value;
+                OnPropertyChanged(s_levelChanged);
             }
         }
 
@@ -299,8 +299,8 @@ namespace CoCSharp.Logic
                 if (_experience == value)
                     return;
 
-                OnPropertyChanged(s_experienceChanged);
                 _experience = value;
+                OnPropertyChanged(s_experienceChanged);
             }
         }
 
@@ -319,8 +319,8 @@ namespace CoCSharp.Logic
                 if (_gems == value)
                     return;
 
-                OnPropertyChanged(s_gemsChanged);
                 _gems = value;
+                OnPropertyChanged(s_gemsChanged);
             }
         }
 
@@ -339,8 +339,8 @@ namespace CoCSharp.Logic
                 if (_freeGems == value)
                     return;
 
-                OnPropertyChanged(s_freeGemsChanged);
                 _freeGems = value;
+                OnPropertyChanged(s_freeGemsChanged);
             }
         }
 
@@ -359,8 +359,8 @@ namespace CoCSharp.Logic
                 if (_trophies == value)
                     return;
 
-                OnPropertyChanged(s_trophiesChanged);
                 _trophies = value;
+                OnPropertyChanged(s_trophiesChanged);
             }
         }
 
@@ -379,8 +379,8 @@ namespace CoCSharp.Logic
                 if (_attkWon == value)
                     return;
 
-                OnPropertyChanged(s_attkWonChanged);
                 _attkWon = value;
+                OnPropertyChanged(s_attkWonChanged);
             }
         }
 
@@ -399,8 +399,8 @@ namespace CoCSharp.Logic
                 if (_attkLost == value)
                     return;
 
-                OnPropertyChanged(s_attkLostChanged);
                 _attkLost = value;
+                OnPropertyChanged(s_attkLostChanged);
             }
         }
 
@@ -419,8 +419,8 @@ namespace CoCSharp.Logic
                 if (_defWon == value)
                     return;
 
-                OnPropertyChanged(s_defWonChanged);
                 _defWon = value;
+                OnPropertyChanged(s_defWonChanged);
             }
         }
 
@@ -439,8 +439,8 @@ namespace CoCSharp.Logic
                 if (_defLost == value)
                     return;
 
-                OnPropertyChanged(s_defLostChanged);           
                 _defLost = value;
+                OnPropertyChanged(s_defLostChanged);
             }
         }
 
