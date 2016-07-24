@@ -240,7 +240,7 @@ namespace CoCSharp.Data
             // Determines if we're inside the "files" array.
             var inFilesArray = false;
 
-            using (var txtReader = new StringReader(value))
+            var txtReader = new StringReader(value);
             using (var jsonReader = new JsonTextReader(txtReader))
             {
                 // Keep on reading the next JSON token.

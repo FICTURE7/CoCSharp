@@ -241,13 +241,19 @@ namespace CoCSharp.Network
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="MessageWriter"/> class.
         /// </summary>
-        public new void Dispose()
+        /// <param name="disposing"><c>true</c> to release managed resources.</param>
+        protected override void Dispose(bool disposing)
         {
-            if (!_disposed)
-            {
-                Dispose(true);
-                _disposed = true;
-            }
+            if (_disposed)
+                return;
+
+            //if (disposing)
+            //{
+
+            //}
+
+            _disposed = true;
+            base.Dispose(true);
         }
 
         private void CheckDispose()

@@ -68,7 +68,7 @@ namespace CoCSharp.Network.Messages
             var villageBytes = reader.ReadBytes();
             if (villageBytes.Length != 0)
             {
-                using (var mem = new MemoryStream(villageBytes))
+                var mem = new MemoryStream(villageBytes);
                 using (var br = new BinaryReader(mem))
                 {
                     var decompressedLength = br.ReadInt32();
@@ -99,7 +99,7 @@ namespace CoCSharp.Network.Messages
 
             AvatarData.WriteMessageComponent(writer);
 
-            using (var mem = new MemoryStream())
+            var mem = new MemoryStream();
             using (var bw = new BinaryWriter(mem))
             {
                 var villageJson = Village.ToJson();

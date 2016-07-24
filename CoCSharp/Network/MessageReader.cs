@@ -137,7 +137,7 @@ namespace CoCSharp.Network
             var length = ReadInt32();
             if (length == -1)
                 return null;
-            
+
             CheckLength(length, "string");
             var buffer = ReadBytes(length);
             return Encoding.UTF8.GetString(buffer);
@@ -158,7 +158,7 @@ namespace CoCSharp.Network
             if (count < 0)
                 throw new InvalidMessageException("Invalid slot array size: " + count);
 
-            var collection = new SlotCollection<TSlot>();            
+            var collection = new SlotCollection<TSlot>();
             for (int i = 0; i < count; i++)
             {
                 var instance = new TSlot();
@@ -191,10 +191,19 @@ namespace CoCSharp.Network
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="MessageReader"/> class.
         /// </summary>
-        public new void Dispose()
+        /// <param name="disposing"><c>true</c> to release managed resources.</param>
+        protected override void Dispose(bool disposing)
         {
-            Dispose(true);
+            if (_disposed)
+                return;
+
+            //if (disposing)
+            //{
+
+            //}
+
             _disposed = true;
+            base.Dispose(true);
         }
 
         private byte[] ReadByteArrayEndian(int count)

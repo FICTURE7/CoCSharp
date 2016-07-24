@@ -109,7 +109,7 @@ namespace CoCSharp.Logic
         /// </summary>
         public List<Decoration> Decorations { get; set; }
 
-        internal Building _townhall;
+        private Building _townhall;
         /// <summary>
         /// Gets or sets the TownHall <see cref="Building"/> of the <see cref="Village"/>; returns
         /// <c>null</c> if there is no TownHall in the <see cref="Village"/>.
@@ -122,10 +122,14 @@ namespace CoCSharp.Logic
             }
             internal set
             {
+                // Prevent the Village from reacting to the old TownHall upgrades.
+                if (_townhall != null)
+                    _townhall.ConstructionFinished -= OnTownHallConstructionFinished;
+
                 _townhall = value;
                 _townhall.ConstructionFinished += OnTownHallConstructionFinished;
             }
-        }       
+        }
         #endregion
 
         #region Methods
@@ -261,21 +265,40 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Releases all resources used by this <see cref="Village"/> instance.
         /// </summary>
+        /// <remarks>
+        /// All the <see cref="VillageObject"/> in the <see cref="Village"/> will be pushed
+        /// to an internal pool, <see cref="VillageObjectPool"/>.
+        /// </remarks>
         public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
         {
             if (_disposed)
                 return;
 
-            for (int i = 0; i < Buildings.Count; i++)
-                Buildings[i].PushToPool();
-            for (int i = 0; i < Obstacles.Count; i++)
-                Obstacles[i].PushToPool();
-            for (int i = 0; i < Traps.Count; i++)
-                Traps[i].PushToPool();
-            for (int i = 0; i < Decorations.Count; i++)
-                Decorations[i].PushToPool();
+            if (disposing)
+            {
+                if (_disposed)
+                    return;
 
-            _disposed = true;
+                for (int i = 0; i < Buildings.Count; i++)
+                    Buildings[i].PushToPool();
+                for (int i = 0; i < Obstacles.Count; i++)
+                    Obstacles[i].PushToPool();
+                for (int i = 0; i < Traps.Count; i++)
+                    Traps[i].PushToPool();
+                for (int i = 0; i < Decorations.Count; i++)
+                    Decorations[i].PushToPool();
+
+                _disposed = true;
+            }
         }
 
         /// <summary>

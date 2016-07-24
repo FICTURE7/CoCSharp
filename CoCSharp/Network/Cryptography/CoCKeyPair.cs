@@ -83,10 +83,22 @@ namespace CoCSharp.Network.Cryptography
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases all unmanaged and optionally managed resources used by the <see cref="CoCKeyPair"/>.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to dispose managed resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
             if (_disposed)
                 return;
 
-            _keyPair.Dispose();
+            if (disposing)
+            {
+                _keyPair.Dispose();
+            }
             _disposed = true;
         }
     }
