@@ -2,6 +2,7 @@
 using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Server.Core;
+using CoCSharp.Server.Handlers.Commands;
 using LiteDB;
 using System;
 using System.Net.Sockets;
@@ -28,43 +29,13 @@ namespace CoCSharp.Server
         }
 
         [BsonIgnore]
-        public CoCServer Server { get; private set; }
+        public CoCServer Server { get; internal set; }
         [BsonIgnore]
         public Socket Connection { get; private set; }
         [BsonIgnore]
         public NetworkManagerAsync NetworkManager { get; private set; }
         [BsonIgnore]
         public byte[] SessionKey { get; set; }
-
-        //[BsonField]
-        //internal ResourceAmountSlot[] SaveResourcesAmount
-        //{
-        //    get
-        //    {
-        //        return ResourcesAmount.ToArray();
-        //    }
-        //    set
-        //    {
-        //        ResourcesAmount.Clear();
-        //        for (int i = 0; i < value.Length; i++)
-        //            ResourcesAmount.Add(value[i]);
-        //    }
-        //}
-
-        //[BsonField]
-        //internal UnitSlot[] SaveUnits
-        //{
-        //    get
-        //    {
-        //        return Units.ToArray();
-        //    }
-        //    set
-        //    {
-        //        Units.Clear();
-        //        for (int i = 0; i < value.Length; i++)
-        //            Units.Add(value[i]);
-        //    }
-        //}
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
@@ -96,7 +67,62 @@ namespace CoCSharp.Server
             FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> Avatar &(darkcyan){0}&(default) disconnected.", Token);
         }
 
-        public void SetFromAvatar(Avatar avatar)
+        public void Save()
+        {
+            Server.AvatarManager.SaveAvatar(this);
+        }
+
+        public bool Load()
+        {
+            var avatar = (Avatar)null;
+
+            // The client is a new Avatar.
+            if (ID == 0 && Token == null)
+            {
+                avatar = Server.AvatarManager.CreateNewAvatar();
+            }
+            else
+            {
+                if (Server.AvatarManager.Exists(Token))
+                {
+                    avatar = Server.AvatarManager.LoadAvatar(Token);
+                }
+                else
+                {
+                    avatar = Server.AvatarManager.CreateNewAvatar(Token, ID);
+                }
+            }
+
+            if (avatar == null)
+                return false;
+
+            // Set the UserToken of buildings to this instance.
+            for (int i = 0; i < avatar.Home.Buildings.Count; i++)
+            {
+                var building = avatar.Home.Buildings[i];
+                building.UserToken = this;
+                building.ConstructionFinished += CommandHandlers.BuildingConstructionFinished;
+            }
+
+            for (int i = 0; i < avatar.Home.Traps.Count; i++)
+            {
+                var trap = avatar.Home.Traps[i];
+                trap.UserToken = this;
+                trap.ConstructionFinished += CommandHandlers.TrapConstructionFinished;
+            }
+
+            for (int i = 0; i < avatar.Home.Obstacles.Count; i++)
+            {
+                var obstacle = avatar.Home.Obstacles[i];
+                obstacle.UserToken = this;
+                obstacle.ClearingFinished += CommandHandlers.ObstacleClearingFinished;
+            }
+
+            SetFromAvatar(avatar);
+            return true;
+        }
+
+        private void SetFromAvatar(Avatar avatar)
         {
             var propValue = IsPropertyChangedEnabled;
             IsPropertyChangedEnabled = false;

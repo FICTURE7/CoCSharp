@@ -4,8 +4,6 @@ using CoCSharp.Logic;
 using CoCSharp.Server.Handlers.Commands;
 using LiteDB;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 
 namespace CoCSharp.Server.Core
@@ -26,23 +24,11 @@ namespace CoCSharp.Server.Core
             _liteDb.Mapper.RegisterType
             (
                 serialize: (village) => village.ToJson(),
-                deserialize: (bson) =>
-                {
-                    var village = Village.FromJson(bson);
-
-                    for (int i = 0; i < village.Buildings.Count; i++)
-                        village.Buildings[i].ConstructionFinished += CommandHandlers.BuildingConstructionFinished;
-
-                    for (int i = 0; i < village.Obstacles.Count; i++)
-                        village.Obstacles[i].ClearingFinished += CommandHandlers.ObstacleClearingFinished;
-
-                    for (int i = 0; i < village.Traps.Count; i++)
-                        village.Traps[i].ConstructionFinished += CommandHandlers.TrapConstructionFinished;
-
-                    return village;
-                }
+                deserialize: (bson) => Village.FromJson(bson)
             );
 
+            // Register the serialization of SlotCollections because
+            // LiteDB can't seem to do it by himself.
             RegisterSlotCollection<ResourceCapacitySlot>();
             RegisterSlotCollection<ResourceAmountSlot>();
             RegisterSlotCollection<UnitSlot>();
@@ -67,41 +53,24 @@ namespace CoCSharp.Server.Core
                 newId: (collection) => collection.Max("_id").AsInt64 + 1L
             );
 
-            _avatarCollection = _liteDb.GetCollection<CoCRemoteClient>("avatars");
+            _avatarCollection = _liteDb.GetCollection<Avatar>("avatars");
+            // Make sure the Token(UserToken) of avatars are unique.
             _avatarCollection.EnsureIndex("Token", unique: true);
         }
 
         private string _startingVillage;
         private LiteDatabase _liteDb;
-        private LiteCollection<CoCRemoteClient> _avatarCollection;
+        private LiteCollection<Avatar> _avatarCollection;
 
-        public CoCRemoteClient CreateNewAvatar()
+        public Avatar CreateNewAvatar()
         {
             // Generate a token & make sure its unique.
             var token = TokenUtils.GenerateToken();
             while (_avatarCollection.Exists(ava => ava.Token == token))
                 token = TokenUtils.GenerateToken();
 
-            var avatar = new Avatar();
-
-            avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
-            avatar.Token = token;
-            // Skip the tutorials.
-            avatar.Level = 10;
-            avatar.Home = Village.FromJson(_startingVillage);
-            avatar.Name = "Patrik"; // :]
-            avatar.Gems = 300;
-            avatar.FreeGems = 300;
-
-            for (int i = 0; i < 10; i++)
-                avatar.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
-
-            var client = new CoCRemoteClient();
-            client.SetFromAvatar(avatar);
-
-            // Avatar.ID will be automatically incremented by LiteDB.
-            _avatarCollection.Insert(client);
-            return client;
+            // CreateNewAvatar will automatically insert the avatar in the db.
+            return CreateNewAvatar(token, default(long));
         }
 
         public Avatar CreateNewAvatar(string token, long id)
@@ -118,20 +87,17 @@ namespace CoCSharp.Server.Core
             avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
             avatar.ID = id;
-            // Skip the tutorials.
             avatar.Level = 9;
             avatar.Home = Village.FromJson(_startingVillage);
             avatar.Name = "Patrik"; // :]
-            avatar.Gems = 300;
-            avatar.FreeGems = 300;
+            avatar.Gems = 69696969;
+            avatar.FreeGems = 69696969;
 
+            // Set tutorial progress to where it ask the username.
             for (int i = 0; i < 10; i++)
                 avatar.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
 
-            var client = new CoCRemoteClient();
-            client.SetFromAvatar(avatar);
-
-            _avatarCollection.Insert(client);
+            _avatarCollection.Insert(avatar);
             return avatar;
         }
 
@@ -153,19 +119,19 @@ namespace CoCSharp.Server.Core
             return _avatarCollection.Exists(ava => ava.ID == id);
         }
 
-        public CoCRemoteClient LoadAvatar(string token)
+        public Avatar LoadAvatar(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
                 return null;
 
-            return _avatarCollection.FindOne(ava => ava.Token == token);
-
+            var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
+            return avatar;
             //var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
             //File.WriteAllText(avatar.Token + ".json", avatar.Home.ToJson());
             //return avatar;
         }
 
-        public void SaveAvatar(CoCRemoteClient avatar)
+        public void SaveAvatar(Avatar avatar)
         {
             // If we don't have the avatar in the db
             // we add it to the db.

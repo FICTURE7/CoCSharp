@@ -14,7 +14,7 @@ namespace CoCSharp.Server.Handlers.Commands
 
             Debug.Assert(obstacle.ID == coCommand.ObstacleGameID);
 
-            obstacle.UserToken = client;
+            //obstacle.UserToken = client;
             obstacle.BeginClearing();
 
             FancyConsole.WriteLine(StartedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);

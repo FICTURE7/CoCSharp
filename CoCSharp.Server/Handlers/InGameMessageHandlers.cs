@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Models;
+using CoCSharp.Data.Slots;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
 using CoCSharp.Server.Core;
@@ -96,7 +97,8 @@ namespace CoCSharp.Server.Handlers
 
                     server.HandleCommand(client, cmd);
                 }
-                server.AvatarManager.SaveAvatar(client);
+
+                client.Save();
             }
         }
 
@@ -108,16 +110,16 @@ namespace CoCSharp.Server.Handlers
 
             var count = client.TutorialProgess.Count;
             for (int i = count; i < count + 3; i++)
-                client.TutorialProgess.Add(new Data.Slots.TutorialProgressSlot(21000000 + i));
+                client.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
 
             var caresMessage = new ChangeAvatarNameResponseMessage();
-            caresMessage.Unknown1 = 3;
+            caresMessage.Unknown1 = 3; // CommandType
             caresMessage.NewName = careqMessage.NewName;
             caresMessage.Unknown3 = 1;
             caresMessage.Unknown4 = -1;
             client.NetworkManager.SendMessage(caresMessage);
 
-            server.AvatarManager.SaveAvatar(client);
+            client.Save();
         }
 
         private static void HandleChatMessageClientMessageMessage(CoCServer server, CoCRemoteClient client, Message message)
@@ -196,7 +198,7 @@ namespace CoCSharp.Server.Handlers
 
                         cmsMessage.Message = "Created 50 new avatar.";
                         client.NetworkManager.SendMessage(cmsMessage);
-                        break;
+                        return;
 
                     default:
                         cmsMessage.Message = "Unknown command.";

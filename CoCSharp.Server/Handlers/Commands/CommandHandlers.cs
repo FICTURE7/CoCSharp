@@ -71,26 +71,18 @@ namespace CoCSharp.Server.Handlers.Commands
             var building = (Building)e.BuildableConstructed;
             var client = (CoCRemoteClient)e.UserToken;
 
-            // Can happen when the buildings were scheduled automatically on load.
-            if (client == null)
-            {
-                return;
-            }
-
             if (e.WasCancelled)
             {
-
                 FancyConsole.WriteLine(CancelledConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
             }
             else
             {
                 FancyConsole.WriteLine(FinishedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
-
                 var exp = LogicUtils.CalculateExperience(building.Data.BuildTime);
                 client.Experience += exp;
             }
 
-            client.Server.AvatarManager.SaveAvatar(client);
+            client.Save();
         }
 
         public static void TrapConstructionFinished(object sende, ConstructionFinishedEventArgs<TrapData> e)
@@ -110,7 +102,7 @@ namespace CoCSharp.Server.Handlers.Commands
                 client.Experience += exp;
             }
 
-            client.Server.AvatarManager.SaveAvatar(client);
+            client.Save();
         }
 
         public static void ObstacleClearingFinished(object sender, ClearingFinishedEventArgs e)
@@ -129,7 +121,7 @@ namespace CoCSharp.Server.Handlers.Commands
                 client.Experience += exp;
             }
 
-            client.Server.AvatarManager.SaveAvatar(client);
+            client.Save();
         }
     }
 }

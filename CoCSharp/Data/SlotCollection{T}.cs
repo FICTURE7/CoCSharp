@@ -20,8 +20,15 @@ namespace CoCSharp.Data
             _slots = new List<TSlot>(4);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SlotCollection{TSlot}"/> class with the specified <see cref="IEnumerator{T}"/> class.
+        /// </summary>
+        /// <param name="enumerable"><see cref="IEnumerator{T}"/> object from which to load the <see cref="SlotCollection{TSlot}"/>.</param>
         public SlotCollection(IEnumerable<TSlot> enumerable)
         {
+            if (enumerable == null)
+                throw new ArgumentNullException("enumerable");
+
             _slots = new List<TSlot>(enumerable);
         }
         #endregion

@@ -51,73 +51,33 @@ namespace CoCSharp.Server.Handlers
                 CountryCode = "OI" //TODO: Return Country code of IP.
             };
 
-            var avatar = (Avatar)null;
-            var avatarManager = server.AvatarManager;
+            client.ID = lrMessage.UserID;
+            client.Token = lrMessage.UserToken;
 
-            // When UserID == 0 and UserToken == null, it means we should create a new account.
-            if (lrMessage.UserID == 0 && lrMessage.UserToken == null)
+            // Load avatar from db.
+            // It will create a new avatar if ID == 0 && Token == null and return
+            // true if it succeeded; otherwise a false.
+            if (!client.Load())
             {
-                avatar = avatarManager.CreateNewAvatar();
-                FancyConsole.WriteLine("[&(blue)Login&(default)] Created new avatar &(darkcyan){0}&(default):{1} success.",
-                                       avatar.Token, avatar.ID);
+                FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} failed.",
+                                           client.Token, client.ID);
 
-                lsMessage.UserID = avatar.ID;
-                lsMessage.UserID1 = avatar.ID;
-                lsMessage.UserToken = avatar.Token;
-                client.SetFromAvatar(avatar);
+                var loginFailed = new LoginFailedMessage();
+                client.NetworkManager.SendMessage(loginFailed);
+                //TODO: Disconnect client.
+                return;
             }
             else
             {
-                // If the account with the specified UserToken does not exists,
-                // we try to create one with the UserToken and UserID.
-                if (!avatarManager.Exists(lrMessage.UserToken))
-                {
-                    avatar = avatarManager.CreateNewAvatar(lrMessage.UserToken, lrMessage.UserID);
-                    if (avatar == null)
-                    {
-                        // Should send a LoginFailedMessage telling the client to clear its data.
-                        var loginFailed = new LoginFailedMessage();
-                        client.NetworkManager.SendMessage(loginFailed);
-                        //TODO: Disconnect client.
-                        return;
-                    }
+                FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} success.",
+                                           client.Token, client.ID);
 
-                    FancyConsole.WriteLine("[&(blue)Login&(default)] Unknown avatar -> Created new avatar with &(darkcyan){0}&(default):{1} success.",
-                                           avatar.Token, avatar.ID);
-                    client.SetFromAvatar(avatar);
-                    avatarManager.SaveAvatar(client);
-                }
-                else
-                {
-                    avatar = avatarManager.LoadAvatar(lrMessage.UserToken);
-                    if (avatar == null)
-                    {
-                        // Should send a LoginFailedMessage telling the client to clear its data.
-                        return;
-                    }
-
-                    FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} success.",
-                                           avatar.Token, avatar.ID);
-                    client.SetFromAvatar(avatar);
-                }
-
-                lsMessage.UserID = avatar.ID;
-                lsMessage.UserID1 = avatar.ID;
-                lsMessage.UserToken = avatar.Token;
+                lsMessage.UserID = client.ID;
+                lsMessage.UserID1 = client.ID;
+                lsMessage.UserToken = client.Token;
             }
 
-            var avatarVillage = avatar.Home;
-            var assetManager = server.AssetManager;
-            var npcManager = server.NpcManager;
-
-            //Profiler.Start("Avatar.UpdateSlots");
-            //avatar.UpdateSlots(assetManager);
-            //Profiler.Stop("Avatar.UpdateSlots");
-            avatar.ResourcesCapacity.Add(new ResourceCapacitySlot(3000000, 1000));
-            avatar.ResourcesCapacity.Add(new ResourceCapacitySlot(3000001, 1000));
-            //avatar.NpcStars = npcManager.CompleteNpcStarList;
-
-            var ohdMessage = avatar.OwnHomeDataMessage;
+            var ohdMessage = client.OwnHomeDataMessage;
             client.NetworkManager.SendMessage(lsMessage); // LoginSuccessMessage
             client.NetworkManager.SendMessage(ohdMessage); // OwnHomeDataMessage
         }

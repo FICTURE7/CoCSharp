@@ -12,9 +12,8 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var btCommand = (BuyTrapCommand)command;
             var data = server.AssetManager.SearchCsv<TrapData>(btCommand.TrapDataID, 0);
-            var trap = new Trap(client.Home, data, btCommand.X, btCommand.Y);
+            var trap = new Trap(client.Home, data, btCommand.X, btCommand.Y, client);
 
-            trap.UserToken = client;
             trap.ConstructionFinished += TrapConstructionFinished;
             trap.BeginConstruction();
 
