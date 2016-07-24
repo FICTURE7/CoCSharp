@@ -80,6 +80,8 @@ namespace CoCSharp.Server
             if (ID == 0 && Token == null)
             {
                 avatar = Server.AvatarManager.CreateNewAvatar();
+                avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000001, 1000));
+                avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000000, 1000));
             }
             else
             {

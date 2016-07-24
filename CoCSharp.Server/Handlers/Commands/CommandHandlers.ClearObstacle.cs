@@ -12,9 +12,11 @@ namespace CoCSharp.Server.Handlers.Commands
             var coCommand = command as ClearObstacleCommand;
             var obstacle = client.Home.GetObstacle(coCommand.ObstacleGameID);
 
+            // Theirs is an issue where when the client removes an obstacle, the instance ID of the
+            // Obstacle is desync because we're not updating them.
+            // Might cause an issue with the Decoration.
             Debug.Assert(obstacle.ID == coCommand.ObstacleGameID);
 
-            //obstacle.UserToken = client;
             obstacle.BeginClearing();
 
             FancyConsole.WriteLine(StartedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
