@@ -57,10 +57,7 @@ namespace CoCSharp.Data
         }
 
         private int _thId;
-        /// <summary>
-        /// Gets the data ID of TownHalls.
-        /// </summary>
-        public int TownHallID
+        internal int TownHallID
         {
             get
             {
@@ -173,9 +170,9 @@ namespace CoCSharp.Data
         /// <exception cref="InvalidOperationException"><typeparamref name="TCsvData"/> was not loaded.</exception>
         public CsvDataSubCollection<TCsvData> SearchCsv<TCsvData>(int id) where TCsvData : CsvData, new()
         {
-            // Silliness here.
-            if (id < Base)
-                throw new ArgumentOutOfRangeException("id", "id must be greater or equal to " + Base + ".");
+            var instance = CsvData.GetInstance<TCsvData>();
+            if (instance.InvalidDataID(id))
+                throw new ArgumentOutOfRangeException("id", instance.GetArgsOutOfRangeMessage("id"));
 
             var index = GetIndex(id);
             var collection = (CsvDataCollection<TCsvData>)_arrayCsv[index];
@@ -203,9 +200,9 @@ namespace CoCSharp.Data
         /// <exception cref="InvalidOperationException"><typeparamref name="TCsvData"/> was not loaded.</exception>
         public TCsvData SearchCsv<TCsvData>(int id, int level) where TCsvData : CsvData, new()
         {
-            // Silliness here.
-            if (id < Base)
-                throw new ArgumentOutOfRangeException("id", "id must be greater or equal to " + Base + ".");
+            var instance = CsvData.GetInstance<TCsvData>();
+            if (instance.InvalidDataID(id))
+                throw new ArgumentOutOfRangeException("id", instance.GetArgsOutOfRangeMessage("id"));
             if (level < 0)
                 throw new ArgumentOutOfRangeException("level", "level must be non-negative.");
 
@@ -266,9 +263,25 @@ namespace CoCSharp.Data
         /// <typeparam name="TCsvData"></typeparam>
         /// <param name="tid"></param>
         /// <returns></returns>
-        public TCsvData[] SearchCsv<TCsvData>(string tid) where TCsvData : CsvData, new()
+        public CsvDataSubCollection<TCsvData> SearchCsv<TCsvData>(string tid) where TCsvData : CsvData, new()
         {
-            throw new NotImplementedException();
+            if (tid == null)
+                throw new ArgumentNullException("tid");
+
+
+            var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
+            var index = GetIndex(baseDataId);
+            var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
+            for (int i = 0; i < data.Count; i++)
+            {
+                var collection = data[baseDataId + i];
+                if (collection.TID == tid)
+                {
+                    return collection;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -280,7 +293,21 @@ namespace CoCSharp.Data
         /// <returns></returns>
         public TCsvData SearchCsv<TCsvData>(string tid, int level) where TCsvData : CsvData, new()
         {
-            throw new NotImplementedException();
+            if (tid == null)
+                throw new ArgumentNullException("tid");
+
+            var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
+            var index = GetIndex(baseDataId);
+            var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
+            for (int i = 0; i < data.Count; i++)
+            {
+                var collection = data[baseDataId + i];
+                if (collection.TID == tid)
+                {
+                    return collection[level];
+                }
+            }
+            return null;
         }
         #endregion
         #endregion
