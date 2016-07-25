@@ -12,11 +12,6 @@ namespace CoCSharp.Server
 {
     public class CoCRemoteClient : Avatar
     {
-        public CoCRemoteClient() : base()
-        {
-            // Space
-        }
-
         public CoCRemoteClient(CoCServer server, Socket connection, NetworkManagerAsyncSettings settings) : base()
         {
             Server = server;
@@ -92,6 +87,8 @@ namespace CoCSharp.Server
                 else
                 {
                     avatar = Server.AvatarManager.CreateNewAvatar(Token, ID);
+                    avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000001, 1000));
+                    avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000000, 1000));
                 }
             }
 

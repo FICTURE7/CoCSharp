@@ -10,6 +10,7 @@ namespace CoCSharp.Logic
     internal static class LogicScheduler
     {
         //TODO: Consider pooling Schedule object to reduce GC pressure.
+        //TODO: Consider using UNIX timestamps(int) instead of DateTime.
 
         static LogicScheduler()
         {
@@ -25,6 +26,7 @@ namespace CoCSharp.Logic
         private readonly static List<Schedule> s_scheduleList;
         private readonly static Stopwatch s_stopwatch;
         private readonly static Thread t_worker;
+        private static int s_tick;
 
         // Schedules the specified Action at the specified DateTime.
         public static void ScheduleLogic(Action logic, DateTime utcWhen, string name = null, object userToken = null)
@@ -124,6 +126,7 @@ namespace CoCSharp.Logic
                         }
                     }
 
+                    s_tick++;
                     s_stopwatch.Stop();
                 }
                 Thread.Sleep(100);

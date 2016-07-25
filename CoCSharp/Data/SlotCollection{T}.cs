@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace CoCSharp.Data
 {
@@ -9,6 +10,7 @@ namespace CoCSharp.Data
     /// Represents a collection of <see cref="Slot"/>.
     /// </summary>
     /// <typeparam name="TSlot">Type of <see cref="Slot"/> to store.</typeparam>
+    [DebuggerDisplay("Count = {Count}")]
     public class SlotCollection<TSlot> : ICollection<TSlot>, INotifyCollectionChanged where TSlot : Slot, new()
     {
         #region Constructors

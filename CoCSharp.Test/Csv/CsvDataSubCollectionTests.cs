@@ -52,26 +52,6 @@ namespace CoCSharp.Test.Csv
 
             Assert.AreSame(instance1, instance2);
         }
-
-        [Test, Ignore("Test a bit inconsistent.")]
-        public void Constructors_TCsvDataInstanceCacheCollected_CreateNewInstance()
-        {
-            var weakRef = new WeakReference(_collection._instance);
-            Assert.True(weakRef.IsAlive);
-
-            // Set _collection to null to remove all references to _instance
-            // so that the GC can reclaim it.
-            _collection = null;
-
-            GC.Collect();
-            Assert.False(weakRef.IsAlive);
-
-            var col = new CsvDataSubCollection<BuildingData>(1000000, "SOME_TID");
-            var instance = col._instance;
-
-            Assert.Null(weakRef.Target);
-            Assert.NotNull(instance);
-        }
         #endregion
 
         #region Indexer

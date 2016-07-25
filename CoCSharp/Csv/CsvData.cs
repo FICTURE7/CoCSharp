@@ -13,7 +13,7 @@ namespace CoCSharp.Csv
         #region Constants
         // Contains instances of TCsvData.
         // To reduce the amount of _instance object duplicates.
-        internal static Dictionary<Type, WeakReference> s_instances = new Dictionary<Type, WeakReference>();
+        internal static Dictionary<Type, CsvData> s_instances = new Dictionary<Type, CsvData>();
 
         internal const int MaxIndex = 999999;
         #endregion
@@ -152,34 +152,15 @@ namespace CoCSharp.Csv
         // To prevent extra creation of objects.
         internal static TCsvData GetInstance<TCsvData>() where TCsvData : CsvData, new()
         {
-            var instance = (TCsvData)null;
-            var weakRef = (WeakReference)null;
-            // If we don't have any weak references to the TCsvData instance,
-            // we create a new instance and add its weak reference to the dictionary.
-            if (!s_instances.TryGetValue(typeof(TCsvData), out weakRef))
+            var type = typeof(TCsvData);
+            var instance = (CsvData)null;
+            if (!s_instances.TryGetValue(type, out instance))
             {
                 instance = new TCsvData();
-
-                weakRef = new WeakReference(instance);
-                s_instances.Add(typeof(TCsvData), weakRef);
-            }
-            else
-            {
-                // If we don't manage to get the weak reference's target object
-                // we create a new instance and update the weak reference.
-                // Likely to happen when the GC kicked in.
-                if (!weakRef.IsAlive)
-                {
-                    instance = new TCsvData();
-                    weakRef.Target = instance;
-                }
-                else
-                {
-                    instance = (TCsvData)weakRef.Target;
-                }
+                s_instances.Add(type, instance);
             }
 
-            return instance;
+            return (TCsvData)instance;
         }
 
         internal int GetIndex(int dataId)
