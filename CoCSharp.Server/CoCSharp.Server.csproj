@@ -57,20 +57,49 @@
     <Compile Include="Core\FancyConsole.cs" />
     <Compile Include="Core\FancyConsole.Write.cs" />
     <Compile Include="Core\FancyConsole.WriteLine.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.BuyBuilding.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.BuyDecoration.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.BuyTrap.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.CancelConstruction.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.ClearObstacle.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyBuilding.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyDecoration.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyResources.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyTrap.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.CancelConstruction.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.ClearObstacle.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Handlers\Commands\CommandHandlers.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.Matchmaking.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.MoveMultipleVillageObject.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.MoveVillageObject.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.RearmTrap.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.SellDecoration.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.SpeedUpConstruction.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeBuildable.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeMultipleBuildable.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.Matchmaking.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.MoveMultipleVillageObject.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.MoveVillageObject.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.RearmTrap.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.SellDecoration.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.SpeedUpConstruction.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeBuildable.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeMultipleBuildable.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Handlers\InGameMessageHandlers.cs" />
     <Compile Include="Handlers\LoginMessageHandlers.cs" />
     <Compile Include="Program.cs" />
@@ -236,7 +265,6 @@
     <None Include="Content\traps.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Handlers\Commands\CommandHandlers.BuyResources.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

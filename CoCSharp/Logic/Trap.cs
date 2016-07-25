@@ -40,6 +40,20 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it with a value indicating
+        /// whether the <see cref="Trap"/> is a new construction.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> containing the <see cref="Trap"/>.</param>
+        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
+        public Trap(Village village, TrapData data, bool newConstruction) : base(village, data, newConstruction)
+        {
+            // Space
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing
         /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it and user token object.
         /// </summary>
         /// 
@@ -47,6 +61,21 @@ namespace CoCSharp.Logic
         /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
         public Trap(Village village, TrapData data, object userToken) : base(village, data, userToken)
+        {
+            // Space
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it and user token object with
+        /// a value indicating whether the <see cref="Trap"/> is a new construction. 
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
+        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
+        /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
+        public Trap(Village village, TrapData data, object userToken, bool newConstruction) : base(village, data, userToken)
         {
             // Space
         }
@@ -67,6 +96,22 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing the <see cref="Trap"/>
+        /// and <see cref="TrapData"/> which is associated with it, X coordinate and Y coordinate with a value indicating whether the
+        /// <see cref="Trap"/> is in construction.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
+        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
+        public Trap(Village village, TrapData data, int x, int y, bool newConstruction) : base(village, data, x, y, newConstruction)
+        {
+            // Space
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing the <see cref="Trap"/>
         /// and <see cref="TrapData"/> which is associated with it, X coordinate, Y coordinate and user token object.
         /// </summary>
         /// 
@@ -79,12 +124,29 @@ namespace CoCSharp.Logic
         {
             // Space
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing the <see cref="Trap"/>
+        /// and <see cref="TrapData"/> which is associated with it, X coordinate, Y coordinate and user token object with a value indicating
+        /// whether the <see cref="Trap"/> is in construction.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
+        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
+        public Trap(Village village, TrapData data, int x, int y, object userToken, bool newConstruction) : base(village, data, x, y, userToken, newConstruction)
+        {
+            // Space
+        }
         #endregion
 
         #region Fields & Properties
         private bool _broken;
         /// <summary>
-        /// Gets or sets whether the trap needs to be repaired.
+        /// Gets or sets a value indicating whether the trap needs to be repaired.
         /// </summary>
         public bool Broken
         {
@@ -97,8 +159,8 @@ namespace CoCSharp.Logic
                 if (_broken == value)
                     return;
 
-                OnPropertyChanged(s_brokenChanged);
                 _broken = value;
+                OnPropertyChanged(s_brokenChanged);
             }
         }
         #endregion
@@ -117,14 +179,15 @@ namespace CoCSharp.Logic
             if (IsConstructing)
                 throw new InvalidOperationException("Trap object is already in construction.");
             if (!CanUpgrade)
-                throw new InvalidOperationException("Trap object is maxed or TownHall level is too low.");
+                throw new InvalidOperationException("Trap object is maxed or Town Hall level is too low.");
 
-            Debug.Assert(Data != null && _nextUpgrade != null);
+            Debug.Assert(Data != null && NextUpgrade != null);
 
-            var buildData = _isConstructed ? _nextUpgrade : Data;
+            var buildData = _constructionLevel > NotConstructedLevel ? NextUpgrade : Data;
             var startTime = DateTime.UtcNow;
 
-            // No need to schedule construction logic if its construction is instant. (Initial construction/First level)
+            // No need to schedule construction logic if its construction is instant.
+            // (Initial construction/First level)
             if (buildData.BuildTime == InstantConstructionTime)
             {
                 DoConstructionFinished();
@@ -179,23 +242,16 @@ namespace CoCSharp.Logic
             DoConstructionFinished();
         }
 
-        internal override void DoConstructionFinished()
+        /// <summary/>
+        protected override void DoConstructionFinished()
         {
             var endTime = DateTime.UtcNow;
 
-            if (!_isConstructed)
-            {
-                // If the building is not constructed (level -1) yet we don't update the Data.
-                _isConstructed = true;
-            }
-            else
+            // If the building is not constructed (level -1) yet we don't update the Data.
+            if (_constructionLevel > NotConstructedLevel)
             {
                 // Increase level if construction finished successfully.
-                var dataId = Data.ID;
-                var lvl = Data.Level + 1;
-
-                //UpdateData(dataId, lvl);
-                _data = _nextUpgrade;
+                _data = NextUpgrade;
                 UpdateCanUpgade();
             }
 
@@ -207,17 +263,21 @@ namespace CoCSharp.Logic
                 EndTime = endTime
             });
 
-            _scheduled = false;
+            Scheduled = false;
         }
 
-        internal override bool CanUpgradeCheckTownHallLevel()
+        /// <summary/>
+        protected override bool CanUpgradeCheckTownHallLevel()
         {
-            Debug.Assert(_nextUpgrade != null && Data != null);
+            Debug.Assert(NextUpgrade != null && Data != null);
 
-            var buildData = _isConstructed ? _nextUpgrade : Data;
+            var buildData = _constructionLevel > NotConstructedLevel ? NextUpgrade : Data;
+            if (buildData.TownHallLevel == 0)
+                return true;
+
             var th = Village.TownHall;
             if (th == null)
-                throw new InvalidOperationException("Village does not contain a TownHall.");
+                throw new InvalidOperationException("Village does not contain a Town Hall.");
 
             // TownHallLevel field is not a zero-based so we subtract 1.
             if (th.Data.Level >= buildData.TownHallLevel - 1)
@@ -233,7 +293,8 @@ namespace CoCSharp.Logic
             _broken = default(bool);
         }
 
-        internal override void RegisterVillageObject()
+        /// <summary/>
+        protected override void RegisterVillageObject()
         {
             ID = BaseGameID + Village.Traps.Count;
             Village.Traps.Add(this);
@@ -251,14 +312,7 @@ namespace CoCSharp.Logic
             writer.WriteValue(ID);
 
             writer.WritePropertyName("lvl");
-            if (IsConstructing && Data.Level == 0)
-            {
-                writer.WriteValue(NotConstructedLevel);
-            }
-            else
-            {
-                writer.WriteValue(Data.Level);
-            }
+            writer.WriteValue(_constructionLevel);
 
             if (ConstructionTEndUnixTimestamp != default(int))
             {
@@ -299,7 +353,6 @@ namespace CoCSharp.Logic
             var dataIdSet = false;
 
             var lvl = 0;
-            //var lvlSet = false;
 
             while (reader.Read())
             {
@@ -322,7 +375,6 @@ namespace CoCSharp.Logic
 
                         case "lvl":
                             lvl = reader.ReadAsInt32().Value;
-                            //lvlSet = true;
                             break;
 
                         case "needs_repair":
@@ -351,23 +403,21 @@ namespace CoCSharp.Logic
             if (!dataIdSet)
                 throw new InvalidOperationException("Trap JSON does not contain a 'data' field.");
 
+            _constructionLevel = lvl;
             // If its not constructed yet, the level is -1,
             // therefore it must be a lvl 0 building.
             if (lvl == NotConstructedLevel)
             {
-                _isConstructed = false;
+                //_isConstructed = false;
                 lvl = 0;
-            }
-            else
-            {
-                _isConstructed = true;
             }
 
             if (instance.InvalidDataID(dataId))
                 throw new InvalidOperationException("Trap JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
             UpdateData(dataId, lvl);
-            UpdateCanUpgade();
+            // UpdateCanUpgade();
+            // Village.ReadTrapArray() method will call the UpdateCanUpgrade() method.
 
             // Try to use const_t if we were not able to get const_t_end's value.
             if (constTimeEnd == -1)

@@ -124,8 +124,8 @@ namespace CoCSharp.Logic
                 if (_lootMultiplier == value)
                     return;
 
-                OnPropertyChanged(s_lootMultiplierChanged);
                 _lootMultiplier = value;
+                OnPropertyChanged(s_lootMultiplierChanged);
             }
         }
 
@@ -301,7 +301,8 @@ namespace CoCSharp.Logic
             ClearTEndUnixTimestamp = default(int);
         }
 
-        internal override void RegisterVillageObject()
+        /// <summary/>
+        protected override void RegisterVillageObject()
         {
             ID = BaseGameID + Village.Obstacles.Count;
             Village.Obstacles.Add(this);
@@ -358,6 +359,10 @@ namespace CoCSharp.Logic
                     var propertyName = (string)reader.Value;
                     switch (propertyName)
                     {
+                        case "id":
+                            // Ignore for now.
+                            break;
+
                         case "data":
                             dataId = reader.ReadAsInt32().Value;
                             dataIdSet = true;

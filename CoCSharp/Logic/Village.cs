@@ -1,9 +1,9 @@
-﻿using CoCSharp.Csv;
-using CoCSharp.Data;
+﻿using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace CoCSharp.Logic
@@ -275,7 +275,7 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// 
+        /// Releases all resources used by this <see cref="Village"/> instance.
         /// </summary>
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
@@ -285,9 +285,6 @@ namespace CoCSharp.Logic
 
             if (disposing)
             {
-                if (_disposed)
-                    return;
-
                 for (int i = 0; i < Buildings.Count; i++)
                     Buildings[i].PushToPool();
                 for (int i = 0; i < Obstacles.Count; i++)
@@ -296,9 +293,9 @@ namespace CoCSharp.Logic
                     Traps[i].PushToPool();
                 for (int i = 0; i < Decorations.Count; i++)
                     Decorations[i].PushToPool();
-
-                _disposed = true;
             }
+
+            _disposed = true;
         }
 
         /// <summary>
@@ -491,7 +488,7 @@ namespace CoCSharp.Logic
             // List of buildings whose CanUpgrade value must be updated.
             // This list gets populated when the townhall buildings is lower than
             // than the buildings in this in the JSON document.
-            var list = new List<Building>(4);
+            var list = new List<Building>();
 
             var building = (Building)null;
             while (reader.Read())
@@ -522,7 +519,10 @@ namespace CoCSharp.Logic
             }
 
             if (village.TownHall == null)
-                throw new InvalidOperationException("Village does not contain a TownHall building.");
+                throw new InvalidOperationException("Village does not contain a Town Hall building.");
+
+            //NOTE: Potential InvalidOperationException when the Trap array is serialized before the Building array.
+            //TODO: Read Building array before any VillageObject array to avoid the above NOTE.
 
             for (int i = 0; i < list.Count; i++)
                 list[i].UpdateCanUpgade();
@@ -558,7 +558,7 @@ namespace CoCSharp.Logic
                 throw new JsonException("Expected a JSON start array.");
 
             // Refer to ReadBuildingArray.
-            var list = new List<Trap>(4);
+            var list = new List<Trap>();
 
             var trap = (Trap)null;
             while (reader.Read())
@@ -618,13 +618,16 @@ namespace CoCSharp.Logic
         // To update the CanUpgrade flags of Buildings and Traps.
         private void OnTownHallConstructionFinished(object sender, ConstructionFinishedEventArgs<BuildingData> e)
         {
-            if (e.WasCancelled == true)
+            if (e.WasCancelled)
                 return;
 
+            // Update our Buildable's CanUpgrade property.
             for (int i = 0; i < Buildings.Count; i++)
                 Buildings[i].UpdateCanUpgade();
             for (int i = 0; i < Traps.Count; i++)
                 Traps[i].UpdateCanUpgade();
+
+            Debug.WriteLine("Town Hall construction finished. Updated buildings & traps CanUpgrade property.");
         }
         #endregion
     }

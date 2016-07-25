@@ -14,7 +14,6 @@ namespace CoCSharp.Logic
     [DebuggerDisplay("ID = {ID}")]
     public abstract class VillageObject
     {
-        //TODO: Make it reusable.
         #region Constants
         // Represents the Base ID of every game ID & data ID.
         internal const int Base = 1000000;
@@ -78,6 +77,9 @@ namespace CoCSharp.Logic
             }
             internal set
             {
+                if (_village == value)
+                    return;
+
                 _village = value;
                 RegisterVillageObject();
             }
@@ -107,7 +109,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Width.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and <see cref="Village.Width"/>.</exception>
         public int X
         {
             get
@@ -132,7 +134,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the y coordinate of the <see cref="VillageObject"/>.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and Village.Height.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not between 0 and <see cref="Village.Height"/>.</exception>
         public int Y
         {
             get
@@ -165,7 +167,7 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
-        #region Component
+        #region Component System
         // Adds the specified component to the VillageObject.
         internal void AddComponent(LogicComponent component)
         {
@@ -211,13 +213,13 @@ namespace CoCSharp.Logic
                 if (_components[i] != null && _components[i].GetType() == type)
                     return (TLogicComponent)_components[i];
             }
-            
+
             return null;
         }
         #endregion
 
-        // Calls the PropertyChanged event.
-        internal void OnPropertyChanged(PropertyChangedEventArgs args)
+        ///<summary>Raises the PropertyChanged event.</summary>
+        protected void OnPropertyChanged(PropertyChangedEventArgs args)
         {
             if (PropertyChanged != null && IsPropertyChangedEnabled)
                 PropertyChanged(this, args);
@@ -234,8 +236,8 @@ namespace CoCSharp.Logic
             _y = default(int);
         }
 
-        // Register the VillageObject to its Village.
-        internal abstract void RegisterVillageObject();
+        ///<summary>Register the VillageObject to its Village.</summary>
+        protected abstract void RegisterVillageObject();
 
         // Writes the current VillageObject to the JsonWriter.
         internal abstract void ToJsonWriter(JsonWriter writer);

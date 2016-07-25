@@ -12,10 +12,9 @@ namespace CoCSharp.Server.Handlers.Commands
         {
             var bbCommand = (BuyBuildingCommand)command;
             var data = server.AssetManager.SearchCsv<BuildingData>(bbCommand.BuildingDataID, 0);
-            var building = new Building(client.Home, data, bbCommand.X, bbCommand.Y, client);
-
+            var building = new Building(client.Home, data, bbCommand.X, bbCommand.Y, client, true);
             building.ConstructionFinished += BuildingConstructionFinished;
-            building.BeginConstruction();
+            //building.BeginConstruction();
 
             FancyConsole.WriteLine(StartedConstructionFormat, client.Token, bbCommand.X, bbCommand.Y, building.Data.Level);
         }

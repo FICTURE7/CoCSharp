@@ -190,15 +190,16 @@ namespace CoCSharp.Server.Handlers
                         client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
                         return;
 
+#if DEBUG
+                        // Add this feature only in the DEBUG build
                     case "populatedb":
                         for (int i = 0; i < 50; i++)
-                        {
                             server.AvatarManager.CreateNewAvatar();
-                        }
 
                         cmsMessage.Message = "Created 50 new avatar.";
                         client.NetworkManager.SendMessage(cmsMessage);
                         return;
+#endif
 
                     default:
                         cmsMessage.Message = "Unknown command.";

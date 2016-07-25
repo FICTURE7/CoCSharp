@@ -25,127 +25,145 @@ namespace CoCSharp.Test.Logic
             _village = new Village(_manager);
 
             // Add townhall to village.
-            var townhalldata = _manager.SearchCsv<BuildingData>(1000001, 1);
-            var townhall = new Building(_village, townhalldata);
-
-            Assert.AreSame(townhall, _village.TownHall);
+            // Level 1(2), Town Hall.
+            new Building(_village, _manager.SearchCsv<BuildingData>(1000001, 1));
         }
 
         [Test]
-        public void Constructors_InvalidArgs_Exceptions()
+        public void Constructors__ValidArgs__Building_Added_To_Village()
         {
-            var data = _manager.SearchCsv<BuildingData>(1000000, 0);
-            Assert.Throws<ArgumentNullException>(() => new Building(null, data));
+            var count = _village.Buildings.Count;
+            // Level 0(1), Elixir Storage.
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 0));
+            Assert.AreEqual(count + 1, _village.Buildings.Count);
+            Assert.AreSame(building, _village.GetBuilding(building.ID));
+        }
+
+        [Test]
+        public void Constructors__newConstruction_True__Level_Neg1()
+        {
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 0), true);
+            Assert.AreEqual(-1, building._constructionLevel);
+        }
+
+        [Test]
+        public void Constructors_newConstruction_False__Level_0()
+        {
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 0), false);
+            Assert.AreEqual(0, building._constructionLevel);
+        }
+
+        [Test]
+        public void Constructors__Building_Is_A_TownHall__Village_TownHall_Is_Set_To_Building()
+        {
+            var village = new Village(_manager);
+            Assert.Null(village.TownHall);
+            Assert.AreEqual(0, village.Buildings.Count);
+
+            // Level 0(1), Town Hall.
+            var townhalldata = _manager.SearchCsv<BuildingData>(1000001, 0);
+            var townhall = new Building(village, townhalldata);
+
+            Assert.AreSame(townhall, village.TownHall);
+            Assert.AreEqual(1, village.Buildings.Count);
+        }
+
+        [Test]
+        public void Constructors__Building_Is_A_TownHall_And_Already_A_TownHall__Exception()
+        {
+            var village = new Village(_manager);
+            Assert.Null(village.TownHall);
+            Assert.AreEqual(0, village.Buildings.Count);
+
+            // Level 0(1), Town Hall.
+            var townhalldata = _manager.SearchCsv<BuildingData>(1000001, 0);
+            var townhall1 = new Building(village, townhalldata);
+
+            Assert.AreSame(townhall1, village.TownHall);
+            Assert.AreEqual(1, village.Buildings.Count);
+
+            // Village already contains a TownHall.
+            Assert.Throws<InvalidOperationException>(() => new Building(village, townhalldata));
+        }
+
+        [Test]
+        public void Constructors_InvalidArgs_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Building(null));
             Assert.Throws<ArgumentNullException>(() => new Building(_village, null));
-        }
-
-        [Test]
-        public void CanUpgrade_True()
-        {
-            // Gold Mine.
-            var data1 = _manager.SearchCsv<BuildingData>(1000002, 0);
-            var building1 = new Building(_village, data1);
-            Assert.True(building1.CanUpgrade);
-
-            // Army Camp.
-            var data2 = _manager.SearchCsv<BuildingData>(1000000, 0);
-            var building2 = new Building(_village, data2);
-            Assert.True(building2.CanUpgrade);
-        }
-
-        [Test]
-        public void CanUpgrade_False()
-        {
-            var collection = _manager.SearchCsv<BuildingData>(1000002);
-            var data = collection[collection.Count - 1];
-            var building = new Building(_village, data);
-
-            Assert.False(building.CanUpgrade);
-        }
-
-        [Test]
-        public void DoConstructionFinished_isConstructed()
-        {
-            var data = _manager.SearchCsv<BuildingData>(1000002, 0);
-            var building = new Building(_village, data);
-            Assert.False(building._isConstructed);
-
-            building.DoConstructionFinished();
-            Assert.AreEqual(0, building.Data.Level);
-
-            Assert.True(building._isConstructed);
-
-            building.DoConstructionFinished();
-            Assert.AreEqual(1, building.Data.Level);
-
-            Assert.True(building._isConstructed);
         }
 
         [Test]
         public void Data_Null_Exception()
         {
-            var data = _manager.SearchCsv<BuildingData>(1000002, 0);
-            var building = new Building(_village, data);
+            // Level 0(1), Elixir Storage.
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 0));
 
             Assert.Throws<ArgumentNullException>(() => building.Data = null);
         }
 
         [Test]
-        public void FromJsonReader_isConstructed()
+        public void CanUpgrade__Data_TownHallLevel_LowerThan_TownHall_Level__ReturnFalse()
         {
-            var villagePath = Path.Combine(TestUtils.LayoutDirectory, "test_village.json");
-            var villageJson = File.ReadAllText(villagePath);
-
-            var village = Village.FromJson(villageJson, _manager);
-
-            var building0 = village.Buildings[0];
-            Assert.False(building0._isConstructed);
-
-            var building1 = village.Buildings[1];
-            Assert.True(building1._isConstructed);
+            // Level 2(3), Elixir Storage.
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 2));
+            Assert.False(building.CanUpgrade);
         }
 
         [Test]
-        public void Constructor_ValidArgs_RegisteredInstanceID()
+        public void CanUpgrade__Data_TownHallLevel_GreaterEqualThan_TownHall_Level__ReturnTrue()
         {
-            _village = new Village(_manager);
-            // Add townhall to village.
-            var townhalldata = _manager.SearchCsv<BuildingData>(1000001, 1);
-            var townhall = new Building(_village, townhalldata);
-
-            var data = _manager.SearchCsv<BuildingData>(1000000, 0);
-
-            var building1 = new Building(_village, data);
-            Assert.AreSame(data, building1.Data);
-            var building2 = new Building(_village, data);
-            Assert.AreSame(data, building2.Data);
-
-            Assert.AreEqual(Building.BaseGameID + 1, building1.ID);
-            Assert.AreEqual(Building.BaseGameID + 2, building2.ID);
+            // Level 1(2), Elixir Storage.
+            // In village with Town Hall level 1(2).
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 1));
+            Assert.True(building.CanUpgrade);
         }
 
-        private bool _raised = false;
         [Test]
-        public void PropertyChanged_IsLocked_EventRaised()
+        public void BeginConstruction__CanUpgrade_False__Exception()
         {
-            _raised = false;
-            var building = new Building(_village);
-            building.IsPropertyChangedEnabled = true;
-            building.PropertyChanged += PropertyChanged;
-
-            building.IsLocked = true;
-            Assert.True(_raised);
-
-            _raised = false;
-            building.IsPropertyChangedEnabled = false;
-            building.IsLocked = false;
-            Assert.False(_raised);
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 2));
+            Assert.Throws<InvalidOperationException>(() => building.BeginConstruction());
         }
 
-        private void PropertyChanged(object sender, PropertyChangedEventArgs e)
+        [Test]
+        public void BeginConstruction__SpeedUpConstruction__Data_Level_Increases()
         {
-            _raised = true;
-            Assert.AreEqual("IsLocked", e.PropertyName);
+            // Level 1(2), Elixir Storage.
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000003, 1));
+
+            Assert.AreEqual(1, building._constructionLevel);
+            building.BeginConstruction();
+            Assert.True(building.IsConstructing);
+            Assert.AreEqual(1, building.Data.Level);
+
+            building.SpeedUpConstruction();
+            Assert.False(building.IsConstructing);
+            Assert.AreEqual(2, building.Data.Level);
+        }
+
+        [Test]
+        public void BeginConstruction_BarbarianKing()
+        {
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000022, 0));
+            //Assert.AreEqual(-1, building._constructionLevel);
+            Assert.AreEqual(0, building._constructionLevel);
+
+            //building.BeginConstruction();
+
+            //Assert.AreEqual(0, building._constructionLevel);
+        }
+
+        [Test]
+        public void BeginConstruction_Walls()
+        {
+            var building = new Building(_village, _manager.SearchCsv<BuildingData>(1000010, 0));
+            //Assert.AreEqual(-1, building._constructionLevel);
+            Assert.AreEqual(0, building._constructionLevel);
+
+            //building.BeginConstruction();
+
+            //Assert.AreEqual(0, building._constructionLevel);
         }
     }
 }

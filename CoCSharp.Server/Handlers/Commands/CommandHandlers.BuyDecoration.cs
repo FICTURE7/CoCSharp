@@ -15,7 +15,7 @@ namespace CoCSharp.Server.Handlers.Commands
             var data = server.AssetManager.SearchCsv<DecorationData>(bdCommand.DecorationDataID, 0);
             var deco = new Decoration(client.Home, data, bdCommand.X, bdCommand.Y);
 
-            Debug.Assert(deco.ID == bdCommand.DecorationDataID);
+            //Debug.Assert(deco.ID == bdCommand.DecorationDataID);
 
             FancyConsole.WriteLine(BoughtDecorationFormat, bdCommand.DecorationDataID, client.Token, bdCommand.X, bdCommand.Y);
         }

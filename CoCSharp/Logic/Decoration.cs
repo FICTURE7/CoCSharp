@@ -52,7 +52,8 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
-        internal override void RegisterVillageObject()
+        ///<summary/>
+        protected override void RegisterVillageObject()
         {
             ID = BaseGameID + Village.Buildings.Count;
             Village.Decorations.Add(this);

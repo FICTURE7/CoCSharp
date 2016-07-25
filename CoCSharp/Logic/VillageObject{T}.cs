@@ -14,7 +14,6 @@ namespace CoCSharp.Logic
     {
         #region Constants
         // We're doing nothing with this.
-        internal readonly int _baseDataId;
 
         private static readonly PropertyChangedEventArgs s_dataChanged = new PropertyChangedEventArgs("Data");
         #endregion
@@ -23,7 +22,7 @@ namespace CoCSharp.Logic
         // Constructors that FromJsonReader method is going to use.
         internal VillageObject(Village village) : base(village)
         {
-            _baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
+            // Space
         }
 
 
@@ -33,7 +32,6 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("data");
 
             _data = data;
-            _baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
         }
 
         internal VillageObject(Village village, TCsvData data, int x, int y) : base(village, x, y)
@@ -42,13 +40,15 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("data");
 
             _data = data;
-            _baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
         }
         #endregion
 
         #region Fields & Properties
-        // Cache to the collection in which Data is found.
-        internal CsvDataSubCollection<TCsvData> _collectionCache;
+        // Level of the construction.
+        internal int _constructionLevel;
+
+        ///<summary>Cache to the sub-collection in which Data is found.</summary>
+        protected CsvDataSubCollection<TCsvData> CollectionCache { get; set; }
 
         internal TCsvData _data;
         /// <summary>
@@ -63,16 +63,21 @@ namespace CoCSharp.Logic
             }
             set
             {
+                //NOTE: Changing this might break the UpdateCanUpgrade() method.
+
                 if (value == null)
                     throw new ArgumentNullException("value");
 
                 if (_data == value)
                     return;
-                if (_data.ID != value.ID)
-                    _collectionCache = null;
 
-                OnPropertyChanged(s_dataChanged);
+                // We have changed CsvDataSubCollection.
+                if (_data.ID != value.ID)
+                    CollectionCache = null;
+
+                _constructionLevel = value.Level;
                 _data = value;
+                OnPropertyChanged(s_dataChanged);
             }
         }
         #endregion

@@ -25,7 +25,6 @@ namespace CoCSharp.Logic
             // Space
         }
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
         /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it.
@@ -40,6 +39,20 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it with a value indicating
+        /// whether the <see cref="Building"/> is a new construction.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> containing the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
+        public Building(Village village, BuildingData data, bool newConstruction) : base(village, data, newConstruction)
+        {
+            CheckAndSetTownHall();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
         /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and user token object.
         /// </summary>
         /// 
@@ -47,6 +60,21 @@ namespace CoCSharp.Logic
         /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
         public Building(Village village, BuildingData data, object userToken) : base(village, data, userToken)
+        {
+            CheckAndSetTownHall();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
+        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and user token object with
+        /// a value indicating whether the <see cref="Building"/> is a new construction. 
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
+        /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
+        public Building(Village village, BuildingData data, object userToken, bool newConstruction) : base(village, data, userToken, newConstruction)
         {
             CheckAndSetTownHall();
         }
@@ -67,6 +95,22 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
+        /// and <see cref="BuildingData"/> which is associated with it, X coordinate and Y coordinate with a value indicating whether the
+        /// <see cref="Building"/> is in construction.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
+        public Building(Village village, BuildingData data, int x, int y, bool newConstruction) : base(village, data, x, y, newConstruction)
+        {
+            CheckAndSetTownHall();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
         /// and <see cref="BuildingData"/> which is associated with it, X coordinate, Y coordinate and user token object.
         /// </summary>
         /// 
@@ -76,6 +120,23 @@ namespace CoCSharp.Logic
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
         public Building(Village village, BuildingData data, int x, int y, object userToken) : base(village, data, x, y, userToken)
+        {
+            CheckAndSetTownHall();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
+        /// and <see cref="BuildingData"/> which is associated with it, X coordinate, Y coordinate and user token object with a value indicating
+        /// whether the <see cref="Building"/> is in construction.
+        /// </summary>
+        /// 
+        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
+        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
+        /// <param name="x">X coordinate.</param>
+        /// <param name="y">Y coordinate.</param>
+        /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
+        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
+        public Building(Village village, BuildingData data, int x, int y, object userToken, bool newConstruction) : base(village, data, x, y, userToken, newConstruction)
         {
             CheckAndSetTownHall();
         }
@@ -98,8 +159,8 @@ namespace CoCSharp.Logic
                 if (_isLocked == value)
                     return;
 
-                OnPropertyChanged(s_isLockedChanged);
                 _isLocked = value;
+                OnPropertyChanged(s_isLockedChanged);
             }
         }
         #endregion
@@ -116,12 +177,24 @@ namespace CoCSharp.Logic
             // Make sure that we not constructing a building that is already in construction.
             if (IsConstructing)
                 throw new InvalidOperationException("Building object is already in construction.");
-            if (!CanUpgrade)
-                throw new InvalidOperationException("Building object is maxed or TownHall level too low.");
+            if (!CanUpgrade && _constructionLevel > NotConstructedLevel)
+                throw new InvalidOperationException("Building object is maxed or Town Hall level too low.");
 
-            Debug.Assert(Data != null && _nextUpgrade != null);
+            //Debug.Assert(Data != null && _nextUpgrade != null);
 
-            var buildData = _isConstructed ? _nextUpgrade : Data;
+            //var buildData = _constructionLevel > NotConstructedLevel ? _nextUpgrade : Data;
+            var buildData = (BuildingData)null;
+            if (_constructionLevel > NotConstructedLevel)
+            {
+                Debug.Assert(NextUpgrade != null);
+                buildData = NextUpgrade;
+            }
+            else
+            {
+                Debug.Assert(Data != null);
+                buildData = Data;
+            }
+
             var startTime = DateTime.UtcNow;
 
             // No need to schedule construction logic if its construction is instant. (Walls)
@@ -180,23 +253,19 @@ namespace CoCSharp.Logic
             DoConstructionFinished();
         }
 
-        internal override void DoConstructionFinished()
+        /// <summary/>
+        protected override void DoConstructionFinished()
         {
             var endTime = DateTime.UtcNow;
 
-            if (!_isConstructed)
-            {
-                // If the building is not constructed (level -1) yet we don't update the Data.
-                _isConstructed = true;
-            }
-            else
+            // If the building is not constructed (level -1) yet we don't update the Data.
+            if (_constructionLevel > NotConstructedLevel)
             {
                 // Increase level if construction finished successfully.
-                var dataId = Data.ID;
-                var lvl = Data.Level + 1;
+                //var dataId = Data.ID;
+                //var lvl = Data.Level + 1;
 
-                //UpdateData(dataId, lvl);
-                _data = _nextUpgrade;
+                _data = NextUpgrade;
                 UpdateCanUpgade();
             }
 
@@ -208,22 +277,21 @@ namespace CoCSharp.Logic
                 EndTime = endTime
             });
 
-            _scheduled = false;
+            Scheduled = false;
         }
 
-        internal override bool CanUpgradeCheckTownHallLevel()
+        /// <summary/>
+        protected override bool CanUpgradeCheckTownHallLevel()
         {
-            Debug.Assert(_nextUpgrade != null && Data != null);
+            Debug.Assert(NextUpgrade != null && Data != null);
 
-
-            if (_nextUpgrade.TID == "TID_BUILDING_TOWN_HALL")
+            var buildData = _constructionLevel > NotConstructedLevel ? NextUpgrade : Data;
+            if (buildData.TownHallLevel == 0)
                 return true;
-
-            var buildData = _isConstructed ? _nextUpgrade : Data;
 
             var th = Village.TownHall;
             if (th == null)
-                throw new InvalidOperationException("Village does not contain a TownHall.");
+                throw new InvalidOperationException("Village does not contain a Town Hall.");
 
             // TownHallLevel field is not a zero-based so we subtract 1.
             if (th.Data.Level >= buildData.TownHallLevel - 1)
@@ -239,7 +307,8 @@ namespace CoCSharp.Logic
             _isLocked = default(bool);
         }
 
-        internal override void RegisterVillageObject()
+        /// <summary/>
+        protected override void RegisterVillageObject()
         {
             ID = BaseGameID + Village.Buildings.Count;
             Village.Buildings.Add(this);
@@ -257,14 +326,7 @@ namespace CoCSharp.Logic
             writer.WriteValue(ID);
 
             writer.WritePropertyName("lvl");
-            if (IsConstructing && Data.Level == 0)
-            {
-                writer.WriteValue(NotConstructedLevel);
-            }
-            else
-            {
-                writer.WriteValue(Data.Level);
-            }
+            writer.WriteValue(_constructionLevel);
 
             if (IsLocked != default(bool))
             {
@@ -359,23 +421,21 @@ namespace CoCSharp.Logic
             if (!lvlSet)
                 throw new InvalidOperationException("Building JSON does not contain a 'lvl' field.");
 
+            _constructionLevel = lvl;
             // If its not constructed yet, the level is -1,
             // therefore it must be a lvl 0 building.
             if (lvl == NotConstructedLevel)
             {
-                _isConstructed = false;
+                //_isConstructed = false;
                 lvl = 0;
-            }
-            else
-            {
-                _isConstructed = true;
             }
 
             if (instance.InvalidDataID(dataId))
                 throw new InvalidOperationException("Building JSON contained an invalid BuildingData ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
             UpdateData(dataId, lvl);
-            UpdateCanUpgade();
+            // UpdateCanUpgade();
+            // Village.ReadBuildingArray() method will call the UpdateCanUpgrade() method.
 
             // Check if the current building is a townhall.
             // If yes set Village.TownHall to this building.
@@ -410,18 +470,19 @@ namespace CoCSharp.Logic
 
         // Determines if the current VillageObject is a TownHall building based on Data.TID
         // and set the townhall of the Village to this VillageObject. 
-        internal void CheckAndSetTownHall()
+        private void CheckAndSetTownHall()
         {
-            if (Data.TID == "TID_BUILDING_TOWN_HALL")
+            if (Data.ID == AssetManager.TownHallID)
             {
                 // A Village cannot contain more than 1 townhall.
                 if (Village.TownHall != null)
-                    throw new InvalidOperationException("Village already contains a TownHall.");
+                    throw new InvalidOperationException("Cannot add a Town Hall building if it already contains one.");
 
                 Village.TownHall = this;
             }
         }
 
+        // Tries to return an instance of the Building class from the VillageObjectPool.
         internal static Building GetInstance(Village village)
         {
             var obj = (VillageObject)null;
