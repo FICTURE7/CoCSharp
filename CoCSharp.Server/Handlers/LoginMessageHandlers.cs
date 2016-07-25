@@ -25,6 +25,13 @@ namespace CoCSharp.Server.Handlers
             }
 
             var lrMessage = (LoginRequestMessage)message;
+            if (lrMessage.UserToken != null && !TokenUtils.CheckToken(lrMessage.UserToken))
+            {
+                var loginFailed = new LoginFailedMessage();
+                client.NetworkManager.SendMessage(loginFailed);
+                return;
+            }
+
             var keyPair = Crypto8.GenerateKeyPair();
             var lsMessage = new LoginSuccessMessage()
             {

@@ -104,31 +104,39 @@ namespace CoCSharp.Server
         // Tries to handles the specified Message with the registered MessageHandlers.
         public void HandleMessage(CoCRemoteClient client, Message message)
         {
-            //try
-            //{
+#if !DEBUG
+            try
+            {
+#endif
                 var handler = (MessageHandler)null;
                 if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
                     handler(this, client, message);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine("Exception occurred while handling message: {0}\r\n\t{1}", message.GetType().Name, ex);
-            //}
+#if !DEBUG
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception occurred while handling message: {0}\r\n\t{1}", message.GetType().Name, ex);
+            }
+#endif
         }
 
         // Tries to handles the specified Command with the registered CommandHandlers.
         public void HandleCommand(CoCRemoteClient client, Command command)
         {
-            //try
-            //{
+#if !DEBUG
+            try
+            {
+#endif
                 var handler = (CommandHandler)null;
                 if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
                     handler(this, client, command);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine("Exception occurred while handling command: {0}\r\n\t{1}", command.GetType().Name, ex);
-            //}
+#if !DEBUG
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception occurred while handling command: {0}\r\n\t{1}", command.GetType().Name, ex);
+            }
+#endif
         }
 
         // Sends a Message to all connected clients.
