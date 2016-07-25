@@ -9,11 +9,12 @@ namespace CoCSharp.Server.Handlers
 {
     public static class InGameMessageHandlers
     {
-        private static KeepAliveResponseMessage s_keepAliveRespond = new KeepAliveResponseMessage();
+        private static KeepAliveResponseMessage s_keepAliveResponse = new KeepAliveResponseMessage();
 
         private static void HandleKeepAliveRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
         {
-            client.NetworkManager.SendMessage(s_keepAliveRespond);
+            client.UpdateKeepAlive();
+            client.NetworkManager.SendMessage(s_keepAliveResponse);
         }
 
         private static void HandleAttackNpcMessage(CoCServer server, CoCRemoteClient client, Message message)

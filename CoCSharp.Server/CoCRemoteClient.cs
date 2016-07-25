@@ -21,6 +21,8 @@ namespace CoCSharp.Server
             NetworkManager = new NetworkManagerAsync(connection, settings);
             NetworkManager.MessageReceived += OnMessageReceived;
             NetworkManager.Disconnected += OnDisconnected;
+
+            UpdateKeepAlive();
         }
 
         [BsonIgnore]
@@ -31,6 +33,13 @@ namespace CoCSharp.Server
         public NetworkManagerAsync NetworkManager { get; private set; }
         [BsonIgnore]
         public byte[] SessionKey { get; set; }
+
+        [BsonIgnore]
+        // Date when the last KeepAliveMessage was received.
+        public DateTime LastKeepAlive { get; set; }
+        [BsonIgnore]
+        // Date when the next KeepAliveMessage should received.
+        public DateTime ExpirationKeepAlive { get; set; }
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
@@ -48,18 +57,25 @@ namespace CoCSharp.Server
             Server.HandleMessage(this, e.Message);
         }
 
-        private void OnDisconnected(object sender, DisconnectedEventArgs e)
+        public void Disconnect()
         {
+            // Close connection to client.
+
             // Push the VillageObjects to the VillageObjectPool.
             if (Home != null)
-            {
                 Home.Dispose();
-            }
+
+            NetworkManager.Dispose();
 
             // Dereference the client object so that it gets picked up
             // by the GarbageCollector.
             Server.Clients.Remove(this);
             FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> Avatar &(darkcyan){0}&(default) disconnected.", Token);
+        }
+
+        private void OnDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            Disconnect();
         }
 
         public void Save()
@@ -119,6 +135,12 @@ namespace CoCSharp.Server
 
             SetFromAvatar(avatar);
             return true;
+        }
+
+        public void UpdateKeepAlive()
+        {
+            LastKeepAlive = DateTime.UtcNow;
+            ExpirationKeepAlive = LastKeepAlive.AddSeconds(30);
         }
 
         private void SetFromAvatar(Avatar avatar)

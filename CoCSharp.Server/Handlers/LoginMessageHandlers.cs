@@ -1,6 +1,4 @@
-﻿using CoCSharp.Data.Slots;
-using CoCSharp.Logic;
-using CoCSharp.Network;
+﻿using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
 using CoCSharp.Network.Messages;
 using CoCSharp.Server.Core;

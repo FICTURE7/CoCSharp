@@ -69,8 +69,10 @@ namespace CoCSharp.Server.Handlers.Commands
 
         public static void BuildingConstructionFinished(object sender, ConstructionFinishedEventArgs<BuildingData> e)
         {
+#if !DEBUG
             try
             {
+#endif
                 var building = (Building)e.BuildableConstructed;
                 var client = (CoCRemoteClient)e.UserToken;
 
@@ -86,17 +88,21 @@ namespace CoCSharp.Server.Handlers.Commands
                 }
 
                 client.Save();
+#if !DEBUG
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception occurred while handling Building construction finished; {0} -> {1}", ex.GetType().Name, ex.Message);
             }
+#endif
         }
 
         public static void TrapConstructionFinished(object sende, ConstructionFinishedEventArgs<TrapData> e)
         {
+#if !DEBUG
             try
             {
+#endif
                 var trap = (Trap)e.BuildableConstructed;
                 var client = (CoCRemoteClient)e.UserToken;
 
@@ -113,17 +119,21 @@ namespace CoCSharp.Server.Handlers.Commands
                 }
 
                 client.Save();
+#if !DEBUG
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception occurred while handling Trap construction finished; {0} -> {1}", ex.GetType().Name, ex.Message);
             }
+#endif
         }
 
         public static void ObstacleClearingFinished(object sender, ClearingFinishedEventArgs e)
         {
+#if !DEBUG
             try
             {
+#endif
                 var obstacle = e.ClearedObstacle;
                 var client = (CoCRemoteClient)e.UserToken;
 
@@ -139,11 +149,13 @@ namespace CoCSharp.Server.Handlers.Commands
                 }
 
                 client.Save();
+#if !DEBUG
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception occurred while handling Obstacle clearing finished; {0} -> {1}", ex.GetType().Name, ex.Message);
             }
+#endif
         }
     }
 }

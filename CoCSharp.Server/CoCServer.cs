@@ -45,6 +45,8 @@ namespace CoCSharp.Server
             Console.WriteLine("-> Setting up NpcManager...");
             NpcManager = new NpcManager();
 
+            _keepAliveManager = new KeepAliveManager(this);
+
             Clients = new List<CoCRemoteClient>();
             MessageHandlerDictionary = new Dictionary<ushort, MessageHandler>();
             CommandHandlerDictionary = new Dictionary<int, CommandHandler>();
@@ -60,6 +62,8 @@ namespace CoCSharp.Server
         public AvatarManager AvatarManager { get; private set; }
         public AssetManager AssetManager { get; private set; }
 
+        private KeepAliveManager _keepAliveManager;
+
         private Dictionary<int, CommandHandler> CommandHandlerDictionary { get; set; }
         private Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; set; }
 
@@ -72,6 +76,7 @@ namespace CoCSharp.Server
         {
             _listener.Bind(new IPEndPoint(IPAddress.Any, 9339));
             _listener.Listen(100);
+            _keepAliveManager.Start();
             StartAccept();
         }
 
