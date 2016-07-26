@@ -56,11 +56,30 @@ namespace CoCSharp.Server.Core
             _avatarCollection = _liteDb.GetCollection<Avatar>("avatars");
             // Make sure the Token(UserToken) of avatars are unique.
             _avatarCollection.EnsureIndex("Token", unique: true);
+
+            _newNames = new string[]
+            {
+                "Patrik", // :]
+                "Kevin",
+                "John",
+                "Kukli",
+                "Jessen",
+                "Levi",
+                "Kenny"
+            };
         }
 
+        // Array of random names to choose from when creating a new avatar.
+        private string[] _newNames;
         private string _startingVillage;
         private LiteDatabase _liteDb;
         private LiteCollection<Avatar> _avatarCollection;
+
+        private string GetRandomName()
+        {
+            var name = _newNames[Utils.Random.Next(_newNames.Length - 1)];
+            return name;
+        }
 
         public Avatar CreateNewAvatar()
         {
@@ -89,7 +108,7 @@ namespace CoCSharp.Server.Core
             avatar.ID = id;
             avatar.Level = 9;
             avatar.Home = Village.FromJson(_startingVillage);
-            avatar.Name = "Patrik"; // :]
+            avatar.Name = GetRandomName();
             avatar.Gems = 69696969;
             avatar.FreeGems = 69696969;
 

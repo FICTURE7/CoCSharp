@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 
 namespace CoCSharp.Network
 {
+    [DebuggerDisplay("Count = {Count}")]
     internal sealed class SocketAsyncEventArgsPool : IDisposable
     {
         public SocketAsyncEventArgsPool(int capacity)
