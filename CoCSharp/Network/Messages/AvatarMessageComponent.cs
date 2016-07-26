@@ -47,7 +47,7 @@ namespace CoCSharp.Network.Messages
             }
 
             LeagueLevel = avatar.League;
-            //TownHallLevel = avatar.Home.TownHall.Level;
+            TownHallLevel = avatar.Home.TownHall.Data.Level;
             Name = avatar.Name;
 
             //Unknown13 = -1;
