@@ -50,7 +50,7 @@ namespace CoCSharp.Server
             if (e.Exception is CryptographicException)
             {
                 Console.WriteLine("\tCryptographicException occurred while decrypting a message.");
-                //TODO: Disconnect the client.
+                Disconnect();
                 return;
             }
 

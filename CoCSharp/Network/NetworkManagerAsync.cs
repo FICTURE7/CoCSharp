@@ -167,6 +167,7 @@ namespace CoCSharp.Network
                         args.SetBuffer(new byte[65535], 0, 65535);
                         MessageSendToken.Create(args);
                     }
+
                     var token = args.UserToken as MessageSendToken;
                     token.ID = message.ID;
                     token.Length = body.Length;
@@ -428,11 +429,24 @@ namespace CoCSharp.Network
             args.Completed -= AsyncOperationCompleted;
             if (args.SocketError == SocketError.OperationAborted || _disposed)
             {
-                _receivePool.Push(args);
-                return; // gently stop any operations
+                switch (args.LastOperation)
+                {
+                    case SocketAsyncOperation.Receive:
+                        _receivePool.Push(args);
+                        break;
+
+                    case SocketAsyncOperation.Send:
+                        _sendPool.Push(args);
+                        break;
+
+                    default:
+                        throw new Exception("Wut Ze Fuk?");
+                }
+
+                // Gently stop any operations.
+                return;
             }
 
-            //TODO: Better handling, DisconnectedEventArgs
             if (args.SocketError != SocketError.Success)
                 OnDisconnected(new DisconnectedEventArgs() { Error = args.SocketError });
 

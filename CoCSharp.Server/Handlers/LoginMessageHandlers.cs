@@ -19,6 +19,7 @@ namespace CoCSharp.Server.Handlers
             {
                 var loginFailed = new LoginFailedMessage();
                 client.NetworkManager.SendMessage(loginFailed);
+                client.Disconnect();
                 return;
             }
 
@@ -27,6 +28,7 @@ namespace CoCSharp.Server.Handlers
             {
                 var loginFailed = new LoginFailedMessage();
                 client.NetworkManager.SendMessage(loginFailed);
+                client.Disconnect();
                 return;
             }
 
