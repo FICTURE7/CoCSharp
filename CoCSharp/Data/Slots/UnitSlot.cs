@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represent a Clash of Clans slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Amount = {Amount}")]
     public class UnitSlot : Slot
     {
         /// <summary>
@@ -31,7 +33,7 @@ namespace CoCSharp.Data.Slots
         /// <summary>
         /// Gets or sets the unit ID.
         /// </summary>
-        public int ID { get; set; }
+        //public override int ID { get; set; }
 
         /// <summary>
         /// Gets or sets the amount of unit.

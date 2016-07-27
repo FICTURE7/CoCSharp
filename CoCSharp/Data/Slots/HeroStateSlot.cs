@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of Clans hero state slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, State = {State}")]
     public class HeroStateSlot : Slot
     {
         /// <summary>
@@ -28,10 +30,7 @@ namespace CoCSharp.Data.Slots
             State = state;
         }
 
-        /// <summary>
-        /// Gets or sets the hero ID.
-        /// </summary>
-        public int ID { get; set; }
+        //TODO: Implement an enum for it.
 
         /// <summary>
         /// Gets or sets the state of hero.

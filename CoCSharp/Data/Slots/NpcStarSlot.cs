@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of Clans npc star slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Star = {Star}")]
     public class NpcStarSlot : Slot
     {
         /// <summary>
@@ -27,11 +29,6 @@ namespace CoCSharp.Data.Slots
             ID = id;
             Star = star;   
         }
-
-        /// <summary>
-        /// Gets or sets the NPC ID.
-        /// </summary>
-        public int ID { get; set; }
 
         /// <summary>
         /// Gets or sets the star amount.

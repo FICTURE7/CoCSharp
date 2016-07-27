@@ -17,11 +17,6 @@ namespace CoCSharp.Data.Slots
         }
 
         /// <summary>
-        /// Gets or sets the ID of the unknown slot.
-        /// </summary>
-        public int ID { get; set; }
-
-        /// <summary>
         /// Gets or sets the value of the unknown slot.
         /// </summary>
         public int Value { get; set; }

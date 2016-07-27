@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of Clans spell upgrade slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Level = {Level}")]
     public class SpellUpgradeSlot : Slot
     {
         /// <summary>
@@ -27,11 +29,6 @@ namespace CoCSharp.Data.Slots
             ID = id;
             Level = level;
         }
-
-        /// <summary>
-        /// Gets or sets the spell upgrade ID.
-        /// </summary>
-        public int ID { get; set; }
 
         /// <summary>
         /// Gets or sets the level of spell upgrade.

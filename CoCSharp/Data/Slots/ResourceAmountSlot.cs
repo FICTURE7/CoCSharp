@@ -1,12 +1,14 @@
 ﻿using CoCSharp.Data.Models;
 using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of clans resource amount slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Amount = {Amount}")]
     public class ResourceAmountSlot : Slot<ResourceData>
     {
         /// <summary>
@@ -27,25 +29,6 @@ namespace CoCSharp.Data.Slots
         {
             ID = id;
             Amount = amount;
-        }
-
-        private int _id;
-        /// <summary>
-        /// Gets or sets the resource ID.
-        /// </summary>
-        public int ID
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                if (_instance.InvalidDataID(value))
-                    throw new ArgumentOutOfRangeException("value", _instance.GetArgsOutOfRangeMessage("value"));
-
-                _id = value;
-            }
         }
 
         /// <summary>

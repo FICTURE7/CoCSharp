@@ -18,5 +18,20 @@ namespace CoCSharp.Data
         }
 
         internal TCsvData _instance;
+
+        internal override bool InvalidDataID(int dataId)
+        {
+            return _instance.InvalidDataID(dataId);
+        }
+
+        internal override int GetIndex(int dataId)
+        {
+            return _instance.GetIndex(dataId);
+        }
+
+        internal override string GetArgsOutOfRangeMessage(string paramName)
+        {
+            return _instance.GetArgsOutOfRangeMessage(paramName);
+        }
     }
 }

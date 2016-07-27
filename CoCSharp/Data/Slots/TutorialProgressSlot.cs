@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of Clans tutorial(mission) progress slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}")]
     public class TutorialProgressSlot : Slot
     {
         /// <summary>
@@ -29,7 +31,7 @@ namespace CoCSharp.Data.Slots
         /// <summary>
         /// Gets or sets the mission ID.
         /// </summary>
-        public int ID { get; set; }
+        //public override int ID { get; set; }
 
         /// <summary>
         /// Reads the <see cref="TutorialProgressSlot"/> from the specified <see cref="MessageReader"/>.

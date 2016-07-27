@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of Clans achievement slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}")]
     public class AchievementSlot : Slot
     {
         /// <summary>
@@ -25,11 +27,6 @@ namespace CoCSharp.Data.Slots
         {
             ID = id;
         }
-
-        /// <summary>
-        /// Gets or sets the achievement ID.
-        /// </summary>
-        public int ID { get; set; }
 
         /// <summary>
         /// Reads the <see cref="AchievementSlot"/> from the specified <see cref="MessageReader"/>.

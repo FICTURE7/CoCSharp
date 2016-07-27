@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of Clans spell slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Amount = {Amount}")]
     public class SpellSlot : Slot
     {
         /// <summary>
@@ -27,11 +29,6 @@ namespace CoCSharp.Data.Slots
             ID = id;
             Amount = amount;
         }
-
-        /// <summary>
-        /// Gets or sets the spell ID.
-        /// </summary>
-        public int ID { get; set; }
 
         /// <summary>
         /// Gets or sets the amount of spell.

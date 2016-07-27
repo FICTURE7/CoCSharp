@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents a Clash of Clans achievement progress slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Progress = {Progress}")]
     public class AchievementProgessSlot : Slot
     {
         /// <summary>
@@ -27,11 +29,6 @@ namespace CoCSharp.Data.Slots
             ID = id;
             Progress = progress;
         }
-
-        /// <summary>
-        /// Gets or sets the achievement ID.
-        /// </summary>
-        public int ID { get; set; }
 
         /// <summary>
         /// Gets or sets the progress of achievement.
