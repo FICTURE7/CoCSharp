@@ -3,7 +3,6 @@ using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
-using System.Diagnostics;
 
 namespace CoCSharp.Server.Handlers.Commands
 {

@@ -25,7 +25,7 @@ namespace CoCSharp.Server.Handlers.Commands
                     building.UserToken = client;
                     building.BeginConstruction();
 
-                    client.ResourcesAmount.GetSlot(GetResourceID(building.Data.BuildResource)).Amount -= building.Data.BuildCost;
+                    client.ResourcesAmount.GetSlot(GetResourceID(building.Data.BuildResource)).Amount -= building.NextUpgrade.BuildCost;
                     FancyConsole.WriteLine(StartedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
                 }
                 else
@@ -42,7 +42,7 @@ namespace CoCSharp.Server.Handlers.Commands
                     trap.UserToken = client;
                     trap.BeginConstruction();
 
-                    client.ResourcesAmount.GetSlot(GetResourceID(trap.Data.BuildResource)).Amount -= trap.Data.BuildCost;
+                    client.ResourcesAmount.GetSlot(GetResourceID(trap.Data.BuildResource)).Amount -= trap.NextUpgrade.BuildCost;
                     FancyConsole.WriteLine(StartedConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
                 }
                 else

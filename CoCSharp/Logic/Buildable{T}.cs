@@ -104,15 +104,6 @@ namespace CoCSharp.Logic
         /// The event raised when the <see cref="Building"/> construction is finished.
         /// </summary>
         public event EventHandler<ConstructionFinishedEventArgs<TCsvData>> ConstructionFinished;
-        
-        //private LogicOperations _operations;
-        //public LogicOperations AvailableOperations
-        //{
-        //    get
-        //    {
-        //        return _operations;
-        //    }
-        //}
 
         /// <summary>
         /// Gets or sets the user token associated with the <see cref="Buildable{TCsvData}"/>.
@@ -144,6 +135,11 @@ namespace CoCSharp.Logic
                 return _canUpgrade;
             }
         }
+
+        /// <summary>
+        /// Gets the next upgrade's <typeparamref name="TCsvData"/>.
+        /// </summary>
+        public TCsvData NextUpgrade { get; protected set; }
 
         /// <summary>
         /// Gets the duration of the construction of the <see cref="Buildable{TCsvData}"/> object.
@@ -218,8 +214,6 @@ namespace CoCSharp.Logic
 
         /// <sumary>Determines whether the Buildable Build event was scheduled.</sumary>
         protected bool Scheduled { get; set; }
-        /// <summary>Next upgrade of the Buildable. This field gets set by the UpdateCanUpgrade method.</summary>
-        protected TCsvData NextUpgrade { get; set; }
         #endregion
 
         #region Methods

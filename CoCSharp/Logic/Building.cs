@@ -459,6 +459,7 @@ namespace CoCSharp.Logic
                 else
                 {
                     // Date at which building construction was going to end has passed.
+                    UpdateCanUpgade();
                     DoConstructionFinished();
                     return;
                 }
