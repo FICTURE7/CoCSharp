@@ -5,6 +5,7 @@ using CoCSharp.Network.Messages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic
 {
@@ -534,6 +535,8 @@ namespace CoCSharp.Logic
                 if (Home == null)
                     throw new InvalidOperationException("Home cannot be null.");
 
+                UpdateSlots();
+
                 var villageData = new VillageMessageComponent(this);
                 var avatarData = new AvatarMessageComponent(this);
                 var ohdMessage = new OwnHomeDataMessage()
@@ -552,21 +555,21 @@ namespace CoCSharp.Logic
 
         #region Methods
         /// <summary>
-        /// Updates all <see cref="Slot"/> array of the <see cref="Avatar"/> with the specified
-        /// <see cref="AssetManager"/>.
+        /// Updates all <see cref="SlotCollection{TSot}"/> of the <see cref="Avatar"/> with <see cref="Home"/>'s <see cref="Village.AssetManager"/>
+        /// instance.
         /// </summary>
-        /// <param name="manager"><see cref="AssetManager"/> from which data will be used.</param>
-        public void UpdateSlots(AssetManager manager)
+        /// 
+        /// <exception cref="InvalidOperationException"><see cref="Home"/> is null.</exception>
+        public void UpdateSlots()
         {
+            if (Home == null)
+                throw new InvalidOperationException("Home cannot be null.");
+
+            Debug.Assert(Home.AssetManager != null);
             // Update the resource capacity of the avatar according to
             // its Home Village object.
-
-            //UpdateResourceCapacity(manager);
-        }
-
-        private void UpdateResourceCapacity(AssetManager manager)
-        {
-            var capacitySlot = new List<ResourceCapacitySlot>();
+            var manager = Home.AssetManager;
+            ResourcesCapacity.Clear();
 
             // Total capacity.
             var gold = 0;
@@ -583,45 +586,34 @@ namespace CoCSharp.Logic
                 if (building.IsLocked)
                     continue;
 
-                // If the building does not have any data,
-                // we ignore it.
-                if (building.Data == null)
-                    continue;
-
+                Debug.Assert(building.Data != null);
                 var data = building.Data;
 
                 // Ignore the building if its locked (from building.csv). E.g: Clan Castle level 0.
                 if (data.Locked)
                     continue;
 
-                //if (data.MaxStoredGold > 0)
                 gold += data.MaxStoredGold;
-                //if (data.MaxStoredWarGold > 0)
                 warGold += data.MaxStoredWarGold;
-                //if (data.MaxStoredElixir > 0)
                 elixir += data.MaxStoredElixir;
-                //if (data.MaxStoredWarElixir > 0)
                 warElixir += data.MaxStoredWarElixir;
-                //if (data.MaxStoredDarkElixir > 0)
                 darkElixir += data.MaxStoredDarkElixir;
-                //if (data.MaxStoredWarDarkElixir > 0)
                 warDarkElixir += data.MaxStoredWarDarkElixir;
             }
 
-            if (gold > 0)
-                capacitySlot.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_GOLD", 0).ID, gold));
+            ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_GOLD", 0).ID, gold));
             if (warGold > 0)
-                capacitySlot.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_GOLD", 0).ID, warGold));
-            if (elixir > 0)
-                capacitySlot.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_ELIXIR", 0).ID, elixir));
-            if (warElixir > 0)
-                capacitySlot.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_ELIXIR", 0).ID, warElixir));
-            if (darkElixir > 0)
-                capacitySlot.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_DARK_ELIXIR", 0).ID, darkElixir));
-            if (warDarkElixir > 0)
-                capacitySlot.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0).ID, warDarkElixir));
+                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_GOLD", 0).ID, warGold));
 
-            //ResourcesCapacity = capacitySlot.ToArray();
+            ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_ELIXIR", 0).ID, elixir));
+            if (warElixir > 0)
+                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_ELIXIR", 0).ID, warElixir));
+
+            // Dark Elixir is unlocked at townhall 7.
+            if (darkElixir > 0 || Home.TownHall.Data.Level >= 7)
+                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_DARK_ELIXIR", 0).ID, darkElixir));
+            if (warDarkElixir > 0)
+                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0).ID, warDarkElixir));
         }
 
         /// <summary>

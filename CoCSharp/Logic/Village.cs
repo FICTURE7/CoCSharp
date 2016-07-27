@@ -147,9 +147,9 @@ namespace CoCSharp.Logic
         /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
         public Building GetBuilding(int gameId)
         {
-            if (gameId < Building.BaseGameID || gameId > Building.BaseGameID + VillageObject.Base)
+            if (gameId < Building.BaseGameID || gameId > Building.BaseGameID + InternalConstants.IDBase)
                 throw new ArgumentException("'" + gameId + "' is not a valid Building game ID. It must be between '" + Building.BaseGameID +
-                                            "' and '" + (Building.BaseGameID + VillageObject.Base) + "'.");
+                                            "' and '" + (Building.BaseGameID + InternalConstants.IDBase) + "'.");
 
             var index = gameId - Building.BaseGameID;
             // Check if the index is valid.
@@ -169,9 +169,9 @@ namespace CoCSharp.Logic
         /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
         public Obstacle GetObstacle(int gameId)
         {
-            if (gameId < Obstacle.BaseGameID || gameId > Obstacle.BaseGameID + VillageObject.Base)
+            if (gameId < Obstacle.BaseGameID || gameId > Obstacle.BaseGameID + InternalConstants.IDBase)
                 throw new ArgumentException("'" + gameId + "' is not a valid Obstacle game ID. It must be between '" + Obstacle.BaseGameID +
-                                            "' and '" + (Obstacle.BaseGameID + VillageObject.Base) + "'.");
+                                            "' and '" + (Obstacle.BaseGameID + InternalConstants.IDBase) + "'.");
 
             var index = gameId - Obstacle.BaseGameID;
             // Check if the index is valid.
@@ -191,9 +191,9 @@ namespace CoCSharp.Logic
         /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
         public Trap GetTrap(int gameId)
         {
-            if (gameId < Trap.BaseGameID || gameId > Trap.BaseGameID + VillageObject.Base)
+            if (gameId < Trap.BaseGameID || gameId > Trap.BaseGameID + InternalConstants.IDBase)
                 throw new ArgumentException("'" + gameId + "' is not a valid Trap game ID. It must be between '" + Trap.BaseGameID +
-                                            "' and '" + (Trap.BaseGameID + VillageObject.Base) + "'.");
+                                            "' and '" + (Trap.BaseGameID + InternalConstants.IDBase) + "'.");
 
             var index = gameId - Trap.BaseGameID;
             // Check if the index is valid.
@@ -213,9 +213,9 @@ namespace CoCSharp.Logic
         /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
         public Decoration GetDecoration(int gameId)
         {
-            if (gameId < Decoration.BaseGameID || gameId > Decoration.BaseGameID + VillageObject.Base)
+            if (gameId < Decoration.BaseGameID || gameId > Decoration.BaseGameID + InternalConstants.IDBase)
                 throw new ArgumentException("'" + gameId + "' is not a valid Decoration game ID. It must be between '" + Decoration.BaseGameID +
-                                            "' and '" + (Decoration.BaseGameID + VillageObject.Base) + "'.");
+                                            "' and '" + (Decoration.BaseGameID + InternalConstants.IDBase) + "'.");
 
             var index = gameId - Decoration.BaseGameID;
             // Check if the index is valid.
@@ -248,13 +248,13 @@ namespace CoCSharp.Logic
         public VillageObject GetVillageObject(int gameId)
         {
             // Code repetition here with double checking of gameIds.
-            if (gameId >= Building.BaseGameID && gameId < Building.BaseGameID + VillageObject.Base)
+            if (gameId >= Building.BaseGameID && gameId < Building.BaseGameID + InternalConstants.IDBase)
                 return GetBuilding(gameId);
-            else if (gameId >= Obstacle.BaseGameID && gameId < Obstacle.BaseGameID + VillageObject.Base)
+            else if (gameId >= Obstacle.BaseGameID && gameId < Obstacle.BaseGameID + InternalConstants.IDBase)
                 return GetObstacle(gameId);
-            else if (gameId >= Trap.BaseGameID && gameId < Trap.BaseGameID + VillageObject.Base)
+            else if (gameId >= Trap.BaseGameID && gameId < Trap.BaseGameID + InternalConstants.IDBase)
                 return GetTrap(gameId);
-            else if (gameId >= Decoration.BaseGameID && gameId < Decoration.BaseGameID + VillageObject.Base)
+            else if (gameId >= Decoration.BaseGameID && gameId < Decoration.BaseGameID + InternalConstants.IDBase)
                 return GetDecoration(gameId);
             else
                 return null;

@@ -16,7 +16,7 @@ namespace CoCSharp.Logic
     {
         #region Constants
         // Represents the Base ID of every game ID & data ID.
-        internal const int Base = 1000000;
+        //internal const int Base = 1000000;
 
         internal static int s_rested = 0;
         internal static int s_created = 0;

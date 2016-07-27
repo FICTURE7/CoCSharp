@@ -41,7 +41,7 @@ namespace CoCSharp.Test.Data
         {
             _collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => Assert.AreEqual(NotifyCollectionChangedAction.Add, e.Action);
 
-            var slot = new ResourceAmountSlot();
+            var slot = new ResourceAmountSlot(3000000, 1000);
             Assert.AreEqual(0, _collection.Count);
             _collection.Add(slot);
             Assert.AreEqual(1, _collection.Count);
@@ -74,7 +74,7 @@ namespace CoCSharp.Test.Data
         public void Clear_IsReadOnly_Exception()
         {
             for (int i = 0; i < 50; i++)
-                _collection.Add(new ResourceAmountSlot());
+                _collection.Add(new ResourceAmountSlot(3000000 + i, 10000));
 
             _collection.IsReadOnly = true;
             Assert.Throws<InvalidOperationException>(() => _collection.Clear());
@@ -85,7 +85,7 @@ namespace CoCSharp.Test.Data
         {
             Assert.AreEqual(0, _collection.Count);
             for (int i = 0; i < 50; i++)
-                _collection.Add(new ResourceAmountSlot());
+                _collection.Add(new ResourceAmountSlot(3000000 + i, 10000));
             Assert.AreEqual(50, _collection.Count);
 
             _collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => Assert.AreEqual(NotifyCollectionChangedAction.Reset, e.Action);

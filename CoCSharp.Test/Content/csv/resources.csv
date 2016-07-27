@@ -1,0 +1,9 @@
+"Name","TID","SWF","CollectEffect","ResourceIconExportName","StealEffect","PremiumCurrency","HudInstanceName","CapFullTID","TextRed","TextGreen","TextBlue","WarRefResource"
+"String","String","String","String","String","String","Boolean","String","String","int","int","int","String"
+"Diamonds","TID_DIAMONDS","sc/ui.sc","Collect Diamonds",,,"true","diamond_bar",,0,255,92,
+"Gold","TID_GOLD","sc/ui.sc","Collect Gold","building_resources_gold","Steal Gold",,"gold_bar","TID_RESOURCE_CAP_FULL_GOLD",240,240,0,
+"Elixir","TID_ELIXIR","sc/ui.sc","Collect Elixir","building_resources_elixir","Steal Elixir",,"elixir_bar","TID_RESOURCE_CAP_FULL_ELIXIR",192,0,192,
+"DarkElixir","TID_DARK_ELIXIR","sc/ui.sc","Collect Dark Elixir","building_resources_dark_elixir","Steal Dark Elixir",,"dark_elixir_bar","TID_RESOURCE_CAP_FULL_DARK_ELIXIR",240,240,240,
+"WarGold","TID_WAR_GOLD","sc/ui.sc","Collect Gold","building_resources_gold",,,,,240,240,0,"Gold"
+"WarElixir","TID_WAR_ELIXIR","sc/ui.sc","Collect Elixir","building_resources_elixir",,,,,192,0,192,"Elixir"
+"WarDarkElixir","TID_WAR_DARK_ELIXIR","sc/ui.sc","Collect Dark Elixir","building_resources_dark_elixir",,,,,240,240,240,"DarkElixir"

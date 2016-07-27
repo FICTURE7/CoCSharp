@@ -163,6 +163,11 @@ namespace CoCSharp.Csv
             return (TCsvData)instance;
         }
 
+        // Returns the index of data ID.
+        // This value depends on BaseGameID.
+        // E.g: 1000000 => 0
+        //      5000004 => 4
+        //      12000001 => 1
         internal int GetIndex(int dataId)
         {
             return dataId - _minId;

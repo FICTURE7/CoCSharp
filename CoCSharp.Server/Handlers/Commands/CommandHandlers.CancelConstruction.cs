@@ -17,6 +17,8 @@ namespace CoCSharp.Server.Handlers.Commands
                 if (trap.IsConstructing)
                 {
                     trap.CancelConstruction();
+
+                    client.ResourcesAmount.GetSlot(GetResourceID(trap.Data.BuildResource)).Amount += trap.Data.BuildCost;
                 }
                 else
                 {
@@ -29,6 +31,8 @@ namespace CoCSharp.Server.Handlers.Commands
                 if (building.IsConstructing)
                 {
                     building.CancelConstruction();
+
+                    client.ResourcesAmount.GetSlot(GetResourceID(building.Data.BuildResource)).Amount += building.Data.BuildCost;
                 }
                 else
                 {

@@ -147,7 +147,7 @@ namespace CoCSharp.Server.Handlers
 
                         //var ohdMessage = client.Avatar.OwnHomeDataMessage;
                         client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
-                        return;
+                        break;
 
                     case "clearobstacles":
                         var count = client.Home.Obstacles.Count;
@@ -158,7 +158,7 @@ namespace CoCSharp.Server.Handlers
 
                         cmsMessage.Message = "Cleared " + count + " obstacles.";
                         client.NetworkManager.SendMessage(cmsMessage);
-                        return;
+                        break;
 
                     case "max":
                         var countBuilding = client.Home.Buildings.Count;
@@ -189,17 +189,21 @@ namespace CoCSharp.Server.Handlers
                         client.NetworkManager.SendMessage(cmsMessage);
 
                         client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
-                        return;
+                        break;
+
+                    case "reload":
+                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
+                        break;
 
 #if DEBUG
-                        // Add this feature only in the DEBUG build
+                    // Add this feature only in the DEBUG build
                     case "populatedb":
                         for (int i = 0; i < 50; i++)
                             server.AvatarManager.CreateNewAvatar();
 
                         cmsMessage.Message = "Created 50 new avatar.";
                         client.NetworkManager.SendMessage(cmsMessage);
-                        return;
+                        break;
 #endif
 
                     default:
@@ -208,16 +212,18 @@ namespace CoCSharp.Server.Handlers
                         goto case "help";
                 }
             }
+            else
+            {
+                //TODO: Set alliance and all that jazz.
 
-            //TODO: Set alliance and all that jazz.
+                cmsMessage.Level = client.Level;
+                cmsMessage.CurrentUserID = client.ID;
+                cmsMessage.UserID = client.ID; // <- might have an issue here.
+                cmsMessage.Name = client.Name;
+                cmsMessage.Message = cmcMessage.Message;
 
-            cmsMessage.Level = client.Level;
-            cmsMessage.CurrentUserID = client.ID;
-            cmsMessage.UserID = client.ID;
-            cmsMessage.Name = client.Name;
-            cmsMessage.Message = cmcMessage.Message;
-
-            server.SendMessageAll(cmsMessage);
+                server.SendMessageAll(cmsMessage);
+            }
         }
 
         public static void RegisterInGameMessageHandlers(CoCServer server)

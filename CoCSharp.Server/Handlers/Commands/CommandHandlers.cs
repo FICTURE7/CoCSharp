@@ -1,3 +1,4 @@
+using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 using CoCSharp.Network.Messages.Commands;
@@ -67,27 +68,49 @@ namespace CoCSharp.Server.Handlers.Commands
             server.RegisterCommandHandler(new MatchmakingCommand(), HandleMatchmakingCommand);
         }
 
+        // Doing this because a lot of stuff made incorrectly.
+        private static int GetResourceID(string name)
+        {
+            switch (name)
+            {
+                case "Gold":
+                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_GOLD").ID;
+
+                case "Elixir":
+                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_ELIXIR").ID;
+
+                case "DarkElixir":
+                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_DARK_ELIXIR").ID;
+
+                case "Diamonds":
+                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_DIAMONDS").ID;
+
+                default:
+                    return -1;
+            }
+        }
+
         public static void BuildingConstructionFinished(object sender, ConstructionFinishedEventArgs<BuildingData> e)
         {
 #if !DEBUG
             try
             {
 #endif
-                var building = (Building)e.BuildableConstructed;
-                var client = (CoCRemoteClient)e.UserToken;
+            var building = (Building)e.BuildableConstructed;
+            var client = (CoCRemoteClient)e.UserToken;
 
-                if (e.WasCancelled)
-                {
-                    FancyConsole.WriteLine(CancelledConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
-                }
-                else
-                {
-                    FancyConsole.WriteLine(FinishedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
-                    var exp = LogicUtils.CalculateExperience(building.Data.BuildTime);
-                    client.Experience += exp;
-                }
+            if (e.WasCancelled)
+            {
+                FancyConsole.WriteLine(CancelledConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
+            }
+            else
+            {
+                FancyConsole.WriteLine(FinishedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
+                var exp = LogicUtils.CalculateExperience(building.Data.BuildTime);
+                client.Experience += exp;
+            }
 
-                client.Save();
+            client.Save();
 #if !DEBUG
             }
             catch (Exception ex)
@@ -103,22 +126,22 @@ namespace CoCSharp.Server.Handlers.Commands
             try
             {
 #endif
-                var trap = (Trap)e.BuildableConstructed;
-                var client = (CoCRemoteClient)e.UserToken;
+            var trap = (Trap)e.BuildableConstructed;
+            var client = (CoCRemoteClient)e.UserToken;
 
-                if (e.WasCancelled)
-                {
-                    FancyConsole.WriteLine(CancelledConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
-                }
-                else
-                {
-                    FancyConsole.WriteLine(FinishedConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
+            if (e.WasCancelled)
+            {
+                FancyConsole.WriteLine(CancelledConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
+            }
+            else
+            {
+                FancyConsole.WriteLine(FinishedConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
 
-                    var exp = LogicUtils.CalculateExperience(trap.Data.BuildTime);
-                    client.Experience += exp;
-                }
+                var exp = LogicUtils.CalculateExperience(trap.Data.BuildTime);
+                client.Experience += exp;
+            }
 
-                client.Save();
+            client.Save();
 #if !DEBUG
             }
             catch (Exception ex)
@@ -134,21 +157,21 @@ namespace CoCSharp.Server.Handlers.Commands
             try
             {
 #endif
-                var obstacle = e.ClearedObstacle;
-                var client = (CoCRemoteClient)e.UserToken;
+            var obstacle = e.ClearedObstacle;
+            var client = (CoCRemoteClient)e.UserToken;
 
-                if (e.WasCancelled)
-                {
-                    FancyConsole.WriteLine(CancelledClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
-                }
-                else
-                {
-                    FancyConsole.WriteLine(FinishedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
-                    var exp = LogicUtils.CalculateExperience(obstacle.Data.ClearTime);
-                    client.Experience += exp;
-                }
+            if (e.WasCancelled)
+            {
+                FancyConsole.WriteLine(CancelledClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
+            }
+            else
+            {
+                FancyConsole.WriteLine(FinishedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
+                var exp = LogicUtils.CalculateExperience(obstacle.Data.ClearTime);
+                client.Experience += exp;
+            }
 
-                client.Save();
+            client.Save();
 #if !DEBUG
             }
             catch (Exception ex)

@@ -53,7 +53,8 @@ namespace CoCSharp.Logic
         // Reads the current LogicComponent to the JsonReader.
         internal abstract void FromJsonReader(JsonReader reader);
 
-        internal void OnPropertyChanged(PropertyChangedEventArgs args)
+        ///<summary>Raises the PropertyChanged event.</summary>
+        protected void OnPropertyChanged(PropertyChangedEventArgs args)
         {
             if (IsPropertyChangedEnabled && PropertyChanged != null)
                 PropertyChanged(this, args);

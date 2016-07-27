@@ -17,6 +17,7 @@ namespace CoCSharp.Server.Handlers.Commands
             if (trap.Broken == true)
             {
                 trap.Broken = false;
+                client.ResourcesAmount.GetSlot(GetResourceID(trap.Data.BuildResource)).Amount -= trap.Data.RearmCost;
                 FancyConsole.WriteLine(RearmedTrapFormat, rtCommand.TrapGameID, client.Token, trap.X, trap.Y);
             }
         }

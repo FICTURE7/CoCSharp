@@ -11,10 +11,6 @@ namespace CoCSharp.Data
     /// </summary>
     public class AssetManager
     {
-        #region Constants
-        private const int Base = 1000000;
-        #endregion
-
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetManager"/> class with the specified path
@@ -28,7 +24,7 @@ namespace CoCSharp.Data
             if (!Directory.Exists(path))
                 throw new DirectoryNotFoundException("Could not find directory at '" + path + "'.");
 
-            _tid2index = new Dictionary<string, int>();
+            _tid2subCollection = new Dictionary<string, object>();
             _arrayCsv = new object[30];
             _assetPath = path;
         }
@@ -40,7 +36,7 @@ namespace CoCSharp.Data
         /// </summary>
         public static AssetManager DefaultInstance { get; set; }
 
-        private readonly Dictionary<string, int> _tid2index;
+        private Dictionary<string, object> _tid2subCollection;
         // Array of CsvDataCollection.
         private readonly object[] _arrayCsv;
 
@@ -166,7 +162,7 @@ namespace CoCSharp.Data
         /// A <see cref="CsvDataSubCollection{TCsvData}"/> of<typeparamref name="TCsvData"/> with the same data ID as specified if successful.
         /// </returns>
         /// 
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is less than the <see cref="Base"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is not within the range of <typeparamref name="TCsvData"/>.</exception>
         /// <exception cref="InvalidOperationException"><typeparamref name="TCsvData"/> was not loaded.</exception>
         public CsvDataSubCollection<TCsvData> SearchCsv<TCsvData>(int id) where TCsvData : CsvData, new()
         {
@@ -195,7 +191,7 @@ namespace CoCSharp.Data
         /// <param name="level">Specific level to look for.</param>
         /// <returns>A <typeparamref name="TCsvData"/> with the same data ID and level as specified if successful.</returns>
         /// 
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is less than the <see cref="Base"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is not within the range of <typeparamref name="TCsvData"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="level"/> is less than 0.</exception>
         /// <exception cref="InvalidOperationException"><typeparamref name="TCsvData"/> was not loaded.</exception>
         public TCsvData SearchCsv<TCsvData>(int id, int level) where TCsvData : CsvData, new()
@@ -246,16 +242,7 @@ namespace CoCSharp.Data
 
             return subcollection[level];
         }
-        #endregion
-
-        // Gets the index in _arrayCsv of a CsvDataCollection from a data ID.
-        // Eg: 1000001  => 1
-        //     12000003 => 12
-        //     28000032 => 28
-        private int GetIndex(int id)
-        {
-            return id / Base;
-        }
+        #endregion       
 
         /// <summary>
         /// Searches for an array <typeparamref name="TCsvData"/> have the same specified TID.
@@ -268,16 +255,29 @@ namespace CoCSharp.Data
             if (tid == null)
                 throw new ArgumentNullException("tid");
 
+            var type = typeof(TCsvData);
+            if (!IsCsvLoaded<TCsvData>())
+                throw new InvalidOperationException("CsvData of type '" + type + "' was not loaded. Call LoadCsv<" + type.Name + ">() first.");
 
-            var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
-            var index = GetIndex(baseDataId);
-            var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
-            for (int i = 0; i < data.Count; i++)
+            var objCollection = (object)null;
+            if (_tid2subCollection.TryGetValue(tid, out objCollection))
             {
-                var collection = data[baseDataId + i];
-                if (collection.TID == tid)
+                var collection = (CsvDataSubCollection<TCsvData>)objCollection;
+                return collection;
+            }
+            else
+            {
+                var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
+                var index = GetIndex(baseDataId);
+                var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
+                for (int i = 0; i < data.Count; i++)
                 {
-                    return collection;
+                    var collection = data[baseDataId + i];
+                    if (collection.TID == tid)
+                    {
+                        _tid2subCollection.Add(tid, collection);
+                        return collection;
+                    }
                 }
             }
 
@@ -296,18 +296,42 @@ namespace CoCSharp.Data
             if (tid == null)
                 throw new ArgumentNullException("tid");
 
-            var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
-            var index = GetIndex(baseDataId);
-            var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
-            for (int i = 0; i < data.Count; i++)
+            var type = typeof(TCsvData);
+            if (!IsCsvLoaded<TCsvData>())
+                throw new InvalidOperationException("CsvData of type '" + type + "' was not loaded. Call LoadCsv<" + type.Name + ">() first.");
+
+            var objCollection = (object)null;
+            if (_tid2subCollection.TryGetValue(tid, out objCollection))
             {
-                var collection = data[baseDataId + i];
-                if (collection.TID == tid)
+                var collection = (CsvDataSubCollection<TCsvData>)objCollection;
+                return collection[level];
+            }
+            else
+            {
+                var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
+                var index = GetIndex(baseDataId);
+                var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
+                for (int i = 0; i < data.Count; i++)
                 {
-                    return collection[level];
+                    var collection = data[baseDataId + i];
+                    if (collection.TID == tid)
+                    {
+                        _tid2subCollection.Add(tid, collection);
+                        return collection[level];
+                    }
                 }
             }
+
             return null;
+        }
+
+        // Gets the index in _arrayCsv of a CsvDataCollection from a data ID.
+        // Eg: 1000001  => 1
+        //     12000003 => 12
+        //     28000032 => 28
+        private static int GetIndex(int id)
+        {
+            return id / InternalConstants.IDBase;
         }
         #endregion
         #endregion

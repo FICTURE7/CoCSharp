@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data.Models;
+using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Server.Core;
@@ -86,13 +87,13 @@ namespace CoCSharp.Server
         public bool Load()
         {
             var avatar = (Avatar)null;
+            var newAvatar = false;
 
             // The client is a new Avatar.
             if (ID == 0 && Token == null)
             {
                 avatar = Server.AvatarManager.CreateNewAvatar();
-                avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000001, 1000));
-                avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000000, 1000));
+                newAvatar = true;    
             }
             else
             {
@@ -103,8 +104,7 @@ namespace CoCSharp.Server
                 else
                 {
                     avatar = Server.AvatarManager.CreateNewAvatar(Token, ID);
-                    avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000001, 1000));
-                    avatar.ResourcesAmount.Add(new ResourceAmountSlot(3000000, 1000));
+                    newAvatar = true;
                 }
             }
 
@@ -134,10 +134,22 @@ namespace CoCSharp.Server
             }
 
             SetFromAvatar(avatar);
+            if (newAvatar)
+                SetNewAvatarSlots();
+
             return true;
         }
 
-        public void UpdateKeepAlive()
+        private void SetNewAvatarSlots()
+        {
+            var gold = Home.AssetManager.SearchCsv<ResourceData>("TID_GOLD").ID;
+            var elixir = Home.AssetManager.SearchCsv<ResourceData>("TID_ELIXIR").ID;
+
+            ResourcesAmount.Add(new ResourceAmountSlot(gold, 1000));
+            ResourcesAmount.Add(new ResourceAmountSlot(elixir, 1000));
+        }
+
+        internal void UpdateKeepAlive()
         {
             LastKeepAlive = DateTime.UtcNow;
             ExpirationKeepAlive = LastKeepAlive.AddSeconds(30);

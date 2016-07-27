@@ -52,7 +52,7 @@ namespace CoCSharp.Data.Models
         /// <summary>
         /// Gets or sets the Cap full TID.
         /// </summary>
-        public string CapFullTID { get; set; } 
+        public string CapFullTID { get; set; }
         /// <summary>
         /// Gets or sets the Text red.
         /// </summary>

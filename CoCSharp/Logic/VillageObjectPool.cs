@@ -61,7 +61,7 @@ namespace CoCSharp.Logic
         private static ConcurrentBag<VillageObject> GetPool(int gameId)
         {
             // Potential IndexOutOfRangeException here.
-            return _pools[(gameId / VillageObject.Base) - 500];
+            return _pools[(gameId / InternalConstants.IDBase) - 500];
         }
     }
 }

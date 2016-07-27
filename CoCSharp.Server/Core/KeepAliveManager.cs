@@ -28,8 +28,8 @@ namespace CoCSharp.Server.Core
             if (Started)
                 throw new InvalidOperationException("KeepAliveManager already started.");
 
-            _keepAliveThread.Start();
             Started = true;
+            _keepAliveThread.Start();
         }
 
         public void Stop()
@@ -37,39 +37,28 @@ namespace CoCSharp.Server.Core
             if (!Started)
                 throw new InvalidOperationException("KeepAliveManager did not start yet.");
 
-            _keepAliveThread.Abort();
             Started = false;
+            _keepAliveThread.Join();
         }
 
         private void UpdateKeepAlive()
         {
             while (Started)
             {
-                try
-                {
-                    // If the client does not send a KeepAliveRequestMessage within an interval of 30 seconds
-                    // we assume its disconnected.
+                // If the client does not send a KeepAliveRequestMessage within an interval of 30 seconds
+                // we assume its disconnected.
 
-                    for (int i = 0; i < _server.Clients.Count; i++)
+                for (int i = 0; i < _server.Clients.Count; i++)
+                {
+                    var client = _server.Clients[i];
+                    if (DateTime.UtcNow >= client.ExpirationKeepAlive)
                     {
-                        var client = _server.Clients[i];
-                        if (DateTime.UtcNow >= client.ExpirationKeepAlive)
-                        {
-                            client.Disconnect();
-                            Debug.WriteLine("Disconnecting client because it did not send a KeepAliveRequestMessage in time.");
-                        }
+                        client.Disconnect();
+                        Debug.WriteLine("Disconnecting client because it did not send a KeepAliveRequestMessage in time.");
                     }
+                }
 
-                    Thread.Sleep(500);
-                }
-                catch (ThreadAbortException)
-                {
-                    // We don't care.
-                }
-                catch
-                {
-                    throw;
-                }
+                Thread.Sleep(500);
             }
         }
     }

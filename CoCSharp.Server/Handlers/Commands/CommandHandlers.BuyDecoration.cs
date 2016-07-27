@@ -17,6 +17,7 @@ namespace CoCSharp.Server.Handlers.Commands
 
             //Debug.Assert(deco.ID == bdCommand.DecorationDataID);
 
+            client.ResourcesAmount.GetSlot(GetResourceID(data.BuildResource)).Amount -= data.BuildCost;
             FancyConsole.WriteLine(BoughtDecorationFormat, bdCommand.DecorationDataID, client.Token, bdCommand.X, bdCommand.Y);
         }
     }

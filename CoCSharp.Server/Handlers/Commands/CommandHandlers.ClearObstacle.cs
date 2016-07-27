@@ -17,6 +17,7 @@ namespace CoCSharp.Server.Handlers.Commands
             // Might cause an issue with the Decoration.
             Debug.Assert(obstacle.ID == coCommand.ObstacleGameID);
 
+            client.ResourcesAmount.GetSlot(GetResourceID(obstacle.Data.ClearResource)).Amount -= obstacle.Data.ClearCost;
             obstacle.BeginClearing();
 
             FancyConsole.WriteLine(StartedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);

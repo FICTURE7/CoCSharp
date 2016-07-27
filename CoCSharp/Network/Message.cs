@@ -82,15 +82,15 @@ namespace CoCSharp.Network
             return GetMessageDirection((T)Activator.CreateInstance(tType));
         }
 
-        // Throws a ArgumentNullException if reader is null.
-        internal void ThrowIfReaderNull(MessageReader reader)
+        /// <summary>Throws ArgumentNullException if reader is null.</summary>
+        protected void ThrowIfReaderNull(MessageReader reader)
         {
             if (reader == null)
                 throw new ArgumentNullException("reader");
         }
 
-        // Throws a ArgumentNullException if writer is null.
-        internal void ThrowIfWriterNull(MessageWriter writer)
+        /// <summary>Throws ArgumentNullException if writer is null.</summary>
+        protected void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
                 throw new ArgumentNullException("writer");

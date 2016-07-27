@@ -52,7 +52,7 @@ namespace CoCSharp.Data
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("index");
+                    throw new ArgumentNullException("value");
 
                 if (index > Count - 1)
                 {
@@ -111,6 +111,9 @@ namespace CoCSharp.Data
                 throw new InvalidOperationException("SlotCollection object is readonly.");
             if (slot == null)
                 throw new ArgumentNullException("slot");
+
+            if (GetSlot(slot.ID) != null)
+                throw new InvalidOperationException("Already contain a Slot with the same ID '" + slot.ID + "'.");
 
             _slots.Add(slot);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, slot));
@@ -186,6 +189,25 @@ namespace CoCSharp.Data
         public TSlot[] ToArray()
         {
             return _slots.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a <typeparamref name="TSlot"/> in the <see cref="SlotCollection{TSlot}"/> with the
+        /// same <see cref="Slot.ID"/> as the specified data ID.
+        /// </summary>
+        /// <param name="dataId">Data ID of the <typeparamref name="TSlot"/> to look for.</param>
+        /// <returns>
+        /// Returns null if not found, otherwise the instance of <typeparamref name="TSlot"/> with
+        /// the same <see cref="Slot.ID"/> as <paramref name="dataId"/>.
+        /// </returns>
+        public TSlot GetSlot(int dataId)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                if (_slots[i].ID == dataId)
+                    return _slots[i];
+            }
+            return null;
         }
 
         /// <summary>

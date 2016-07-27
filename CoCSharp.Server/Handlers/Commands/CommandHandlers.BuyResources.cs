@@ -11,7 +11,7 @@ namespace CoCSharp.Server.Handlers.Commands
             var brCommand = (BuyResourcesCommand)command;
             var embeddedCommand = brCommand.Command;
 
-            //TODO: Add amount to resource and all that jazz.
+            client.ResourcesAmount.GetSlot(brCommand.ResourceDataID).Amount += brCommand.ResourceAmount;
             FancyConsole.WriteLine("[&(darkgreen)Logic&(default)] Bought resource -> {1} for account &(darkcyan){0}&(default) \n\t\tAmount: {2}",
                   client.Token, brCommand.ResourceDataID, brCommand.ResourceAmount);
 
