@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using System.Collections.Generic;
 using System.IO;
@@ -15,12 +16,12 @@ namespace CoCSharp.Server.Core
             _completeNpcStartList = GetCompleteNpcStart();
         }
 
-        public NpcStarSlot[] CompleteNpcStarList
+        public SlotCollection<NpcStarSlot> CompleteNpcStarList
         {
             get { return _completeNpcStartList; }
         }
 
-        private NpcStarSlot[] _completeNpcStartList;
+        private SlotCollection<NpcStarSlot> _completeNpcStartList;
         private Dictionary<int, Village> _loadedNpc;
 
         public Village LoadNpc(int id)
@@ -46,10 +47,10 @@ namespace CoCSharp.Server.Core
         }
 
         // Generates a complete list of NPCs.
-        private NpcStarSlot[] GetCompleteNpcStart()
+        private SlotCollection<NpcStarSlot> GetCompleteNpcStart()
         {
             var prefixLength = NpcVillageFilePrefix.Length;
-            var list = new List<NpcStarSlot>();
+            var list = new SlotCollection<NpcStarSlot>();
             var files = Directory.GetFiles(DirectoryPaths.Npc);
             for (int i = 0; i < files.Length; i++)
             {
@@ -64,7 +65,7 @@ namespace CoCSharp.Server.Core
                 list.Add(new NpcStarSlot(id, 3));
             }
 
-            return list.ToArray();
+            return list;
         }
     }
 }

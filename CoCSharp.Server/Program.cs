@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using CoCSharp.Logic;
 
 namespace CoCSharp.Server
 {
@@ -24,8 +25,21 @@ namespace CoCSharp.Server
 
             Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
 
-            //TODO: Don't waste this thread making it sleep forever, instead use it for a queue save system.
-            Thread.Sleep(Timeout.Infinite);
+            var avatarManager = Server.AvatarManager;
+            while (true)
+            {
+                if (!avatarManager.QueuedAvatars.IsEmpty)
+                {
+                    var avatar = (Avatar)null;
+                    if (avatarManager.QueuedAvatars.TryPop(out avatar))
+                    {
+                        avatarManager.SaveAvatar(avatar);
+                        Debug.WriteLine("Saved avatar " + avatar.Token, "Saving");
+                    }
+                }
+
+                Thread.Sleep(100);
+            }
         }
     }
 }

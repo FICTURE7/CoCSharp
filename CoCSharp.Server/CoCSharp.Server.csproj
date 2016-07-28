@@ -95,6 +95,9 @@
     <Compile Include="Handlers\Commands\CommandHandlers.SpeedUpConstruction.cs">
       <DependentUpon>CommandHandlers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.UnlockBuilding.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Handlers\Commands\CommandHandlers.UpgradeBuildable.cs">
       <DependentUpon>CommandHandlers.cs</DependentUpon>
     </Compile>

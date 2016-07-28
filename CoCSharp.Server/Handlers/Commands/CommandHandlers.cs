@@ -53,6 +53,7 @@ namespace CoCSharp.Server.Handlers.Commands
 
             server.RegisterCommandHandler(new SellDecorationCommand(), HandleSellDecorationCommand);
 
+            server.RegisterCommandHandler(new UnlockBuildingCommand(), HandleUnlockBuildingCommand);
             server.RegisterCommandHandler(new UpgradeBuildableCommand(), HandleUpgradeBuildableCommand);
             server.RegisterCommandHandler(new UpgradeMultipleBuildableCommand(), HandleUpgradeMultipleBuildableCommand);
             server.RegisterCommandHandler(new CancelConsturctionCommand(), HandleCancelConstructionCommand);

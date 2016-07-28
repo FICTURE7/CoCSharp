@@ -81,7 +81,7 @@ namespace CoCSharp.Server
 
         public void Save()
         {
-            Server.AvatarManager.SaveAvatar(this);
+            Server.AvatarManager.EnqueueForSave(this);
         }
 
         public bool Load()
@@ -145,6 +145,7 @@ namespace CoCSharp.Server
             var gold = Home.AssetManager.SearchCsv<ResourceData>("TID_GOLD").ID;
             var elixir = Home.AssetManager.SearchCsv<ResourceData>("TID_ELIXIR").ID;
 
+            NpcStars = Server.NpcManager.CompleteNpcStarList;
             ResourcesAmount.Add(new ResourceAmountSlot(gold, 1000));
             ResourcesAmount.Add(new ResourceAmountSlot(elixir, 1000));
         }

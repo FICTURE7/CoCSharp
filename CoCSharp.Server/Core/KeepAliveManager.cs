@@ -54,7 +54,7 @@ namespace CoCSharp.Server.Core
                     if (DateTime.UtcNow >= client.ExpirationKeepAlive)
                     {
                         client.Disconnect();
-                        Debug.WriteLine("Disconnecting client because it did not send a KeepAliveRequestMessage in time.");
+                        Debug.WriteLine("Disconnecting client because it did not send a KeepAliveRequestMessage in time.", "KeepAlive");
                     }
                 }
 

@@ -3,6 +3,7 @@ using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using LiteDB;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 
 namespace CoCSharp.Server.Core
@@ -66,6 +67,8 @@ namespace CoCSharp.Server.Core
                 "Levi",
                 "Kenny"
             };
+
+            QueuedAvatars = new ConcurrentStack<Avatar>();
         }
 
         // Array of random names to choose from when creating a new avatar.
@@ -73,6 +76,9 @@ namespace CoCSharp.Server.Core
         private string _startingVillage;
         private LiteDatabase _liteDb;
         private LiteCollection<Avatar> _avatarCollection;
+
+        // Queue of avatars to save.
+        public ConcurrentStack<Avatar> QueuedAvatars { get; set; }
 
         private string GetRandomName()
         {
@@ -147,6 +153,11 @@ namespace CoCSharp.Server.Core
             //var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
             //File.WriteAllText(avatar.Token + ".json", avatar.Home.ToJson());
             //return avatar;
+        }
+
+        public void EnqueueForSave(Avatar avatar)
+        {
+            QueuedAvatars.Push(avatar);
         }
 
         public void SaveAvatar(Avatar avatar)

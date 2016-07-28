@@ -37,6 +37,7 @@ namespace CoCSharp.Server.Handlers.Commands
                 Unknown4 = 0,
             };
 
+            ehdMessage.OwnAvatarData.Units.Clear();
             for (int i = 0; i < 18; i++)
                 ehdMessage.OwnAvatarData.Units.Add(new UnitSlot(4000000 + i, 999));
 

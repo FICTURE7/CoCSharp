@@ -28,12 +28,11 @@ namespace CoCSharp.Server.Handlers
                 return;
             }
 
-            var avatar = new AvatarMessageComponent(client)
-            {
-                AllianceCastleLevel = 1,
-                AllianceCastleTotalCapacity = 10,
-                AllianceCastleUsedCapacity = 0
-            };
+            var avatar = new AvatarMessageComponent(client);
+
+            avatar.Units.Clear();
+            for (int i = 0; i < 18; i++)
+                avatar.Units.Add(new UnitSlot(4000000 + i, 999));
 
             var ndMessage = new NpcDataMessage();
             ndMessage.AvatarData = avatar;
