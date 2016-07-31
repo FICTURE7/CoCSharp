@@ -21,6 +21,9 @@ namespace CoCSharp.Network
 
         internal static void Initialize()
         {
+            s_allianceStreamDictionary.Clear();
+            s_avatarStreamDictionary.Clear();
+
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes();
             for (int i = 0; i < types.Length; i++)
@@ -50,8 +53,6 @@ namespace CoCSharp.Network
                     Debug.Fail("Unexpected type " + type);
                 }
             }
-
-            //s_avatarStreamDictionary.Add(2, typeof(AttackLogAvatarStreamEntry));
         }
 
         private static readonly Dictionary<int, Type> s_allianceStreamDictionary;

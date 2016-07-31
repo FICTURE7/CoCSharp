@@ -19,6 +19,8 @@ namespace CoCSharp.Network
 
         internal static void Initialize()
         {
+            s_commandDictionary.Clear();
+
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes();
             for (int i = 0; i < types.Length; i++)
@@ -36,7 +38,7 @@ namespace CoCSharp.Network
                     var instance = (Command)Activator.CreateInstance(type);
 
                     // A command with the same ID as instance.ID was already added to the dictionary.
-                    Debug.Assert(!s_commandDictionary.ContainsKey(instance.ID), "CommandDictionary already contains '" + instance.ID + "'.");
+                    Debug.Assert(!s_commandDictionary.ContainsKey(instance.ID), "s_commandDictionary already contains '" + instance.ID + "'.");
                     s_commandDictionary.Add(instance.ID, type);
                 }
             }

@@ -19,7 +19,9 @@ namespace CoCSharp.Network
         }
 
         internal static void Initialize()
-        {        
+        {
+            s_messageDictionary.Clear();
+
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes();
             for (int i = 0; i < types.Length; i++)
