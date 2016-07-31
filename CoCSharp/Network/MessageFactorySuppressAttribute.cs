@@ -4,7 +4,7 @@ namespace CoCSharp.Network
 {
     /// <summary>
     /// Use this attribute to prevent the <see cref="MessageFactory"/> to add it
-    /// in the <see cref="MessageFactory.MessageDictionary"/>. This class cannot be inherited.
+    /// in the <see cref="MessageFactory.s_messageDictionary"/>. This class cannot be inherited.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     internal sealed class MessageFactorySuppressAttribute : Attribute

@@ -13,13 +13,12 @@ namespace CoCSharp.Network
     {
         static CommandFactory()
         {
+            s_commandDictionary = new Dictionary<int, Type>();
             Initialize();
         }
 
         internal static void Initialize()
         {
-            CommandDictionary = new Dictionary<int, Type>();
-
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes();
             for (int i = 0; i < types.Length; i++)
@@ -37,19 +36,14 @@ namespace CoCSharp.Network
                     var instance = (Command)Activator.CreateInstance(type);
 
                     // A command with the same ID as instance.ID was already added to the dictionary.
-                    Debug.Assert(!CommandDictionary.ContainsKey(instance.ID), "CommandDictionary already contains '" + instance.ID + "'.");
-                    CommandDictionary.Add(instance.ID, type);
+                    Debug.Assert(!s_commandDictionary.ContainsKey(instance.ID), "CommandDictionary already contains '" + instance.ID + "'.");
+                    s_commandDictionary.Add(instance.ID, type);
                 }
             }
         }
 
         private static readonly Type s_commandType = typeof(Command);
-
-        /// <summary>
-        /// Gets the dictionary that associates <see cref="Command"/> types with
-        /// there ID.
-        /// </summary>
-        public static Dictionary<int, Type> CommandDictionary { get; private set; }
+        private static readonly Dictionary<int, Type> s_commandDictionary;
 
         /// <summary>
         /// Creates a new instance of a <see cref="Command"/> with the specified
@@ -63,7 +57,7 @@ namespace CoCSharp.Network
         public static Command Create(int id)
         {
             var type = (Type)null;
-            if (!CommandDictionary.TryGetValue(id, out type))
+            if (!s_commandDictionary.TryGetValue(id, out type))
                 throw new NotSupportedException("Command with ID: " + id + " does not exists or is not implemented.");
             return (Command)Activator.CreateInstance(type);
         }
@@ -84,7 +78,7 @@ namespace CoCSharp.Network
         public static bool TryCreate(int id, out Command command)
         {
             var type = (Type)null;
-            if (!CommandDictionary.TryGetValue(id, out type))
+            if (!s_commandDictionary.TryGetValue(id, out type))
             {
                 command = default(Command);
                 return false;

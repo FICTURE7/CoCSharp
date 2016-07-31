@@ -42,15 +42,15 @@ namespace CoCSharp.Network
             throw new NotImplementedException();
         }
 
-        // Throws a ArgumentNullException if reader is null.
-        internal void ThrowIfReaderNull(MessageReader reader)
+        ///<summary> Throws a ArgumentNullException if reader is null.</summary>
+        protected void ThrowIfReaderNull(MessageReader reader)
         {
             if (reader == null)
                 throw new ArgumentNullException("reader");
         }
 
-        // Throws a ArgumentNullException if writer is null.
-        internal void ThrowIfWriterNull(MessageWriter writer)
+        ///<summary> Throws a ArgumentNullException if writer is null.</summary>
+        protected void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
                 throw new ArgumentNullException("writer");

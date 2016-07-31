@@ -14,13 +14,12 @@ namespace CoCSharp.Network
     {
         static MessageFactory()
         {
+            s_messageDictionary = new Dictionary<ushort, Type>();
             Initialize();
         }
 
         internal static void Initialize()
-        {
-            MessageDictionary = new Dictionary<ushort, Type>();
-
+        {        
             var assembly = Assembly.GetExecutingAssembly();
             var types = assembly.GetTypes();
             for (int i = 0; i < types.Length; i++)
@@ -38,19 +37,14 @@ namespace CoCSharp.Network
                     var instance = (Message)Activator.CreateInstance(type);
 
                     // A message with the same ID as instance.ID was already added to the dictionary.
-                    Debug.Assert(!MessageDictionary.ContainsKey(instance.ID), "CommandDictionary already contains '" + instance.ID + "'.");
-                    MessageDictionary.Add(instance.ID, type);
+                    Debug.Assert(!s_messageDictionary.ContainsKey(instance.ID), "s_messageDictionary already contains '" + instance.ID + "'.");
+                    s_messageDictionary.Add(instance.ID, type);
                 }
             }
         }
 
         private static readonly Type s_messageType = typeof(Message);
-
-        /// <summary>
-        /// Gets the dictionary that associates <see cref="Message"/> types with
-        /// there ID.
-        /// </summary>
-        public static Dictionary<ushort, Type> MessageDictionary { get; private set; }
+        private static readonly Dictionary<ushort, Type> s_messageDictionary;
 
         /// <summary>
         /// Creates a new instance of a <see cref="Message"/> with the specified
@@ -64,7 +58,7 @@ namespace CoCSharp.Network
         public static Message Create(ushort id)
         {
             var type = (Type)null;
-            if (!MessageDictionary.TryGetValue(id, out type))
+            if (!s_messageDictionary.TryGetValue(id, out type))
                 return new UnknownMessage() { ID = id };
             return (Message)Activator.CreateInstance(type);
         }
@@ -85,7 +79,7 @@ namespace CoCSharp.Network
         public static bool TryCreate(ushort id, out Message message)
         {
             var type = (Type)null;
-            if (!MessageDictionary.TryGetValue(id, out type))
+            if (!s_messageDictionary.TryGetValue(id, out type))
             {
                 message = default(Message);
                 return false;

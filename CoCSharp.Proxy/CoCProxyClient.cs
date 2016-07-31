@@ -149,7 +149,7 @@ namespace CoCSharp.Server
                 Buffer.BlockCopy(body, 0, messageBytes, Message.HeaderSize, body.Length); // body
             }
 
-            File.WriteAllBytes("messages\\[C2S] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageBody);
+            File.WriteAllBytes("messages\\[S2C] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageBody);
             ClientConnection.Connection.Send(messageBytes);
         }
     }

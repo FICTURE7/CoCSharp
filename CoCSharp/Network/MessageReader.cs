@@ -225,6 +225,7 @@ namespace CoCSharp.Network
             if (length > BaseStream.Length - BaseStream.Position)
                 throw new InvalidMessageException("The length of a " + typeName + " was larger than the remaining bytes '" + length + "'.");
         }
+
         private void CheckDispose()
         {
             if (_disposed)

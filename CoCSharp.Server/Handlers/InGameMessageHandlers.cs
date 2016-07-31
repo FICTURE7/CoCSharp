@@ -3,6 +3,7 @@ using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
+using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
 
 namespace CoCSharp.Server.Handlers
@@ -112,12 +113,13 @@ namespace CoCSharp.Server.Handlers
             for (int i = count; i < count + 3; i++)
                 client.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
 
-            var caresMessage = new ChangeAvatarNameResponseMessage();
-            caresMessage.Unknown1 = 3; // CommandType
-            caresMessage.NewName = careqMessage.NewName;
-            caresMessage.Unknown3 = 1;
-            caresMessage.Unknown4 = -1;
-            client.NetworkManager.SendMessage(caresMessage);
+            var ascMessage = new AvailableServerCommandMessage();
+            var canCommand = new ChangeAvatarNameCommand();
+            canCommand.NewName = careqMessage.NewName;
+            canCommand.Unknown1 = 1;
+            canCommand.Unknown2 = -1;
+            ascMessage.Command = canCommand;
+            client.NetworkManager.SendMessage(ascMessage);
 
             client.Save();
         }
@@ -168,6 +170,8 @@ namespace CoCSharp.Server.Handlers
                             var data = collection[collection.Count - 1];
                             if (building.IsConstructing)
                                 building.CancelConstruction();
+                            if (building.IsLocked)
+                                building.IsLocked = false;
 
                             building.Data = data;
                         }

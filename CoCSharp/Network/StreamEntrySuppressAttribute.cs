@@ -4,12 +4,13 @@ namespace CoCSharp.Network
 {
     /// <summary>
     /// Use this attribute to prevent the <see cref="CommandFactory"/> to add it
-    /// in the <see cref="CommandFactory.s_commandDictionary"/>. This class cannot be inherited.
+    /// in the <see cref="StreamEntryFactory.s_allianceStreamDictionary"/> 
+    /// or <see cref="StreamEntryFactory.s_avatarStreamDictionary"/>. This class cannot be inherited.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    internal sealed class CommandFactorySuppressAttribute : Attribute
+    internal sealed class StreamEntrySuppressAttribute : Attribute
     {
-        public CommandFactorySuppressAttribute(bool suppress = true)
+        public StreamEntrySuppressAttribute(bool suppress = true)
         {
             Suppress = suppress;
         }
