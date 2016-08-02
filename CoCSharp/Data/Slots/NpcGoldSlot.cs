@@ -9,7 +9,7 @@ namespace CoCSharp.Data.Slots
     /// Represents a Clash of Clans npc gold slot.
     /// </summary>
     [DebuggerDisplay("ID = {ID}, Gold = {Gold}")]
-    public class NpcGoldSlot : Slot<ResourceData>
+    public class NpcGoldSlot : Slot
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NpcGoldSlot"/> class.

@@ -20,8 +20,9 @@ namespace CoCSharp.Server
             // Space
         }
 
-        public AvatarClient(long id)
+        public AvatarClient(CoCServer server, long id)
         {
+            Server = server;
             ID = id;
         }
 
@@ -84,18 +85,28 @@ namespace CoCSharp.Server
             if (ID == 0 && Token == null)
             {
                 avatar = Server.AvatarManager.CreateNewAvatar();
-                newAvatar = true;    
+                newAvatar = true;
             }
             else
             {
-                if (Server.AvatarManager.Exists(Token))
+                if (Token != null)
                 {
-                    avatar = Server.AvatarManager.LoadAvatar(Token);
+                    if (Server.AvatarManager.Exists(Token))
+                    {
+                        avatar = Server.AvatarManager.LoadAvatar(Token);
+                    }
+                    else
+                    {
+                        avatar = Server.AvatarManager.CreateNewAvatar(Token, ID);
+                        newAvatar = true;
+                    }
                 }
-                else
+                else if (ID != 0)
                 {
-                    avatar = Server.AvatarManager.CreateNewAvatar(Token, ID);
-                    newAvatar = true;
+                    if (Server.AvatarManager.Exists(ID))
+                    {
+                        avatar = Server.AvatarManager.LoadAvatar(ID);
+                    }
                 }
             }
 

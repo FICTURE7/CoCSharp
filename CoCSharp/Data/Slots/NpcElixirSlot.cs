@@ -9,7 +9,7 @@ namespace CoCSharp.Data.Slots
     /// Represents a Clash of Clans npc elixir slot.
     /// </summary>
     [DebuggerDisplay("ID = {ID}, Elixir = {Elixir}")]
-    public class NpcElixirSlot : Slot<ResourceData>
+    public class NpcElixirSlot : Slot
     {       
         /// <summary>
         /// Initializes a new instance of the <see cref="NpcElixirSlot"/> class.

@@ -5,6 +5,7 @@ using CoCSharp.Network;
 using CoCSharp.Network.Messages;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
+using System;
 
 namespace CoCSharp.Server.Handlers
 {
@@ -57,9 +58,14 @@ namespace CoCSharp.Server.Handlers
 
         private static void HandleAvatarProfileRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
+            var apreqMessage = (AvatarProfileRequestMessage)message;
+
+            var avatar = apreqMessage.UserID == client.ID ? client : new AvatarClient(server, apreqMessage.UserID);
+            avatar.Load();
+
             var aprMessage = new AvatarProfileResponseMessage();
-            aprMessage.Village = client.Home;
-            aprMessage.AvatarData = new AvatarMessageComponent(client);
+            aprMessage.Village = avatar.Home;
+            aprMessage.AvatarData = new AvatarMessageComponent(avatar);
 
             //aprMessage.AvatarData.Unknown13 = 2; // League
             //aprMessage.AvatarData.Unknown14 = 13;
@@ -79,6 +85,28 @@ namespace CoCSharp.Server.Handlers
             FancyConsole.WriteLine(LogFormats.Avatar_ProfileReq, client.Token);
 
             client.NetworkManager.SendMessage(aprMessage);
+        }
+
+        private static void HandleVisitHomeMessage(CoCServer server, AvatarClient client, Message message)
+        {
+            var vhMessage = (VisitHomeMessage)message;
+
+            var avatar = new AvatarClient(server, vhMessage.HomeID);
+            avatar.Load();
+
+            var vhdMessage = new VisitHomeDataMessage()
+            {
+                LastVisit = TimeSpan.FromSeconds(0),
+
+                VisitVillageData = new VillageMessageComponent(avatar),
+                VisitAvatarData = new AvatarMessageComponent(avatar),
+
+                Unknown1 = 1,
+
+                OwnAvatarData = new AvatarMessageComponent(client),
+            };
+
+            client.NetworkManager.SendMessage(vhdMessage);
         }
 
         private static void HandleCommandMessage(CoCServer server, AvatarClient client, Message message)
@@ -233,6 +261,7 @@ namespace CoCSharp.Server.Handlers
             server.RegisterMessageHandler(new ChatMessageClientMessage(), HandleChatMessageClientMessageMessage);
             server.RegisterMessageHandler(new AvatarProfileRequestMessage(), HandleAvatarProfileRequestMessage);
             server.RegisterMessageHandler(new ChangeAvatarNameRequestMessage(), HandleChangeAvatarNameRequestMessage);
+            server.RegisterMessageHandler(new VisitHomeMessage(), HandleVisitHomeMessage);
         }
     }
 }

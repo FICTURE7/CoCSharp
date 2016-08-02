@@ -112,8 +112,8 @@ namespace CoCSharp.Data
             if (slot == null)
                 throw new ArgumentNullException("slot");
 
-            if (GetSlot(slot.ID) != null)
-                throw new InvalidOperationException("Already contain a Slot with the same ID '" + slot.ID + "'.");
+            //if (GetSlot(slot.ID) != null)
+            //    throw new InvalidOperationException("Already contain a Slot with the same ID '" + slot.ID + "'.");
 
             _slots.Add(slot);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, slot));

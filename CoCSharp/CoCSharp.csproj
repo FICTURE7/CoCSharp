@@ -170,6 +170,8 @@
     <Compile Include="Network\Messages\Commands\UpgradeMultipleBuildableCommand.cs" />
     <Compile Include="Network\Messages\NpcDataMessage.cs" />
     <Compile Include="Network\Messages\StreamEntry.cs" />
+    <Compile Include="Network\Messages\VisitHomeDataMessage.cs" />
+    <Compile Include="Network\Messages\VisitHomeMessage.cs" />
     <Compile Include="Network\StreamEntryFactory.cs" />
     <Compile Include="Network\Messages\VillageMessageComponent.cs" />
     <Compile Include="DateTimeConverter.cs" />

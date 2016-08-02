@@ -183,6 +183,14 @@ namespace CoCSharp.Server.Core
             //return avatar;
         }
 
+        public Avatar LoadAvatar(long id)
+        {
+            if (id < 1)
+                throw new ArgumentOutOfRangeException("id", "id cannot be less than 1.");
+
+            return _avatarCollection.FindById(id);
+        }
+
         public void SaveAvatar(Avatar avatar)
         {
             if (avatar == null)
