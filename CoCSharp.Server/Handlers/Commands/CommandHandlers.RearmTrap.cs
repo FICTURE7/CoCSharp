@@ -7,7 +7,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleRearmTrapCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleRearmTrapCommand(CoCServer server, AvatarClient client, Command command)
         {
             var rtCommand = (RearmTrapCommand)command;
             var trap = client.Home.GetTrap(rtCommand.TrapGameID);
@@ -18,7 +18,7 @@ namespace CoCSharp.Server.Handlers.Commands
             {
                 trap.Broken = false;
                 client.ResourcesAmount.GetSlot(GetResourceID(trap.Data.BuildResource)).Amount -= trap.Data.RearmCost;
-                FancyConsole.WriteLine(RearmedTrapFormat, rtCommand.TrapGameID, client.Token, trap.X, trap.Y);
+                FancyConsole.WriteLine(LogFormats.Logic_Rearmed_Trap, rtCommand.TrapGameID, client.Token, trap.X, trap.Y);
             }
         }
     }

@@ -8,7 +8,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        public static void HandleMatchmakingCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleMatchmakingCommand(CoCServer server, AvatarClient client, Command command)
         {
             // TODO: Check if avatar has shield or guard.
             var avatar = server.AvatarManager.GetRandomAvatar(client.ID);
@@ -41,8 +41,7 @@ namespace CoCSharp.Server.Handlers.Commands
             for (int i = 0; i < 18; i++)
                 ehdMessage.OwnAvatarData.Units.Add(new UnitSlot(4000000 + i, 999));
 
-            FancyConsole.WriteLine("[&(darkmagenta)Attack&(default)] Account &(darkcyan){0}&(default) attacked village &(darkcyan){1}&(default).",
-                client.Token, avatar.ID);
+            FancyConsole.WriteLine(LogFormats.Attack_PvP, client.Token, avatar.ID);
             client.NetworkManager.SendMessage(ehdMessage);
         }
     }

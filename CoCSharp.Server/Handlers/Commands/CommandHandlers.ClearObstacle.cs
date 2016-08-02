@@ -7,7 +7,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleClearObstacleCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleClearObstacleCommand(CoCServer server, AvatarClient client, Command command)
         {
             var coCommand = command as ClearObstacleCommand;
             var obstacle = client.Home.GetObstacle(coCommand.ObstacleGameID);
@@ -20,7 +20,7 @@ namespace CoCSharp.Server.Handlers.Commands
             client.ResourcesAmount.GetSlot(GetResourceID(obstacle.Data.ClearResource)).Amount -= obstacle.Data.ClearCost;
             obstacle.BeginClearing();
 
-            FancyConsole.WriteLine(StartedClearObstacleFormat, client.Token, obstacle.X, obstacle.Y);
+            FancyConsole.WriteLine(LogFormats.Logic_Clearing_Started, client.Token, obstacle.X, obstacle.Y);
         }
     }
 }

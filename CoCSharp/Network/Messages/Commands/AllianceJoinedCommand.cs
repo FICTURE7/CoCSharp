@@ -6,18 +6,18 @@ namespace CoCSharp.Network.Messages.Commands
     /// Command that is sent by the server to the client
     /// to tell it that it joined an alliance.
     /// </summary>
-    public class JoinAllianceCommand : Command
+    public class AllianceJoinedCommand : Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="JoinAllianceCommand"/> class.
+        /// Initializes a new instance of the <see cref="AllianceJoinedCommand"/> class.
         /// </summary>
-        public JoinAllianceCommand()
+        public AllianceJoinedCommand()
         {
             // Space
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="JoinAllianceCommand"/>.
+        /// Gets the ID of the <see cref="AllianceJoinedCommand"/>.
         /// </summary>
         public override int ID { get { return 1; } }
 
@@ -55,10 +55,10 @@ namespace CoCSharp.Network.Messages.Commands
         public int Tick; // -1
 
         /// <summary>
-        /// Reads the <see cref="JoinAllianceCommand"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="AllianceJoinedCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="JoinAllianceCommand"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="AllianceJoinedCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
@@ -79,10 +79,10 @@ namespace CoCSharp.Network.Messages.Commands
         }
 
         /// <summary>
-        /// Writes the <see cref="JoinAllianceCommand"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="AllianceJoinedCommand"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="JoinAllianceCommand"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="AllianceJoinedCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
 

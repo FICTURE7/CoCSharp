@@ -29,7 +29,7 @@ namespace CoCSharp.Network.Messages
         /// Description of the clan.
         /// </summary>
         public string Description;
-        
+
         /// <summary>
         /// Unknown integer 1.
         /// </summary>
@@ -90,10 +90,14 @@ namespace CoCSharp.Network.Messages
                 throw new InvalidOperationException("Clan cannot be null.");
 
             Clan.WriteMessageComponent(writer);
-            Clan.WriteMessageComponent(writer);
             writer.Write(Description);
 
             writer.Write(Unknown1);
+
+            var inWar = WarID != 0;
+            writer.Write(inWar);
+            if (inWar)
+                writer.Write(WarID);
 
             if (Members == null)
             {

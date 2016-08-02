@@ -11,9 +11,9 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Server
 {
-    public delegate void CommandHandler(CoCServer server, CoCRemoteClient client, Command command);
+    public delegate void CommandHandler(CoCServer server, AvatarClient client, Command command);
 
-    public delegate void MessageHandler(CoCServer server, CoCRemoteClient client, Message message);
+    public delegate void MessageHandler(CoCServer server, AvatarClient client, Message message);
 
     public class CoCServer
     {
@@ -25,6 +25,9 @@ namespace CoCSharp.Server
 
             Console.WriteLine("-> Setting up AvatarManager...");
             AvatarManager = new AvatarManager();
+
+            Console.WriteLine("-> Setting up AllianceManager...");
+            AllianceManager = new AllianceManager();
 
             Console.WriteLine("-> Setting up AssetManager...");
             AssetManager = new AssetManager(DirectoryPaths.Content);
@@ -47,19 +50,23 @@ namespace CoCSharp.Server
 
             _keepAliveManager = new KeepAliveManager(this);
 
-            Clients = new List<CoCRemoteClient>();
+            Clients = new List<AvatarClient>();
             MessageHandlerDictionary = new Dictionary<ushort, MessageHandler>();
             CommandHandlerDictionary = new Dictionary<int, CommandHandler>();
 
             LoginMessageHandlers.RegisterLoginMessageHandlers(this);
             InGameMessageHandlers.RegisterInGameMessageHandlers(this);
+            AllianceMessageHandlers.RegisterAllianceMessageHandlers(this);
 
             CommandHandlers.RegisterCommandHandlers(this);
         }
 
-        public List<CoCRemoteClient> Clients { get; private set; }
+        public List<AvatarClient> Clients { get; private set; }
+
         public NpcManager NpcManager { get; private set; }
         public AvatarManager AvatarManager { get; private set; }
+        public AllianceManager AllianceManager { get; private set; }
+
         public AssetManager AssetManager { get; private set; }
 
         private KeepAliveManager _keepAliveManager;
@@ -107,15 +114,15 @@ namespace CoCSharp.Server
         }
 
         // Tries to handles the specified Message with the registered MessageHandlers.
-        public void HandleMessage(CoCRemoteClient client, Message message)
+        public void HandleMessage(AvatarClient client, Message message)
         {
 #if !DEBUG
             try
             {
 #endif
-                var handler = (MessageHandler)null;
-                if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
-                    handler(this, client, message);
+            var handler = (MessageHandler)null;
+            if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
+                handler(this, client, message);
 #if !DEBUG
             }
             catch (Exception ex)
@@ -126,15 +133,15 @@ namespace CoCSharp.Server
         }
 
         // Tries to handles the specified Command with the registered CommandHandlers.
-        public void HandleCommand(CoCRemoteClient client, Command command)
+        public void HandleCommand(AvatarClient client, Command command)
         {
 #if !DEBUG
             try
             {
 #endif
-                var handler = (CommandHandler)null;
-                if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
-                    handler(this, client, command);
+            var handler = (CommandHandler)null;
+            if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
+                handler(this, client, command);
 #if !DEBUG
             }
             catch (Exception ex)
@@ -195,9 +202,8 @@ namespace CoCSharp.Server
             // Start accepting new connection ASAP.
             StartAccept();
 
-            FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> New connection accepted &(darkcyan){0}&(default).",
-                                   args.AcceptSocket.RemoteEndPoint);
-            Clients.Add(new CoCRemoteClient(this, args.AcceptSocket, _settings));
+            FancyConsole.WriteLine(LogFormats.Listener_Connected, args.AcceptSocket.RemoteEndPoint);
+            Clients.Add(new AvatarClient(this, args.AcceptSocket, _settings));
 
             args.AcceptSocket = null;
             _acceptPool.Push(args);

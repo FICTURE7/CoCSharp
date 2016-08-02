@@ -8,7 +8,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleBuyBuildingCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleBuyBuildingCommand(CoCServer server, AvatarClient client, Command command)
         {
             var bbCommand = (BuyBuildingCommand)command;
             var data = server.AssetManager.SearchCsv<BuildingData>(bbCommand.BuildingDataID, 0);
@@ -16,7 +16,7 @@ namespace CoCSharp.Server.Handlers.Commands
             building.ConstructionFinished += BuildingConstructionFinished;
             client.ResourcesAmount.GetSlot(GetResourceID(data.BuildResource)).Amount -= data.BuildCost;
 
-            FancyConsole.WriteLine(StartedConstructionFormat, client.Token, bbCommand.X, bbCommand.Y, building.Data.Level);
+            FancyConsole.WriteLine(LogFormats.Logic_Construction_Started, client.Token, bbCommand.X, bbCommand.Y, building.Data.Level);
         }
     }
 }

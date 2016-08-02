@@ -8,7 +8,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleBuyTrapCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleBuyTrapCommand(CoCServer server, AvatarClient client, Command command)
         {
             var btCommand = (BuyTrapCommand)command;
             var data = server.AssetManager.SearchCsv<TrapData>(btCommand.TrapDataID, 0);
@@ -16,7 +16,7 @@ namespace CoCSharp.Server.Handlers.Commands
             trap.ConstructionFinished += TrapConstructionFinished;
             client.ResourcesAmount.GetSlot(GetResourceID(data.BuildResource)).Amount -= data.BuildCost;
 
-            FancyConsole.WriteLine(StartedConstructionFormat, client.Token, btCommand.X, btCommand.Y, trap.Data.Level);
+            FancyConsole.WriteLine(LogFormats.Logic_Construction_Started, client.Token, btCommand.X, btCommand.Y, trap.Data.Level);
         }
     }
 }

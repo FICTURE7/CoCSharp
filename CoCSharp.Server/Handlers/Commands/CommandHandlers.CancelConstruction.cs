@@ -7,7 +7,7 @@ namespace CoCSharp.Server.Handlers.Commands
     public static partial class CommandHandlers
     {
         //TODO: Rename because its no necessarily a construction.
-        private static void HandleCancelConstructionCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleCancelConstructionCommand(CoCServer server, AvatarClient client, Command command)
         {
             var ccCommand = (CancelConsturctionCommand)command;
             var villageObject = client.Home.GetVillageObject(ccCommand.VillageObjectID);

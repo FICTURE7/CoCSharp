@@ -29,9 +29,9 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int Badge;
         /// <summary>
-        /// <see cref="Avatar"/> clan role.
+        /// Clan member role.
         /// </summary>
-        public int Role;
+        public ClanMemberRole Role;
         /// <summary>
         /// Clan level.
         /// </summary>

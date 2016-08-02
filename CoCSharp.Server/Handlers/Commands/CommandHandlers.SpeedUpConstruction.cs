@@ -8,7 +8,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleSpeedUpConstructionCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleSpeedUpConstructionCommand(CoCServer server, AvatarClient client, Command command)
         {
             // Fabulous variable name.
             var sucCommand = (SpeedUpConstructionCommand)command;

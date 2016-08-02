@@ -11,9 +11,21 @@ using System.Security.Cryptography;
 
 namespace CoCSharp.Server
 {
-    public class CoCRemoteClient : Avatar
+    // Represents a Avatar which has the ability to send 
+    // and received Messages.
+    public class AvatarClient : Avatar
     {
-        public CoCRemoteClient(CoCServer server, Socket connection, NetworkManagerAsyncSettings settings) : base()
+        public AvatarClient()
+        {
+            // Space
+        }
+
+        public AvatarClient(long id)
+        {
+            ID = id;
+        }
+
+        public AvatarClient(CoCServer server, Socket connection, NetworkManagerAsyncSettings settings) : base()
         {
             Server = server;
 
@@ -42,22 +54,6 @@ namespace CoCSharp.Server
         // Date when the next KeepAliveMessage should received.
         public DateTime ExpirationKeepAlive { get; set; }
 
-        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-                Console.WriteLine("Exception occurred while receiving: {0}", e.Exception.ToString());
-            }
-            if (e.Exception is CryptographicException)
-            {
-                Console.WriteLine("\tCryptographicException occurred while decrypting a message.");
-                Disconnect();
-                return;
-            }
-
-            Server.HandleMessage(this, e.Message);
-        }
-
         public void Disconnect()
         {
             // Close connection to client.
@@ -71,17 +67,12 @@ namespace CoCSharp.Server
             // Dereference the client object so that it gets picked up
             // by the GarbageCollector.
             Server.Clients.Remove(this);
-            FancyConsole.WriteLine("[&(darkyellow)Listener&(default)] -> Avatar &(darkcyan){0}&(default) disconnected.", Token);
-        }
-
-        private void OnDisconnected(object sender, DisconnectedEventArgs e)
-        {
-            Disconnect();
+            FancyConsole.WriteLine(LogFormats.Listener_Disconnected, Token);
         }
 
         public void Save()
         {
-            Server.AvatarManager.EnqueueForSave(this);
+            Server.AvatarManager.Queue(this);
         }
 
         public bool Load()
@@ -135,7 +126,18 @@ namespace CoCSharp.Server
 
             SetFromAvatar(avatar);
             if (newAvatar)
+            {
                 SetNewAvatarSlots();
+            }
+            else
+            {
+                // If the avatar has an alliance associated with it.
+                // we load it.
+                if (Alliance != null)
+                {
+                    Alliance = Server.AllianceManager.LoadClan(Alliance.ID);
+                }
+            }
 
             return true;
         }
@@ -148,12 +150,6 @@ namespace CoCSharp.Server
             NpcStars = Server.NpcManager.CompleteNpcStarList;
             ResourcesAmount.Add(new ResourceAmountSlot(gold, 1000));
             ResourcesAmount.Add(new ResourceAmountSlot(elixir, 1000));
-        }
-
-        internal void UpdateKeepAlive()
-        {
-            LastKeepAlive = DateTime.UtcNow;
-            ExpirationKeepAlive = LastKeepAlive.AddSeconds(30);
         }
 
         private void SetFromAvatar(Avatar avatar)
@@ -195,6 +191,33 @@ namespace CoCSharp.Server
             NpcStars = avatar.NpcStars;
             NpcGold = avatar.NpcGold;
             NpcElixir = avatar.NpcElixir;
+        }
+
+        internal void UpdateKeepAlive()
+        {
+            LastKeepAlive = DateTime.UtcNow;
+            ExpirationKeepAlive = LastKeepAlive.AddSeconds(30);
+        }
+
+        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                Console.WriteLine("Exception occurred while receiving: {0}", e.Exception.ToString());
+            }
+            if (e.Exception is CryptographicException)
+            {
+                Console.WriteLine("\tCryptographicException occurred while decrypting a message.");
+                Disconnect();
+                return;
+            }
+
+            Server.HandleMessage(this, e.Message);
+        }
+
+        private void OnDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            Disconnect();
         }
     }
 }

@@ -2,6 +2,7 @@
 using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Network.Messages
 {
@@ -36,12 +37,15 @@ namespace CoCSharp.Network.Messages
 
             if (avatar.Alliance != null)
             {
+                var member = avatar.Alliance.FindMember(avatar.ID);
+                Debug.Assert(member != null);
+
                 ClanData = new ClanMessageComponent()
                 {
                     ID = avatar.Alliance.ID,
                     Name = avatar.Alliance.Name,
                     Badge = avatar.Alliance.Badge,
-                    Role = avatar.Alliance.Role,
+                    Role = member.Role,
                     Level = avatar.Alliance.Level
                 };
             }
@@ -400,11 +404,11 @@ namespace CoCSharp.Network.Messages
                 ClanData.ID = reader.ReadInt64();
                 ClanData.Name = reader.ReadString();
                 ClanData.Badge = reader.ReadInt32();
-                ClanData.Role = reader.ReadInt32();
+                ClanData.Role = (ClanMemberRole)reader.ReadInt32();
                 ClanData.Level = reader.ReadInt32();
                 ClanData.Unknown1 = reader.ReadByte(); // Clan war?
                 if (ClanData.Unknown1 == 1)
-                    ClanData.Unknown2 = reader.ReadInt64();
+                    ClanData.Unknown2 = reader.ReadInt64(); // Clan war ID?
             }
 
             Unknown2 = reader.ReadInt32();
@@ -505,7 +509,7 @@ namespace CoCSharp.Network.Messages
                 writer.Write(ClanData.ID);
                 writer.Write(ClanData.Name);
                 writer.Write(ClanData.Badge);
-                writer.Write(ClanData.Role);
+                writer.Write((int)ClanData.Role);
                 writer.Write(ClanData.Level);
                 writer.Write(ClanData.Unknown1);
                 if (ClanData.Unknown1 == 1)

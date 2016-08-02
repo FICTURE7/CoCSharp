@@ -32,9 +32,9 @@
         /// </summary>
         public int Badge;
         /// <summary>
-        /// Type of the alliance.
+        /// Invite type of the alliance.
         /// </summary>
-        public int Type;
+        public int InviteType;
         /// <summary>
         /// Number of required trophy to join the alliance.
         /// </summary>
@@ -46,7 +46,7 @@
         /// <summary>
         /// Origin of the alliance.
         /// </summary>
-        public int AllianceOrigin;
+        public int Origin;
         /// <summary>
         /// Value indicating if the war log of the alliance is
         /// public.
@@ -66,10 +66,10 @@
             Name = reader.ReadString();
             Description = reader.ReadString();
             Badge = reader.ReadInt32();
-            Type = reader.ReadInt32();
+            InviteType = reader.ReadInt32();
             RequiredTrophy = reader.ReadInt32();
             WarFrequency = reader.ReadInt32();
-            AllianceOrigin = reader.ReadInt32();
+            Origin = reader.ReadInt32();
             WarLogPublic = reader.ReadBoolean();
         }
 
@@ -86,10 +86,10 @@
             writer.Write(Name);
             writer.Write(Description);
             writer.Write(Badge);
-            writer.Write(Type);
+            writer.Write(InviteType);
             writer.Write(RequiredTrophy);
             writer.Write(WarFrequency);
-            writer.Write(AllianceOrigin);
+            writer.Write(Origin);
             writer.Write(WarLogPublic);
         }
     }

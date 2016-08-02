@@ -7,7 +7,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleMoveVillageObjectCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleMoveVillageObjectCommand(CoCServer server, AvatarClient client, Command command)
         {
             var mvCommand = (MoveVillageObjectCommand)command;
             var gameId = mvCommand.MoveData.VillageObjectGameID;
@@ -18,7 +18,7 @@ namespace CoCSharp.Server.Handlers.Commands
             villageObject.X = mvCommand.MoveData.X;
             villageObject.Y = mvCommand.MoveData.Y;
 
-            FancyConsole.WriteLine(MoveVillageObjectFormat, gameId, client.Token, villageObject.X, villageObject.Y);
+            FancyConsole.WriteLine(LogFormats.Logic_Placement_VillageObjectMoved, gameId, client.Token, villageObject.X, villageObject.Y);
         }
     }
 }

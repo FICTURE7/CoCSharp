@@ -17,6 +17,35 @@ namespace CoCSharp.Network.Messages
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="CompleteClanMessageComponent"/> class from
+        /// the specified <see cref="Clan"/>.
+        /// </summary>
+        /// <param name="clan"><see cref="Clan"/> from which the data will be set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="clan"/> is null.</exception>
+        public CompleteClanMessageComponent(Clan clan)
+        {
+            if (clan == null)
+                throw new ArgumentNullException("clan");
+
+            ID = clan.ID;
+            Name = clan.Name;
+            Badge = clan.Badge;
+            InviteType = clan.InviteType;
+            MemberCount = clan.Members.Count;
+            TotalTrophies = clan.TotalTrophies;
+            RequiredTrophies = clan.RequiredTrophies;
+            WarsWon = clan.WarsWon;
+            WarsLost = clan.WarsLost;
+            WarsTried = clan.WarsTried;
+            Language = clan.Language;
+            WarFrequency = clan.WarFrequency;
+            Location = clan.Location;
+            PerkPoints = clan.PerkPoints;
+            Level = clan.Level;
+            WinStreak = clan.WinStreak;
+        }
+
+        /// <summary>
         /// ID of the clan.
         /// </summary>
         public long ID;

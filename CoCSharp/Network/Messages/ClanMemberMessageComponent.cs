@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Logic;
+using System;
 
 namespace CoCSharp.Network.Messages
 {
@@ -16,6 +17,29 @@ namespace CoCSharp.Network.Messages
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ClanMemberMessageComponent"/> class with
+        /// the specified <see cref="ClanMember"/>.
+        /// </summary>
+        /// <param name="member"><see cref="ClanMember"/> from which to initialize this <see cref="ClanMemberMessageComponent"/>.</param>
+        public ClanMemberMessageComponent(ClanMember member)
+        {
+            ID = member.ID;
+            Name = member.Name;
+            Role = member.Role;
+            Level = member.Level;
+            LeagueLevel = member.LeagueLevel;
+            Trophies = member.Trophies;
+            TroopsDonated = member.TroopsDonated;
+            TroopsReceived = member.TroopsReceived;
+            Rank = member.Rank;
+            PreviousRank = member.PreviousRank;
+            NewMember = member.NewMember;
+            WarCoolDown = member.WarCoolDown;
+            WarPreference = member.WarPreference;
+            ID2 = member.ID;
+        }
+
+        /// <summary>
         /// User ID of the member.
         /// </summary>
         public long ID;
@@ -26,7 +50,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Role of the member.
         /// </summary>
-        public int Role;
+        public ClanMemberRole Role;
         /// <summary>
         /// Level of the member.
         /// </summary>
@@ -63,6 +87,12 @@ namespace CoCSharp.Network.Messages
         /// War cool down of the member.
         /// </summary>
         public int WarCoolDown;
+        /// <summary>
+        /// War preference of member.
+        /// </summary>
+        public int WarPreference;
+
+        // Unknown1 & ID2 are ?LONG
 
         /// <summary>
         /// Unknown byte 1.
@@ -73,11 +103,6 @@ namespace CoCSharp.Network.Messages
         /// User ID of the member.
         /// </summary>
         public long ID2;
-
-        /// <summary>
-        /// War preference of member.
-        /// </summary>
-        public int WarPreference;
 
         /// <summary>
         /// Reads the <see cref="CompleteClanMessageComponent"/> from the specified <see cref="MessageReader"/>.
@@ -92,7 +117,7 @@ namespace CoCSharp.Network.Messages
 
             ID = reader.ReadInt64();
             Name = reader.ReadString();
-            Role = reader.ReadInt32();
+            Role = (ClanMemberRole)reader.ReadInt32();
             Level = reader.ReadInt32();
             LeagueLevel = reader.ReadInt32();
             Trophies = reader.ReadInt32();
@@ -105,8 +130,8 @@ namespace CoCSharp.Network.Messages
             WarPreference = reader.ReadInt32();
 
             Unknown1 = reader.ReadByte();
-
-            ID2 = reader.ReadInt64();
+            if (Unknown1 == 1)
+                ID2 = reader.ReadInt64();
         }
 
         /// <summary>
@@ -122,8 +147,8 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(ID);
             writer.Write(Name);
+            writer.Write((int)Role);
             writer.Write(Level);
-            writer.Write(LeagueLevel);
             writer.Write(LeagueLevel);
             writer.Write(Trophies);
             writer.Write(TroopsDonated);
@@ -134,9 +159,10 @@ namespace CoCSharp.Network.Messages
             writer.Write(WarCoolDown);
             writer.Write(WarPreference);
 
+            // Apparently its ?LONG
             writer.Write(Unknown1);
-
-            writer.Write(ID2);
+            if (Unknown1 == 1)
+                writer.Write(ID2);
         }
     }
 }

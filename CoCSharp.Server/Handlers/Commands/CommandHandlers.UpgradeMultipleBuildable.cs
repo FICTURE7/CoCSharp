@@ -9,7 +9,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleUpgradeMultipleBuildableCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleUpgradeMultipleBuildableCommand(CoCServer server, AvatarClient client, Command command)
         {
             var umbCommand = (UpgradeMultipleBuildableCommand)command;
 
@@ -29,11 +29,11 @@ namespace CoCSharp.Server.Handlers.Commands
                         building.BeginConstruction();
 
                         client.ResourcesAmount.GetSlot(GetResourceID(building.Data.BuildResource)).Amount -= building.NextUpgrade.BuildCost;
-                        FancyConsole.WriteLine(StartedConstructionFormat, client.Token, building.X, building.Y, building.Data.Level);
+                        FancyConsole.WriteLine(LogFormats.Logic_Construction_Started, client.Token, building.X, building.Y, building.Data.Level);
                     }
                     else
                     {
-                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Token, gameId);
+                        FancyConsole.WriteLine(LogFormats.Logic_Construction_AlreadyConstructing, client.Token, gameId);
                         // OutOfSync.
                     }
                 }
@@ -46,11 +46,11 @@ namespace CoCSharp.Server.Handlers.Commands
                         trap.BeginConstruction();
 
                         client.ResourcesAmount.GetSlot(GetResourceID(trap.Data.BuildResource)).Amount -= trap.NextUpgrade.BuildCost;
-                        FancyConsole.WriteLine(StartedConstructionFormat, client.Token, trap.X, trap.Y, trap.Data.Level);
+                        FancyConsole.WriteLine(LogFormats.Logic_Construction_Started, client.Token, trap.X, trap.Y, trap.Data.Level);
                     }
                     else
                     {
-                        FancyConsole.WriteLine(BuildableAlreadyInConstructionFormat, client.Token, gameId);
+                        FancyConsole.WriteLine(LogFormats.Logic_Construction_AlreadyConstructing, client.Token, gameId);
                         // OutOfSync.
                     }
                 }

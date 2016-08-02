@@ -7,7 +7,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleSellDecorationCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleSellDecorationCommand(CoCServer server, AvatarClient client, Command command)
         {
             var sdCommand = (SellDecorationCommand)command;
             var deco = client.Home.GetDecoration(sdCommand.DecorationGameID);
@@ -17,7 +17,7 @@ namespace CoCSharp.Server.Handlers.Commands
             //TODO: Improve API to allow removal of VillageObject with there game IDs.
             client.Home.Decorations.Remove(deco);
 
-            FancyConsole.WriteLine(SoldDecorationFormat, sdCommand.DecorationGameID, client.Token, deco.X, deco.Y);
+            FancyConsole.WriteLine(LogFormats.Logic_Deco_Sold, sdCommand.DecorationGameID, client.Token, deco.X, deco.Y);
         }
     }
 }

@@ -12,13 +12,13 @@ namespace CoCSharp.Server.Handlers
     {
         private static KeepAliveResponseMessage s_keepAliveResponse = new KeepAliveResponseMessage();
 
-        private static void HandleKeepAliveRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
+        private static void HandleKeepAliveRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
             client.UpdateKeepAlive();
             client.NetworkManager.SendMessage(s_keepAliveResponse);
         }
 
-        private static void HandleAttackNpcMessage(CoCServer server, CoCRemoteClient client, Message message)
+        private static void HandleAttackNpcMessage(CoCServer server, AvatarClient client, Message message)
         {
             var anMessage = message as AttackNpcMessage;
 
@@ -40,24 +40,22 @@ namespace CoCSharp.Server.Handlers
             ndMessage.NpcVillage = npcVillage;
             ndMessage.NpcID = anMessage.NpcID;
 
-            FancyConsole.WriteLine("[&(darkmagenta)Attack&(default)] Account &(darkcyan){0}&(default) attacked NPC &(darkcyan){1}&(default).",
-                client.Token, anMessage.NpcID);
+            FancyConsole.WriteLine(LogFormats.Attack_Npc, client.Token, anMessage.NpcID);
 
             client.NetworkManager.SendMessage(ndMessage);
         }
 
-        private static void HandleAttackResultMessage(CoCServer server, CoCRemoteClient client, Message message)
+        private static void HandleAttackResultMessage(CoCServer server, AvatarClient client, Message message)
         {
             var avatar = client;
             var ohdMessage = client.OwnHomeDataMessage;
 
-            FancyConsole.WriteLine("[&(darkmagenta)Attack&(default)] Account &(darkcyan){0}&(default) returned home.",
-                client.Token);
+            FancyConsole.WriteLine(LogFormats.Attack_ReturnHome, client.Token);
 
             client.NetworkManager.SendMessage(ohdMessage);
         }
 
-        private static void HandleAvatarProfileRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
+        private static void HandleAvatarProfileRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
             var aprMessage = new AvatarProfileResponseMessage();
             aprMessage.Village = client.Home;
@@ -78,13 +76,12 @@ namespace CoCSharp.Server.Handlers
             //    new AchievementProgessSlot(23000062, 306) // 23000060 to 23000062 -> War Stars count.
             //};
 
-            FancyConsole.WriteLine("[&(darkmagenta)Avatar&(default)] Profile &(darkcyan){0}&(default) was requested.",
-                client.Token);
+            FancyConsole.WriteLine(LogFormats.Avatar_ProfileReq, client.Token);
 
             client.NetworkManager.SendMessage(aprMessage);
         }
 
-        private static void HandleCommandMessage(CoCServer server, CoCRemoteClient client, Message message)
+        private static void HandleCommandMessage(CoCServer server, AvatarClient client, Message message)
         {
             var cmdMessage = message as CommandMessage;
             if (cmdMessage.Commands.Length > 0)
@@ -103,7 +100,7 @@ namespace CoCSharp.Server.Handlers
             }
         }
 
-        private static void HandleChangeAvatarNameRequestMessage(CoCServer server, CoCRemoteClient client, Message message)
+        private static void HandleChangeAvatarNameRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
             var careqMessage = (ChangeAvatarNameRequestMessage)message;
             client.Name = careqMessage.NewName;
@@ -124,7 +121,7 @@ namespace CoCSharp.Server.Handlers
             client.Save();
         }
 
-        private static void HandleChatMessageClientMessageMessage(CoCServer server, CoCRemoteClient client, Message message)
+        private static void HandleChatMessageClientMessageMessage(CoCServer server, AvatarClient client, Message message)
         {
             var cmcMessage = message as ChatMessageClientMessage;
             var cmsMessage = new ChatMessageServerMessage();
@@ -146,7 +143,6 @@ namespace CoCSharp.Server.Handlers
                         cmsMessage.Message = "Added 500 gems.";
                         client.NetworkManager.SendMessage(cmsMessage);
 
-                        //var ohdMessage = client.Avatar.OwnHomeDataMessage;
                         client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
                         break;
 
@@ -154,7 +150,6 @@ namespace CoCSharp.Server.Handlers
                         var count = client.Home.Obstacles.Count;
                         client.Home.Obstacles.Clear();
 
-                        //var ohdMessage = client.Avatar.OwnHomeDataMessage;
                         client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
 
                         cmsMessage.Message = "Cleared " + count + " obstacles.";

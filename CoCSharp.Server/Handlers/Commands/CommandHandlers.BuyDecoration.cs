@@ -8,7 +8,7 @@ namespace CoCSharp.Server.Handlers.Commands
 {
     public static partial class CommandHandlers
     {
-        private static void HandleBuyDecorationCommand(CoCServer server, CoCRemoteClient client, Command command)
+        private static void HandleBuyDecorationCommand(CoCServer server, AvatarClient client, Command command)
         {
             var bdCommand = (BuyDecorationCommand)command;
             var data = server.AssetManager.SearchCsv<DecorationData>(bdCommand.DecorationDataID, 0);
@@ -17,7 +17,7 @@ namespace CoCSharp.Server.Handlers.Commands
             //Debug.Assert(deco.ID == bdCommand.DecorationDataID);
 
             client.ResourcesAmount.GetSlot(GetResourceID(data.BuildResource)).Amount -= data.BuildCost;
-            FancyConsole.WriteLine(BoughtDecorationFormat, bdCommand.DecorationDataID, client.Token, bdCommand.X, bdCommand.Y);
+            FancyConsole.WriteLine(LogFormats.Logic_Deco_Bought, bdCommand.DecorationDataID, client.Token, bdCommand.X, bdCommand.Y);
         }
     }
 }

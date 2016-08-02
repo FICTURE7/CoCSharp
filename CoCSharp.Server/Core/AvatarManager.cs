@@ -4,7 +4,10 @@ using CoCSharp.Logic;
 using LiteDB;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace CoCSharp.Server.Core
 {
@@ -13,50 +16,11 @@ namespace CoCSharp.Server.Core
     {
         public AvatarManager()
         {
-            var villagePath = Path.Combine(DirectoryPaths.Content, "starting_village.json");
-            _startingVillage = File.ReadAllText(villagePath);
+            _lock = new object();
+            _saveQueue = new List<Avatar>(32);
 
-            _liteDb = new LiteDatabase("avatars_db.db");
-
-            // Had to downgrade to LiteDB 1.0.4 because
-            // we need to prevent the object mapper from mapping the
-            // village.
-            _liteDb.Mapper.RegisterType
-            (
-                serialize: (village) => village.ToJson(),
-                deserialize: (bson) => Village.FromJson(bson)
-            );
-
-            // Register the serialization of SlotCollections because
-            // LiteDB can't seem to do it by himself.
-            RegisterSlotCollection<ResourceCapacitySlot>();
-            RegisterSlotCollection<ResourceAmountSlot>();
-            RegisterSlotCollection<UnitSlot>();
-            RegisterSlotCollection<SpellSlot>();
-            RegisterSlotCollection<UnitUpgradeSlot>();
-            RegisterSlotCollection<SpellUpgradeSlot>();
-            RegisterSlotCollection<HeroUpgradeSlot>();
-            RegisterSlotCollection<HeroHealthSlot>();
-            RegisterSlotCollection<HeroStateSlot>();
-            RegisterSlotCollection<AllianceUnitSlot>();
-            RegisterSlotCollection<TutorialProgressSlot>();
-            RegisterSlotCollection<AchievementSlot>();
-            RegisterSlotCollection<AchievementProgessSlot>();
-            RegisterSlotCollection<NpcStarSlot>();
-            RegisterSlotCollection<NpcGoldSlot>();
-            RegisterSlotCollection<NpcElixirSlot>();
-
-            // LiteDB does not support Int64 auto-id. So implement our own.
-            _liteDb.Mapper.RegisterAutoId
-            (
-                isEmpty: (value) => value == default(long),
-                newId: (collection) => collection.Max("_id").AsInt64 + 1L
-            );
-
-            _avatarCollection = _liteDb.GetCollection<Avatar>("avatars");
-            // Make sure the Token(UserToken) of avatars are unique.
-            _avatarCollection.EnsureIndex("Token", unique: true);
-
+            // Random names which Avatars who have not set their names
+            // are set to.
             _newNames = new string[]
             {
                 "Patrik", // :]
@@ -68,23 +32,87 @@ namespace CoCSharp.Server.Core
                 "Kenny"
             };
 
-            QueuedAvatars = new ConcurrentStack<Avatar>();
+            var villagePath = Path.Combine(DirectoryPaths.Content, "starting_village.json");
+            _startingVillage = File.ReadAllText(villagePath);
+
+            _mapper = new BsonMapper();
+            // LiteDB does not support Int64 auto-id. So implement our own.
+            _mapper.RegisterAutoId
+            (
+                isEmpty: (value) =>
+                {
+                    return value == default(long);
+                },
+                newId: (collection) =>
+                {
+                    return collection.Max("_id").AsInt64 + 1L;
+                }
+            );
+
+            // Make sure LiteDB does not map Villages into BSON.
+            _mapper.RegisterType
+            (
+                serialize: (village) =>
+                {
+                    return village.ToJson();
+                },
+                deserialize: (bson) =>
+                {
+                    return Village.FromJson(bson);
+                }
+            );
+
+            // Make sure LiteDB does not serialize Clans.
+            // Instead serialize their IDs.
+            _mapper.RegisterType
+            (
+                serialize: (clan) =>
+                {
+                    return clan.ID;
+                },
+                deserialize: (bson) =>
+                {
+                    return new Clan()
+                    {
+                        ID = bson.AsInt64
+                    };
+                }
+            );
+
+            // LiteDB does not take into account inheritance, from what I observed.
+            _mapper.Entity<Avatar>()
+                   .Id(x => x.ID)
+                   .Index(x => x.Token, true) // Make sure tokens are unique.
+                   .Ignore(x => x.OwnHomeDataMessage)
+                   .Ignore(x => x.ShieldDuration)
+                   .Ignore(x => x.IsPropertyChangedEnabled);
+            _mapper.Entity<AvatarClient>()
+                   .Id(x => x.ID)
+                   .Index(x => x.Token, true) // Make sure tokens are unique.
+                   .Ignore(x => x.OwnHomeDataMessage)
+                   .Ignore(x => x.ShieldDuration)
+                   .Ignore(x => x.IsPropertyChangedEnabled);
+
+
+            _liteDb = new LiteDatabase("avatars_db.db", _mapper);
+            _avatarCollection = _liteDb.GetCollection<Avatar>("avatars");
         }
 
         // Array of random names to choose from when creating a new avatar.
-        private string[] _newNames;
-        private string _startingVillage;
-        private LiteDatabase _liteDb;
-        private LiteCollection<Avatar> _avatarCollection;
+        private readonly string[] _newNames;
+        // Default village json.
+        private readonly string _startingVillage;
 
-        // Queue of avatars to save.
-        public ConcurrentStack<Avatar> QueuedAvatars { get; set; }
-
-        private string GetRandomName()
-        {
-            var name = _newNames[Utils.Random.Next(_newNames.Length - 1)];
-            return name;
-        }
+        // Mapper that _liteDb is going to use.
+        private readonly BsonMapper _mapper;
+        // Db of Avatars.
+        private readonly LiteDatabase _liteDb;
+        // Collection of avatars in _liteDb.
+        private readonly LiteCollection<Avatar> _avatarCollection;
+        // 'Queue' of avatars to save.
+        private readonly List<Avatar> _saveQueue;
+        // To lock reading and writing to _saveQueue.
+        private readonly object _lock;
 
         public Avatar CreateNewAvatar()
         {
@@ -121,7 +149,7 @@ namespace CoCSharp.Server.Core
             for (int i = 0; i < 10; i++)
                 avatar.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
 
-            _avatarCollection.Insert(avatar);
+            SaveAvatar(avatar);
             return avatar;
         }
 
@@ -148,24 +176,73 @@ namespace CoCSharp.Server.Core
             if (string.IsNullOrWhiteSpace(token))
                 return null;
 
-            var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
-            return avatar;
+            return _avatarCollection.FindOne(ava => ava.Token == token);
+
             //var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
             //File.WriteAllText(avatar.Token + ".json", avatar.Home.ToJson());
             //return avatar;
         }
 
-        public void EnqueueForSave(Avatar avatar)
-        {
-            QueuedAvatars.Push(avatar);
-        }
-
         public void SaveAvatar(Avatar avatar)
         {
+            if (avatar == null)
+                throw new ArgumentNullException("avatar");
+
             // If we don't have the avatar in the db
             // we add it to the db.
             if (!_avatarCollection.Update(avatar))
                 _avatarCollection.Insert(avatar);
+        }
+
+        // Queues the specified avatar into a list
+        // of avatars to save.
+        public void Queue(Avatar avatar)
+        {
+            if (avatar == null)
+                throw new ArgumentNullException("avatar");
+
+            lock (_lock)
+            {
+                var index = _saveQueue.IndexOf(avatar);
+                if (index == -1)
+                {
+                    _saveQueue.Add(avatar);
+                }
+                else
+                {
+                    // If we already queued this avatar
+                    // move it to the end of the queue.
+                    _saveQueue.RemoveAt(index);
+                    _saveQueue.Add(avatar);
+                }
+            }
+        }
+
+        // Flushes all avatars in the save queue.
+        public void Flush()
+        {
+            lock (_lock)
+            {
+                if (_saveQueue.Count == 0)
+                    return;
+
+                Debug.WriteLine("Flushing avatars", "Saving");
+                using (var trans = _liteDb.BeginTrans())
+                {
+                    for (int i = 0; i < _saveQueue.Count; i++)
+                    {
+                        var avatar = _saveQueue[i];
+                        _saveQueue.RemoveAt(i);
+
+                        Debug.Assert(avatar != null);
+                        SaveAvatar(avatar);
+                        Debug.WriteLine("--> Saved avatar " + avatar.Token, "Saving");
+                    }
+
+                    trans.Commit();
+                }
+                Debug.WriteLine("Flushing done", "Saving");
+            }
         }
 
         public Avatar GetRandomAvatar(long excludeId)
@@ -187,13 +264,10 @@ namespace CoCSharp.Server.Core
             return choosenOne;
         }
 
-        private void RegisterSlotCollection<T>() where T : Slot, new()
+        // Returns a random name from _newNames.
+        private string GetRandomName()
         {
-            _liteDb.Mapper.RegisterType
-            (
-                serialize: (collection) => _liteDb.Mapper.Serialize(collection.ToArray()),
-                deserialize: (bson) => new SlotCollection<T>(_liteDb.Mapper.Deserialize<T[]>(bson))
-            );
+            return _newNames[Utils.Random.Next(_newNames.Length - 1)];
         }
     }
 }

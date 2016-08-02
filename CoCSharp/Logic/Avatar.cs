@@ -3,7 +3,6 @@ using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
 using CoCSharp.Network.Messages;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
