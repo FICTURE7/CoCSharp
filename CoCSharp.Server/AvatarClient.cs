@@ -68,6 +68,8 @@ namespace CoCSharp.Server
             // Dereference the client object so that it gets picked up
             // by the GarbageCollector.
             Server.Clients.Remove(this);
+
+            Console.Title = "CoC# - Server: " + Clients.Count;
             FancyConsole.WriteLine(LogFormats.Listener_Disconnected, Token);
         }
 

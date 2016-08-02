@@ -205,6 +205,8 @@ namespace CoCSharp.Server
             FancyConsole.WriteLine(LogFormats.Listener_Connected, args.AcceptSocket.RemoteEndPoint);
             Clients.Add(new AvatarClient(this, args.AcceptSocket, _settings));
 
+            Console.Title = "CoC# - Server: " + Clients.Count;
+
             args.AcceptSocket = null;
             _acceptPool.Push(args);
         }
