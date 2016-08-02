@@ -58,29 +58,5 @@ namespace CoCSharp.Server
                 Thread.Sleep(100);
             }
         }
-
-        public static void m()
-        {
-            Console.WriteLine("-> Setting up AssetManager...");
-            var AssetManager = new AssetManager(DirectoryPaths.Content);
-
-            Console.WriteLine("     > Loading buildings.csv...");
-            AssetManager.LoadCsv<BuildingData>("buildings.csv");
-            Console.WriteLine("     > Loading traps.csv...");
-            AssetManager.LoadCsv<TrapData>("traps.csv");
-            Console.WriteLine("     > Loading obstacles.csv...");
-            AssetManager.LoadCsv<ObstacleData>("obstacles.csv");
-            Console.WriteLine("     > Loading decos.csv...");
-            AssetManager.LoadCsv<DecorationData>("decos.csv");
-            Console.WriteLine("     > Loading resources.csv...");
-            AssetManager.LoadCsv<ResourceData>("resources.csv");
-
-            AssetManager.DefaultInstance = AssetManager;
-
-            var mem = new MemoryStream(File.ReadAllBytes("dumpleet"));
-            var kek = new MessageReader(mem);
-            var visit = new VisitHomeDataMessage();
-            visit.ReadMessage(kek);
-        }
     }
 }
