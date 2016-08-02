@@ -69,7 +69,7 @@ namespace CoCSharp.Server
             // by the GarbageCollector.
             Server.Clients.Remove(this);
 
-            Console.Title = "CoC# - Server: " + Clients.Count;
+            Console.Title = "CoC# - Server: " + Server.Clients.Count;
             FancyConsole.WriteLine(LogFormats.Listener_Disconnected, Token);
         }
 
