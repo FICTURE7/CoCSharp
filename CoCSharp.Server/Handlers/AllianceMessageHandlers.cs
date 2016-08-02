@@ -109,7 +109,7 @@ namespace CoCSharp.Server.Handlers
         {
             var laMessage = (LeaveAllianceMessage)message;
             var clan = client.Alliance;
-            var member = clan.FindMember(client.ID);
+            var clientMember = clan.FindMember(client.ID);
 
             if (!clan.RemoveMember(client.ID))
             {
@@ -125,7 +125,7 @@ namespace CoCSharp.Server.Handlers
                 FancyConsole.WriteLine("[&(darkblue)Alliance&(default)] &(red)Deleted&(default) -> Clan &(darkcyan){0}&(default).",
                     clan.Name);
             }
-            else if(member.Role == ClanMemberRole.Leader)
+            else if(clientMember.Role == ClanMemberRole.Leader)
             {
                 // Apparently the oldest CoLeader becomes the Leader and
                 // if their is no CoLeaders the oldest Elder becomes the Leader and
