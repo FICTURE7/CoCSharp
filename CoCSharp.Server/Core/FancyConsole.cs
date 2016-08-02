@@ -8,6 +8,8 @@ namespace CoCSharp.Server.Core
     // TODO: This should form part of CoCSharp.Server.API.
     public static partial class FancyConsole
     {
+        public static bool Enabled { get; set; }
+
         static FancyConsole()
         {
             _colorDictionary = new Dictionary<string, ConsoleColor>();

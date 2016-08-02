@@ -38,6 +38,7 @@ namespace CoCSharp.Server
 
         public static void Main(string[] args)
         {
+            FancyConsole.Enabled = false;
             Console.Title = "CoC# - Server";
 
             var stopwatch = new Stopwatch();
@@ -53,8 +54,26 @@ namespace CoCSharp.Server
             Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
             while (true)
             {
-                AvatarManager.Flush();
-                AllianceManager.Flush();
+                try
+                {
+                    AvatarManager.Flush();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception while flushing avatars: ", ex.Message);
+                    Console.WriteLine();
+                }
+
+                try
+                {
+                    AllianceManager.Flush();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception while flushing alliances: ", ex.Message);
+                    Console.WriteLine();
+                }
+
                 Thread.Sleep(100);
             }
         }

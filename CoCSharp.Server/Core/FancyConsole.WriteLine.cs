@@ -6,11 +6,17 @@ namespace CoCSharp.Server.Core
     {
         public static void WriteLine()
         {
+            if (!Enabled)
+                return;
+
             Console.WriteLine();
         }
 
         public static void WriteLine(object value)
         {
+            if (!Enabled)
+                return;
+
             Write(value);
             WriteLine();
         }
@@ -37,6 +43,9 @@ namespace CoCSharp.Server.Core
 
         public static void WriteLine(string format, params object[] args)
         {
+            if (!Enabled)
+                return;
+
             Write(format, args);
             WriteLine();
         }

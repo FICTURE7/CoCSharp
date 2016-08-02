@@ -19,6 +19,7 @@ namespace CoCSharp.Server
     {
         public CoCServer()
         {
+            _obj = new object();
             _settings = new NetworkManagerAsyncSettings(64, 64);
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(100);
@@ -74,6 +75,7 @@ namespace CoCSharp.Server
         private Dictionary<int, CommandHandler> CommandHandlerDictionary { get; set; }
         private Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; set; }
 
+        private readonly object _obj;
         private readonly Socket _listener;
         private readonly SocketAsyncEventArgsPool _acceptPool;
         private readonly NetworkManagerAsyncSettings _settings;
@@ -120,9 +122,14 @@ namespace CoCSharp.Server
             try
             {
 #endif
-            var handler = (MessageHandler)null;
-            if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
-                handler(this, client, message);
+                var handler = (MessageHandler)null;
+                if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
+                {
+                    lock (_obj)
+                    {
+                        handler(this, client, message);
+                    }
+                }
 #if !DEBUG
             }
             catch (Exception ex)
@@ -139,9 +146,14 @@ namespace CoCSharp.Server
             try
             {
 #endif
-            var handler = (CommandHandler)null;
-            if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
-                handler(this, client, command);
+                var handler = (CommandHandler)null;
+                if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
+                {
+                    lock (_obj)
+                    {
+                        handler(this, client, command);
+                    }
+                }
 #if !DEBUG
             }
             catch (Exception ex)

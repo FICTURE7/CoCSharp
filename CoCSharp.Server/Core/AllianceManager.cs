@@ -31,10 +31,12 @@ namespace CoCSharp.Server.Core
                    .Ignore(x => x.AllianceDataResponseMessage);
 
             _liteDb = new LiteDatabase("alliances_db.db", _mapper);
+            _liteDb.Log.Level = Logger.ERROR;
+            _liteDb.Log.Logging += OnLog;
 
             _alliancesCollection = _liteDb.GetCollection<Clan>("alliances");
         }
-        
+
         // Mapper that _liteDb is going to use.
         private readonly BsonMapper _mapper;
         // Db of alliances.
@@ -67,8 +69,11 @@ namespace CoCSharp.Server.Core
             if (clan == null)
                 throw new ArgumentNullException("clan");
 
-            if (!_alliancesCollection.Update(clan))
-                _alliancesCollection.Insert(clan);
+            using (var trans = _liteDb.BeginTrans())
+            {
+                if (!_alliancesCollection.Update(clan))
+                    _alliancesCollection.Insert(clan);
+            }
         }
 
         public void Delete(Clan clan)
@@ -120,9 +125,14 @@ namespace CoCSharp.Server.Core
                         Debug.WriteLine("--> Saved alliance " + clan.ID, "Saving");
                     }
 
-                    trans.Commit();
+                    // trans.Commit();
                 }
             }
+        }
+
+        private void OnLog(string obj)
+        {
+            Console.WriteLine("AllianceDb exception: " + obj);
         }
 
         public IEnumerable<Clan> GetAllClan()

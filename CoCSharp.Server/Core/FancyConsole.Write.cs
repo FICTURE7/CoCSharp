@@ -6,6 +6,9 @@ namespace CoCSharp.Server.Core
     {
         public static void Write(object value)
         {
+            if (!Enabled)
+                return;
+
             var jobs = Parse(value.ToString());
             for (int i = 0; i < jobs.Count; i++)
                 jobs[i].Write();
@@ -33,6 +36,9 @@ namespace CoCSharp.Server.Core
 
         public static void Write(string format, params object[] args)
         {
+            if (!Enabled)
+                return;
+
             var value = string.Format(format, args);
             var jobs = Parse(value.ToString());
             for (int i = 0; i < jobs.Count; i++)

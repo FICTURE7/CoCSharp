@@ -181,6 +181,12 @@ namespace CoCSharp.Network
 
         private void StartSend(SocketAsyncEventArgs args)
         {
+            if (_disposed)
+            {
+                _sendPool.Push(args);
+                return;
+            }
+
             args.Completed += AsyncOperationCompleted;
             var token = args.UserToken as MessageSendToken;
 
@@ -224,6 +230,12 @@ namespace CoCSharp.Network
 
         private void StartReceive(SocketAsyncEventArgs args)
         {
+            if (_disposed)
+            {
+                _receivePool.Push(args);
+                return;
+            }
+
             args.Completed += AsyncOperationCompleted;
             if (!Connection.ReceiveAsync(args))
                 AsyncOperationCompleted(Connection, args);

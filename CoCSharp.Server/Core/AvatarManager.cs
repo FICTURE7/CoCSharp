@@ -95,6 +95,9 @@ namespace CoCSharp.Server.Core
 
 
             _liteDb = new LiteDatabase("avatars_db.db", _mapper);
+            _liteDb.Log.Level = Logger.ERROR;
+            _liteDb.Log.Logging += OnLog;
+
             _avatarCollection = _liteDb.GetCollection<Avatar>("avatars");
         }
 
@@ -196,10 +199,13 @@ namespace CoCSharp.Server.Core
             if (avatar == null)
                 throw new ArgumentNullException("avatar");
 
-            // If we don't have the avatar in the db
-            // we add it to the db.
-            if (!_avatarCollection.Update(avatar))
-                _avatarCollection.Insert(avatar);
+            using (var trans = _liteDb.BeginTrans())
+            {
+                // If we don't have the avatar in the db
+                // we add it to the db.
+                if (!_avatarCollection.Update(avatar))
+                    _avatarCollection.Insert(avatar);
+            }
         }
 
         // Queues the specified avatar into a list
@@ -247,10 +253,15 @@ namespace CoCSharp.Server.Core
                         Debug.WriteLine("--> Saved avatar " + avatar.Token, "Saving");
                     }
 
-                    trans.Commit();
+                    // trans.Commit();
                 }
                 Debug.WriteLine("Flushing done", "Saving");
             }
+        }
+
+        private void OnLog(string obj)
+        {
+            Console.WriteLine("AvatarDb exception: " + obj);
         }
 
         public Avatar GetRandomAvatar(long excludeId)
