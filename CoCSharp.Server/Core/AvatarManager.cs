@@ -16,8 +16,7 @@ namespace CoCSharp.Server.Core
     {
         public AvatarManager()
         {
-            _lock = new object();
-            _saveQueue = new List<Avatar>(32);
+            _saveQueue = new SaveQueue<Avatar>();
 
             // Random names which Avatars who have not set their names
             // are set to.
@@ -86,6 +85,7 @@ namespace CoCSharp.Server.Core
                    .Ignore(x => x.OwnHomeDataMessage)
                    .Ignore(x => x.ShieldDuration)
                    .Ignore(x => x.IsPropertyChangedEnabled);
+
             _mapper.Entity<AvatarClient>()
                    .Id(x => x.ID)
                    .Index(x => x.Token, true) // Make sure tokens are unique.
@@ -108,14 +108,14 @@ namespace CoCSharp.Server.Core
 
         // Mapper that _liteDb is going to use.
         private readonly BsonMapper _mapper;
+        
         // Db of Avatars.
         private readonly LiteDatabase _liteDb;
         // Collection of avatars in _liteDb.
         private readonly LiteCollection<Avatar> _avatarCollection;
-        // 'Queue' of avatars to save.
-        private readonly List<Avatar> _saveQueue;
-        // To lock reading and writing to _saveQueue.
-        private readonly object _lock;
+        
+        // Queue of avatars to save.
+        private readonly SaveQueue<Avatar> _saveQueue;
 
         public Avatar CreateNewAvatar()
         {
@@ -215,53 +215,43 @@ namespace CoCSharp.Server.Core
             if (avatar == null)
                 throw new ArgumentNullException("avatar");
 
-            lock (_lock)
-            {
-                var index = _saveQueue.IndexOf(avatar);
-                if (index == -1)
-                {
-                    _saveQueue.Add(avatar);
-                }
-                else
-                {
-                    // If we already queued this avatar
-                    // move it to the end of the queue.
-                    _saveQueue.RemoveAt(index);
-                    _saveQueue.Add(avatar);
-                }
-            }
+            _saveQueue.Enqueue(avatar);
         }
 
         // Flushes all avatars in the save queue.
         public void Flush()
         {
-            lock (_lock)
+            if (_saveQueue.Count == 0)
+                return;
+
+            Debug.WriteLine("Flushing avatars", "Saving");
+            Debug.Indent();
+
+            // Save transaction.
+            using (var trans = _liteDb.BeginTrans())
             {
-                if (_saveQueue.Count == 0)
-                    return;
-
-                Debug.WriteLine("Flushing avatars", "Saving");
-                using (var trans = _liteDb.BeginTrans())
+                for (int i = 0; i < _saveQueue.Count; i++)
                 {
-                    for (int i = 0; i < _saveQueue.Count; i++)
+                    var avatar = _saveQueue.Dequeue();
+                    Debug.Assert(avatar != null);
+                    if (avatar == null)
                     {
-                        var avatar = _saveQueue[i];
-                        _saveQueue.RemoveAt(i);
-
-                        Debug.Assert(avatar != null);
-                        SaveAvatar(avatar);
-                        Debug.WriteLine("--> Saved avatar " + avatar.Token, "Saving");
+                        Console.WriteLine("WARNING: AllianceManager _saveQueue.Dequeue() returned null - skipping save");
+                        continue;
                     }
 
-                    // trans.Commit();
+                    SaveAvatar(avatar);
+                    Debug.WriteLine("--> Saved avatar " + avatar.Token, "Saving");
                 }
-                Debug.WriteLine("Flushing done", "Saving");
             }
+
+            Debug.Unindent();
+            Debug.WriteLine("Flushing done", "Saving");
         }
 
-        private void OnLog(string obj)
+        private void OnLog(string log)
         {
-            Console.WriteLine("AvatarDb exception: " + obj);
+            Console.WriteLine("ERROR: AvatarManager _liteDb: " + log);
         }
 
         public Avatar GetRandomAvatar(long excludeId)

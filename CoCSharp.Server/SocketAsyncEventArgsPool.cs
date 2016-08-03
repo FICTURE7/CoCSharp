@@ -6,7 +6,7 @@ namespace CoCSharp.Server
 {
     public class SocketAsyncEventArgsPool : IDisposable
     {
-        public SocketAsyncEventArgsPool(int capacity)
+        public SocketAsyncEventArgsPool(int capacity, EventHandler<SocketAsyncEventArgs> handler)
         {
             if (capacity < 1)
                 throw new ArgumentOutOfRangeException("capacity cannot be less that 1.");
@@ -14,10 +14,17 @@ namespace CoCSharp.Server
             Capacity = capacity;
             _objLock = new object();
             _pool = new Stack<SocketAsyncEventArgs>(capacity);
+            for (int i = 0; i < capacity; i++)
+            {
+                var args = new SocketAsyncEventArgs();
+                args.Completed += handler;
+
+                Push(args);
+            }
         }
 
-        private object _objLock;
         private bool _disposed;
+        private object _objLock;
         private Stack<SocketAsyncEventArgs> _pool;
 
         public int Capacity { get; private set; }
@@ -27,6 +34,9 @@ namespace CoCSharp.Server
         {
             lock(_objLock)
             {
+                if (_pool.Count == 0)
+                    return null;
+
                 return _pool.Pop();
             }
         }

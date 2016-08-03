@@ -3,75 +3,77 @@ using CoCSharp.Network.Messages;
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace CoCSharp.Network
 {
     /// <summary>
-    /// Implements methods to send and receive <see cref="Message"/> from <see cref="Socket"/> asynchronously
+    /// Implements methods to send and receive <see cref="Message"/> from <see cref="System.Net.Sockets.Socket"/> asynchronously
     /// using the <see cref="SocketAsyncEventArgs"/> model.
     /// </summary>
     public class NetworkManagerAsync : IDisposable
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="Socket"/>.
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/>.
         /// </summary>
-        /// <param name="connection"><see cref="Socket"/> instance.</param>
+        /// <param name="socket"><see cref="System.Net.Sockets.Socket"/> instance.</param>
         /// 
-        /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
-        public NetworkManagerAsync(Socket connection)
-            : this(connection, NetworkManagerAsyncSettings.DefaultSettings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
+        /// <exception cref="ArgumentNullException"><paramref name="socket"/> is null.</exception>
+        public NetworkManagerAsync(Socket socket)
+            : this(socket, NetworkManagerAsyncSettings.DefaultSettings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="Socket"/> 
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/> 
         /// and <see cref="NetworkManagerAsyncSettings"/>.
         /// </summary>
         /// 
-        /// <param name="connection"><see cref="Socket"/> instance.</param>
+        /// <param name="socket"><see cref="System.Net.Sockets.Socket"/> instance.</param>
         /// <param name="settings">
         /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
         /// object management.
         /// </param>
         /// 
-        /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="socket"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
-        public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings)
-            : this(connection, settings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
+        public NetworkManagerAsync(Socket socket, NetworkManagerAsyncSettings settings)
+            : this(socket, settings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="Socket"/>
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/>
         /// and <see cref="NetworkManagerAsyncSettings"/> with the specified <see cref="Crypto8"/> that will be used to encrypt and decrypt messages.
         /// </summary>
         /// 
-        /// <param name="connection"><see cref="Socket"/> instance.</param>
+        /// <param name="socket"><see cref="System.Net.Sockets.Socket"/> instance.</param>
         /// <param name="settings">
         /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
         /// object management.
         /// </param>
         /// <param name="crypto"><see cref="Crypto8"/> instance that will be used to encrypt and decrypt messages.</param>
         /// 
-        /// <exception cref="ArgumentNullException"><paramref name="connection"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="socket"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="crypto"/> is null.</exception>
-        public NetworkManagerAsync(Socket connection, NetworkManagerAsyncSettings settings, Crypto8 crypto)
+        public NetworkManagerAsync(Socket socket, NetworkManagerAsyncSettings settings, Crypto8 crypto)
         {
-            if (connection == null)
+            if (socket == null)
                 throw new ArgumentNullException("connection");
             if (settings == null)
                 throw new ArgumentNullException("settings");
             if (crypto == null)
                 throw new ArgumentNullException("crypto");
 
-            Connection = connection;
+            Socket = socket;
             Settings = settings;
             Crypto = crypto;
             Statistics = new NetworkManagerAsyncStatistics();
 
+            _settingsStats = Settings.Statistics;
             _receivePool = Settings._receivePool;
             _sendPool = Settings._sendPool;
 
@@ -85,15 +87,16 @@ namespace CoCSharp.Network
             StartReceive(args);
         }
 
-        private bool _disposed;
+        private int _disposed;
         private readonly SocketAsyncEventArgsPool _receivePool;
         private readonly SocketAsyncEventArgsPool _sendPool;
+        private readonly NetworkManagerAsyncStatistics _settingsStats;
 
         /// <summary>
-        /// Gets the <see cref="Socket"/> that is used to send and receive
+        /// Gets the <see cref="System.Net.Sockets.Socket"/> that is used to send and receive
         /// data.
         /// </summary>
-        public Socket Connection { get; private set; }
+        public Socket Socket { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="NetworkManagerAsyncSettings"/> being used the
@@ -108,13 +111,12 @@ namespace CoCSharp.Network
         public NetworkManagerAsyncStatistics Statistics { get; private set; }
 
         /// <summary>
-        /// Gets the <see cref="Crypto8"/> being used with
-        /// the current <see cref="NetworkManagerAsync"/>.
+        /// Gets the <see cref="Crypto8"/> being used with the current <see cref="NetworkManagerAsync"/>.
         /// </summary>
         public Crypto8 Crypto { get; private set; }
 
         /// <summary>
-        /// Sends the specified message using the <see cref="Connection"/> socket.
+        /// Sends the specified message using the <see cref="Socket"/> socket.
         /// </summary>
         /// <param name="message"><see cref="Message"/> to send.</param>
         /// 
@@ -123,9 +125,7 @@ namespace CoCSharp.Network
         /// <exception cref="InvalidMessageException"><paramref name="message"/> length greater than <see cref="Message.MaxSize"/>.</exception>
         public void SendMessage(Message message)
         {
-            //TODO: Custom write for LoginRequestMessage.
-
-            if (_disposed)
+            if (Thread.VolatileRead(ref _disposed) == 1)
                 throw new ObjectDisposedException(null, "Cannot SendMessage because the NetworkManagerAsync object was disposed.");
             if (message == null)
                 throw new ArgumentNullException("message");
@@ -181,79 +181,92 @@ namespace CoCSharp.Network
 
         private void StartSend(SocketAsyncEventArgs args)
         {
-            if (_disposed)
+            if (Thread.VolatileRead(ref _disposed) == 1)
             {
                 _sendPool.Push(args);
                 return;
             }
 
             args.Completed += AsyncOperationCompleted;
-            var token = args.UserToken as MessageSendToken;
+            var token = (MessageSendToken)args.UserToken;
 
-            if (token.SendRemaining > 0) // if still have bytes to send
+            // If still we have bytes to send.
+            if (token.SendRemaining > 0)
             {
-                if (token.Body.Length > Settings.BufferSize) // if message larger than buffer size
+                // If message larger than buffer size.
+                if (token.Body.Length > Settings.BufferSize)
                 {
                     Buffer.BlockCopy(token.Body, token.SendOffset, args.Buffer, args.Offset, Settings.BufferSize);
                 }
-                else // else resize buffer count
+                // Else resize buffer count.
+                else
                 {
                     Buffer.BlockCopy(token.Body, token.SendOffset, args.Buffer, args.Offset, token.SendRemaining);
                     args.SetBuffer(args.Offset, token.SendRemaining);
                 }
             }
 
-            if (!Connection.SendAsync(args))
+            if (!Socket.SendAsync(args))
                 ProcessSend(args);
         }
 
         private void ProcessSend(SocketAsyncEventArgs args)
         {
             var bytesToProcess = args.BytesTransferred;
-            var token = args.UserToken as MessageSendToken;
+            var token = (MessageSendToken)args.UserToken;
 
-            Statistics.TotalByteReceived += args.BytesTransferred;
+            Interlocked.Add(ref Statistics._totalSent, args.BytesTransferred);
+            Interlocked.Add(ref _settingsStats._totalSent, args.BytesTransferred);
 
             token.SendOffset += bytesToProcess;
-            if (token.SendRemaining > 0) // if still have bytes to send
+            // If we still have bytes to send.
+            if (token.SendRemaining > 0)
             {
-                StartSend(args); // reuse same op
+                StartSend(args);
                 return;
             }
-            else // else reset and push back the args
+            // Else reset and push back the SocketAsyncEventArgs.
+            else
             {
+                Interlocked.Increment(ref Statistics._totalMessagesSent);
+                Interlocked.Increment(ref _settingsStats._totalMessagesSent);
                 token.Reset();
-                args.SetBuffer(args.Offset, Settings.BufferSize); // just in case
+                // Just in case.
+                args.SetBuffer(args.Offset, Settings.BufferSize);
                 _sendPool.Push(args);
             }
         }
 
         private void StartReceive(SocketAsyncEventArgs args)
         {
-            if (_disposed)
+            if (Thread.VolatileRead(ref _disposed) == 1)
             {
                 _receivePool.Push(args);
                 return;
             }
 
             args.Completed += AsyncOperationCompleted;
-            if (!Connection.ReceiveAsync(args))
-                AsyncOperationCompleted(Connection, args);
+            if (!Socket.ReceiveAsync(args))
+                AsyncOperationCompleted(Socket, args);
         }
 
         private void ProcessReceive(SocketAsyncEventArgs args)
         {
             var bytesToProcess = args.BytesTransferred;
-            var token = args.UserToken as MessageReceiveToken;
+            var token = (MessageReceiveToken)args.UserToken;
 
-            Statistics.TotalByteReceived += args.BytesTransferred;
+            Interlocked.Add(ref Statistics._totalReceived, args.BytesTransferred);
+            Interlocked.Add(ref _settingsStats._totalReceived, args.BytesTransferred);
 
             while (bytesToProcess != 0)
             {
-                // copy header from buffer
-                if (Message.HeaderSize != token.HeaderOffset) // if we dont have the header yet
+                // If we don't have the complete header yet.
+                // Copy header from buffer.
+                if (Message.HeaderSize != token.HeaderOffset)
                 {
-                    if (bytesToProcess < token.HeaderRemaining) // if we dont have the header in a single receive op
+                    // If we don't have the complete header in a single receive operation.
+                    // Copy what we have from the buffer.
+                    if (bytesToProcess < token.HeaderRemaining)
                     {
                         //Console.WriteLine("Reusing args: {0}", token.TokenID);
 
@@ -263,7 +276,7 @@ namespace CoCSharp.Network
                         bytesToProcess = 0;
                         token.Offset = args.Offset;
 
-                        StartReceive(args); // reuse same op
+                        StartReceive(args);
                         return;
                     }
                     else
@@ -272,14 +285,19 @@ namespace CoCSharp.Network
                         bytesToProcess -= token.HeaderRemaining;
                         token.Offset += token.HeaderRemaining;
                         token.HeaderOffset += token.HeaderRemaining;
+
+                        // Process the header, so we know how large the message is etc.
                         ProcessReceiveToken(token);
                     }
                 }
 
-                // copy body from buffer
-                if (token.Length != token.BodyOffset) // if we dont have the body yet
+                // If we don't have the complete body yet.
+                // Copy body from buffer
+                if (token.Length != token.BodyOffset)
                 {
-                    if (bytesToProcess < token.BodyRemaining) // if we dont have the body in a single receive op
+                    // If we don't have the complete body in a single receive operation.
+                    // Copy what we have from the buffer.
+                    if (bytesToProcess < token.BodyRemaining)
                     {
                         //Console.WriteLine("Reusing args: {0}", token.TokenID);
 
@@ -359,8 +377,6 @@ namespace CoCSharp.Network
                             Exception = ex
                         });
                         token.Reset();
-
-                        // Could break early here because the keys are probably messed up.
                         continue;
                     }
                 }
@@ -438,49 +454,62 @@ namespace CoCSharp.Network
 
         private void AsyncOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
+            const int TIMEOUT = 5000;
+
             args.Completed -= AsyncOperationCompleted;
-            if (args.SocketError == SocketError.OperationAborted || _disposed)
+            if (Settings._concurrentOps.WaitOne(TIMEOUT))
             {
+                if (args.SocketError == SocketError.OperationAborted || Thread.VolatileRead(ref _disposed) == 1)
+                {
+                    switch (args.LastOperation)
+                    {
+                        case SocketAsyncOperation.Receive:
+                            _receivePool.Push(args);
+                            break;
+
+                        case SocketAsyncOperation.Send:
+                            _sendPool.Push(args);
+                            break;
+                    }
+                    return;
+                }
+
+                if (args.BytesTransferred == 0 || args.SocketError != SocketError.Success)
+                {
+                    switch (args.LastOperation)
+                    {
+                        case SocketAsyncOperation.Receive:
+                            _receivePool.Push(args);
+                            break;
+
+                        case SocketAsyncOperation.Send:
+                            _sendPool.Push(args);
+                            break;
+                    }
+
+                    OnDisconnected(new DisconnectedEventArgs(args.SocketError));
+                    return;
+                }
+
                 switch (args.LastOperation)
                 {
                     case SocketAsyncOperation.Receive:
-                        _receivePool.Push(args);
+                        ProcessReceive(args);
                         break;
 
                     case SocketAsyncOperation.Send:
-                        _sendPool.Push(args);
+                        ProcessSend(args);
                         break;
 
                     default:
-                        throw new Exception("Wut Ze Fuk?");
+                        throw new InvalidOperationException("IMPOSSIBRU! Unexpected SocketAsyncOperation: " + args.LastOperation);
                 }
 
-                // Gently stop any operations.
-                return;
+                Settings._concurrentOps.Release();
             }
-
-            if (args.SocketError != SocketError.Success)
-                OnDisconnected(new DisconnectedEventArgs() { Error = args.SocketError });
-
-            if (args.BytesTransferred == 0)
+            else
             {
-                _receivePool.Push(args);
-                OnDisconnected(new DisconnectedEventArgs());
-                return;
-            }
-
-            switch (args.LastOperation)
-            {
-                case SocketAsyncOperation.Receive:
-                    ProcessReceive(args);
-                    break;
-
-                case SocketAsyncOperation.Send:
-                    ProcessSend(args);
-                    break;
-
-                default:
-                    throw new InvalidOperationException("IMPOSSIBRU! Unexpected SocketAsyncOperation: " + args.LastOperation);
+                // NetworkManagerAsync is not responding.
             }
         }
 
@@ -499,20 +528,15 @@ namespace CoCSharp.Network
         /// <param name="disposing">Releases managed resources if set to <c>true</c>.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (Interlocked.CompareExchange(ref _disposed, 1, 0) == 0)
             {
                 if (disposing)
                 {
-                    try
-                    {
-                        Connection.Shutdown(SocketShutdown.Both);
-                    }
+                    try { Socket.Shutdown(SocketShutdown.Both); }
                     catch { }
 
-                    Connection.Close();
-                    //Settings.Dipose(); // Don't dispose because we might dispose other NetworkManagers.
+                    Socket.Close();
                 }
-                _disposed = true;
             }
         }
 
@@ -526,12 +550,15 @@ namespace CoCSharp.Network
         /// <param name="e">The arguments.</param>
         protected virtual void OnMessageReceived(MessageReceivedEventArgs e)
         {
-            if (MessageReceived != null && !_disposed)
+            Interlocked.Increment(ref Statistics._totalMessagesReceived);
+            Interlocked.Increment(ref _settingsStats._totalMessagesReceived);
+
+            if (MessageReceived != null && Thread.VolatileRead(ref _disposed) == 0)
                 MessageReceived(this, e);
         }
 
         /// <summary>
-        /// The event raised when <see cref="Connection"/> socket got disconnected.
+        /// The event raised when <see cref="Socket"/> socket got disconnected.
         /// </summary>
         public event EventHandler<DisconnectedEventArgs> Disconnected;
         /// <summary>

@@ -57,20 +57,25 @@ namespace CoCSharp.Server
 
         public void Disconnect()
         {
+            Disconnect(false);
+        }
+
+        internal void Disconnect(bool dueToKeepAlive)
+        {
             // Close connection to client.
 
             // Push the VillageObjects to the VillageObjectPool.
             if (Home != null)
                 Home.Dispose();
 
+            var remoteEndPoint = NetworkManager.Socket.RemoteEndPoint;
+            Save();
             NetworkManager.Dispose();
-
-            // Dereference the client object so that it gets picked up
-            // by the GarbageCollector.
             Server.Clients.Remove(this);
 
-            Console.Title = "CoC# - Server: " + Server.Clients.Count;
-            FancyConsole.WriteLine(LogFormats.Listener_Disconnected, Token);
+            //Console.Title = "CoC# - Server: " + Server.Clients.Count;
+            var extraInfo = dueToKeepAlive ? ";keepalive expired." : string.Empty;
+            Console.WriteLine("listener: disconnected {0} {1}", remoteEndPoint, extraInfo);
         }
 
         public void Save()

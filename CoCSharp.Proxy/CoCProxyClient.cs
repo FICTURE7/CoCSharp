@@ -93,7 +93,7 @@ namespace CoCSharp.Server
             }
 
             File.WriteAllBytes("messages\\[C2S] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageBody);
-            ServerConnection.Connection.Send(messageBytes);
+            ServerConnection.Socket.Send(messageBytes);
         }
 
         private void ServerReceived(object sender, MessageReceivedEventArgs e)
@@ -150,7 +150,7 @@ namespace CoCSharp.Server
             }
 
             File.WriteAllBytes("messages\\[S2C] " + DateTime.Now.ToString("hh-mm-ss.fff") + " " + e.Message.ID, e.MessageBody);
-            ClientConnection.Connection.Send(messageBytes);
+            ClientConnection.Socket.Send(messageBytes);
         }
     }
 }

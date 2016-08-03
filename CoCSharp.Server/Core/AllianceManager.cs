@@ -10,8 +10,8 @@ namespace CoCSharp.Server.Core
     {
         public AllianceManager()
         {
-            _lock = new object();
-            _saveQueue = new List<Clan>(32);
+            _saveQueue = new SaveQueue<Clan>();
+            _deleteQueue = new SaveQueue<Clan>();
 
             _mapper = new BsonMapper();
             // LiteDB does not support Int64 auto-id. So implement our own.
@@ -39,14 +39,16 @@ namespace CoCSharp.Server.Core
 
         // Mapper that _liteDb is going to use.
         private readonly BsonMapper _mapper;
+        
         // Db of alliances.
         private readonly LiteDatabase _liteDb;
         // Collection of alliances in _liteDb.
         private readonly LiteCollection<Clan> _alliancesCollection;
-        // 'Queue' of alliances to save.
-        private readonly List<Clan> _saveQueue;
-        // To prevent reading and writing to _saveQueue.
-        private readonly object _lock;
+
+        // Queue of alliances to save.
+        private readonly SaveQueue<Clan> _saveQueue;
+        // Queue of alliances to delete.
+        private readonly SaveQueue<Clan> _deleteQueue;
 
         public Clan CreateNewClan()
         {
@@ -61,7 +63,7 @@ namespace CoCSharp.Server.Core
             if (id < 1)
                 throw new ArgumentOutOfRangeException("id", "id cannot be less than 1.");
 
-            return _alliancesCollection.FindOne(c => c.ID == id);
+            return _alliancesCollection.FindById(id);
         }
 
         public void SaveClan(Clan clan)
@@ -76,7 +78,7 @@ namespace CoCSharp.Server.Core
             }
         }
 
-        public void Delete(Clan clan)
+        public void DeleteClan(Clan clan)
         {
             if (clan == null)
                 throw new ArgumentNullException("clan");
@@ -84,55 +86,72 @@ namespace CoCSharp.Server.Core
             _alliancesCollection.Delete(clan.ID);
         }
 
-        public void Queue(Clan clan)
+        public void QueueSave(Clan clan)
         {
             if (clan == null)
                 throw new ArgumentNullException("clan");
 
-            lock (_lock)
-            {
-                var index = _saveQueue.IndexOf(clan);
-                if (index == -1)
-                {
-                    _saveQueue.Add(clan);
-                }
-                else
-                {
-                    // If we already queued this clan
-                    // move it to the end of the queue.
-                    _saveQueue.RemoveAt(index);
-                    _saveQueue.Add(clan);
-                }
-            }
+            _saveQueue.Enqueue(clan);
+        }
+
+        public void QueueDelete(Clan clan)
+        {
+            if (clan == null)
+                throw new ArgumentNullException("clan");
+
+            _deleteQueue.Enqueue(clan);
         }
 
         public void Flush()
         {
-            lock (_lock)
+            if (_saveQueue.Count == 0)
+                return;
+
+            Debug.WriteLine("Flushing alliances", "Saving");
+            Debug.Indent();
+
+            // Save transaction.
+            using (var trans = _liteDb.BeginTrans())
             {
-                if (_saveQueue.Count == 0)
-                    return;
-
-                using (var trans = _liteDb.BeginTrans())
+                for (int i = 0; i < _saveQueue.Count; i++)
                 {
-                    for (int i = 0; i < _saveQueue.Count; i++)
+                    var clan = _saveQueue.Dequeue();
+                    Debug.Assert(clan != null);
+                    if (clan == null)
                     {
-                        var clan = _saveQueue[i];
-                        _saveQueue.RemoveAt(i);
-
-                        Debug.Assert(clan != null);
-                        SaveClan(clan);
-                        Debug.WriteLine("--> Saved alliance " + clan.ID, "Saving");
+                        Console.WriteLine("WARNING: AllianceManger _saveQueue.Dequeue() returned null - skipping save");
+                        continue;
                     }
 
-                    // trans.Commit();
+                    SaveClan(clan);
+                    Debug.WriteLine("--> Saved alliance " + clan.ID, "Saving");
                 }
             }
+
+            // Delete transaction.
+            using (var trans = _liteDb.BeginTrans())
+            {
+                for (int i = 0; i < _deleteQueue.Count; i++)
+                {
+                    var clan = _saveQueue.Dequeue();
+                    Debug.Assert(clan != null);
+                    if (clan == null)
+                    {
+                        Console.WriteLine("alliance _deleteQueue.Dequeue() returned null - skipping save");
+                        continue;
+                    }
+
+                    DeleteClan(clan);
+                    Debug.WriteLine("--> Deleted alliance " + clan.ID, "Saving");
+                }
+            }
+            Debug.Unindent();
+            Debug.WriteLine("Flushing done", "Saving");
         }
 
-        private void OnLog(string obj)
+        private void OnLog(string log)
         {
-            Console.WriteLine("AllianceDb exception: " + obj);
+            Console.WriteLine("ERROR: AllianceManager _liteDb: " + log);
         }
 
         public IEnumerable<Clan> GetAllClan()

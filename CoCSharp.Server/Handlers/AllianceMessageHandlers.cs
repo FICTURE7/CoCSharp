@@ -57,7 +57,7 @@ namespace CoCSharp.Server.Handlers
             clan.Members.Add(member);
 
             FancyConsole.WriteLine(LogFormats.Alliance_Created, clan.Name, client.Token);
-            server.AllianceManager.Queue(clan);
+            server.AllianceManager.QueueSave(clan);
 
             var ajCommand = new AllianceJoinedCommand();
             ajCommand.ClanID = clan.ID;
@@ -90,7 +90,7 @@ namespace CoCSharp.Server.Handlers
 
             FancyConsole.WriteLine("[&(darkblue)Alliance&(default)] Joined -> Account &(darkcyan){0}&(default) joined &(darkcyan){1}&(default).",
                 client.Token, clan.Name);
-            server.AllianceManager.Queue(clan);
+            server.AllianceManager.QueueSave(clan);
 
             var ajCommand = new AllianceJoinedCommand();
             ajCommand.ClanID = clan.ID;
@@ -121,7 +121,7 @@ namespace CoCSharp.Server.Handlers
 
             if (clan.Members.Count == 0)
             {
-                server.AllianceManager.Delete(clan);
+                server.AllianceManager.QueueDelete(clan);
                 FancyConsole.WriteLine("[&(darkblue)Alliance&(default)] &(red)Deleted&(default) -> Clan &(darkcyan){0}&(default).",
                     clan.Name);
             }
@@ -171,7 +171,7 @@ namespace CoCSharp.Server.Handlers
                 newLeader.Role = ClanMemberRole.Leader;
             }
 
-            server.AllianceManager.Queue(clan);
+            server.AllianceManager.QueueSave(clan);
 
             var alCommand = new AllianceLeftCommand();
             alCommand.ClanID = clan.ID;

@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data;
+﻿using CoCSharp.Csv;
+using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Network;
 using CoCSharp.Server.Core;
@@ -6,8 +7,8 @@ using CoCSharp.Server.Handlers;
 using CoCSharp.Server.Handlers.Commands;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace CoCSharp.Server
 {
@@ -15,41 +16,37 @@ namespace CoCSharp.Server
 
     public delegate void MessageHandler(CoCServer server, AvatarClient client, Message message);
 
-    public class CoCServer
+    public partial class CoCServer
     {
         public CoCServer()
         {
-            _obj = new object();
+            const int KEEPALIVE_TIIMEOUT = 25000;
+
             _settings = new NetworkManagerAsyncSettings(64, 64);
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            _acceptPool = new SocketAsyncEventArgsPool(100);
+            _acceptPool = new SocketAsyncEventArgsPool(100, AcceptOperationCompleted);
 
-            Console.WriteLine("-> Setting up AvatarManager...");
+            _timer = new Timer(TimerCallback, null, KEEPALIVE_TIIMEOUT, KEEPALIVE_TIIMEOUT);
+
+            Console.WriteLine("-> setting up AvatarManager...");
             AvatarManager = new AvatarManager();
 
-            Console.WriteLine("-> Setting up AllianceManager...");
+            Console.WriteLine("-> setting up AllianceManager...");
             AllianceManager = new AllianceManager();
 
-            Console.WriteLine("-> Setting up AssetManager...");
+            Console.WriteLine("-> setting up AssetManager...");
             AssetManager = new AssetManager(DirectoryPaths.Content);
 
-            Console.WriteLine("     > Loading buildings.csv...");
-            AssetManager.LoadCsv<BuildingData>("buildings.csv");
-            Console.WriteLine("     > Loading traps.csv...");
-            AssetManager.LoadCsv<TrapData>("traps.csv");
-            Console.WriteLine("     > Loading obstacles.csv...");
-            AssetManager.LoadCsv<ObstacleData>("obstacles.csv");
-            Console.WriteLine("     > Loading decos.csv...");
-            AssetManager.LoadCsv<DecorationData>("decos.csv");
-            Console.WriteLine("     > Loading resources.csv...");
-            AssetManager.LoadCsv<ResourceData>("resources.csv");
+            LoadCsv<BuildingData>("buildings.csv");
+            LoadCsv<TrapData>("traps.csv");
+            LoadCsv<ObstacleData>("obstacles.csv");
+            LoadCsv<DecorationData>("decos.csv");
+            LoadCsv<ResourceData>("resources.csv");
 
             AssetManager.DefaultInstance = AssetManager;
 
-            Console.WriteLine("-> Setting up NpcManager...");
+            Console.WriteLine("-> setting up NpcManager...");
             NpcManager = new NpcManager();
-
-            _keepAliveManager = new KeepAliveManager(this);
 
             Clients = new List<AvatarClient>();
             MessageHandlerDictionary = new Dictionary<ushort, MessageHandler>();
@@ -62,6 +59,13 @@ namespace CoCSharp.Server
             CommandHandlers.RegisterCommandHandlers(this);
         }
 
+        private void LoadCsv<T>(string path) where T : CsvData, new()
+        {
+            Console.Write("--> loading {0}...", path);
+            AssetManager.LoadCsv<T>(path);
+            Console.WriteLine("done");
+        }
+
         public List<AvatarClient> Clients { get; private set; }
 
         public NpcManager NpcManager { get; private set; }
@@ -70,23 +74,16 @@ namespace CoCSharp.Server
 
         public AssetManager AssetManager { get; private set; }
 
-        private KeepAliveManager _keepAliveManager;
-
         private Dictionary<int, CommandHandler> CommandHandlerDictionary { get; set; }
         private Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; set; }
 
-        private readonly object _obj;
-        private readonly Socket _listener;
-        private readonly SocketAsyncEventArgsPool _acceptPool;
         private readonly NetworkManagerAsyncSettings _settings;
+        private readonly Timer _timer;
 
         // Starts listening & handling clients async.
         public void Start()
         {
-            _listener.Bind(new IPEndPoint(IPAddress.Any, 9339));
-            _listener.Listen(100);
-            _keepAliveManager.Start();
-            StartAccept();
+            StartListener();
         }
 
         // Registers the specified MessageHandler for the specific Message.
@@ -122,14 +119,11 @@ namespace CoCSharp.Server
             try
             {
 #endif
-                var handler = (MessageHandler)null;
-                if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
-                {
-                    lock (_obj)
-                    {
-                        handler(this, client, message);
-                    }
-                }
+            var handler = (MessageHandler)null;
+            if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
+            {
+                handler(this, client, message);
+            }
 #if !DEBUG
             }
             catch (Exception ex)
@@ -146,14 +140,11 @@ namespace CoCSharp.Server
             try
             {
 #endif
-                var handler = (CommandHandler)null;
-                if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
-                {
-                    lock (_obj)
-                    {
-                        handler(this, client, command);
-                    }
-                }
+            var handler = (CommandHandler)null;
+            if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
+            {
+                handler(this, client, command);
+            }
 #if !DEBUG
             }
             catch (Exception ex)
@@ -170,69 +161,30 @@ namespace CoCSharp.Server
                 Clients[i].NetworkManager.SendMessage(message);
         }
 
-        private void StartAccept()
+        // Called by _timer to check whether KeepAlives has expired
+        // and to provide some logs.
+        private void TimerCallback(object state)
         {
-            var acceptArgs = (SocketAsyncEventArgs)null;
-            if (_acceptPool.Count > 1)
+            
+            for (int i = 0; i < Clients.Count; i++)
             {
-                try
-                {
-                    acceptArgs = _acceptPool.Pop();
-                    acceptArgs.Completed += AcceptOperationCompleted;
+                var client = Clients[i];
+                if (DateTime.UtcNow >= client.ExpirationKeepAlive)
+                { 
+                    var remoteEndPoint = client.NetworkManager.Socket.RemoteEndPoint;
+                    client.Disconnect(true);
                 }
-                catch
-                {
-                    acceptArgs = CreateNewAcceptArgs();
-                }
-            }
-            else
-            {
-                acceptArgs = CreateNewAcceptArgs();
             }
 
-            if (!_listener.AcceptAsync(acceptArgs))
-                ProcessAccept(acceptArgs);
-        }
+            var activeConn = Clients.Count; // <- Can be wrong some times.
+            var totalConn = Thread.VolatileRead(ref _totalConnection);
+            var totalSent = _settings.Statistics.TotalByteSent;
+            var totalReceived = _settings.Statistics.TotalByteReceived;
+            var totalMsgSent = _settings.Statistics.TotalMessagesSent;
+            var totalMsgReceived = _settings.Statistics.TotalMessagesReceived;            
 
-        private SocketAsyncEventArgs CreateNewAcceptArgs()
-        {
-            var args = new SocketAsyncEventArgs();
-            args.Completed += AcceptOperationCompleted;
-            return args;
-        }
-
-        private void ProcessAccept(SocketAsyncEventArgs args)
-        {
-            args.Completed -= AcceptOperationCompleted;
-            if (args.SocketError != SocketError.Success)
-            {
-                // Start accepting new connection ASAP.
-                StartAccept();
-                ProcessBadAccept(args);
-            }
-
-            // Start accepting new connection ASAP.
-            StartAccept();
-
-            FancyConsole.WriteLine(LogFormats.Listener_Connected, args.AcceptSocket.RemoteEndPoint);
-            Clients.Add(new AvatarClient(this, args.AcceptSocket, _settings));
-
-            Console.Title = "CoC# - Server: " + Clients.Count;
-
-            args.AcceptSocket = null;
-            _acceptPool.Push(args);
-        }
-
-        private void ProcessBadAccept(SocketAsyncEventArgs args)
-        {
-            args.AcceptSocket.Close();
-            args.AcceptSocket = null;
-            _acceptPool.Push(args);
-        }
-
-        private void AcceptOperationCompleted(object sender, SocketAsyncEventArgs e)
-        {
-            ProcessAccept(e);
+            Console.WriteLine("log::activeconn/totalconn: {0}/{1}, sent/receive: {2}/{3} bytes, sent/receive: {4}/{5} messages",
+                              activeConn, totalConn, totalSent, totalReceived, totalMsgSent, totalMsgReceived);
         }
     }
 }

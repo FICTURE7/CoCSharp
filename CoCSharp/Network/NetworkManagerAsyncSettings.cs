@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace CoCSharp.Network
 {
     /// <summary>
     /// Provides settings for the <see cref="NetworkManagerAsync"/> class. It is recommended to use
-    /// this for better management of <see cref="SocketAsyncEventArgs"/> objects. This class cannot
+    /// it for better management of <see cref="SocketAsyncEventArgs"/> objects. This class cannot
     /// be inherited.
     /// </summary>
     public sealed class NetworkManagerAsyncSettings : IDisposable
@@ -49,6 +50,10 @@ namespace CoCSharp.Network
                 throw new ArgumentOutOfRangeException("bufferSize", "Argument bufferSize cannot be less than 1.");
 
             BufferSize = bufferSize;
+            Statistics = new NetworkManagerAsyncStatistics();
+
+            var concurrentOpsCount = Environment.ProcessorCount * 2;
+            _concurrentOps = new Semaphore(concurrentOpsCount, concurrentOpsCount);
             _receivePool = new SocketAsyncEventArgsPool(receiveCount);
             _sendPool = new SocketAsyncEventArgsPool(sendCount);
             _bufferManager = new MessageBufferManager(receiveCount, sendCount, bufferSize);
@@ -95,9 +100,17 @@ namespace CoCSharp.Network
         /// </summary>
         public int BufferSize { get; private set; }
 
+        /// <summary>
+        /// Gets the <see cref="NetworkManagerAsyncStatistics"/> associated with this
+        /// <see cref="NetworkManagerAsyncSettings"/> and represents the overall stats of <see cref="NetworkManagerAsync"/> instances
+        /// associated with the current <see cref="NetworkManagerAsyncSettings"/>.
+        /// </summary>
+        public NetworkManagerAsyncStatistics Statistics { get; private set; }
+
         private bool _disposed;
         private readonly MessageBufferManager _bufferManager;
 
+        internal readonly Semaphore _concurrentOps;
         internal readonly SocketAsyncEventArgsPool _receivePool;
         internal readonly SocketAsyncEventArgsPool _sendPool;
 
@@ -117,7 +130,7 @@ namespace CoCSharp.Network
                 {
                     _receivePool.Dispose();
                     _sendPool.Dispose();
-                    //TODO: Dipose all NetworkManagerAsync instances using this also
+                    //TODO: Dispose all NetworkManagerAsync instances using this also
                 }
                 _disposed = true;
             }

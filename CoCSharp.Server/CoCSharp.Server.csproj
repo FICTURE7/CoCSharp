@@ -51,10 +51,13 @@
   <ItemGroup>
     <Compile Include="AvatarClient.cs" />
     <Compile Include="CoCServer.cs" />
+    <Compile Include="CoCServer.Listening.cs">
+      <DependentUpon>CoCServer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Core\AllianceManager.cs" />
     <Compile Include="Core\AvatarManager.cs" />
-    <Compile Include="Core\KeepAliveManager.cs" />
     <Compile Include="Core\NpcManager.cs" />
+    <Compile Include="Core\SaveQueue{T}.cs" />
     <Compile Include="DirectoryPaths.cs" />
     <Compile Include="Core\FancyConsole.cs" />
     <Compile Include="Core\FancyConsole.Write.cs" />
