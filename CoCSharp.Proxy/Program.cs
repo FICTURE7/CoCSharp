@@ -1,6 +1,4 @@
-﻿using CoCSharp.Network;
-using CoCSharp.Network.Messages;
-using Ionic.Zip;
+﻿using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -65,15 +63,6 @@ namespace CoCSharp.Server
 
             Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
             Thread.Sleep(Timeout.Infinite);
-        }
-
-        public static void Main()
-        {
-            var bytes = File.ReadAllBytes("failddump");
-            var stream = new MemoryStream(bytes);
-            var reader = new MessageReader(stream);
-            var loginfaild = new LoginFailedMessage();
-            loginfaild.ReadMessage(reader);
         }
     }
 }
