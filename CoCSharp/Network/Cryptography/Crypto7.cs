@@ -35,11 +35,22 @@ namespace CoCSharp.Network.Cryptography
             InitializeCiphers(key);
         }
 
+        /// <summary>
+        /// Gets the version of the <see cref="CoCCrypto"/>.
+        /// </summary>
+        public override int Version
+        {
+            get
+            {
+                return 7;
+            }
+        }
+
         private RC4 Encryptor { get; set; }
         private RC4 Decryptor { get; set; }
 
         /// <summary>
-        /// Encrypts the provided bytes(plaintext).
+        /// Encrypts the provided bytes(plain-text).
         /// </summary>
         /// <param name="data">Bytes to encrypt.</param>
         /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
@@ -53,7 +64,7 @@ namespace CoCSharp.Network.Cryptography
         }
 
         /// <summary>
-        /// Decrypts the provided bytes(ciphertext).
+        /// Decrypts the provided bytes(cipher-text).
         /// </summary>
         /// <param name="data">Bytes to decrypt.</param>
         /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>

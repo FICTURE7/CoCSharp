@@ -23,7 +23,7 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public byte[] PublicKey;
         /// <summary>
-        /// Session key sent in <see cref="SessionSuccessMessage"/>.
+        /// Session key sent in <see cref="HandshakeSuccessMessage"/>.
         /// </summary>
         public byte[] SessionKey;
         /// <summary>

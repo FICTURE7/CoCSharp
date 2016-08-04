@@ -31,18 +31,18 @@ namespace CoCSharp.Network
         /// <summary>
         /// Gets or sets whether the <see cref="Message"/> received was fully read.
         /// </summary>
-        public bool MessageFullyRead { get; set; } // TODO: Consider renaming to FullyRead.
+        public bool FullyRead { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="Network.Message"/> bytes body that was decrypted
         /// from the network.
         /// </summary>
-        public byte[] MessageBody { get; set; } //TODO: Improve structure.
+        public byte[] PayloadDecrypted { get; set; } //TODO: Improve structure.
 
         /// <summary>
         /// Gets or sets the <see cref="Network.Message"/> raw bytes that was received from
         /// the network. This includes the header and the body encrypted.
         /// </summary>
-        public byte[] MessageData { get; set; }
+        public byte[] PacketBytes { get; set; }
     }
 }

@@ -226,8 +226,8 @@
     <Compile Include="Network\Messages\KeepAliveRequestMessage.cs" />
     <Compile Include="Network\Messages\KeepAliveResponseMessage.cs" />
     <Compile Include="Network\Messages\LoginRequestMessage.cs" />
-    <Compile Include="Network\Messages\SessionRequestMessage.cs" />
-    <Compile Include="Network\Messages\SessionSuccessMessage.cs" />
+    <Compile Include="Network\Messages\HandshakeRequestMessage.cs" />
+    <Compile Include="Network\Messages\HandshakeSuccessMessage.cs" />
     <Compile Include="Network\Messages\UnknownMessage.cs" />
     <Compile Include="Network\MessageWriter.cs" />
     <Compile Include="Network\NetworkManagerAsync.cs" />

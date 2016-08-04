@@ -138,7 +138,9 @@ namespace CoCSharp.Network
                 if (body.Length > Message.MaxSize)
                     throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
 
-                if (!(message is SessionSuccessMessage || message is SessionRequestMessage)) // ignore 10100 and 20100 for encryption
+                // Ignore 10100 and 20100 for encryption
+                // any messages for encryption before encryption has been set up.
+                if (Crypto._cryptoState != Crypto8.CryptoState.None)
                     Crypto.Encrypt(ref body);
 
                 if (message is LoginSuccessMessage)
@@ -146,6 +148,12 @@ namespace CoCSharp.Network
                     var lsMessage = message as LoginSuccessMessage;
                     Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Encrypt);
                     Crypto.UpdateSharedKey(lsMessage.PublicKey);
+                }
+                if (message is LoginFailedMessage && Crypto._cryptoState != Crypto8.CryptoState.None)
+                {
+                    var lfMessage = message as LoginFailedMessage;
+                    Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Encrypt);
+                    Crypto.UpdateSharedKey(lfMessage.PublicKey);
                 }
 
                 using (var enMessageWriter = new MessageWriter(new MemoryStream()))
@@ -337,11 +345,6 @@ namespace CoCSharp.Network
                     var lrMessage = message as LoginRequestMessage;
                     lrMessage.PublicKey = publicKey;
 
-                    // Should never happen. As the Crypto8 was initiated as the client and
-                    // LoginRequestMessage is sent to the server only.
-                    if (Crypto.Direction == MessageDirection.Server)
-                        Console.WriteLine("Vut Ze Fk m8!?");
-
                     // Updates with clientKey(pk). _cryptoState = InitialKey
                     Crypto.UpdateSharedKey(publicKey);
                 }
@@ -358,9 +361,9 @@ namespace CoCSharp.Network
                 Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
-                // Ignore 10100 & 20100 for decryption.
-                // TODO: Ignore message for decryption when Crypto._state == CryptoState.None.
-                if (!(message is SessionSuccessMessage || message is SessionRequestMessage))
+                // Ignore 10100 & 20100 for decryption and
+                // any messages for decryption before encryption has been set up.
+                if (Crypto._cryptoState != Crypto8.CryptoState.None)
                 {
                     try
                     {
@@ -372,8 +375,8 @@ namespace CoCSharp.Network
                         OnMessageReceived(new MessageReceivedEventArgs()
                         {
                             Message = message,
-                            MessageData = messageData,
-                            MessageBody = messageDeBody,
+                            PacketBytes = messageData,
+                            PayloadDecrypted = messageDeBody,
                             Exception = ex
                         });
                         token.Reset();
@@ -392,9 +395,9 @@ namespace CoCSharp.Network
                     OnMessageReceived(new MessageReceivedEventArgs()
                     {
                         Message = message,
-                        MessageData = messageData,
-                        MessageBody = messageDeBody,
-                        MessageFullyRead = true
+                        PacketBytes = messageData,
+                        PayloadDecrypted = messageDeBody,
+                        FullyRead = true
                     });
                     token.Reset();
                     continue;
@@ -408,19 +411,22 @@ namespace CoCSharp.Network
                     catch (Exception ex) { exception = ex; }
 
                     // Before encryption (was added before the server/client encrypted the data).
-                    if (message is LoginRequestMessage) // We're the server.
+                    // We're the server.
+                    if (message is LoginRequestMessage)
                     {
                         var lrMessage = message as LoginRequestMessage;
                         Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Decrypt); // update with snonce, decryptnonce = snonce
                         Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Blake);
                     }
-                    else if (message is LoginSuccessMessage) // We're the client.
+                    // We're the client.
+                    else if (message is LoginSuccessMessage)
                     {
                         var lsMessage = message as LoginSuccessMessage;
                         Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
                         Crypto.UpdateSharedKey(lsMessage.PublicKey); // Update crypto with k.
                     }
-                    else if (message is LoginFailedMessage) // We're the client.
+                    // We're the client.
+                    else if (message is LoginFailedMessage && Crypto._cryptoState != Crypto8.CryptoState.None)
                     {
                         var lfMessage = message as LoginFailedMessage;
                         Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
@@ -430,9 +436,9 @@ namespace CoCSharp.Network
                     OnMessageReceived(new MessageReceivedEventArgs()
                     {
                         Message = message,
-                        MessageData = messageData,
-                        MessageBody = messageDeBody,
-                        MessageFullyRead = reader.BaseStream.Position == reader.BaseStream.Length,
+                        PacketBytes = messageData,
+                        PayloadDecrypted = messageDeBody,
+                        FullyRead = reader.BaseStream.Position == reader.BaseStream.Length,
                         Exception = exception
                     });
                 }

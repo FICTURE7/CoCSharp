@@ -4,14 +4,14 @@ namespace CoCSharp.Network.Messages
 {
     /// <summary>
     /// Message that is sent by the server to the client after 
-    /// the client sends a <see cref="SessionRequestMessage"/>.
+    /// the client sends a <see cref="HandshakeRequestMessage"/>.
     /// </summary>
-    public class SessionSuccessMessage : Message
+    public class HandshakeSuccessMessage : Message
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SessionSuccessMessage"/> class.
+        /// Initializes a new instance of the <see cref="HandshakeSuccessMessage"/> class.
         /// </summary>
-        public SessionSuccessMessage()
+        public HandshakeSuccessMessage()
         {
             // Space
         }
@@ -22,15 +22,15 @@ namespace CoCSharp.Network.Messages
         public byte[] SessionKey;
 
         /// <summary>
-        /// Gets the ID of the <see cref="SessionSuccessMessage"/>.
+        /// Gets the ID of the <see cref="HandshakeSuccessMessage"/>.
         /// </summary>
         public override ushort ID { get { return 20100; } }
 
         /// <summary>
-        /// Reads the <see cref="SessionSuccessMessage"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="HandshakeSuccessMessage"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="SessionSuccessMessage"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="HandshakeSuccessMessage"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessage(MessageReader reader)
@@ -41,10 +41,10 @@ namespace CoCSharp.Network.Messages
         }
 
         /// <summary>
-        /// Writes the <see cref="SessionSuccessMessage"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="HandshakeSuccessMessage"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="SessionSuccessMessage"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="HandshakeSuccessMessage"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)

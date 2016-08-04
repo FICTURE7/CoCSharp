@@ -96,33 +96,41 @@ namespace CoCSharp.Network.Messages
         /// Unknown string 2.
         /// </summary>
         public string AppStoreUrl;
-
         /// <summary>
-        /// Unknown int 3.
+        /// Message shown when under maintenance.
         /// </summary>
-        public int Unknown3;
+        public string Message;
+        /// <summary>
+        /// Duration of the maintenance.
+        /// </summary>
+        public TimeSpan MaintenanceDuration;
         /// <summary>
         /// Unknown byte 4.
         /// </summary>
         public byte Unknown4;
-        /// <summary>
-        /// Unknown string 5.
-        /// </summary>
-        public string Unknown5;
 
         /// <summary>
         /// New fingerprint that the server wants the client
         /// to use.
         /// </summary>
         public Fingerprint Fingerprint;
+
         /// <summary>
-        /// Unknown int 6.
+        /// Unknown integer 6.
         /// </summary>
         public int Unknown6;
         /// <summary>
-        /// Unknown int 7.
+        /// Unknown integer 7.
         /// </summary>
         public int Unknown7;
+        /// <summary>
+        /// Unknown integer 8.
+        /// </summary>
+        public int Unknown8;
+        /// <summary>
+        /// Unknown integer 9.
+        /// </summary>
+        public int Unknown9;
 
         /// <summary>
         ///  Gets the ID of the <see cref="LoginFailedMessage"/>.
@@ -149,11 +157,11 @@ namespace CoCSharp.Network.Messages
 
             Hostname = reader.ReadString(); // stage.clashofclans.com
             DownloadRootUrl = reader.ReadString(); // http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/
-
             AppStoreUrl = reader.ReadString(); // market://details?id=com.supercell.clashofclans
-            Unknown3 = reader.ReadInt32(); // -1
+            Message = reader.ReadString();
+            MaintenanceDuration = TimeSpan.FromSeconds(reader.ReadInt32());
+
             Unknown4 = reader.ReadByte(); // 0
-            Unknown5 = reader.ReadString(); // ""
 
             //TODO: Implement Compressed String in MessageWriter and MessageReader.
             var fingerprintData = reader.ReadBytes();
@@ -170,6 +178,8 @@ namespace CoCSharp.Network.Messages
 
             Unknown6 = reader.ReadInt32(); // -1
             Unknown7 = reader.ReadInt32(); // 2
+            Unknown8 = reader.ReadInt32(); // 0
+            Unknown9 = reader.ReadInt32(); // -1
         }
 
         /// <summary>
@@ -183,28 +193,44 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
+            Version = 2;
+            if (Nonce != null)
+                writer.Write(Nonce, false);
+            if (PublicKey != null)
+                writer.Write(PublicKey, false);
+
             writer.Write((int)Reason);
 
             writer.Write(Unknown1);
 
             writer.Write(Hostname);
             writer.Write(DownloadRootUrl);
-
             writer.Write(AppStoreUrl);
-            writer.Write(Unknown3);
+            writer.Write(Message);
+            writer.Write((int)MaintenanceDuration.TotalSeconds);
             writer.Write(Unknown4);
 
-            writer.Write(Unknown5);
-
-            //TODO: Fix this thing, because its not correctly compressed/not at all.
             if (Fingerprint != null)
-                writer.Write(Fingerprint.ToJson());
+            {
+                // Uses BinaryWriter for little-endian writing.
+                var mem = new MemoryStream();
+                using (var bw = new BinaryWriter(mem))
+                {
+                    var fingerprintJson = Fingerprint.ToJson();
+                    var compressedFingerprintJson = ZlibStream.CompressString(fingerprintJson);
+
+                    bw.Write(fingerprintJson.Length);
+                    bw.Write(compressedFingerprintJson);
+                    writer.Write(mem.ToArray(), true);
+                }
+            }
             else
                 writer.Write(-1);
 
-            writer.Write(Unknown5);
             writer.Write(Unknown6);
             writer.Write(Unknown7);
+            writer.Write(Unknown8);
+            writer.Write(Unknown9);
         }
     }
 }

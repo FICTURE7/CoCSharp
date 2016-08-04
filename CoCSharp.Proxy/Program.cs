@@ -1,4 +1,6 @@
-﻿using Ionic.Zip;
+﻿using CoCSharp.Network;
+using CoCSharp.Network.Messages;
+using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +13,7 @@ namespace CoCSharp.Server
     {
         public static CoCProxy Proxy { get; set; }
 
-        public static void Main(string[] args)
+        public static void m(string[] args)
         {
             Console.Title = "CoC# - Proxy";
 
@@ -63,6 +65,15 @@ namespace CoCSharp.Server
 
             Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
             Thread.Sleep(Timeout.Infinite);
+        }
+
+        public static void Main()
+        {
+            var bytes = File.ReadAllBytes("failddump");
+            var stream = new MemoryStream(bytes);
+            var reader = new MessageReader(stream);
+            var loginfaild = new LoginFailedMessage();
+            loginfaild.ReadMessage(reader);
         }
     }
 }

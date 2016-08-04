@@ -1,7 +1,6 @@
 ﻿using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
 using CoCSharp.Network.Messages;
-using CoCSharp.Server.Core;
 using System;
 using System.Threading;
 
@@ -25,7 +24,7 @@ namespace CoCSharp.Server.Handlers
             }
 
             var lrMessage = (LoginRequestMessage)message;
-            var keyPair = Crypto8.GenerateKeyPair();
+            var keyPair = Crypto8.GenerateKeyPair();            
             var lsMessage = new LoginSuccessMessage()
             {
                 // NetworkManagerAsync will use this nonce.
@@ -62,9 +61,16 @@ namespace CoCSharp.Server.Handlers
                 var thread = Thread.CurrentThread.ManagedThreadId;
                 Console.WriteLine("login: failed {0}:{1} thread {2}, already have entry with same ID?", client.ID, client.Token, thread);
 
-                var loginFailed = new LoginFailedMessage();
-                //client.NetworkManager.SendMessage(loginFailed);
-                //TODO: Disconnect client.
+                var lfMessage = new LoginFailedMessage()
+                {
+                    Nonce = Crypto8.GenerateNonce(),
+                    PublicKey = keyPair.PublicKey,
+
+                    Reason = (LoginFailureReason)6,
+                    Message = "Issue with loading your account, please clear your app data."
+                };
+                client.NetworkManager.SendMessage(lfMessage);
+                client.Disconnect();
                 return;
             }
             else
@@ -83,10 +89,11 @@ namespace CoCSharp.Server.Handlers
             client.NetworkManager.SendMessage(ohdMessage); // OwnHomeDataMessage
         }
 
-        private static void HandleSessionRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleHandshakeRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
             client.SessionKey = Crypto8.GenerateNonce();
-            var enMessage = new SessionSuccessMessage()
+
+            var enMessage = new HandshakeSuccessMessage()
             {
                 SessionKey = client.SessionKey
             };
@@ -97,7 +104,7 @@ namespace CoCSharp.Server.Handlers
         public static void RegisterLoginMessageHandlers(CoCServer server)
         {
             server.RegisterMessageHandler(new LoginRequestMessage(), HandleLoginRequestMessage);
-            server.RegisterMessageHandler(new SessionRequestMessage(), HandleSessionRequestMessage);
+            server.RegisterMessageHandler(new HandshakeRequestMessage(), HandleHandshakeRequestMessage);
         }
     }
 }
