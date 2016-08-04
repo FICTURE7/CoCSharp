@@ -12,6 +12,15 @@ namespace CoCSharp.Server
         private int _totalConnection;
         private readonly Socket _listener;
         private readonly SocketAsyncEventArgsPool _acceptPool;
+        
+        // Returns a new SocketAsyncEventArgs object with Completed
+        // set to AcceptOperationCompleted. 
+        private SocketAsyncEventArgs CreateNewAcceptArgs()
+        {
+            var args = new SocketAsyncEventArgs();
+            args.Completed += AcceptOperationCompleted;
+            return args;
+        }
 
         private void StartListener()
         {
@@ -34,50 +43,56 @@ namespace CoCSharp.Server
 
         private void StartAccept()
         {
-            var acceptArgs = _acceptPool.Pop();
-            if (acceptArgs == null)
+            try
             {
-                acceptArgs = CreateNewAcceptArgs();
-            } 
+                var acceptArgs = _acceptPool.Pop();
+                if (acceptArgs == null)
+                {
+                    acceptArgs = CreateNewAcceptArgs();
+                }
 
-            if (!_listener.AcceptAsync(acceptArgs))
-                ProcessAccept(acceptArgs);
-        }
-        
-        // Returns a new SocketAsyncEventArgs object with Completed
-        // set to AcceptOperationCompleted. 
-        private SocketAsyncEventArgs CreateNewAcceptArgs()
-        {
-            var args = new SocketAsyncEventArgs();
-            args.Completed += AcceptOperationCompleted;
-            return args;
+                if (!_listener.AcceptAsync(acceptArgs))
+
+                    ProcessAccept(acceptArgs);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("exception: unable to start accept: {0}", ex.Message);
+            }
         }
 
         private void ProcessAccept(SocketAsyncEventArgs args)
         {
-            if (args.SocketError != SocketError.Success)
+            try
             {
+                if (args.SocketError != SocketError.Success)
+                {
+                    // Start accepting new connection ASAP.
+                    StartAccept();
+                    ProcessBadAccept(args);
+                    return;
+                }
+
                 // Start accepting new connection ASAP.
                 StartAccept();
-                ProcessBadAccept(args);
-                return;
+
+                var remoteEndPoint = args.AcceptSocket.RemoteEndPoint;
+                // FancyConsole.WriteLine(LogFormats.Listener_Connected, args.AcceptSocket.RemoteEndPoint);
+                Console.WriteLine("listener: accepted new remote connection: {0}", remoteEndPoint);
+
+                Interlocked.Increment(ref _totalConnection);
+                var client = new AvatarClient(this, args.AcceptSocket, _settings);
+                Clients.Add(client);
+
+                //Console.Title = "CoC# - Server: " + Clients.Count;
+
+                args.AcceptSocket = null;
+                _acceptPool.Push(args);
             }
-
-            // Start accepting new connection ASAP.
-            StartAccept();
-
-            var remoteEndPoint = args.AcceptSocket.RemoteEndPoint;
-            // FancyConsole.WriteLine(LogFormats.Listener_Connected, args.AcceptSocket.RemoteEndPoint);
-            Console.WriteLine("listener: accepted new remote connection: {0}", remoteEndPoint);
-
-            Interlocked.Increment(ref _totalConnection);
-            var client = new AvatarClient(this, args.AcceptSocket, _settings);
-            Clients.Add(client);
-
-            //Console.Title = "CoC# - Server: " + Clients.Count;
-
-            args.AcceptSocket = null;
-            _acceptPool.Push(args);
+            catch (Exception ex)
+            {
+                Console.WriteLine("exception: unable to process accept: {0}", ex.Message);
+            }
         }
 
         private void ProcessBadAccept(SocketAsyncEventArgs args)

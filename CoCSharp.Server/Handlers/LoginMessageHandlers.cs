@@ -3,6 +3,7 @@ using CoCSharp.Network.Cryptography;
 using CoCSharp.Network.Messages;
 using CoCSharp.Server.Core;
 using System;
+using System.Threading;
 
 namespace CoCSharp.Server.Handlers
 {
@@ -24,14 +25,6 @@ namespace CoCSharp.Server.Handlers
             }
 
             var lrMessage = (LoginRequestMessage)message;
-            if (lrMessage.UserToken != null && !TokenUtils.CheckToken(lrMessage.UserToken))
-            {
-                var loginFailed = new LoginFailedMessage();
-                client.NetworkManager.SendMessage(loginFailed);
-                client.Disconnect();
-                return;
-            }
-
             var keyPair = Crypto8.GenerateKeyPair();
             var lsMessage = new LoginSuccessMessage()
             {
@@ -66,19 +59,20 @@ namespace CoCSharp.Server.Handlers
             // true if it succeeded; otherwise a false.
             if (!client.Load())
             {
-                FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} failed.",
-                                           client.Token, client.ID);
+                var thread = Thread.CurrentThread.ManagedThreadId;
+                Console.WriteLine("login: failed {0}:{1} thread {2}, already have entry with same ID?", client.ID, client.Token, thread);
 
                 var loginFailed = new LoginFailedMessage();
-                client.NetworkManager.SendMessage(loginFailed);
+                //client.NetworkManager.SendMessage(loginFailed);
                 //TODO: Disconnect client.
                 return;
             }
             else
             {
-                FancyConsole.WriteLine("[&(blue)Login&(default)] Avatar &(darkcyan){0}&(default):{1} success.",
-                                           client.Token, client.ID);
+                var thread = Thread.CurrentThread.ManagedThreadId;
+                Console.WriteLine("login: success {0}:{1} thread {2}", client.ID, client.Token, thread);
 
+                client.Status |= ClientFlags.LoggedIn;
                 lsMessage.UserID = client.ID;
                 lsMessage.UserID1 = client.ID;
                 lsMessage.UserToken = client.Token;

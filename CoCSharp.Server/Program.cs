@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Models;
+using CoCSharp.Network.Messages;
 using CoCSharp.Server.Core;
 using System;
 using System.Diagnostics;
@@ -50,6 +51,42 @@ namespace CoCSharp.Server
 
             Console.WriteLine("done({0}ms): listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
             Console.WriteLine();
+
+            //new Thread(() =>
+            //{
+            //    var count = 0;
+            //    while (true)
+            //    {
+            //        var ava = new AvatarClient();
+            //        ava.Server = Server;
+            //        ava.SessionKey = new byte[24];
+            //        var loginReq = new LoginRequestMessage();
+
+            //        loginReq.UserToken = "asddf";
+            //        loginReq.UserID = count;
+            //        Server.HandleMessage(ava, loginReq);
+            //        count++;
+            //    }
+            //}).Start();
+
+            //new Thread(() =>
+            //{
+            //    var count = 0;
+            //    while (true)
+            //    {
+            //        var ava = new AvatarClient();
+            //        ava.Server = Server;
+            //        ava.SessionKey = new byte[24];
+            //        var loginReq = new LoginRequestMessage();
+
+            //        loginReq.UserToken = "asdf";
+            //        loginReq.UserID = count;
+            //        Server.HandleMessage(ava, loginReq);
+            //        count++;
+            //    }
+            //}).Start();
+
+
             while (true)
             {
                 try
@@ -74,25 +111,6 @@ namespace CoCSharp.Server
 
                 Thread.Sleep(100);
             }
-        }
-
-        public static void m()
-        {
-            Console.WriteLine("-> Setting up AssetManager...");
-            var AssetManager = new AssetManager(DirectoryPaths.Content);
-
-            Console.WriteLine("     > Loading buildings.csv...");
-            AssetManager.LoadCsv<BuildingData>("buildings.csv");
-            Console.WriteLine("     > Loading traps.csv...");
-            AssetManager.LoadCsv<TrapData>("traps.csv");
-            Console.WriteLine("     > Loading obstacles.csv...");
-            AssetManager.LoadCsv<ObstacleData>("obstacles.csv");
-            Console.WriteLine("     > Loading decos.csv...");
-            AssetManager.LoadCsv<DecorationData>("decos.csv");
-            Console.WriteLine("     > Loading resources.csv...");
-            AssetManager.LoadCsv<ResourceData>("resources.csv");
-
-            AssetManager.DefaultInstance = AssetManager;
         }
     }
 }

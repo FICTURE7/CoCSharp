@@ -50,6 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvatarClient.cs" />
+    <Compile Include="AvatarClient.Saving.cs">
+      <DependentUpon>AvatarClient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ClientFlags.cs" />
     <Compile Include="CoCServer.cs" />
     <Compile Include="CoCServer.Listening.cs">
       <DependentUpon>CoCServer.cs</DependentUpon>

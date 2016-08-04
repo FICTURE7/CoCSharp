@@ -116,7 +116,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the user token of the <see cref="Avatar"/>.
         /// </summary>
-        /// <exception cref="ArgumentException"><paramref name="value"/> is not a valid token.</exception>
+        ///// <exception cref="ArgumentException"><paramref name="value"/> is not a valid token.</exception>
         public string Token
         {
             get
@@ -125,8 +125,8 @@ namespace CoCSharp.Logic
             }
             set
             {
-                if (value != null && !TokenUtils.CheckToken(value))
-                    throw new ArgumentException("'" + value + "' is not a valid token.");
+                //if (value != null && !TokenUtils.CheckToken(value))
+                //    throw new ArgumentException("'" + value + "' is not a valid token.");
 
                 if (_token == value)
                     return;

@@ -81,19 +81,20 @@ namespace CoCSharp.Server.Core
             // LiteDB does not take into account inheritance, from what I observed.
             _mapper.Entity<Avatar>()
                    .Id(x => x.ID)
-                   .Index(x => x.Token, true) // Make sure tokens are unique.
+                   //.Index(x => x.Token, true) // Make sure tokens are unique.
                    .Ignore(x => x.OwnHomeDataMessage)
                    .Ignore(x => x.ShieldDuration)
                    .Ignore(x => x.IsPropertyChangedEnabled);
 
             _mapper.Entity<AvatarClient>()
                    .Id(x => x.ID)
-                   .Index(x => x.Token, true) // Make sure tokens are unique.
+                   //.Index(x => x.Token, true) // Make sure tokens are unique.
                    .Ignore(x => x.OwnHomeDataMessage)
                    .Ignore(x => x.ShieldDuration)
                    .Ignore(x => x.IsPropertyChangedEnabled);
 
 
+            _dbLock = new object();
             _liteDb = new LiteDatabase("avatars_db.db", _mapper);
             _liteDb.Log.Level = Logger.ERROR;
             _liteDb.Log.Logging += OnLog;
@@ -108,21 +109,19 @@ namespace CoCSharp.Server.Core
 
         // Mapper that _liteDb is going to use.
         private readonly BsonMapper _mapper;
-        
+
+        private readonly object _dbLock;
         // Db of Avatars.
         private readonly LiteDatabase _liteDb;
         // Collection of avatars in _liteDb.
         private readonly LiteCollection<Avatar> _avatarCollection;
-        
+
         // Queue of avatars to save.
         private readonly SaveQueue<Avatar> _saveQueue;
 
         public Avatar CreateNewAvatar()
         {
-            // Generate a token & make sure its unique.
             var token = TokenUtils.GenerateToken();
-            while (_avatarCollection.Exists(ava => ava.Token == token))
-                token = TokenUtils.GenerateToken();
 
             // CreateNewAvatar will automatically insert the avatar in the db.
             return CreateNewAvatar(token, default(long));
@@ -130,10 +129,6 @@ namespace CoCSharp.Server.Core
 
         public Avatar CreateNewAvatar(string token, long id)
         {
-            if (string.IsNullOrWhiteSpace(token))
-                return null;
-            if (!TokenUtils.CheckToken(token))
-                return null;
             if (Exists(id))
                 return null;
 
@@ -158,12 +153,10 @@ namespace CoCSharp.Server.Core
 
         public bool Exists(string token)
         {
-            if (string.IsNullOrWhiteSpace(token))
-                return false;
-            if (!TokenUtils.CheckToken(token))
-                return false;
-
-            return _avatarCollection.Exists(ava => ava.Token == token);
+            lock (_dbLock)
+            {
+                return _avatarCollection.Exists(ava => ava.Token == token);
+            }
         }
 
         public bool Exists(long id)
@@ -171,19 +164,20 @@ namespace CoCSharp.Server.Core
             if (id < 1)
                 return false;
 
-            return _avatarCollection.Exists(ava => ava.ID == id);
+            lock (_dbLock)
+            {
+                return _avatarCollection.Exists(ava => ava.ID == id);
+            }
         }
 
         public Avatar LoadAvatar(string token)
         {
-            if (string.IsNullOrWhiteSpace(token))
-                return null;
+            Debug.Assert(token != null);
 
-            return _avatarCollection.FindOne(ava => ava.Token == token);
-
-            //var avatar = _avatarCollection.FindOne(ava => ava.Token == token);
-            //File.WriteAllText(avatar.Token + ".json", avatar.Home.ToJson());
-            //return avatar;
+            lock (_dbLock)
+            {
+                return _avatarCollection.FindOne(ava => ava.Token == token);
+            }
         }
 
         public Avatar LoadAvatar(long id)
@@ -191,7 +185,10 @@ namespace CoCSharp.Server.Core
             if (id < 1)
                 throw new ArgumentOutOfRangeException("id", "id cannot be less than 1.");
 
-            return _avatarCollection.FindById(id);
+            lock (_dbLock)
+            {
+                return _avatarCollection.FindById(id);
+            }
         }
 
         public void SaveAvatar(Avatar avatar)
@@ -199,18 +196,29 @@ namespace CoCSharp.Server.Core
             if (avatar == null)
                 throw new ArgumentNullException("avatar");
 
-            using (var trans = _liteDb.BeginTrans())
+            Debug.Assert(avatar.Token != null);
+            if (avatar.Token == null)
             {
+                Console.WriteLine("warning: null token");
+                return;
+            }
+
+            lock (_dbLock)
+            {
+                var trans = _liteDb.BeginTrans();
+
                 // If we don't have the avatar in the db
                 // we add it to the db.
                 if (!_avatarCollection.Update(avatar))
                     _avatarCollection.Insert(avatar);
+
+                trans.Commit();
             }
         }
 
         // Queues the specified avatar into a list
         // of avatars to save.
-        public void Queue(Avatar avatar)
+        public void QueueSave(Avatar avatar)
         {
             if (avatar == null)
                 throw new ArgumentNullException("avatar");
@@ -227,9 +235,10 @@ namespace CoCSharp.Server.Core
             Debug.WriteLine("Flushing avatars", "Saving");
             Debug.Indent();
 
-            // Save transaction.
-            using (var trans = _liteDb.BeginTrans())
+            lock (_dbLock)
             {
+                // Save transaction.
+                var trans = _liteDb.BeginTrans();
                 for (int i = 0; i < _saveQueue.Count; i++)
                 {
                     var avatar = _saveQueue.Dequeue();
@@ -243,6 +252,7 @@ namespace CoCSharp.Server.Core
                     SaveAvatar(avatar);
                     Debug.WriteLine("--> Saved avatar " + avatar.Token, "Saving");
                 }
+                trans.Commit();
             }
 
             Debug.Unindent();
@@ -256,11 +266,25 @@ namespace CoCSharp.Server.Core
 
         public Avatar GetRandomAvatar(long excludeId)
         {
-            var count = _avatarCollection.Count();
-            var avatars = _avatarCollection.Find(Query.Not("_id", excludeId));
+            var count = 0;
+            var avatars = (IEnumerable<Avatar>)null;
+            lock (_dbLock)
+            {
+                count = _avatarCollection.Count();
+                avatars = _avatarCollection.Find(Query.Not("_id", excludeId));
+            }
+
             var choosenOne = (Avatar)null;
             var i = Utils.Random.Next(count);
             var j = 0;
+
+            Debug.Assert(avatars != null);
+            if (avatars == null)
+            {
+                Console.WriteLine("warning: db returned null list of avatars");
+                return null;
+            }
+
             foreach (var avatar in avatars)
             {
                 if (i == j)

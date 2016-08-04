@@ -30,6 +30,7 @@ namespace CoCSharp.Server.Core
             _mapper.Entity<Clan>()
                    .Ignore(x => x.AllianceDataResponseMessage);
 
+            _dbLock = new object();
             _liteDb = new LiteDatabase("alliances_db.db", _mapper);
             _liteDb.Log.Level = Logger.ERROR;
             _liteDb.Log.Logging += OnLog;
@@ -39,7 +40,8 @@ namespace CoCSharp.Server.Core
 
         // Mapper that _liteDb is going to use.
         private readonly BsonMapper _mapper;
-        
+
+        private readonly object _dbLock;
         // Db of alliances.
         private readonly LiteDatabase _liteDb;
         // Collection of alliances in _liteDb.
@@ -54,7 +56,7 @@ namespace CoCSharp.Server.Core
         {
             var clan = new Clan();
 
-            _alliancesCollection.Insert(clan);
+            SaveClan(clan);
             return clan;
         }
 
@@ -71,7 +73,7 @@ namespace CoCSharp.Server.Core
             if (clan == null)
                 throw new ArgumentNullException("clan");
 
-            using (var trans = _liteDb.BeginTrans())
+            lock (_dbLock)
             {
                 if (!_alliancesCollection.Update(clan))
                     _alliancesCollection.Insert(clan);
@@ -83,7 +85,10 @@ namespace CoCSharp.Server.Core
             if (clan == null)
                 throw new ArgumentNullException("clan");
 
-            _alliancesCollection.Delete(clan.ID);
+            lock (_dbLock)
+            {
+                _alliancesCollection.Delete(clan.ID);
+            }
         }
 
         public void QueueSave(Clan clan)
@@ -110,41 +115,45 @@ namespace CoCSharp.Server.Core
             Debug.WriteLine("Flushing alliances", "Saving");
             Debug.Indent();
 
-            // Save transaction.
-            using (var trans = _liteDb.BeginTrans())
+            lock (_dbLock)
             {
-                for (int i = 0; i < _saveQueue.Count; i++)
+                // Save transaction.
+                using (var trans = _liteDb.BeginTrans())
                 {
-                    var clan = _saveQueue.Dequeue();
-                    Debug.Assert(clan != null);
-                    if (clan == null)
+                    for (int i = 0; i < _saveQueue.Count; i++)
                     {
-                        Console.WriteLine("WARNING: AllianceManger _saveQueue.Dequeue() returned null - skipping save");
-                        continue;
-                    }
+                        var clan = _saveQueue.Dequeue();
+                        Debug.Assert(clan != null);
+                        if (clan == null)
+                        {
+                            Console.WriteLine("WARNING: AllianceManger _saveQueue.Dequeue() returned null - skipping save");
+                            continue;
+                        }
 
-                    SaveClan(clan);
-                    Debug.WriteLine("--> Saved alliance " + clan.ID, "Saving");
+                        SaveClan(clan);
+                        Debug.WriteLine("--> Saved alliance " + clan.ID, "Saving");
+                    }
+                }
+
+                // Delete transaction.
+                using (var trans = _liteDb.BeginTrans())
+                {
+                    for (int i = 0; i < _deleteQueue.Count; i++)
+                    {
+                        var clan = _saveQueue.Dequeue();
+                        Debug.Assert(clan != null);
+                        if (clan == null)
+                        {
+                            Console.WriteLine("alliance _deleteQueue.Dequeue() returned null - skipping save");
+                            continue;
+                        }
+
+                        DeleteClan(clan);
+                        Debug.WriteLine("--> Deleted alliance " + clan.ID, "Saving");
+                    }
                 }
             }
 
-            // Delete transaction.
-            using (var trans = _liteDb.BeginTrans())
-            {
-                for (int i = 0; i < _deleteQueue.Count; i++)
-                {
-                    var clan = _saveQueue.Dequeue();
-                    Debug.Assert(clan != null);
-                    if (clan == null)
-                    {
-                        Console.WriteLine("alliance _deleteQueue.Dequeue() returned null - skipping save");
-                        continue;
-                    }
-
-                    DeleteClan(clan);
-                    Debug.WriteLine("--> Deleted alliance " + clan.ID, "Saving");
-                }
-            }
             Debug.Unindent();
             Debug.WriteLine("Flushing done", "Saving");
         }
@@ -156,7 +165,10 @@ namespace CoCSharp.Server.Core
 
         public IEnumerable<Clan> GetAllClan()
         {
-            return _alliancesCollection.FindAll();
+            lock (_dbLock)
+            {
+                return _alliancesCollection.FindAll();
+            }
         }
     }
 }

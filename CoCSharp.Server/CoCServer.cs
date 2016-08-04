@@ -165,26 +165,37 @@ namespace CoCSharp.Server
         // and to provide some logs.
         private void TimerCallback(object state)
         {
-            
-            for (int i = 0; i < Clients.Count; i++)
-            {
-                var client = Clients[i];
-                if (DateTime.UtcNow >= client.ExpirationKeepAlive)
-                { 
-                    var remoteEndPoint = client.NetworkManager.Socket.RemoteEndPoint;
-                    client.Disconnect(true);
-                }
-            }
+            DoKeepAlive();
 
             var activeConn = Clients.Count; // <- Can be wrong some times.
             var totalConn = Thread.VolatileRead(ref _totalConnection);
             var totalSent = _settings.Statistics.TotalByteSent;
             var totalReceived = _settings.Statistics.TotalByteReceived;
             var totalMsgSent = _settings.Statistics.TotalMessagesSent;
-            var totalMsgReceived = _settings.Statistics.TotalMessagesReceived;            
+            var totalMsgReceived = _settings.Statistics.TotalMessagesReceived;
 
             Console.WriteLine("log::activeconn/totalconn: {0}/{1}, sent/receive: {2}/{3} bytes, sent/receive: {4}/{5} messages",
                               activeConn, totalConn, totalSent, totalReceived, totalMsgSent, totalMsgReceived);
+        }
+
+        private void DoKeepAlive()
+        {
+            try
+            {
+                for (int i = 0; i < Clients.Count; i++)
+                {
+                    var client = Clients[i];
+                    if (DateTime.UtcNow >= client.ExpirationKeepAlive)
+                    {
+                        var remoteEndPoint = client.NetworkManager.Socket.RemoteEndPoint;
+                        client.InternalDisconnect(true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("exception: error while checking keepalives: {0}", ex.Message);
+            }
         }
     }
 }
