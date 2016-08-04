@@ -102,8 +102,8 @@ namespace CoCSharp.Server
             var elixir = Home.AssetManager.SearchCsv<ResourceData>("TID_ELIXIR").ID;
 
             NpcStars = Server.NpcManager.CompleteNpcStarList;
-            ResourcesAmount.Add(new ResourceAmountSlot(gold, 1000));
-            ResourcesAmount.Add(new ResourceAmountSlot(elixir, 1000));
+            ResourcesAmount.Add(new ResourceAmountSlot(gold, Server.Configuration.StartingGold));
+            ResourcesAmount.Add(new ResourceAmountSlot(elixir, Server.Configuration.StartingElixir));
         }
 
         private void SetFromAvatar(Avatar avatar, bool newAvatar)

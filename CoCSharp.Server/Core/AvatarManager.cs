@@ -14,8 +14,9 @@ namespace CoCSharp.Server.Core
     // Provides method to save & load avatars.
     public class AvatarManager
     {
-        public AvatarManager()
+        public AvatarManager(CoCServer server)
         {
+            _server = server;
             _saveQueue = new SaveQueue<Avatar>();
 
             // Random names which Avatars who have not set their names
@@ -102,6 +103,8 @@ namespace CoCSharp.Server.Core
             _avatarCollection = _liteDb.GetCollection<Avatar>("avatars");
         }
 
+        // Server with which the manager was initialized.
+        private readonly CoCServer _server;
         // Array of random names to choose from when creating a new avatar.
         private readonly string[] _newNames;
         // Default village json.
@@ -140,8 +143,8 @@ namespace CoCSharp.Server.Core
             avatar.Level = 9;
             avatar.Home = Village.FromJson(_startingVillage);
             avatar.Name = GetRandomName();
-            avatar.Gems = 69696969;
-            avatar.FreeGems = 69696969;
+            avatar.Gems = _server.Configuration.StartingGems;
+            avatar.FreeGems = _server.Configuration.StartingGems;
 
             // Set tutorial progress to where it ask the username.
             for (int i = 0; i < 10; i++)

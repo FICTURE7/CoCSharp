@@ -62,6 +62,7 @@
     <Compile Include="Core\AvatarManager.cs" />
     <Compile Include="Core\NpcManager.cs" />
     <Compile Include="Core\SaveQueue{T}.cs" />
+    <Compile Include="CoCServerConfiguration.cs" />
     <Compile Include="DirectoryPaths.cs" />
     <Compile Include="Core\FancyConsole.cs" />
     <Compile Include="Core\FancyConsole.Write.cs" />

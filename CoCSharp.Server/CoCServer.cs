@@ -28,8 +28,10 @@ namespace CoCSharp.Server
 
             _timer = new Timer(TimerCallback, null, KEEPALIVE_TIIMEOUT, KEEPALIVE_TIIMEOUT);
 
+            Console.WriteLine("-> loading config.xml");
+            Configuration = new CoCServerConfiguration("config.xml");
             Console.WriteLine("-> setting up AvatarManager...");
-            AvatarManager = new AvatarManager();
+            AvatarManager = new AvatarManager(this);
 
             Console.WriteLine("-> setting up AllianceManager...");
             AllianceManager = new AllianceManager();
@@ -66,6 +68,7 @@ namespace CoCSharp.Server
             Console.WriteLine("done");
         }
 
+        public CoCServerConfiguration Configuration { get; private set; }
         public List<AvatarClient> Clients { get; private set; }
 
         public NpcManager NpcManager { get; private set; }
