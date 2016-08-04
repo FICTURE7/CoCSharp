@@ -138,6 +138,11 @@ namespace CoCSharp.Network.Messages
         public override ushort ID { get { return 20103; } }
 
         /// <summary>
+        /// Gets the version of the <see cref="LoginFailedMessage"/>.
+        /// </summary>
+        public override ushort Version { get { return 2; } }
+
+        /// <summary>
         /// Reads the <see cref="LoginFailedMessage"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
