@@ -31,11 +31,6 @@ namespace CoCSharp.Data.Slots
         }
 
         /// <summary>
-        /// Gets or sets the unit upgrade ID.
-        /// </summary>
-        //public override int ID { get; set; }
-
-        /// <summary>
         /// Gets or sets the level of unit upgrade.
         /// </summary>
         public int Level { get; set; }

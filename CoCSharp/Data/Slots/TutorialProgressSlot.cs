@@ -29,11 +29,6 @@ namespace CoCSharp.Data.Slots
         }
 
         /// <summary>
-        /// Gets or sets the mission ID.
-        /// </summary>
-        //public override int ID { get; set; }
-
-        /// <summary>
         /// Reads the <see cref="TutorialProgressSlot"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">

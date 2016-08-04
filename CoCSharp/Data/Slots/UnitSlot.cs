@@ -29,11 +29,6 @@ namespace CoCSharp.Data.Slots
             ID = id;
             Amount = amount;
         }
-        
-        /// <summary>
-        /// Gets or sets the unit ID.
-        /// </summary>
-        //public override int ID { get; set; }
 
         /// <summary>
         /// Gets or sets the amount of unit.
