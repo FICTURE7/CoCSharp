@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Network;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 
 namespace CoCSharp
@@ -55,6 +56,25 @@ namespace CoCSharp
             for (int i = 0; i < bytes.Length; i++)
                 str += bytes[i].ToString("x2");
             return str;
+        }
+        public static void IncrementNonce(this byte[] nonce)
+        {
+            // TODO: Write own method for incrementing nonces by 2.
+            //nonce = Utilities.Increment(Utilities.Increment(nonce));
+            for (int j = 0; j < 2; j++)
+            {
+                ushort c = 1;
+                for (uint i = 0; i < nonce.Length; i++)
+                {
+                    c += nonce[i];
+                    nonce[i] = (byte)c;
+                    c >>= 8;
+                }
+            }
+        }
+        public static byte[] ToBytes(this string hex)
+        {
+            return Enumerable.Range(0, hex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hex.Substring(x, 2), 16)).ToArray();
         }
     }
 }
