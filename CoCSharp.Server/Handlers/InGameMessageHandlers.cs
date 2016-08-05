@@ -247,6 +247,8 @@ namespace CoCSharp.Server.Handlers
                 cmsMessage.UserID = client.ID; // <- might have an issue here.
                 cmsMessage.Name = client.Name;
                 cmsMessage.Message = cmcMessage.Message;
+                cmsMessage.Clan = client.Alliance;
+
 
                 server.SendMessageAll(cmsMessage);
             }
