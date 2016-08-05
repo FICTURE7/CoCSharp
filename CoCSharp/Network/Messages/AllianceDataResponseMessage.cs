@@ -106,7 +106,6 @@ namespace CoCSharp.Network.Messages
             }
 
             var count = Members.Length;
-            Console.WriteLine(count);
             writer.Write(count);
             for (int i = 0; i < count; i++)
             {

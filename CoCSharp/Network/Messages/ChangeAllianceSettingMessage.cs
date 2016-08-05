@@ -46,10 +46,10 @@ namespace CoCSharp.Network.Messages
         }
 
         /// <summary>
-        /// Writes the <see cref="ChangeAvatarNameRequestMessage"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="ChangeAllianceSettingMessage"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ChangeAvatarNameRequestMessage"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ChangeAllianceSettingMessage"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessage(MessageWriter writer)
