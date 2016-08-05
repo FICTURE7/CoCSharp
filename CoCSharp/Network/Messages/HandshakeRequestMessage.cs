@@ -17,40 +17,41 @@ namespace CoCSharp.Network.Messages
         }
 
         /// <summary>
-        /// Unknown integer 1.
+        /// Protocol.
         /// </summary>
-        public int Unknown1;
+        public int Protocol;
         /// <summary>
-        /// Unknown integer 2.
+        /// Key Version.
         /// </summary>
-        public int Unknown2;
+        public int KeyVersion;
         /// <summary>
-        /// Unknown integer 3.
+        /// MajorVersion.
         /// </summary>
         public int MajorVersion;
 
         /// <summary>
-        /// Unknown integer 4.
-        /// </summary>
-        public int Unknown4;
-
-        /// <summary>
-        /// Unknown integer 5.
+        /// MinorVersion.
         /// </summary>
         public int MinorVersion;
+
+        /// <summary>
+        /// Build;.
+        /// </summary>
+        public int Build;
+
         /// <summary>
         /// Hash string.
         /// </summary>
         public string Hash;
 
         /// <summary>
-        /// Unknown integer 6.
+        /// Device Type.
         /// </summary>
-        public int Unknown6;
+        public int DeviceType;
         /// <summary>
-        /// Unknown integer 7.
+        /// AppStore.
         /// </summary>
-        public int Unknown7;
+        public int AppStore;
 
         /// <summary>
         /// Gets the ID of the <see cref="HandshakeRequestMessage"/>.
@@ -68,18 +69,18 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            Unknown1 = reader.ReadInt32();
-            Unknown2 = reader.ReadInt32();
+            Protocol = reader.ReadInt32();
+            KeyVersion = reader.ReadInt32();
 
             MajorVersion = reader.ReadInt32();
 
-            Unknown4 = reader.ReadInt32();
-
             MinorVersion = reader.ReadInt32();
+
+            Build = reader.ReadInt32();
             Hash = reader.ReadString();
 
-            Unknown6 = reader.ReadInt32();
-            Unknown7 = reader.ReadInt32();
+            DeviceType = reader.ReadInt32();
+            AppStore = reader.ReadInt32();
         }
 
         /// <summary>
@@ -93,18 +94,18 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(Unknown1);
-            writer.Write(Unknown2);
+            writer.Write(Protocol);
+            writer.Write(KeyVersion);
 
             writer.Write(MajorVersion);
 
-            writer.Write(Unknown4);
-
             writer.Write(MinorVersion);
+
+            writer.Write(Build);
             writer.Write(Hash);
 
-            writer.Write(Unknown6);
-            writer.Write(Unknown7);
+            writer.Write(DeviceType);
+            writer.Write(AppStore);
         }
     }
 }

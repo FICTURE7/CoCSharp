@@ -71,7 +71,29 @@ namespace CoCSharp.Server.Handlers
             client.Alliance = clan;
             client.NetworkManager.SendMessage(ascMessage);
         }
+        private static void HandleChangeAllianceSettingMessage(CoCServer server, AvatarClient client, Message message)
+        {
+            // Not yet finish because working on fixing Alliance Data
+            var edAlliance = (ChangeAllianceSettingMessage)message;
+            var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
+            if (clan == null)
+            {
+                // Whattt?
+            }
+            clan.Description = edAlliance.Description;
+            server.AllianceManager.QueueSave(clan);
 
+            var csCommand = new ChangedAllianceSettingCommand();
+            csCommand.ClanID = clan.ID;
+            csCommand.Badge = clan.Badge;
+            csCommand.Level = clan.Level;
+            csCommand.Tick = -1;
+            var ascMessage = new AvailableServerCommandMessage();
+            ascMessage.Command = csCommand;
+
+            client.NetworkManager.SendMessage(ascMessage);
+
+        }
         private static void HandleJoinAllianceMessage(CoCServer server, AvatarClient client, Message message)
         {
             var jaAlliance = (JoinAllianceMessage)message;

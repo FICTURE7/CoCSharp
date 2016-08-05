@@ -364,11 +364,6 @@ namespace CoCSharp.Network.Messages
         public SlotCollection<NpcElixirSlot> NpcElixir;
 
         /// <summary>
-        /// Unknown integer 29.
-        /// </summary>
-        public int Unknown29;
-
-        /// <summary>
         /// Unknown slot 1.
         /// </summary>
         public SlotCollection<UnknownSlot> UnknownSlot1;
@@ -380,6 +375,10 @@ namespace CoCSharp.Network.Messages
         /// Unknown slot 3.
         /// </summary>
         public SlotCollection<UnknownSlot> UnknownSlot3;
+        /// <summary>
+        /// Unknown slot 4.
+        /// </summary>
+        public SlotCollection<UnknownSlot> UnknownSlot4;
         #endregion
 
         #region Methods
@@ -423,13 +422,14 @@ namespace CoCSharp.Network.Messages
             Unknown11 = reader.ReadInt32();
             Unknown12 = reader.ReadInt32();
 
-            Unknown13 = reader.ReadInt32(); // 0 = 8.x.x
-            Unknown14 = reader.ReadInt32(); // -1 = 8.x.x
-
             LeagueLevel = reader.ReadInt32();
             AllianceCastleLevel = reader.ReadInt32();
             AllianceCastleTotalCapacity = reader.ReadInt32();
             AllianceCastleUsedCapacity = reader.ReadInt32();
+            
+            Unknown13 = reader.ReadInt32(); // 0 = 8.x.x
+            Unknown14 = reader.ReadInt32(); // -1 = 8.x.x
+
             TownHallLevel = reader.ReadInt32();
             Name = reader.ReadString();
 
@@ -481,11 +481,10 @@ namespace CoCSharp.Network.Messages
             NpcGold = reader.Read<NpcGoldSlot>();
             NpcElixir = reader.Read<NpcElixirSlot>();
 
-            Unknown29 = reader.ReadInt32();
-
             UnknownSlot1 = reader.Read<UnknownSlot>();
             UnknownSlot2 = reader.Read<UnknownSlot>();
             UnknownSlot3 = reader.Read<UnknownSlot>();
+            UnknownSlot4 = reader.Read<UnknownSlot>();
         }
 
         /// <summary>
@@ -586,11 +585,10 @@ namespace CoCSharp.Network.Messages
             writer.Write(NpcGold);
             writer.Write(NpcElixir);
 
-            writer.Write(Unknown29);
-
             writer.Write(UnknownSlot1);
             writer.Write(UnknownSlot2);
             writer.Write(UnknownSlot3);
+            writer.Write(UnknownSlot4);
         }
         #endregion
     }

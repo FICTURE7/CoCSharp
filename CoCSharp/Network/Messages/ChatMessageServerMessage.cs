@@ -98,10 +98,13 @@ namespace CoCSharp.Network.Messages
 
             if (Clan != null)
             {
+                writer.Write(true);
                 writer.Write(Clan.ID);
                 writer.Write(Clan.Name);
-                writer.Write(Clan.Level);
+                writer.Write(Clan.Badge);
             }
+            else
+                writer.Write(false);
         }
     }
 }
