@@ -62,7 +62,6 @@ namespace CoCSharp.Network.Messages.Commands
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="ChangedAllianceSettingCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
-
         public override void WriteCommand(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);

@@ -152,6 +152,20 @@ namespace CoCSharp.Logic
                 return data;
             }
         }
+        /// <summary>
+        /// Gets a new <see cref="Network.Messages.AllianceFullEntryMessage"/>
+        /// representing this <see cref="Clan"/> instance.
+        /// </summary>
+        public AllianceFullEntryMessage AllianceFullEntryMessage
+        {
+            get
+            {
+                var data = new AllianceFullEntryMessage();
+                data.Clan = new CompleteClanMessageComponent(this);
+                data.Description = Description;
+                return data;
+            }
+        }
 
         /// <summary>
         /// Finds a <see cref="ClanMember"/> with the same user ID as specified.
