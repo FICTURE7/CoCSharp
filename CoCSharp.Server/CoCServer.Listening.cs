@@ -33,48 +33,43 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine("exception: unable to start listener on {0}: {1}", endpoint, ex.Message);
+                Log.Exception("unable to start listener on " + endpoint, ex);
                 Environment.Exit(1);
             }
 
-            StartAccept();
+            StartAccept(null);
         }
 
-        private void StartAccept()
+        private void StartAccept(SocketAsyncEventArgs args)
         {
             try
             {
-                var acceptArgs = _acceptPool.Pop();
-                if (acceptArgs == null)
-                    acceptArgs = CreateNewAcceptArgs();
-
-                acceptArgs.AcceptSocket = null;
-                while (!_listener.AcceptAsync(acceptArgs))
+                if (args == null)
                 {
-                    ProcessAccept(acceptArgs);
-                    acceptArgs.AcceptSocket = null;
+                    args = _acceptPool.Pop();
+                    if (args == null)
+                        args = CreateNewAcceptArgs();
                 }
+
+                args.AcceptSocket = null;
+                if (!_listener.AcceptAsync(args))
+                    ProcessAccept(args);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("exception: unable to start accept: {0}", ex.Message);
+                Log.Exception("***unable to start accept", ex);
             }
         }
 
         private void ProcessAccept(SocketAsyncEventArgs args)
-        {
-            if (args.SocketError != SocketError.Success)
-            {
-                ProcessBadAccept(args);
-                return;
-            }
-
+        {            
             try
             {
                 Interlocked.Increment(ref _totalConnection);
                 var remoteSocket = args.AcceptSocket;
                 var remoteEndPoint = args.AcceptSocket.RemoteEndPoint;
                 Console.WriteLine("listener: accepted new remote connection: {0}", remoteEndPoint);
+                args.AcceptSocket = null;
 
                 // Start accepting new connection ASAP.
                 ThreadPool.QueueUserWorkItem((object state) =>
@@ -82,35 +77,45 @@ namespace CoCSharp.Server
                     var client = new AvatarClient(this, remoteSocket, _settings);
                     Clients.Add(client);
                 });
-
-                args.AcceptSocket = null;
             }
             catch (Exception ex)
             {
-                Log.Exception("unable to process accept: ", ex);
+                Log.Exception("***unable to process accept: ", ex);
+            }
+            finally
+            {
+                StartAccept(args);
             }
         }
 
         private void ProcessBadAccept(SocketAsyncEventArgs args)
         {
-            Console.WriteLine("listener: encountered bad accept");
+            Console.WriteLine("listener: ***encountered bad accept");
             try
             {
                 args.AcceptSocket.Close();
                 args.AcceptSocket = null;
-                //_acceptPool.Push(args);
+                _acceptPool.Push(args);
             }
             catch (Exception ex)
             {
-                Log.Exception("unable to close bad socket: ", ex);
+                Log.Exception("***unable to close bad socket: ", ex);
+            }
+            finally
+            {
+                StartAccept(null);
             }
         }
 
         private void AcceptOperationCompleted(object sender, SocketAsyncEventArgs args)
         {
+            if (args.SocketError != SocketError.Success)
+            {
+                ProcessBadAccept(args);
+                return;
+            }
+
             ProcessAccept(args);
-            StartAccept();
-            _acceptPool.Push(args);
         }
     }
 }

@@ -28,7 +28,8 @@ namespace CoCSharp.Server.Core
             );
 
             _mapper.Entity<Clan>()
-                   .Ignore(x => x.AllianceDataResponseMessage);
+                   .Ignore(x => x.AllianceDataResponseMessage)
+                   .Ignore(x => x.AllianceFullEntryMessage);
 
             _dbLock = new object();
             _liteDb = new LiteDatabase("alliances_db.db", _mapper);
@@ -55,7 +56,7 @@ namespace CoCSharp.Server.Core
         public Clan CreateNewClan()
         {
             var clan = new Clan();
-
+            clan.Name = "Unnamed Alliance";
             SaveClan(clan);
             return clan;
         }
@@ -119,7 +120,7 @@ namespace CoCSharp.Server.Core
 
         public void Flush()
         {
-            if (_saveQueue.Count == 0)
+            if (_saveQueue.Count == 0 && _deleteQueue.Count == 0)
                 return;
 
             Debug.WriteLine("Flushing alliances", "Saving");
@@ -150,7 +151,7 @@ namespace CoCSharp.Server.Core
                 {
                     for (int i = 0; i < _deleteQueue.Count; i++)
                     {
-                        var clan = _saveQueue.Dequeue();
+                        var clan = _deleteQueue.Dequeue();
                         Debug.Assert(clan != null);
                         if (clan == null)
                         {

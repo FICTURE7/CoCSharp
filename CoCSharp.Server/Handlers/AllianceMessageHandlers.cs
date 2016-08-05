@@ -26,7 +26,7 @@ namespace CoCSharp.Server.Handlers
             var count = 0;
             foreach (var clan in clans)
             {
-                if (count == 1)
+                if (count == 64)
                     break;
                 if (clan.Members.Count == 0)
                     continue;
@@ -155,6 +155,8 @@ namespace CoCSharp.Server.Handlers
                 return;
             }
 
+            clan.RemoveMember(client.ID);
+
             if (clan.Members.Count == 0)
             {
                 server.AllianceManager.QueueDelete(clan);
@@ -203,9 +205,8 @@ namespace CoCSharp.Server.Handlers
                     newLeader = firstMember;
 
                 newLeader.Role = ClanMemberRole.Leader;
+                server.AllianceManager.QueueSave(clan);
             }
-
-            server.AllianceManager.QueueSave(clan);
 
             var alCommand = new AllianceLeftCommand()
             {

@@ -96,7 +96,7 @@ namespace CoCSharp.Server
             Server.Clients.Remove(this);
 
             var extraInfo = dueToKeepAlive ? "; keepalive expired" : string.Empty;
-            Console.WriteLine("listener: disconnected {0}{1}", remoteEndPoint, extraInfo);
+            Log.Info("listener", string.Format("disconnected {0}{1}", remoteEndPoint, extraInfo));
         }
 
         internal void UpdateKeepAlive()

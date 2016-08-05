@@ -87,10 +87,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(lsMessage); // LoginSuccessMessage
             client.SendMessage(ohdMessage); // OwnHomeDataMessage
             if (client.Alliance != null)
-            {
-                var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
-                client.SendMessage(clan.AllianceFullEntryMessage); // AllianceFullEntry
-            }
+                client.SendMessage(client.Alliance.AllianceFullEntryMessage);
         }
 
         private static void HandleHandshakeRequestMessage(CoCServer server, AvatarClient client, Message message)
