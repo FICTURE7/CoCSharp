@@ -11,7 +11,7 @@ namespace CoCSharp.Server
     {
         public static CoCProxy Proxy { get; set; }
 
-        public static void m(string[] args)
+        public static void Main(string[] args)
         {
             Console.Title = "CoC# - Proxy";
 
