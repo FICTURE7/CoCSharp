@@ -18,13 +18,13 @@ namespace CoCSharp.Server.Handlers
             if (client.SessionKey == null)
             {
                 var loginFailed = new LoginFailedMessage();
-                client.NetworkManager.SendMessage(loginFailed);
+                client.SendMessage(loginFailed);
                 client.Disconnect();
                 return;
             }
 
             var lrMessage = (LoginRequestMessage)message;
-            var keyPair = Crypto8.GenerateKeyPair();            
+            var keyPair = Crypto8.GenerateKeyPair();
             var lsMessage = new LoginSuccessMessage()
             {
                 // NetworkManagerAsync will use this nonce.
@@ -59,17 +59,16 @@ namespace CoCSharp.Server.Handlers
             if (!client.Load())
             {
                 var thread = Thread.CurrentThread.ManagedThreadId;
-                Console.WriteLine("login: failed {0}:{1} thread {2}, already have entry with same ID?", client.ID, client.Token, thread);
+                Console.WriteLine("login: failed {0}:{1} thread {2}, already have entry with same id?", client.ID, client.Token, thread);
 
                 var lfMessage = new LoginFailedMessage()
                 {
                     Nonce = Crypto8.GenerateNonce(),
                     PublicKey = keyPair.PublicKey,
 
-                    Reason = (LoginFailureReason)6,
-                    Message = "Issue with loading your account, please clear your app data."
+                    Message = "Issue with loading your account, please clear your app data and try again."
                 };
-                client.NetworkManager.SendMessage(lfMessage);
+                client.SendMessage(lfMessage);
                 client.Disconnect();
                 return;
             }
@@ -85,26 +84,24 @@ namespace CoCSharp.Server.Handlers
             }
 
             var ohdMessage = client.OwnHomeDataMessage;
-
-            client.NetworkManager.SendMessage(lsMessage); // LoginSuccessMessage
-            client.NetworkManager.SendMessage(ohdMessage); // OwnHomeDataMessage
+            client.SendMessage(lsMessage); // LoginSuccessMessage
+            client.SendMessage(ohdMessage); // OwnHomeDataMessage
             if (client.Alliance != null)
             {
                 var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
-                client.NetworkManager.SendMessage(clan.AllianceFullEntryMessage); // AllianceFullEntry
+                client.SendMessage(clan.AllianceFullEntryMessage); // AllianceFullEntry
             }
         }
 
         private static void HandleHandshakeRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
             client.SessionKey = Crypto8.GenerateNonce();
-
             var enMessage = new HandshakeSuccessMessage()
             {
                 SessionKey = client.SessionKey
             };
 
-            client.NetworkManager.SendMessage(enMessage);
+            client.SendMessage(enMessage);
         }
 
         public static void RegisterLoginMessageHandlers(CoCServer server)

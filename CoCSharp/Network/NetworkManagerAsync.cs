@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Network.Cryptography;
 using CoCSharp.Network.Messages;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -168,6 +169,8 @@ namespace CoCSharp.Network
                     enMessageWriter.Write(body); // encrypted body
 
                     var messageData = ((MemoryStream)enMessageWriter.BaseStream).ToArray();
+                    if (messageData.Length > Message.MaxSize)
+                        throw new InvalidMessageException("Message size too large.", message);
                     var args = _sendPool.Pop();
                     if (args == null)
                     {
@@ -202,7 +205,7 @@ namespace CoCSharp.Network
             if (token.SendRemaining > 0)
             {
                 // If message larger than buffer size.
-                if (token.Body.Length > Settings.BufferSize)
+                if (token.SendRemaining > Settings.BufferSize)
                 {
                     Buffer.BlockCopy(token.Body, token.SendOffset, args.Buffer, args.Offset, Settings.BufferSize);
                 }
@@ -477,6 +480,8 @@ namespace CoCSharp.Network
                             _sendPool.Push(args);
                             break;
                     }
+
+                    Settings._concurrentOps.Release();
                     return;
                 }
 
@@ -493,6 +498,7 @@ namespace CoCSharp.Network
                             break;
                     }
 
+                    Settings._concurrentOps.Release();
                     OnDisconnected(new DisconnectedEventArgs(args.SocketError));
                     return;
                 }
@@ -515,7 +521,7 @@ namespace CoCSharp.Network
             }
             else
             {
-                // NetworkManagerAsync is not responding.
+                Debug.Write("Semaphore not responding in time.");
             }
         }
 

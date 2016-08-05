@@ -24,12 +24,13 @@ namespace CoCSharp.Server
 
             _settings = new NetworkManagerAsyncSettings(64, 64);
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            _acceptPool = new SocketAsyncEventArgsPool(100, AcceptOperationCompleted);
+            _acceptPool = new SocketAsyncEventArgsPool(8, AcceptOperationCompleted);
 
             _timer = new Timer(TimerCallback, null, KEEPALIVE_TIIMEOUT, KEEPALIVE_TIIMEOUT);
 
             Console.WriteLine("-> loading config.xml");
             Configuration = new CoCServerConfiguration("config.xml");
+
             Console.WriteLine("-> setting up AvatarManager...");
             AvatarManager = new AvatarManager(this);
 
@@ -122,16 +123,16 @@ namespace CoCSharp.Server
             try
             {
 #endif
-            var handler = (MessageHandler)null;
-            if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
-            {
-                handler(this, client, message);
-            }
+                var handler = (MessageHandler)null;
+                if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
+                {
+                    handler(this, client, message);
+                }
 #if !DEBUG
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception occurred while handling message: {0}\r\n\t{1}", message.GetType().Name, ex);
+                Log.Exception("failed to handle message", ex);
             }
 #endif
         }
@@ -143,16 +144,16 @@ namespace CoCSharp.Server
             try
             {
 #endif
-            var handler = (CommandHandler)null;
-            if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
-            {
-                handler(this, client, command);
-            }
+                var handler = (CommandHandler)null;
+                if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
+                {
+                    handler(this, client, command);
+                }
 #if !DEBUG
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception occurred while handling command: {0}\r\n\t{1}", command.GetType().Name, ex);
+                Log.Exception("failed to handle command", ex);
             }
 #endif
         }
@@ -161,7 +162,7 @@ namespace CoCSharp.Server
         public void SendMessageAll(Message message)
         {
             for (int i = 0; i < Clients.Count; i++)
-                Clients[i].NetworkManager.SendMessage(message);
+                Clients[i].SendMessage(message);
         }
 
         // Called by _timer to check whether KeepAlives has expired
@@ -187,17 +188,14 @@ namespace CoCSharp.Server
             {
                 for (int i = 0; i < Clients.Count; i++)
                 {
-                    var client = Clients[i];
+                    var client = Clients[i]; // <- Can be null. 
                     if (DateTime.UtcNow >= client.ExpirationKeepAlive)
-                    {
-                        var remoteEndPoint = client.NetworkManager.Socket.RemoteEndPoint;
                         client.InternalDisconnect(true);
-                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("exception: error while checking keepalives: {0}", ex.Message);
+                Log.Exception("failed to check keepalives", ex);
             }
         }
     }

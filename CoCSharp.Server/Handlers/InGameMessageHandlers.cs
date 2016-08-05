@@ -16,7 +16,7 @@ namespace CoCSharp.Server.Handlers
         private static void HandleKeepAliveRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
             client.UpdateKeepAlive();
-            client.NetworkManager.SendMessage(s_keepAliveResponse);
+            client.SendMessage(s_keepAliveResponse);
         }
 
         private static void HandleAttackNpcMessage(CoCServer server, AvatarClient client, Message message)
@@ -26,7 +26,7 @@ namespace CoCSharp.Server.Handlers
             var npcVillage = server.NpcManager.LoadNpc(anMessage.NpcID);
             if (npcVillage == null)
             {
-                client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
+                client.SendMessage(client.OwnHomeDataMessage);
                 return;
             }
 
@@ -43,7 +43,7 @@ namespace CoCSharp.Server.Handlers
 
             FancyConsole.WriteLine(LogFormats.Attack_Npc, client.Token, anMessage.NpcID);
 
-            client.NetworkManager.SendMessage(ndMessage);
+            client.SendMessage(ndMessage);
         }
 
         private static void HandleAttackResultMessage(CoCServer server, AvatarClient client, Message message)
@@ -53,7 +53,7 @@ namespace CoCSharp.Server.Handlers
 
             FancyConsole.WriteLine(LogFormats.Attack_ReturnHome, client.Token);
 
-            client.NetworkManager.SendMessage(ohdMessage);
+            client.SendMessage(ohdMessage);
         }
 
         private static void HandleAvatarProfileRequestMessage(CoCServer server, AvatarClient client, Message message)
@@ -84,7 +84,7 @@ namespace CoCSharp.Server.Handlers
 
             FancyConsole.WriteLine(LogFormats.Avatar_ProfileReq, client.Token);
 
-            client.NetworkManager.SendMessage(aprMessage);
+            client.SendMessage(aprMessage);
         }
 
         private static void HandleVisitHomeMessage(CoCServer server, AvatarClient client, Message message)
@@ -106,7 +106,7 @@ namespace CoCSharp.Server.Handlers
                 OwnAvatarData = new AvatarMessageComponent(client),
             };
 
-            client.NetworkManager.SendMessage(vhdMessage);
+            client.SendMessage(vhdMessage);
         }
 
         private static void HandleCommandMessage(CoCServer server, AvatarClient client, Message message)
@@ -139,12 +139,12 @@ namespace CoCSharp.Server.Handlers
                 client.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
 
             var ascMessage = new AvailableServerCommandMessage();
-            var canCommand = new ChangeAvatarNameCommand();
+            var canCommand = new ChangedAvatarNameCommand();
             canCommand.NewName = careqMessage.NewName;
             canCommand.Unknown1 = 1;
             canCommand.Unknown2 = -1;
             ascMessage.Command = canCommand;
-            client.NetworkManager.SendMessage(ascMessage);
+            client.SendMessage(ascMessage);
 
             client.Save();
         }
@@ -161,7 +161,7 @@ namespace CoCSharp.Server.Handlers
                 {
                     case "help":
                         cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /shutdown, /max";
-                        client.NetworkManager.SendMessage(cmsMessage);
+                        client.SendMessage(cmsMessage);
                         break;
 
                     case "addgems":
@@ -169,19 +169,24 @@ namespace CoCSharp.Server.Handlers
                         client.FreeGems += 500;
 
                         cmsMessage.Message = "Added 500 gems.";
-                        client.NetworkManager.SendMessage(cmsMessage);
+                        client.SendMessage(cmsMessage);
 
-                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
+                        client.SendMessage(client.OwnHomeDataMessage);
                         break;
 
                     case "clearobstacles":
                         var count = client.Home.Obstacles.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            var obstacle = client.Home.Obstacles[i];
+                            if (obstacle.IsClearing)
+                                obstacle.CancelClearing();
+                        }
                         client.Home.Obstacles.Clear();
 
-                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
-
                         cmsMessage.Message = "Cleared " + count + " obstacles.";
-                        client.NetworkManager.SendMessage(cmsMessage);
+                        client.SendMessage(cmsMessage);
+                        client.SendMessage(client.OwnHomeDataMessage);
                         break;
 
                     case "max":
@@ -212,13 +217,13 @@ namespace CoCSharp.Server.Handlers
                         }
 
                         cmsMessage.Message = "Maxed " + countBuilding + " buildings and " + countTraps + " traps.";
-                        client.NetworkManager.SendMessage(cmsMessage);
+                        client.SendMessage(cmsMessage);
 
-                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
+                        client.SendMessage(client.OwnHomeDataMessage);
                         break;
 
                     case "reload":
-                        client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
+                        client.SendMessage(client.OwnHomeDataMessage);
                         break;
 
 #if DEBUG
@@ -228,7 +233,7 @@ namespace CoCSharp.Server.Handlers
                             server.AvatarManager.CreateNewAvatar();
 
                         cmsMessage.Message = "Created 50 new avatar.";
-                        client.NetworkManager.SendMessage(cmsMessage);
+                        client.SendMessage(cmsMessage);
                         break;
 #endif
                     case "shutdown":
@@ -237,7 +242,7 @@ namespace CoCSharp.Server.Handlers
 
                     default:
                         cmsMessage.Message = "Unknown command.";
-                        client.NetworkManager.SendMessage(cmsMessage);
+                        client.SendMessage(cmsMessage);
                         goto case "help";
                 }
             }

@@ -621,7 +621,7 @@ namespace CoCSharp.Logic
         /// <param name="args"></param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
         {
-            if (PropertyChanged != null && IsPropertyChangedEnabled)
+            if (IsPropertyChangedEnabled && PropertyChanged != null)
                 PropertyChanged(this, args);
         }
         #endregion

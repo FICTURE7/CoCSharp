@@ -82,14 +82,12 @@ namespace CoCSharp.Server.Core
             // LiteDB does not take into account inheritance, from what I observed.
             _mapper.Entity<Avatar>()
                    .Id(x => x.ID)
-                   //.Index(x => x.Token, true) // Make sure tokens are unique.
                    .Ignore(x => x.OwnHomeDataMessage)
                    .Ignore(x => x.ShieldDuration)
                    .Ignore(x => x.IsPropertyChangedEnabled);
 
             _mapper.Entity<AvatarClient>()
                    .Id(x => x.ID)
-                   //.Index(x => x.Token, true) // Make sure tokens are unique.
                    .Ignore(x => x.OwnHomeDataMessage)
                    .Ignore(x => x.ShieldDuration)
                    .Ignore(x => x.IsPropertyChangedEnabled);
@@ -202,20 +200,19 @@ namespace CoCSharp.Server.Core
             Debug.Assert(avatar.Token != null);
             if (avatar.Token == null)
             {
-                Console.WriteLine("warning: null token");
+                Log.Warning("tried to save an avatar with a null token; skipping save");
                 return;
             }
 
             lock (_dbLock)
             {
-                var trans = _liteDb.BeginTrans();
-
-                // If we don't have the avatar in the db
-                // we add it to the db.
-                if (!_avatarCollection.Update(avatar))
-                    _avatarCollection.Insert(avatar);
-
-                trans.Commit();
+                using (var trans = _liteDb.BeginTrans())
+                {
+                    // If we don't have the avatar in the db
+                    // we add it to the db.
+                    if (!_avatarCollection.Update(avatar))
+                        _avatarCollection.Insert(avatar);
+                }
             }
         }
 
@@ -248,7 +245,7 @@ namespace CoCSharp.Server.Core
                     Debug.Assert(avatar != null);
                     if (avatar == null)
                     {
-                        Console.WriteLine("WARNING: AllianceManager _saveQueue.Dequeue() returned null - skipping save");
+                        Log.Warning("AvatarManager _saveQueue.Dequeue() returned null; skipping save");
                         continue;
                     }
 
@@ -269,35 +266,20 @@ namespace CoCSharp.Server.Core
 
         public Avatar GetRandomAvatar(long excludeId)
         {
-            var count = 0;
-            var avatars = (IEnumerable<Avatar>)null;
             lock (_dbLock)
             {
-                count = _avatarCollection.Count();
-                avatars = _avatarCollection.Find(Query.Not("_id", excludeId));
-            }
+                var count = _avatarCollection.Count();
+                var upperRange = Utils.Random.Next(count - 1);
+                var lowerRange = Utils.Random.Next(upperRange - 1);
 
-            var choosenOne = (Avatar)null;
-            var i = Utils.Random.Next(count);
-            var j = 0;
+                var avatars = _avatarCollection.Find(Query.Not("_id", excludeId), lowerRange, upperRange);
+                if (avatars == null)
+                    return null;
 
-            Debug.Assert(avatars != null);
-            if (avatars == null)
-            {
-                Console.WriteLine("warning: db returned null list of avatars");
+                foreach (var k in avatars)
+                    return k;
                 return null;
             }
-
-            foreach (var avatar in avatars)
-            {
-                if (i == j)
-                {
-                    choosenOne = avatar;
-                    break;
-                }
-                j++;
-            }
-            return choosenOne;
         }
 
         // Returns a random name from _newNames.

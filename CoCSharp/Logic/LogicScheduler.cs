@@ -96,34 +96,41 @@ namespace CoCSharp.Logic
                 {
                     s_stopwatch.Restart();
 
-                    for (int i = 0; i < s_scheduleList.Count; i++)
+                    try
                     {
-                        var schedule = s_scheduleList[i];
-
-                        if (schedule.Cancelled)
+                        for (int i = 0; i < s_scheduleList.Count; i++)
                         {
-                            s_scheduleList.RemoveAt(i);
+                            var schedule = s_scheduleList[i];
 
-                            // Check for the schedule before it.
-                            i--;
+                            if (schedule.Cancelled)
+                            {
+                                s_scheduleList.RemoveAt(i);
 
-                            // No need to check if it needs to be executed.
-                            continue;
+                                // Check for the schedule before it.
+                                i--;
+
+                                // No need to check if it needs to be executed.
+                                continue;
+                            }
+
+                            if (DateTime.UtcNow >= schedule.When)
+                            {
+                                schedule.Logic();
+                                s_scheduleList.RemoveAt(i);
+
+                                // Check for the schedule before it.
+                                i--;
+                            }
+                            else
+                            {
+                                // Exit early because the schedule list was sorted.
+                                break;
+                            }
                         }
-
-                        if (DateTime.UtcNow >= schedule.When)
-                        {
-                            schedule.Logic();
-                            s_scheduleList.RemoveAt(i);
-
-                            // Check for the schedule before it.
-                            i--;
-                        }
-                        else
-                        {
-                            // Exit early because the schedule list was sorted.
-                            break;
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("exception: on scheduled logic: {0}", ex.Message);
                     }
 
                     s_tick++;

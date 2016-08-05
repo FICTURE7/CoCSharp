@@ -21,31 +21,27 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int Protocol;
         /// <summary>
-        /// Key Version.
+        /// Key version.
         /// </summary>
         public int KeyVersion;
         /// <summary>
-        /// MajorVersion.
+        /// Major version.
         /// </summary>
         public int MajorVersion;
-
         /// <summary>
-        /// MinorVersion.
+        /// Minor version.
         /// </summary>
         public int MinorVersion;
-
         /// <summary>
-        /// Build;.
+        /// Build.
         /// </summary>
         public int Build;
-
         /// <summary>
         /// Hash string.
         /// </summary>
         public string Hash;
-
         /// <summary>
-        /// Device Type.
+        /// Device type.
         /// </summary>
         public int DeviceType;
         /// <summary>
@@ -71,14 +67,10 @@ namespace CoCSharp.Network.Messages
 
             Protocol = reader.ReadInt32();
             KeyVersion = reader.ReadInt32();
-
             MajorVersion = reader.ReadInt32();
-
             MinorVersion = reader.ReadInt32();
-
             Build = reader.ReadInt32();
             Hash = reader.ReadString();
-
             DeviceType = reader.ReadInt32();
             AppStore = reader.ReadInt32();
         }
@@ -96,14 +88,10 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Protocol);
             writer.Write(KeyVersion);
-
             writer.Write(MajorVersion);
-
             writer.Write(MinorVersion);
-
             writer.Write(Build);
             writer.Write(Hash);
-
             writer.Write(DeviceType);
             writer.Write(AppStore);
         }

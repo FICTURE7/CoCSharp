@@ -6,18 +6,18 @@ namespace CoCSharp.Network.Messages.Commands
     /// Command that is sent by the server to the client to
     /// tell it that its name was changed.
     /// </summary>
-    public class ChangeAvatarNameCommand : Command
+    public class ChangedAvatarNameCommand : Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChangeAvatarNameCommand"/> class.
+        /// Initializes a new instance of the <see cref="ChangedAvatarNameCommand"/> class.
         /// </summary>
-        public ChangeAvatarNameCommand()
+        public ChangedAvatarNameCommand()
         {
             // Space
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="ChangeAvatarNameCommand"/>.
+        /// Gets the ID of the <see cref="ChangedAvatarNameCommand"/>.
         /// </summary>
         public override int ID { get { return 3; } }
 
@@ -36,10 +36,10 @@ namespace CoCSharp.Network.Messages.Commands
         public int Unknown2;
 
         /// <summary>
-        /// Reads the <see cref="ChangeAvatarNameCommand"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="ChangedAvatarNameCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="ChangeAvatarNameCommand"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="ChangedAvatarNameCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
@@ -53,10 +53,10 @@ namespace CoCSharp.Network.Messages.Commands
         }
 
         /// <summary>
-        /// Writes the <see cref="ChangeAvatarNameCommand"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="ChangedAvatarNameCommand"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ChangeAvatarNameCommand"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ChangedAvatarNameCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)

@@ -184,6 +184,31 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
+        /// Adds a <see cref="ClanMember"/> to the <see cref="Clan"/> from the specified
+        /// <see cref="Avatar"/>. Returns <c>true</c> if succeeded; otherwise; false.
+        /// </summary>
+        /// <param name="avatar"><see cref="Avatar"/> to add to the <see cref="Clan"/>.</param>
+        /// <returns>Returns <c>true</c> if succeeded; otherwise; false.</returns>
+        /// 
+        /// <remarks>
+        /// Returns <c>false</c> if a <see cref="ClanMember"/> has the same ID as the specified <see cref="Avatar"/>.
+        /// </remarks>
+        public bool AddMember(Avatar avatar)
+        {
+            if (FindMember(avatar.ID) != null)
+                return false;
+
+            //TODO: Order by Trophy count.
+            Members.Add(new ClanMember(avatar)
+            {
+                Role = ClanMemberRole.Member,
+                Rank = Members.Count,
+                PreviousRank = Members.Count
+            });
+            return true;
+        }
+
+        /// <summary>
         /// Removes a <see cref="ClanMember"/> with the same user ID as specified and returns <c>true</c>
         /// if succeeded; otherwise, <c>false</c>.
         /// </summary>

@@ -28,9 +28,9 @@ namespace CoCSharp.Server
 
             Connection = connection;
             SessionKey = null;
-            NetworkManager = new NetworkManagerAsync(connection, settings);
-            NetworkManager.MessageReceived += OnMessageReceived;
-            NetworkManager.Disconnected += OnDisconnected;
+            _networkManager = new NetworkManagerAsync(connection, settings);
+            _networkManager.MessageReceived += OnMessageReceived;
+            _networkManager.Disconnected += OnDisconnected;
 
             UpdateKeepAlive();
         }
@@ -42,8 +42,6 @@ namespace CoCSharp.Server
         [BsonIgnore]
         public Socket Connection { get; private set; }
         [BsonIgnore]
-        public NetworkManagerAsync NetworkManager { get; private set; }
-        [BsonIgnore]
         public byte[] SessionKey { get; set; }
 
         [BsonIgnore]
@@ -52,6 +50,13 @@ namespace CoCSharp.Server
         [BsonIgnore]
         // Date when the next KeepAliveMessage should received.
         public DateTime ExpirationKeepAlive { get; set; }
+
+        private NetworkManagerAsync _networkManager;
+
+        public void SendMessage(Message message)
+        {
+            _networkManager.SendMessage(message);
+        }
 
         public void Disconnect()
         {
@@ -85,9 +90,9 @@ namespace CoCSharp.Server
             if (Home != null)
                 Home.Dispose();
 
-            var remoteEndPoint = NetworkManager.Socket.RemoteEndPoint;
+            var remoteEndPoint = _networkManager.Socket.RemoteEndPoint;
             Save();
-            NetworkManager.Dispose();
+            _networkManager.Dispose();
             Server.Clients.Remove(this);
 
             var extraInfo = dueToKeepAlive ? "; keepalive expired" : string.Empty;

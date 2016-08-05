@@ -65,13 +65,23 @@ namespace CoCSharp.Server.Core
             if (id < 1)
                 throw new ArgumentOutOfRangeException("id", "id cannot be less than 1.");
 
-            return _alliancesCollection.FindById(id);
+            lock (_dbLock)
+            {
+                return _alliancesCollection.FindById(id);
+            }
         }
 
         public void SaveClan(Clan clan)
         {
             if (clan == null)
                 throw new ArgumentNullException("clan");
+
+            Debug.Assert(clan.Name != null);
+            if (clan.Name == null)
+            {
+                Log.Warning("tried to save a clan with a null name; skipping save");
+                return;
+            }
 
             lock (_dbLock)
             {
@@ -126,7 +136,7 @@ namespace CoCSharp.Server.Core
                         Debug.Assert(clan != null);
                         if (clan == null)
                         {
-                            Console.WriteLine("WARNING: AllianceManger _saveQueue.Dequeue() returned null - skipping save");
+                            Log.Warning("AllianceManger _saveQueue.Dequeue() returned null; skipping save");
                             continue;
                         }
 

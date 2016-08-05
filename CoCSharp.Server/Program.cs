@@ -1,7 +1,4 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Data.Models;
-using CoCSharp.Network.Messages;
-using CoCSharp.Server.Core;
+﻿using CoCSharp.Server.Core;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -52,41 +49,6 @@ namespace CoCSharp.Server
             Console.WriteLine("done({0}ms): listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
             Console.WriteLine();
 
-            //new Thread(() =>
-            //{
-            //    var count = 0;
-            //    while (true)
-            //    {
-            //        var ava = new AvatarClient();
-            //        ava.Server = Server;
-            //        ava.SessionKey = new byte[24];
-            //        var loginReq = new LoginRequestMessage();
-
-            //        loginReq.UserToken = "asddf";
-            //        loginReq.UserID = count;
-            //        Server.HandleMessage(ava, loginReq);
-            //        count++;
-            //    }
-            //}).Start();
-
-            //new Thread(() =>
-            //{
-            //    var count = 0;
-            //    while (true)
-            //    {
-            //        var ava = new AvatarClient();
-            //        ava.Server = Server;
-            //        ava.SessionKey = new byte[24];
-            //        var loginReq = new LoginRequestMessage();
-
-            //        loginReq.UserToken = "asdf";
-            //        loginReq.UserID = count;
-            //        Server.HandleMessage(ava, loginReq);
-            //        count++;
-            //    }
-            //}).Start();
-
-
             while (true)
             {
                 try
@@ -95,8 +57,7 @@ namespace CoCSharp.Server
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("EXCEPTION: flushing avatars: {0}", ex.Message);
-                    Console.WriteLine();
+                    Log.Exception("flushing avatars", ex);
                 }
 
                 try
@@ -105,8 +66,7 @@ namespace CoCSharp.Server
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("EXCEPTION: flushing alliances: {0}", ex.Message);
-                    Console.WriteLine();
+                    Log.Exception("flushing alliances", ex);
                 }
 
                 Thread.Sleep(100);

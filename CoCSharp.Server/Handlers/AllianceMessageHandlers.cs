@@ -3,6 +3,7 @@ using CoCSharp.Network;
 using CoCSharp.Network.Messages;
 using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
+using System;
 using System.Collections.Generic;
 
 namespace CoCSharp.Server.Handlers
@@ -14,24 +15,28 @@ namespace CoCSharp.Server.Handlers
             var adreqMessage = (AllianceDataRequestMessage)message;
             var clan = server.AllianceManager.LoadClan(adreqMessage.ClanID);
 
-            FancyConsole.WriteLine(LogFormats.Alliance_Data_Requested, clan.Name, client.Token); 
-            client.NetworkManager.SendMessage(clan.AllianceDataResponseMessage);
+            FancyConsole.WriteLine(LogFormats.Alliance_Data_Requested, clan.Name, client.Token);
+            client.SendMessage(clan.AllianceDataResponseMessage);
         }
 
         private static void HandleJoinableAllianceListRequestMessage(CoCServer server, AvatarClient client, Message message)
         {
             var clansComponent = new List<CompleteClanMessageComponent>();
             var clans = server.AllianceManager.GetAllClan();
+            var count = 0;
             foreach (var clan in clans)
             {
+                if (count == 1)
+                    break;
                 if (clan.Members.Count == 0)
                     continue;
 
                 var clanCom = new CompleteClanMessageComponent(clan);
                 clansComponent.Add(clanCom);
+                count++;
             }
 
-            client.NetworkManager.SendMessage(new JoinableAllianceListResponseMessage()
+            client.SendMessage(new JoinableAllianceListResponseMessage()
             {
                 Clans = clansComponent.ToArray()
             });
@@ -50,27 +55,32 @@ namespace CoCSharp.Server.Handlers
             clan.Location = caMessage.Origin;
             clan.RequiredTrophies = caMessage.RequiredTrophy;
 
-            var member = new ClanMember(client);
-            member.Role = ClanMemberRole.Leader;
-            member.Rank = 1;
-            member.PreviousRank = 1;
+            var member = new ClanMember(client)
+            {
+                Role = ClanMemberRole.Leader,
+                Rank = 1,
+                PreviousRank = 1,
+            };
             clan.Members.Add(member);
-
-            FancyConsole.WriteLine(LogFormats.Alliance_Created, clan.Name, client.Token);
+            client.Alliance = clan;
             server.AllianceManager.QueueSave(clan);
 
-            var ajCommand = new AllianceJoinedCommand();
-            ajCommand.ClanID = clan.ID;
-            ajCommand.Name = clan.Name;
-            ajCommand.Badge = clan.Badge;
-            ajCommand.Level = clan.Level;
-            ajCommand.Tick = -1;
-            var ascMessage = new AvailableServerCommandMessage();
-            ascMessage.Command = ajCommand;
-
-            client.Alliance = clan;
-            client.NetworkManager.SendMessage(ascMessage);
+            Console.WriteLine("alliance: created a new alliance {0}", clan.Name);
+            var ajCommand = new AllianceJoinedCommand()
+            {
+                ClanID = clan.ID,
+                Name = clan.Name,
+                Badge = clan.Badge,
+                Level = clan.Level,
+                Tick = -1
+            };
+            var ascMessage = new AvailableServerCommandMessage()
+            {
+                Command = ajCommand
+            };
+            client.SendMessage(ascMessage);
         }
+
         private static void HandleChangeAllianceSettingMessage(CoCServer server, AvatarClient client, Message message)
         {
             // Not yet finish because working on fixing Alliance Data
@@ -78,53 +88,60 @@ namespace CoCSharp.Server.Handlers
             var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
             if (clan == null)
             {
-                // Whattt?
+                Log.Warning("alliance manager returned a null clan; skipping");
+                return;
             }
+
             clan.Description = edAlliance.Description;
             server.AllianceManager.QueueSave(clan);
 
-            var csCommand = new ChangedAllianceSettingCommand();
-            csCommand.ClanID = clan.ID;
-            csCommand.Badge = clan.Badge;
-            csCommand.Level = clan.Level;
-            csCommand.Tick = -1;
-            var ascMessage = new AvailableServerCommandMessage();
-            ascMessage.Command = csCommand;
+            var csCommand = new ChangedAllianceSettingCommand()
+            {
+                ClanID = clan.ID,
+                Badge = clan.Badge,
+                Level = clan.Level,
+                Tick = -1
+            };
+            var ascMessage = new AvailableServerCommandMessage()
+            {
+                Command = csCommand
+            };
 
-            client.NetworkManager.SendMessage(ascMessage);
-
+            client.SendMessage(ascMessage);
         }
+
         private static void HandleJoinAllianceMessage(CoCServer server, AvatarClient client, Message message)
         {
             var jaAlliance = (JoinAllianceMessage)message;
             var clan = server.AllianceManager.LoadClan(jaAlliance.ClanID);
             if (clan == null)
             {
-                // Wut?
+                Log.Warning("alliance manager returned a null clan; skipping");
+                return;
             }
 
-            var member = new ClanMember(client);
-            member.Role = ClanMemberRole.Member;
-            member.Rank = clan.Members.Count;
-            member.PreviousRank = clan.Members.Count;
-
-            clan.Members.Add(member);
-
-            FancyConsole.WriteLine("[&(darkblue)Alliance&(default)] Joined -> Account &(darkcyan){0}&(default) joined &(darkcyan){1}&(default).",
-                client.Token, clan.Name);
+            if (!clan.AddMember(client))
+            {
+                Log.Warning("client tried to join a clan its already in; skipping");
+                return;
+            }
             server.AllianceManager.QueueSave(clan);
 
-            var ajCommand = new AllianceJoinedCommand();
-            ajCommand.ClanID = clan.ID;
-            ajCommand.Name = clan.Name;
-            ajCommand.Badge = clan.Badge;
-            ajCommand.Level = clan.Level;
-            ajCommand.Tick = -1;
-            var ascMessage = new AvailableServerCommandMessage();
-            ascMessage.Command = ajCommand;
+            var ajCommand = new AllianceJoinedCommand()
+            {
+                ClanID = clan.ID,
+                Name = clan.Name,
+                Badge = clan.Badge,
+                Level = clan.Level,
+                Tick = -1
+            };
+            var ascMessage = new AvailableServerCommandMessage()
+            {
+                Command = ajCommand
+            };
 
             client.Alliance = clan;
-            client.NetworkManager.SendMessage(ascMessage);
+            client.SendMessage(ascMessage);
         }
 
         private static void HandleLeaveAllianceMessage(CoCServer server, AvatarClient client, Message message)
@@ -132,30 +149,25 @@ namespace CoCSharp.Server.Handlers
             var laMessage = (LeaveAllianceMessage)message;
             var clan = client.Alliance;
             var clientMember = clan.FindMember(client.ID);
-
-            if (!clan.RemoveMember(client.ID))
+            if (clientMember == null)
             {
-                // Wut?
+                Log.Warning("an avatar tried to leave a clan it is not in; skipping");
+                return;
             }
-
-            FancyConsole.WriteLine("[&(darkblue)Alliance&(default)] Left -> Account &(darkcyan){0}&(default) left &(darkcyan){1}&(default).",
-                client.Token, clan.Name);
 
             if (clan.Members.Count == 0)
             {
                 server.AllianceManager.QueueDelete(clan);
-                FancyConsole.WriteLine("[&(darkblue)Alliance&(default)] &(red)Deleted&(default) -> Clan &(darkcyan){0}&(default).",
-                    clan.Name);
             }
-            else if(clientMember.Role == ClanMemberRole.Leader)
+            else if (clientMember.Role == ClanMemberRole.Leader)
             {
                 // Apparently the oldest CoLeader becomes the Leader and
-                // if their is no CoLeaders the oldest Elder becomes the Leader and
-                // if their is no Elder the oldest Member becomes the Leader.
+                // if there are no CoLeaders the oldest Elder becomes the Leader and
+                // if there are no Elders the oldest Member becomes the Leader.
 
                 // Set the first co-leader in the list to be the leader.
-                // or the first elder in the list if their are no co-leaders
-                // or the first member in the list if their are no elder.
+                // or the first elder in the list if there are no co-leaders
+                // or the first member in the list if there are no elders.
                 var newLeader = clan.Members[0];
 
                 var firstCoLeader = (ClanMember)null;
@@ -195,15 +207,19 @@ namespace CoCSharp.Server.Handlers
 
             server.AllianceManager.QueueSave(clan);
 
-            var alCommand = new AllianceLeftCommand();
-            alCommand.ClanID = clan.ID;
-            alCommand.Reason = 1;
-            alCommand.Tick = -1;
-            var ascMessage = new AvailableServerCommandMessage();
-            ascMessage.Command = alCommand;
+            var alCommand = new AllianceLeftCommand()
+            {
+                ClanID = clan.ID,
+                Reason = 1,
+                Tick = -1
+            };
+            var ascMessage = new AvailableServerCommandMessage()
+            {
+                Command = alCommand
+            };
 
             client.Alliance = null;
-            client.NetworkManager.SendMessage(ascMessage);
+            client.SendMessage(ascMessage);
         }
 
         public static void RegisterAllianceMessageHandlers(CoCServer server)

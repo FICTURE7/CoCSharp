@@ -15,7 +15,7 @@ namespace CoCSharp.Server.Handlers.Commands
             if (avatar == null)
             {
                 // Return home if their is no one to attack.
-                client.NetworkManager.SendMessage(client.OwnHomeDataMessage);
+                client.SendMessage(client.OwnHomeDataMessage);
                 return;
             }
 
@@ -42,7 +42,7 @@ namespace CoCSharp.Server.Handlers.Commands
                 ehdMessage.OwnAvatarData.Units.Add(new UnitSlot(4000000 + i, 999));
 
             FancyConsole.WriteLine(LogFormats.Attack_PvP, client.Token, avatar.ID);
-            client.NetworkManager.SendMessage(ehdMessage);
+            client.SendMessage(ehdMessage);
         }
     }
 }

@@ -22,15 +22,15 @@ namespace CoCSharp.Network.Messages.Commands
         public override int ID { get { return 6; } }
 
         /// <summary>
-        /// ID of the alliance the client joined.
+        /// ID of the alliance whose settings was changed.
         /// </summary>
         public long ClanID;
         /// <summary>
-        /// Badge of the alliance the client joined.
+        /// Badge of the alliance whose settings was changed.
         /// </summary>
         public int Badge;
         /// <summary>
-        /// Level of the alliance the client joined.
+        /// Level of the alliance whose settings was changed.
         /// </summary>
         public int Level; 
         /// <summary>
