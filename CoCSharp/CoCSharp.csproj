@@ -118,6 +118,7 @@
     <Compile Include="Network\Messages\AvatarProfileResponseMessage.cs" />
     <Compile Include="Network\Messages\AvatarStreamEntry.cs" />
     <Compile Include="Network\Messages\AvatarStreamMessage.cs" />
+    <Compile Include="Network\Messages\ChangeAllianceSettingMessage.cs" />
     <Compile Include="Network\Messages\ChangeAvatarNameRequestMessage.cs" />
     <Compile Include="Network\Messages\ClanMemberMessageComponent.cs" />
     <Compile Include="Network\Messages\ClanMessageComponent.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Network\Messages\Commands\ChangeAvatarNameCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceJoinedCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceLeftCommand.cs" />
+    <Compile Include="Network\Messages\Commands\ChangedAllianceSettingCommand.cs" />
     <Compile Include="Network\Messages\Commands\MatchmakingCommand.cs" />
     <Compile Include="Network\Messages\Commands\RemoveShieldCommand.cs" />
     <Compile Include="Network\Messages\Commands\UnlockBuildingCommand.cs" />

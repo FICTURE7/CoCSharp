@@ -1,7 +1,12 @@
 ﻿namespace CoCSharp.Network.Messages
 {
+    /// <summary>
+    /// Message that is sent to the client from the server to tell
+    /// it that it the server is going to be maintaince.
+    /// </summary>
     public class ServerShutdownInfoMessage : Message
     {
+        /// <summary>
         /// Initializes a new instance of the <see cref="ServerShutdownInfoMessage"/> class.
         /// </summary>
         public ServerShutdownInfoMessage()
