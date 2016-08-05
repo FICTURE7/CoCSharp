@@ -94,17 +94,6 @@ namespace CoCSharp.Network.Cryptography
         }
 
         /// <summary>
-        /// Generates a random byte array of atleast 20 bytes long.
-        /// </summary>
-        /// <returns>The random byte array.</returns>
-        public static byte[] CreateRandomByteArray()
-        {
-            var buffer = new byte[InternalUtils.Random.Next(20)];
-            InternalUtils.Random.NextBytes(buffer);
-            return buffer;
-        }
-
-        /// <summary>
         /// Generates a random byte array of random length between 15 and 25 bytes long.
         /// </summary>
         /// <returns>The random byte array.</returns>
