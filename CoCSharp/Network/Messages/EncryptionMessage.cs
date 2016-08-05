@@ -4,8 +4,6 @@ namespace CoCSharp.Network.Messages
 {
     /// <summary>
     /// Message that is sent by the server to the client to update the ciphers.
-    /// </summary>
-    [Obsolete("EncryptionMessage is not used in the latest 8.x.x protocol.")]
     public class EncryptionMessage : Message
     {
         /// <summary>

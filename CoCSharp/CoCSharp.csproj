@@ -107,6 +107,7 @@
     <Compile Include="Network\DisconnectedEventArgs.cs" />
     <Compile Include="Network\Messages\AllianceDataRequestMessage.cs" />
     <Compile Include="Network\Messages\AllianceDataResponseMessage.cs" />
+    <Compile Include="Network\Messages\AllianceFullEntryMessage.cs" />
     <Compile Include="Network\Messages\AllianceStreamEntry.cs" />
     <Compile Include="Network\Messages\AllianceStreamMessage.cs" />
     <Compile Include="Network\Messages\AttackNpcMessage.cs" />

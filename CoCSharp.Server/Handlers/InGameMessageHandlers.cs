@@ -160,7 +160,7 @@ namespace CoCSharp.Server.Handlers
                 switch (cmd)
                 {
                     case "help":
-                        cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /max";
+                        cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /shutdown, /max";
                         client.NetworkManager.SendMessage(cmsMessage);
                         break;
 
@@ -231,6 +231,9 @@ namespace CoCSharp.Server.Handlers
                         client.NetworkManager.SendMessage(cmsMessage);
                         break;
 #endif
+                    case "shutdown":
+                        server.SendMessageAll(new ServerShutdownInfoMessage());
+                        break;
 
                     default:
                         cmsMessage.Message = "Unknown command.";
@@ -240,15 +243,12 @@ namespace CoCSharp.Server.Handlers
             }
             else
             {
-                //TODO: Set alliance and all that jazz.
-
                 cmsMessage.Level = client.Level;
                 cmsMessage.CurrentUserID = client.ID;
                 cmsMessage.UserID = client.ID; // <- might have an issue here.
                 cmsMessage.Name = client.Name;
                 cmsMessage.Message = cmcMessage.Message;
                 cmsMessage.Clan = client.Alliance;
-
 
                 server.SendMessageAll(cmsMessage);
             }
