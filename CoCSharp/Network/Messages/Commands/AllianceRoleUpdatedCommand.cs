@@ -45,6 +45,7 @@ namespace CoCSharp.Network.Messages.Commands
         /// <see cref="MessageReader"/> that will be used to read the <see cref="AllianceRoleUpdatedCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
+        /// </summary>
         public override void ReadCommand(MessageReader reader)
         {
             ThrowIfReaderNull(reader);

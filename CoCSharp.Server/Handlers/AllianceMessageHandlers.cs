@@ -108,7 +108,15 @@ namespace CoCSharp.Server.Handlers
                 return;
             }
 
+            Console.WriteLine(edAlliance.Unknown1);
             clan.Description = edAlliance.Description;
+            clan.Badge = edAlliance.Badge;
+            clan.InviteType = edAlliance.InviteType;
+            clan.RequiredTrophies = edAlliance.RequiredTrophies;
+            clan.WarFrequency = edAlliance.WarFrequency;
+            clan.Location = edAlliance.Location;
+            clan.WarLogsPublic = edAlliance.WarLogsPublic;
+
             server.AllianceManager.QueueSave(clan);
 
             var csCommand = new ChangedAllianceSettingCommand()
@@ -249,6 +257,8 @@ namespace CoCSharp.Server.Handlers
 
             server.RegisterMessageHandler(new JoinAllianceMessage(), HandleJoinAllianceMessage);
             server.RegisterMessageHandler(new LeaveAllianceMessage(), HandleLeaveAllianceMessage);
+
+            server.RegisterMessageHandler(new ChangeAllianceSettingMessage(), HandleChangeAllianceSettingMessage);
         }
     }
 }
