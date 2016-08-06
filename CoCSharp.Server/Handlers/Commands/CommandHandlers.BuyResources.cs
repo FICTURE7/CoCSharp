@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
-using CoCSharp.Server.Core;
 
 namespace CoCSharp.Server.Handlers.Commands
 {
@@ -12,8 +11,6 @@ namespace CoCSharp.Server.Handlers.Commands
             var embeddedCommand = brCommand.Command;
 
             client.ResourcesAmount.GetSlot(brCommand.ResourceDataID).Amount += brCommand.ResourceAmount;
-            FancyConsole.WriteLine(LogFormats.Logic_Resources_Bought, client.Token, brCommand.ResourceDataID, brCommand.ResourceAmount);
-
             if (embeddedCommand == null)
                 return;
 

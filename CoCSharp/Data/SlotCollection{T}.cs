@@ -226,7 +226,7 @@ namespace CoCSharp.Data
         /// <returns>An <see cref="IEnumerable{TSlot}"/> for the <see cref="SlotCollection{TSlot}"/>.</returns>
         public IEnumerator<TSlot> GetEnumerator()
         {
-            return GetEnumerator();
+            return _slots.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

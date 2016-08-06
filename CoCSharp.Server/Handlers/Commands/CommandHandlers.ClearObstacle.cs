@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Network;
 using CoCSharp.Network.Messages.Commands;
-using CoCSharp.Server.Core;
 using System.Diagnostics;
 
 namespace CoCSharp.Server.Handlers.Commands
@@ -19,8 +18,6 @@ namespace CoCSharp.Server.Handlers.Commands
 
             client.ResourcesAmount.GetSlot(GetResourceID(obstacle.Data.ClearResource)).Amount -= obstacle.Data.ClearCost;
             obstacle.BeginClearing();
-
-            FancyConsole.WriteLine(LogFormats.Logic_Clearing_Started, client.Token, obstacle.X, obstacle.Y);
         }
     }
 }

@@ -160,7 +160,7 @@ namespace CoCSharp.Server.Handlers
                 switch (cmd)
                 {
                     case "help":
-                        cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /shutdown, /max";
+                        cmsMessage.Message = "Crappy Command Implementation: Available commands -> /help, /addgems, /clearobstacles, /max, /reload";
                         client.SendMessage(cmsMessage);
                         break;
 
@@ -238,6 +238,8 @@ namespace CoCSharp.Server.Handlers
 #endif
                     case "shutdown":
                         server.SendMessageAll(new ServerShutdownInfoMessage());
+                        cmsMessage.Message = "Sent shutdown info to everyone.";
+                        client.SendMessage(cmsMessage);
                         break;
 
                     default:

@@ -89,16 +89,13 @@ namespace CoCSharp.Logic
         {
             while (true)
             {
-                // Might not need a lock here, because this code
-                // is run by only one thread that is t_worker.
-
                 lock (s_lock)
                 {
                     s_stopwatch.Restart();
 
-                    try
+                    for (int i = 0; i < s_scheduleList.Count; i++)
                     {
-                        for (int i = 0; i < s_scheduleList.Count; i++)
+                        try
                         {
                             var schedule = s_scheduleList[i];
 
@@ -127,10 +124,10 @@ namespace CoCSharp.Logic
                                 break;
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("exception: on scheduled logic: {0}", ex.Message);
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("exception: scheduled logic failed: {0}", ex.ToString());
+                        }
                     }
 
                     s_tick++;

@@ -2,7 +2,6 @@
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
 using CoCSharp.Network.Messages.Commands;
-using CoCSharp.Server.Core;
 using System;
 using System.Collections.Generic;
 
@@ -14,8 +13,6 @@ namespace CoCSharp.Server.Handlers
         {
             var adreqMessage = (AllianceDataRequestMessage)message;
             var clan = server.AllianceManager.LoadClan(adreqMessage.ClanID);
-
-            FancyConsole.WriteLine(LogFormats.Alliance_Data_Requested, clan.Name, client.Token);
             client.SendMessage(clan.AllianceDataResponseMessage);
         }
 
@@ -47,7 +44,7 @@ namespace CoCSharp.Server.Handlers
             var caMessage = (CreateAllianceMessage)message;
             var clan = server.AllianceManager.CreateNewClan();
             clan.Name = caMessage.Name;
-            clan.Description = caMessage.Description;
+            clan.Description = caMessage.Description == null ? string.Empty : caMessage.Description;
             clan.WarFrequency = caMessage.WarFrequency;
             clan.WarLogsPublic = caMessage.WarLogPublic;
             clan.Badge = caMessage.Badge;

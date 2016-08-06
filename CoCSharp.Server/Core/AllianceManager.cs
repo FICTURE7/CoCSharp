@@ -14,6 +14,7 @@ namespace CoCSharp.Server.Core
             _deleteQueue = new SaveQueue<Clan>();
 
             _mapper = new BsonMapper();
+            _mapper.EmptyStringToNull = false;
             // LiteDB does not support Int64 auto-id. So implement our own.
             _mapper.RegisterAutoId
             (
@@ -57,6 +58,7 @@ namespace CoCSharp.Server.Core
         {
             var clan = new Clan();
             clan.Name = "Unnamed Alliance";
+            clan.Description = string.Empty;
             SaveClan(clan);
             return clan;
         }
@@ -81,6 +83,12 @@ namespace CoCSharp.Server.Core
             if (clan.Name == null)
             {
                 Log.Warning("tried to save a clan with a null name; skipping save");
+                return;
+            }
+            Debug.Assert(clan.Description != null);
+            if (clan.Name == null)
+            {
+                Log.Warning("tried to save a clan with a null description; skipping save");
                 return;
             }
 

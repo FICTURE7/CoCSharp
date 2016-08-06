@@ -284,8 +284,9 @@ namespace CoCSharp.Logic
                 UserToken = UserToken
             };
 
-            var index = ID - BaseGameID;
-            Village.Obstacles.RemoveAt(index);
+            //var index = ID - BaseGameID;
+            //Village.Obstacles.RemoveAt(index);
+            Village.Obstacles.Remove(this);
             PushToPool();
 
             OnClearingFinished(args);
