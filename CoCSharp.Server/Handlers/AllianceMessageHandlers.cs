@@ -96,7 +96,6 @@ namespace CoCSharp.Server.Handlers
 
         private static void HandleChangeAllianceSettingMessage(CoCServer server, AvatarClient client, Message message)
         {
-            // Not yet finish because working on fixing Alliance Data
             var edAlliance = (ChangeAllianceSettingMessage)message;
             var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
             if (clan == null)
@@ -134,6 +133,7 @@ namespace CoCSharp.Server.Handlers
         {
             var caAlliance = (AllianceChangeRoleMessage)message;
             var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
+            var user = clan.FindMember(client.ID);
             var promoteduser = clan.FindMember(caAlliance.UserID);
 
             if (clan == null)
@@ -141,20 +141,20 @@ namespace CoCSharp.Server.Handlers
                 Log.Warning("alliance manager returned a null clan; skipping");
                 return;
             }
-             
+
             if (promoteduser == null)
             {
                 Log.Warning("promoted/demoted user not exist in clan; skipping");
                 return;
             }
 
-            if (clan.FindMember(client.ID).Role == ClanMemberRole.Leader || clan.FindMember(client.ID).Role == ClanMemberRole.CoLeader)
+            if (user.Role == ClanMemberRole.Leader || user.Role == ClanMemberRole.CoLeader)
             {
                 promoteduser.Role = caAlliance.Role;
 
                 if (caAlliance.Role == ClanMemberRole.Leader)
                 {
-                    clan.FindMember(client.ID).Role = ClanMemberRole.CoLeader;
+                    user.Role = ClanMemberRole.CoLeader;
 
                     var csbCommand = new AllianceRoleUpdatedCommand()
                     {
@@ -170,6 +170,13 @@ namespace CoCSharp.Server.Handlers
                     client.SendMessage(ascbMessage);
                 }
 
+                server.AllianceManager.QueueSave(clan);
+
+                var cssMessage = new AllianceChangeRoleOkMessage()
+                {
+                    UserID = caAlliance.UserID,
+                    Role = caAlliance.Role
+                };
                 var csCommand = new AllianceRoleUpdatedCommand()
                 {
                     ClanID = clan.ID,
@@ -177,24 +184,18 @@ namespace CoCSharp.Server.Handlers
                     Unknown1 = (int)caAlliance.Role,
                     Tick = -1
                 };
-
                 var ascMessage = new AvailableServerCommandMessage()
                 {
                     Command = csCommand
                 };
 
-                var cssMessage = new AllianceChangeRoleOkMessage()
+                var promoter = server.Clients.Find(a => a.ID == caAlliance.UserID);
+                if (promoter != null)
                 {
-                    UserID = caAlliance.UserID,
-                    Role = caAlliance.Role
-                };
-
-                var user = server.Clients.Find(a => a.ID == caAlliance.UserID);
-                if (user != null)
-                    user.SendMessage(ascMessage);
+                    promoter.SendMessage(ascMessage);
+                }
 
                 client.SendMessage(cssMessage);
-                server.AllianceManager.QueueSave(clan);
             }
         }
 
