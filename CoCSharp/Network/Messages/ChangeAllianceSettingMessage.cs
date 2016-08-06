@@ -25,27 +25,27 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int Unknown1; //Maybe Tick
         /// <summary>
-        /// Alliance Badge Data.
+        /// New Badge Data ID .
         /// </summary>
         public int Badge;
         /// <summary>
-        /// Alliance Type.
+        /// New Alliance Type For Joining The Clan.
         /// </summary>
         public int InviteType;
         /// <summary>
-        /// Alliance Required Score To Join.
+        /// New Alliance Required Score To Join.
         /// </summary>
         public int RequiredTrophies;
         /// <summary>
-        /// Alliance War Frequency.
+        /// New Alliance War Frequency.
         /// </summary>
         public int WarFrequency;
         /// <summary>
-        /// Alliance Origin
+        /// New Clan Location
         /// </summary>
         public int Location;
         /// <summary>
-        /// Alliance War Log For Public Status.
+        ///  Value for indicating war logs of the clan is  available for public.
         /// </summary>
         public bool WarLogsPublic;
 
