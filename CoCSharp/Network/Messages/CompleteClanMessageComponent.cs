@@ -110,9 +110,9 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int WinStreak;
         /// <summary>
-        /// Unknown byte 1.
+        /// Value for indicating war logs of the <see cref="Clan"/> is  available for public.
         /// </summary>
-        public byte Unknown1;
+        public bool WarLogsPublic;
 
         /// <summary>
         /// Reads the <see cref="CompleteClanMessageComponent"/> from the specified <see cref="MessageReader"/>.
@@ -142,7 +142,7 @@ namespace CoCSharp.Network.Messages
             Level = reader.ReadInt32();
             WinStreak = reader.ReadInt32();
 
-            Unknown1 = reader.ReadByte();
+            WarLogsPublic = reader.ReadBoolean();
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace CoCSharp.Network.Messages
             writer.Write(Level);
             writer.Write(WinStreak);
 
-            writer.Write(Unknown1);
+            writer.Write(WarLogsPublic);
         }
     }
 }
