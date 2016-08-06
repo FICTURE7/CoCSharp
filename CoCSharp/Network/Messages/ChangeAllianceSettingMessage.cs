@@ -20,7 +20,34 @@ namespace CoCSharp.Network.Messages
         /// New alliance description.
         /// </summary>
         public string Description;
-
+        /// <summary>
+        /// Unknown Interger 1.
+        /// </summary>
+        public int Unknown1; //Maybe Tick
+        /// <summary>
+        /// New Badge Data ID .
+        /// </summary>
+        public int Badge;
+        /// <summary>
+        /// New Alliance Type For Joining The Clan.
+        /// </summary>
+        public int InviteType;
+        /// <summary>
+        /// New Alliance Required Score To Join.
+        /// </summary>
+        public int RequiredTrophies;
+        /// <summary>
+        /// New Alliance War Frequency.
+        /// </summary>
+        public int WarFrequency;
+        /// <summary>
+        /// New Clan Location
+        /// </summary>
+        public int Location;
+        /// <summary>
+        ///  Value for indicating war logs of the clan is  available for public.
+        /// </summary>
+        public bool WarLogsPublic;
 
         /// <summary>
         /// Gets the ID of the <see cref="ChangeAllianceSettingMessage"/>.
@@ -39,6 +66,16 @@ namespace CoCSharp.Network.Messages
             ThrowIfReaderNull(reader);
 
             Description = reader.ReadString();
+
+            Unknown1 = reader.ReadInt32(); 
+            Badge = reader.ReadInt32();
+            InviteType = reader.ReadInt32();
+            RequiredTrophies = reader.ReadInt32();
+            WarFrequency = reader.ReadInt32();
+            Location = reader.ReadInt32();
+
+            WarLogsPublic = reader.ReadBoolean();
+
         }
 
         /// <summary>
@@ -53,6 +90,15 @@ namespace CoCSharp.Network.Messages
             ThrowIfWriterNull(writer);
 
             writer.Write(Description);
+
+            writer.Write(Unknown1);
+            writer.Write(Badge);
+            writer.Write(InviteType);
+            writer.Write(RequiredTrophies);
+            writer.Write(WarFrequency);
+            writer.Write(Location);
+
+            writer.Write(WarLogsPublic);
         }
     }
 }
