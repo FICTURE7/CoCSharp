@@ -4,6 +4,7 @@ namespace CoCSharp.Network.Messages
 {
     /// <summary>
     /// Message that is sent by the server to the client to update the ciphers.
+    /// </summary>
     public class EncryptionMessage : Message
     {
         /// <summary>

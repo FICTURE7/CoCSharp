@@ -48,7 +48,6 @@ namespace CoCSharp.Server
 
             Console.WriteLine("done({0}ms): listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
             Console.WriteLine();
-
             while (true)
             {
                 try
@@ -71,6 +70,6 @@ namespace CoCSharp.Server
 
                 Thread.Sleep(100);
             }
-        }
+        }   
     }
 }

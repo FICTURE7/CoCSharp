@@ -74,11 +74,27 @@ namespace CoCSharp.Server.Handlers
                 Level = clan.Level,
                 Tick = -1
             };
+
+            var roCommand = new AllianceRoleUpdatedCommand()
+            {
+                ClanID = clan.ID,
+                Unknown1 = 2,
+                Role = ClanMemberRole.Leader,
+                Tick = -1
+            };
+
             var ascMessage = new AvailableServerCommandMessage()
             {
                 Command = ajCommand
             };
+
+            var rocMessage = new AvailableServerCommandMessage()
+            {
+                Command = roCommand
+            };
+
             client.SendMessage(ascMessage);
+            client.SendMessage(rocMessage);
         }
 
         private static void HandleChangeAllianceSettingMessage(CoCServer server, AvatarClient client, Message message)
