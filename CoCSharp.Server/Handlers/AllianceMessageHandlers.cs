@@ -116,7 +116,7 @@ namespace CoCSharp.Server.Handlers
 
             server.AllianceManager.QueueSave(clan);
 
-            var csCommand = new ChangedAllianceSettingCommand()
+            var csCommand = new AllianceSettingChangedCommand()
             {
                 ClanID = clan.ID,
                 Badge = clan.Badge,

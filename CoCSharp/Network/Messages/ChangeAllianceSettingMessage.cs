@@ -4,7 +4,7 @@ namespace CoCSharp.Network.Messages
 {
     /// <summary>
     /// Message that is sent by the client to the server to tell
-    /// it that it has changed alliance setting.
+    /// it that it has changed the alliance setting.
     /// </summary>
     public class ChangeAllianceSettingMessage : Message
     {
@@ -21,31 +21,31 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public string Description;
         /// <summary>
-        /// Unknown Interger 1.
+        /// Unknown integer 1.
         /// </summary>
-        public int Unknown1; //Maybe Tick
+        public int Unknown1; // Maybe Tick?
         /// <summary>
-        /// New Badge Data ID .
+        /// New badge of alliance.
         /// </summary>
         public int Badge;
         /// <summary>
-        /// New Alliance Type For Joining The Clan.
+        /// New invite type of alliance.
         /// </summary>
         public int InviteType;
         /// <summary>
-        /// New Alliance Required Score To Join.
+        /// New number of required trophies to join the alliance.
         /// </summary>
         public int RequiredTrophies;
         /// <summary>
-        /// New Alliance War Frequency.
+        /// New war frequency of the alliance.
         /// </summary>
         public int WarFrequency;
         /// <summary>
-        /// New Clan Location
+        /// New location of the alliance.
         /// </summary>
         public int Location;
         /// <summary>
-        ///  Value for indicating war logs of the clan is  available for public.
+        /// New value indicating if the war logs should be public.
         /// </summary>
         public bool WarLogsPublic;
 
@@ -67,15 +67,14 @@ namespace CoCSharp.Network.Messages
 
             Description = reader.ReadString();
 
-            Unknown1 = reader.ReadInt32(); 
+            Unknown1 = reader.ReadInt32();
+
             Badge = reader.ReadInt32();
             InviteType = reader.ReadInt32();
             RequiredTrophies = reader.ReadInt32();
             WarFrequency = reader.ReadInt32();
             Location = reader.ReadInt32();
-
             WarLogsPublic = reader.ReadBoolean();
-
         }
 
         /// <summary>
@@ -97,7 +96,6 @@ namespace CoCSharp.Network.Messages
             writer.Write(RequiredTrophies);
             writer.Write(WarFrequency);
             writer.Write(Location);
-
             writer.Write(WarLogsPublic);
         }
     }
