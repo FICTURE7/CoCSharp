@@ -23,7 +23,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Unknown Interger 1.
         /// </summary>
-        public int Unknown1;
+        public int Unknown1; //Maybe Tick
         /// <summary>
         /// Alliance Badge Data.
         /// </summary>
@@ -31,23 +31,23 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Alliance Type.
         /// </summary>
-        public int Type;
+        public int InviteType;
         /// <summary>
         /// Alliance Required Score To Join.
         /// </summary>
-        public int Score;
+        public int RequiredTrophies;
         /// <summary>
         /// Alliance War Frequency.
         /// </summary>
-        public int Frequency;
+        public int WarFrequency;
         /// <summary>
         /// Alliance Origin
         /// </summary>
-        public int Origin;
+        public int Location;
         /// <summary>
         /// Alliance War Log For Public Status.
         /// </summary>
-        public bool status;
+        public bool WarLogsPublic;
 
         /// <summary>
         /// Gets the ID of the <see cref="ChangeAllianceSettingMessage"/>.
@@ -67,14 +67,14 @@ namespace CoCSharp.Network.Messages
 
             Description = reader.ReadString();
 
-            Unknown1 = reader.ReadInt32();
+            Unknown1 = reader.ReadInt32(); 
             Badge = reader.ReadInt32();
-            Type = reader.ReadInt32();
-            Score = reader.ReadInt32();
-            Frequency = reader.ReadInt32();
-            Origin = reader.ReadInt32();
+            InviteType = reader.ReadInt32();
+            RequiredTrophies = reader.ReadInt32();
+            WarFrequency = reader.ReadInt32();
+            Location = reader.ReadInt32();
 
-            status = reader.ReadBoolean();
+            WarLogsPublic = reader.ReadBoolean();
 
         }
 
@@ -93,12 +93,12 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown1);
             writer.Write(Badge);
-            writer.Write(Type);
-            writer.Write(Score);
-            writer.Write(Frequency);
-            writer.Write(Origin);
+            writer.Write(InviteType);
+            writer.Write(RequiredTrophies);
+            writer.Write(WarFrequency);
+            writer.Write(Location);
 
-            writer.Write(status);
+            writer.Write(WarLogsPublic);
         }
     }
 }
