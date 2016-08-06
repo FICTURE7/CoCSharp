@@ -128,6 +128,7 @@
     <Compile Include="Data\AssetDownloadProgressChangedEventArgs.cs" />
     <Compile Include="Data\Fingerprint.cs" />
     <Compile Include="Data\FingerprintFile.cs" />
+    <Compile Include="Network\Messages\Commands\AllianceRoleUpdatedCommand.cs" />
     <Compile Include="Network\Messages\Commands\ChangedAvatarNameCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceJoinedCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceLeftCommand.cs" />
