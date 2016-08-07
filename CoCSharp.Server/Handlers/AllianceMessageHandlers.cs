@@ -96,7 +96,6 @@ namespace CoCSharp.Server.Handlers
 
         private static void HandleChangeAllianceSettingMessage(CoCServer server, AvatarClient client, Message message)
         {
-            // Not yet finish because working on fixing Alliance Data
             var edAlliance = (ChangeAllianceSettingMessage)message;
             var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
             if (clan == null)
@@ -105,7 +104,6 @@ namespace CoCSharp.Server.Handlers
                 return;
             }
 
-            Console.WriteLine(edAlliance.Unknown1);
             clan.Description = edAlliance.Description;
             clan.Badge = edAlliance.Badge;
             clan.InviteType = edAlliance.InviteType;

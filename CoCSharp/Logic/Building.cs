@@ -163,6 +163,14 @@ namespace CoCSharp.Logic
                 OnPropertyChanged(s_isLockedChanged);
             }
         }
+
+        internal override int KindID
+        {
+            get
+            {
+                return 0;
+            }
+        }
         #endregion
 
         #region Methods
@@ -307,12 +315,6 @@ namespace CoCSharp.Logic
             _isLocked = default(bool);
         }
 
-        /// <summary/>
-        protected override void RegisterVillageObject()
-        {
-            ID = BaseGameID + Village.Buildings.Count;
-            Village.Buildings.Add(this);
-        }
 
         #region Json Reading/Writing
         internal override void ToJsonWriter(JsonWriter writer)

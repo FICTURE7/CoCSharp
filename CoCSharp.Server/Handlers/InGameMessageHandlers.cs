@@ -139,7 +139,7 @@ namespace CoCSharp.Server.Handlers
                 client.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
 
             var ascMessage = new AvailableServerCommandMessage();
-            var canCommand = new ChangedAvatarNameCommand();
+            var canCommand = new AvatarNameChangedCommand();
             canCommand.NewName = careqMessage.NewName;
             canCommand.Unknown1 = 1;
             canCommand.Unknown2 = -1;

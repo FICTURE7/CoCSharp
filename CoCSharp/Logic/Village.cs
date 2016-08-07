@@ -50,6 +50,7 @@ namespace CoCSharp.Logic
 
             AssetManager = manager;
 
+            _villageObjects = new VillageObjectCollection();
             Buildings = new List<Building>(384);
             Obstacles = new List<Obstacle>(64);
             Traps = new List<Trap>(64);
@@ -88,6 +89,8 @@ namespace CoCSharp.Logic
         /// if it does not find it.
         /// </remarks>
         public int ExperienceVersion { get; set; }
+
+        private VillageObjectCollection _villageObjects;
 
         /// <summary>
         /// Gets or sets the list of <see cref="Building"/> in the <see cref="Village"/>.
@@ -133,134 +136,6 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
-        #region GetVillageObjects
-
-        // These methods becomes pointless to be public be cause
-        // of the GetVillageObject<T>(gameId) method.
-
-        /// <summary>
-        /// Gets the <see cref="Building"/> with the specified game ID.
-        /// </summary>
-        /// <param name="gameId"><see cref="Building"/> with the game ID.</param>
-        /// <returns><see cref="Building"/> with the specified game ID.</returns>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not a valid <see cref="Building"/> game ID.</exception>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
-        public Building GetBuilding(int gameId)
-        {
-            if (gameId < Building.BaseGameID || gameId > Building.BaseGameID + InternalConstants.IDBase)
-                throw new ArgumentException("'" + gameId + "' is not a valid Building game ID. It must be between '" + Building.BaseGameID +
-                                            "' and '" + (Building.BaseGameID + InternalConstants.IDBase) + "'.");
-
-            var index = gameId - Building.BaseGameID;
-            // Check if the index is valid.
-            // Index should be never less than 0 as it was checked above.
-            if (index >= Buildings.Count)
-                throw new ArgumentException("Could not find Building with game ID '" + gameId + "'.", "gameId");
-
-            return Buildings[index];
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Obstacle"/> with the specified game ID.
-        /// </summary>
-        /// <param name="gameId"><see cref="Obstacle"/> with the game ID.</param>
-        /// <returns><see cref="Obstacle"/> with the specified game ID.</returns>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not a valid <see cref="Obstacle"/> game ID.</exception>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
-        public Obstacle GetObstacle(int gameId)
-        {
-            if (gameId < Obstacle.BaseGameID || gameId > Obstacle.BaseGameID + InternalConstants.IDBase)
-                throw new ArgumentException("'" + gameId + "' is not a valid Obstacle game ID. It must be between '" + Obstacle.BaseGameID +
-                                            "' and '" + (Obstacle.BaseGameID + InternalConstants.IDBase) + "'.");
-
-            var index = gameId - Obstacle.BaseGameID;
-            // Check if the index is valid.
-            // Index should be never less than 0 as it was checked above.
-            if (index >= Obstacles.Count)
-                throw new ArgumentException("Could not find Obstacle with game ID '" + gameId + "'.", "gameId");
-
-            return Obstacles[index];
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Trap"/> with the specified game ID.
-        /// </summary>
-        /// <param name="gameId"><see cref="Trap"/> with the game ID.</param>
-        /// <returns><see cref="Trap"/> with the specified game ID.</returns>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not a valid <see cref="Trap"/> game ID.</exception>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
-        public Trap GetTrap(int gameId)
-        {
-            if (gameId < Trap.BaseGameID || gameId > Trap.BaseGameID + InternalConstants.IDBase)
-                throw new ArgumentException("'" + gameId + "' is not a valid Trap game ID. It must be between '" + Trap.BaseGameID +
-                                            "' and '" + (Trap.BaseGameID + InternalConstants.IDBase) + "'.");
-
-            var index = gameId - Trap.BaseGameID;
-            // Check if the index is valid.
-            // Index should be never less than 0 as it was checked above.
-            if (index >= Traps.Count)
-                throw new ArgumentException("Could not find Trap with game ID '" + gameId + "'.", "gameId");
-
-            return Traps[index];
-        }
-
-        /// <summary>
-        /// Gets the <see cref="Decoration"/> with the specified game ID.
-        /// </summary>
-        /// <param name="gameId"><see cref="Decoration"/> with the game ID.</param>
-        /// <returns><see cref="Decoration"/> with the specified game ID.</returns>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not a valid <see cref="Decoration"/> game ID.</exception>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the <see cref="Village"/>.</exception>
-        public Decoration GetDecoration(int gameId)
-        {
-            if (gameId < Decoration.BaseGameID || gameId > Decoration.BaseGameID + InternalConstants.IDBase)
-                throw new ArgumentException("'" + gameId + "' is not a valid Decoration game ID. It must be between '" + Decoration.BaseGameID +
-                                            "' and '" + (Decoration.BaseGameID + InternalConstants.IDBase) + "'.");
-
-            var index = gameId - Decoration.BaseGameID;
-            // Check if the index is valid.
-            // Index should be never less than 0 as it was checked above.
-            if (index >= Decorations.Count)
-                throw new ArgumentException("Could not find Decoration with game ID '" + gameId + "'.", "gameId");
-
-            return Decorations[index];
-        }
-
-        /// <summary>
-        /// Gets the <see cref="VillageObject"/> with specified game ID as 
-        /// the specified <see cref="VillageObject"/> type.
-        /// </summary>
-        /// <typeparam name="T">Type of the <see cref="VillageObject"/> to return.</typeparam>
-        /// <param name="gameId"><see cref="VillageObject"/> with the game ID.</param>
-        /// <returns><see cref="VillageObject"/> with the specified game ID.</returns>
-        public T GetVillageObject<T>(int gameId) where T : VillageObject
-        {
-            return (T)GetVillageObject(gameId);
-        }
-
-        /// <summary>
-        /// Gets the <see cref="VillageObject"/> with the specified game ID; if not <see cref="VillageObject"/>
-        /// with the same game ID is found returns null.
-        /// </summary>
-        /// <param name="gameId"><see cref="VillageObject"/> with the game ID.</param>
-        /// <returns><see cref="VillageObject"/> with the specified game ID.</returns>
-        /// <exception cref="ArgumentException"><paramref name="gameId"/> is not in the village.</exception>
-        public VillageObject GetVillageObject(int gameId)
-        {
-            // Code repetition here with double checking of gameIds.
-            if (gameId >= Building.BaseGameID && gameId < Building.BaseGameID + InternalConstants.IDBase)
-                return GetBuilding(gameId);
-            else if (gameId >= Obstacle.BaseGameID && gameId < Obstacle.BaseGameID + InternalConstants.IDBase)
-                return GetObstacle(gameId);
-            else if (gameId >= Trap.BaseGameID && gameId < Trap.BaseGameID + InternalConstants.IDBase)
-                return GetTrap(gameId);
-            else if (gameId >= Decoration.BaseGameID && gameId < Decoration.BaseGameID + InternalConstants.IDBase)
-                return GetDecoration(gameId);
-            else
-                return null;
-        }
-        #endregion
-
         private bool _disposed;
         /// <summary>
         /// Releases all resources used by this <see cref="Village"/> instance.

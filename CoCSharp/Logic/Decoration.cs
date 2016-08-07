@@ -49,15 +49,16 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
+        internal override int KindID
+        {
+            get
+            {
+                return 6;
+            }
+        }
         #endregion
 
         #region Methods
-        ///<summary/>
-        protected override void RegisterVillageObject()
-        {
-            ID = BaseGameID + Village.Buildings.Count;
-            Village.Decorations.Add(this);
-        }
 
         #region Json Reading/Writing
         internal override void ToJsonWriter(JsonWriter writer)

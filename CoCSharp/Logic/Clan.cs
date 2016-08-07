@@ -16,6 +16,7 @@ namespace CoCSharp.Logic
         public Clan()
         {
             _level = 1;
+            _description = string.Empty;
             Members = new List<ClanMember>();
         }
         #endregion
@@ -26,15 +27,43 @@ namespace CoCSharp.Logic
         /// </summary>
         public long ID { get; set; }
 
+        private string _name;
         /// <summary>
         /// Gets or sets the name of the <see cref="Clan"/>.
         /// </summary>
-        public string Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
 
+                _name = value;
+            }
+        }
+
+        private string _description;
         /// <summary>
         /// Gets or sets the description of the <see cref="Clan"/>.
         /// </summary>
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                return _description;
+            }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("value");
+
+                _description = value;
+            }
+        }
 
         private int _level;
         /// <summary>

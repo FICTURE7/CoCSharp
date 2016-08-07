@@ -197,6 +197,14 @@ namespace CoCSharp.Logic
 
         // Determines whether the Obstacle is scheduled.
         private bool _scheduled;
+
+        internal override int KindID
+        {
+            get
+            {
+                return 3;
+            }
+        }
         #endregion
 
         #region Methods
@@ -300,13 +308,6 @@ namespace CoCSharp.Logic
             base.ResetVillageObject();
             _lootMultiplier = default(int);
             ClearTEndUnixTimestamp = default(int);
-        }
-
-        /// <summary/>
-        protected override void RegisterVillageObject()
-        {
-            ID = BaseGameID + Village.Obstacles.Count;
-            Village.Obstacles.Add(this);
         }
 
         #region Json Reading/Writing

@@ -32,9 +32,7 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("village");
 
             _components = new LogicComponent[8];
-
-            // Setter of Village property will call RegisterVillageObject.
-            Village = village;
+            _village = village;
 
             Interlocked.Increment(ref s_created);
         }
@@ -55,14 +53,14 @@ namespace CoCSharp.Logic
         internal int _recycled;
 
         /// <summary>
-        /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        public bool IsPropertyChangedEnabled { get; set; }
-
-        /// <summary>
         /// The event raised when a property value has changed.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        public bool IsPropertyChangedEnabled { get; set; }
 
         // Village in which the VillageObject is in.
         private Village _village;
@@ -77,30 +75,24 @@ namespace CoCSharp.Logic
             }
             internal set
             {
-                if (_village == value)
-                    return;
-
                 _village = value;
-                RegisterVillageObject();
             }
         }
 
+
+        internal int _columnIndex;
+
         // ID of the VillageObject (IDs above or equal to 500000000). E.g: 500000001
         // This value should be relative to the Village the VillageObject is in.
-        private int _instanceId;
+
         /// <summary>
-        /// Gets or sets the instance/game ID of the <see cref="VillageObject"/>.
+        /// Gets or sets the game ID of the <see cref="VillageObject"/>.
         /// </summary>
         public int ID
         {
             get
             {
-                return _instanceId;
-            }
-            protected set
-            {
-                // TODO: Check range of ID.
-                _instanceId = value;
+                return _columnIndex + ((500 + KindID) * 1000000);
             }
         }
 
@@ -164,6 +156,9 @@ namespace CoCSharp.Logic
                 return Village.AssetManager;
             }
         }
+
+        // Kind ID of the VillageObject.
+        internal abstract int KindID { get; }
         #endregion
 
         #region Methods
@@ -231,13 +226,13 @@ namespace CoCSharp.Logic
             Interlocked.Increment(ref s_rested);
 
             _village = default(Village);
-            _instanceId = default(int);
+            _columnIndex = default(int);
             _x = default(int);
             _y = default(int);
         }
 
         ///<summary>Register the VillageObject to its Village.</summary>
-        protected abstract void RegisterVillageObject();
+        //protected abstract void RegisterVillageObject();
 
         // Writes the current VillageObject to the JsonWriter.
         internal abstract void ToJsonWriter(JsonWriter writer);

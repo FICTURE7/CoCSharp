@@ -62,7 +62,7 @@ namespace CoCSharp.Server
         }
 
         private void ProcessAccept(SocketAsyncEventArgs args)
-        {            
+        {
             try
             {
                 Interlocked.Increment(ref _totalConnection);
@@ -90,7 +90,7 @@ namespace CoCSharp.Server
 
         private void ProcessBadAccept(SocketAsyncEventArgs args)
         {
-            Console.WriteLine("listener: ***encountered bad accept");
+            Log.Warning("listener: ***encountered bad accept");
             try
             {
                 args.AcceptSocket.Close();

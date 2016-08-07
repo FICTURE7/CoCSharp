@@ -163,6 +163,14 @@ namespace CoCSharp.Logic
                 OnPropertyChanged(s_brokenChanged);
             }
         }
+
+        internal override int KindID
+        {
+            get
+            {
+                return 4;
+            }
+        }
         #endregion
 
         #region Methods
@@ -291,13 +299,6 @@ namespace CoCSharp.Logic
         {
             base.ResetVillageObject();
             _broken = default(bool);
-        }
-
-        /// <summary/>
-        protected override void RegisterVillageObject()
-        {
-            ID = BaseGameID + Village.Traps.Count;
-            Village.Traps.Add(this);
         }
 
         #region Json Reading/Writing

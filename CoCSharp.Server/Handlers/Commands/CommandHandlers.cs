@@ -1,7 +1,6 @@
 using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
-using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
 using System;
 
@@ -14,27 +13,27 @@ namespace CoCSharp.Server.Handlers.Commands
 
         public static void RegisterCommandHandlers(CoCServer server)
         {
-            server.RegisterCommandHandler(new BuyBuildingCommand(), HandleBuyBuildingCommand);
-            server.RegisterCommandHandler(new BuyTrapCommand(), HandleBuyTrapCommand);
-            server.RegisterCommandHandler(new BuyDecorationCommand(), HandleBuyDecorationCommand);
-            server.RegisterCommandHandler(new BuyResourcesCommand(), HandleBuyResourcesCommand);
+            //server.RegisterCommandHandler(new BuyBuildingCommand(), HandleBuyBuildingCommand);
+            //server.RegisterCommandHandler(new BuyTrapCommand(), HandleBuyTrapCommand);
+            //server.RegisterCommandHandler(new BuyDecorationCommand(), HandleBuyDecorationCommand);
+            //server.RegisterCommandHandler(new BuyResourcesCommand(), HandleBuyResourcesCommand);
 
-            server.RegisterCommandHandler(new SellDecorationCommand(), HandleSellDecorationCommand);
+            //server.RegisterCommandHandler(new SellDecorationCommand(), HandleSellDecorationCommand);
 
-            server.RegisterCommandHandler(new UnlockBuildingCommand(), HandleUnlockBuildingCommand);
-            server.RegisterCommandHandler(new UpgradeBuildableCommand(), HandleUpgradeBuildableCommand);
-            server.RegisterCommandHandler(new UpgradeMultipleBuildableCommand(), HandleUpgradeMultipleBuildableCommand);
-            server.RegisterCommandHandler(new CancelConsturctionCommand(), HandleCancelConstructionCommand);
-            server.RegisterCommandHandler(new SpeedUpConstructionCommand(), HandleSpeedUpConstructionCommand);
+            //server.RegisterCommandHandler(new UnlockBuildingCommand(), HandleUnlockBuildingCommand);
+            //server.RegisterCommandHandler(new UpgradeBuildableCommand(), HandleUpgradeBuildableCommand);
+            //server.RegisterCommandHandler(new UpgradeMultipleBuildableCommand(), HandleUpgradeMultipleBuildableCommand);
+            //server.RegisterCommandHandler(new CancelConsturctionCommand(), HandleCancelConstructionCommand);
+            //server.RegisterCommandHandler(new SpeedUpConstructionCommand(), HandleSpeedUpConstructionCommand);
 
-            server.RegisterCommandHandler(new MoveVillageObjectCommand(), HandleMoveVillageObjectCommand);
-            server.RegisterCommandHandler(new MoveMultipleVillageObjectCommand(), HandleMoveMultipleVillageObjectCommand);
+            //server.RegisterCommandHandler(new MoveVillageObjectCommand(), HandleMoveVillageObjectCommand);
+            //server.RegisterCommandHandler(new MoveMultipleVillageObjectCommand(), HandleMoveMultipleVillageObjectCommand);
 
-            server.RegisterCommandHandler(new ClearObstacleCommand(), HandleClearObstacleCommand);
+            //server.RegisterCommandHandler(new ClearObstacleCommand(), HandleClearObstacleCommand);
 
-            server.RegisterCommandHandler(new RearmTrapCommand(), HandleRearmTrapCommand);
+            //server.RegisterCommandHandler(new RearmTrapCommand(), HandleRearmTrapCommand);
 
-            server.RegisterCommandHandler(new MatchmakingCommand(), HandleMatchmakingCommand);
+            //server.RegisterCommandHandler(new MatchmakingCommand(), HandleMatchmakingCommand);
         }
 
         // Doing this because a lot of stuff made incorrectly.

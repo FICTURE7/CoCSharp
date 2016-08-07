@@ -90,7 +90,6 @@ namespace CoCSharp.Network.Messages
                 writer.Write(WarID);
 
             Clan.WriteMessageComponent(writer);
-
         }
     }
 }
