@@ -129,10 +129,10 @@
     <Compile Include="Data\Fingerprint.cs" />
     <Compile Include="Data\FingerprintFile.cs" />
     <Compile Include="Network\Messages\Commands\AllianceRoleUpdatedCommand.cs" />
+    <Compile Include="Network\Messages\Commands\AllianceSettingChangedCommand.cs" />
     <Compile Include="Network\Messages\Commands\ChangedAvatarNameCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceJoinedCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceLeftCommand.cs" />
-    <Compile Include="Network\Messages\Commands\ChangedAllianceSettingCommand.cs" />
     <Compile Include="Network\Messages\Commands\DonateAllianceUnitsCommand.cs" />
     <Compile Include="Network\Messages\Commands\MatchmakingCommand.cs" />
     <Compile Include="Network\Messages\Commands\RemoveShieldCommand.cs" />
