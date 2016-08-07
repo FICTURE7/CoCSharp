@@ -15,7 +15,6 @@ namespace CoCSharp.Network.Messages.AlllianceStream
         public ChatStreamEntry()
         {
             //space
-            Unknown1 = 3;
         }
 
         /// <summary>
@@ -35,15 +34,15 @@ namespace CoCSharp.Network.Messages.AlllianceStream
         /// </summary>
         public long HomeID;
         /// <summary>
-        /// UserName
+        /// User Current Name
         /// </summary>
         public string Name;
         /// <summary>
-        /// User Level
+        /// Level to user is currently at
         /// </summary>
         public int Level;
         /// <summary>
-        /// User League
+        /// League that user is currently in
         /// </summary>
         public int League;
         /// <summary>
@@ -51,10 +50,13 @@ namespace CoCSharp.Network.Messages.AlllianceStream
         /// </summary>
         public ClanMemberRole Role;
         /// <summary>
-        /// UserName
+        /// Message that going to be sent
         /// </summary>
         public string Message;
-        private DateTime m_vMessageTime;
+        /// <summary>
+        /// Get the time of the message being sended
+        /// </summary>
+        private int MessageTime;
         /// <summary>
         /// Get the ID of the <see cref="ChatStreamEntry"/>
         /// </summary>
@@ -75,6 +77,21 @@ namespace CoCSharp.Network.Messages.AlllianceStream
         public override void ReadStreamEntry(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
+
+            MessageID = reader.ReadInt32();
+            Unknown1 = reader.ReadByte();
+
+            UserID = reader.ReadInt64();
+            HomeID = reader.ReadInt64();
+            Name = reader.ReadString();
+
+            Level = reader.ReadInt32();
+            League = reader.ReadInt32();
+            Role = (ClanMemberRole)reader.ReadInt32();
+
+            MessageTime = reader.ReadInt32();
+            Message = reader.ReadString();
+
         }
 
         /// <summary>
@@ -95,7 +112,7 @@ namespace CoCSharp.Network.Messages.AlllianceStream
             writer.Write(Level);
             writer.Write(League);
             writer.Write((int)Role);
-            writer.Write((int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds - (int)m_vMessageTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
+            writer.Write(MessageTime); //(int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds - (int)MessageTime.Subtract(new DateTime(1970, 1, 1)).TotalSeconds) But ficture want other thing
             writer.Write(Message);
         }
     }
