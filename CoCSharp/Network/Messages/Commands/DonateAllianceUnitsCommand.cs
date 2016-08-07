@@ -21,7 +21,7 @@ namespace CoCSharp.Network.Messages.Commands
         {
            get
            {
-                return 22;
+                return 4;
            }
         }
         /// <summary>
