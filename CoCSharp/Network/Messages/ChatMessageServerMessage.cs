@@ -95,7 +95,6 @@ namespace CoCSharp.Network.Messages
             writer.Write(League);
             writer.Write(UserID);
             writer.Write(CurrentUserID);
-
             if (Clan != null)
             {
                 writer.Write(true);
