@@ -129,12 +129,14 @@
     <Compile Include="Data\Fingerprint.cs" />
     <Compile Include="Data\FingerprintFile.cs" />
     <Compile Include="Network\Messages\Commands\AllianceRoleUpdatedCommand.cs" />
+    <Compile Include="Network\Messages\Commands\AllianceSettingChangedCommand.cs" />
     <Compile Include="Network\Messages\Commands\ChangedAvatarNameCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceJoinedCommand.cs" />
     <Compile Include="Network\Messages\Commands\AllianceLeftCommand.cs" />
-    <Compile Include="Network\Messages\Commands\ChangedAllianceSettingCommand.cs" />
+    <Compile Include="Network\Messages\Commands\DonateAllianceUnitsCommand.cs" />
     <Compile Include="Network\Messages\Commands\MatchmakingCommand.cs" />
     <Compile Include="Network\Messages\Commands\RemoveShieldCommand.cs" />
+    <Compile Include="Network\Messages\Commands\RequestAllianceUnitsCommand.cs" />
     <Compile Include="Network\Messages\Commands\UnlockBuildingCommand.cs" />
     <Compile Include="Network\Messages\CompleteClanMessageComponent.cs" />
     <Compile Include="Network\Messages\CreateAllianceMessage.cs" />
@@ -175,6 +177,7 @@
     <Compile Include="Network\Messages\NpcDataMessage.cs" />
     <Compile Include="Network\Messages\ServerShutdownInfoMessage.cs" />
     <Compile Include="Network\Messages\StreamEntry.cs" />
+    <Compile Include="Network\Messages\TroopRequestStreamEntry.cs" />
     <Compile Include="Network\Messages\VisitHomeDataMessage.cs" />
     <Compile Include="Network\Messages\VisitHomeMessage.cs" />
     <Compile Include="Network\StreamEntryFactory.cs" />
