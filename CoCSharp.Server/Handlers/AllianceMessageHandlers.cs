@@ -104,7 +104,7 @@ namespace CoCSharp.Server.Handlers
                 return;
             }
 
-            clan.Description = edAlliance.Description;
+            clan.Description = edAlliance.Description == null ? string.Empty : edAlliance.Description;
             clan.Badge = edAlliance.Badge;
             clan.InviteType = edAlliance.InviteType;
             clan.RequiredTrophies = edAlliance.RequiredTrophies;
