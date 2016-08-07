@@ -49,6 +49,7 @@ namespace CoCSharp.Network.Messages.Commands
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
         {
+            ThrowIfReaderNull(reader);
             FlagHasRequestMessage = reader.ReadByte();
             Message = reader.ReadString();
             MessageLength = reader.ReadInt32();
@@ -64,6 +65,7 @@ namespace CoCSharp.Network.Messages.Commands
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
         {
+            ThrowIfWriterNull(writer);
             writer.Write(FlagHasRequestMessage);
             writer.Write(Message);
             writer.Write(MessageLength);
