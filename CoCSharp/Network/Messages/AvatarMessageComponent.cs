@@ -526,13 +526,13 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown10);
             writer.Write(Unknown11); // 1
             writer.Write(Unknown12);
-            writer.Write(Unknown13); // 1 = 8.x.x
-            writer.Write(Unknown14); // 0 = 8.x.x
 
             writer.Write(LeagueLevel);
             writer.Write(AllianceCastleLevel);
             writer.Write(AllianceCastleTotalCapacity);
             writer.Write(AllianceCastleUsedCapacity);
+            writer.Write(Unknown13); // 1 = 8.x.x
+            writer.Write(Unknown14); // 0 = 8.x.x
             writer.Write(TownHallLevel);
             writer.Write(Name);
 
