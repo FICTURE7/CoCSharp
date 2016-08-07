@@ -95,13 +95,15 @@ namespace CoCSharp.Network.Messages
             writer.Write(League);
             writer.Write(UserID);
             writer.Write(CurrentUserID);
-            writer.Write(Clan == null ? false : true);
             if (Clan != null)
             {
+                writer.Write(true);
                 writer.Write(Clan.ID);
                 writer.Write(Clan.Name);
                 writer.Write(Clan.Badge);
             }
+            else
+                writer.Write(false);
         }
     }
 }

@@ -123,6 +123,7 @@
     <Compile Include="Network\Messages\AvatarStreamMessage.cs" />
     <Compile Include="Network\Messages\ChangeAllianceSettingMessage.cs" />
     <Compile Include="Network\Messages\ChangeAvatarNameRequestMessage.cs" />
+    <Compile Include="Network\Messages\AllianceStream\ChatStreamEntry.cs" />
     <Compile Include="Network\Messages\ClanMemberMessageComponent.cs" />
     <Compile Include="Network\Messages\ClanMessageComponent.cs" />
     <Compile Include="Csv\CsvData.cs" />

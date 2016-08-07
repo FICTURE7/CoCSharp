@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
+using CoCSharp.Network.Messages.AlllianceStream;
 using CoCSharp.Network.Messages.Commands;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,21 @@ namespace CoCSharp.Server.Handlers
             clan.WarLogsPublic = edAlliance.WarLogsPublic;
 
             server.AllianceManager.QueueSave(clan);
+            var chat = new ChatStreamEntry()
+            {
+                MessageID = 1,
+                UserID = 1,
+                HomeID = 1,
+                Name = "Test 1",
+                League = 22,
+                Level = 100,
+                Role = ClanMemberRole.Leader,
+                Message = "Alliance Setting Changed"
+              
+            };
+            var stream = new AllianceStreamMessage();
+            stream.Entries.Add(chat);
+            client.SendMessage(stream);
 
             var csCommand = new AllianceSettingChangedCommand()
             {
@@ -125,10 +141,10 @@ namespace CoCSharp.Server.Handlers
             {
                 Command = csCommand
             };
-
+            client.SendMessage(stream);
             client.SendMessage(ascMessage);
         }
-
+    
         private static void HandleAllianceRoleUpdateMessage(CoCServer server, AvatarClient client, Message message)
         {
             var caAlliance = (AllianceChangeRoleMessage)message;
