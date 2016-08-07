@@ -117,6 +117,7 @@ namespace CoCSharp.Server.Handlers
             var chat = new ChatStreamEntry()
             {
                 MessageID = 1,
+                Unknown1 = 3,
                 UserID = 1,
                 HomeID = 1,
                 Name = "Test 1",
