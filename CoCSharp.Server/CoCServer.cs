@@ -1,4 +1,4 @@
-﻿using CoCSharp.Csv;
+using CoCSharp.Csv;
 using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Network;
@@ -28,16 +28,16 @@ namespace CoCSharp.Server
 
             _timer = new Timer(TimerCallback, null, KEEPALIVE_TIIMEOUT, KEEPALIVE_TIIMEOUT);
 
-            Console.WriteLine("-> loading config.xml");
+            Console.WriteLine("> Loading config.xml");
             Configuration = new CoCServerConfiguration("config.xml");
 
-            Console.WriteLine("-> setting up AvatarManager...");
+            Console.WriteLine("> Setting up AvatarManager...");
             AvatarManager = new AvatarManager(this);
 
-            Console.WriteLine("-> setting up AllianceManager...");
+            Console.WriteLine("> Setting up AllianceManager...");
             AllianceManager = new AllianceManager();
 
-            Console.WriteLine("-> setting up AssetManager...");
+            Console.WriteLine("> Setting up AssetManager...\n");
             AssetManager = new AssetManager(DirectoryPaths.Content);
 
             LoadCsv<BuildingData>("buildings.csv");
@@ -48,7 +48,7 @@ namespace CoCSharp.Server
 
             AssetManager.DefaultInstance = AssetManager;
 
-            Console.WriteLine("-> setting up NpcManager...");
+            Console.WriteLine("\n> Setting up NpcManager...");
             NpcManager = new NpcManager();
 
             Clients = new List<AvatarClient>();
@@ -64,9 +64,13 @@ namespace CoCSharp.Server
 
         private void LoadCsv<T>(string path) where T : CsvData, new()
         {
-            Console.Write("--> loading {0}...", path);
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write("-> Loading {0}...", path);
+            Console.ResetColor();
             AssetManager.LoadCsv<T>(path);
-            Console.WriteLine("done");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine(" DONE");
+            Console.ResetColor();
         }
 
         public CoCServerConfiguration Configuration { get; private set; }
@@ -132,7 +136,7 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Log.Exception("failed to handle message", ex);
+                Log.Exception("Failed to handle message", ex);
             }
 #endif
         }
@@ -153,7 +157,7 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Log.Exception("failed to handle command", ex);
+                Log.Exception("Failed to handle command", ex);
             }
 #endif
         }
@@ -178,8 +182,10 @@ namespace CoCSharp.Server
             var totalMsgSent = _settings.Statistics.TotalMessagesSent;
             var totalMsgReceived = _settings.Statistics.TotalMessagesReceived;
 
-            Console.WriteLine("log::activeconn/totalconn: {0}/{1}, sent/receive: {2}/{3} bytes, sent/receive: {4}/{5} messages",
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("LOG: Active Connections / Total Connections: {0} / {1}, Sent / Received: {2} / {3} bytes, Sent / Received: {4} / {5} messages.",
                               activeConn, totalConn, totalSent, totalReceived, totalMsgSent, totalMsgReceived);
+            Console.ResetColor();
         }
 
         private void DoKeepAlive()
@@ -195,7 +201,7 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Log.Exception("failed to check keepalives", ex);
+                Log.Exception("Failed to check keepalives", ex);
             }
         }
     }
