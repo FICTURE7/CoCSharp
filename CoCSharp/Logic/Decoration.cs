@@ -11,6 +11,7 @@ namespace CoCSharp.Logic
     public class Decoration : VillageObject<DecorationData>
     {
         #region Constants
+        internal const int Kind = 6;
         internal const int BaseGameID = 506000000;
         #endregion
 
@@ -141,6 +142,11 @@ namespace CoCSharp.Logic
             }
 
             return new Decoration(village);
+        }
+
+        internal override void Tick(int tick)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

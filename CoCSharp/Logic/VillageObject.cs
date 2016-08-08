@@ -33,6 +33,7 @@ namespace CoCSharp.Logic
 
             _components = new LogicComponent[8];
             _village = village;
+            _village.VillageObjects.Add(this);
 
             Interlocked.Increment(ref s_created);
         }
@@ -92,7 +93,7 @@ namespace CoCSharp.Logic
         {
             get
             {
-                return _columnIndex + ((500 + KindID) * 1000000);
+                return Thread.VolatileRead(ref _columnIndex) + ((500 + KindID) * 1000000);
             }
         }
 
@@ -231,9 +232,8 @@ namespace CoCSharp.Logic
             _y = default(int);
         }
 
-        ///<summary>Register the VillageObject to its Village.</summary>
-        //protected abstract void RegisterVillageObject();
-
+        internal abstract void Tick(int tick);
+        
         // Writes the current VillageObject to the JsonWriter.
         internal abstract void ToJsonWriter(JsonWriter writer);
 

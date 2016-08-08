@@ -190,10 +190,9 @@ namespace CoCSharp.Server.Handlers
                         break;
 
                     case "max":
-                        var countBuilding = client.Home.Buildings.Count;
-                        for (int i = 0; i < countBuilding; i++)
+                        var countBuilding = 0;
+                        foreach (var building in client.Home.Buildings)
                         {
-                            var building = client.Home.Buildings[i];
                             var collection = AssetManager.DefaultInstance.SearchCsv<BuildingData>(building.Data.ID);
                             var data = collection[collection.Count - 1];
                             if (building.IsConstructing)
@@ -202,12 +201,12 @@ namespace CoCSharp.Server.Handlers
                                 building.IsLocked = false;
 
                             building.Data = data;
+                            countBuilding++;
                         }
 
-                        var countTraps = client.Home.Traps.Count;
-                        for (int i = 0; i < countTraps; i++)
+                        var countTraps = 0;
+                        foreach (var trap in client.Home.Traps)
                         {
-                            var trap = client.Home.Traps[i];
                             var collection = AssetManager.DefaultInstance.SearchCsv<TrapData>(trap.Data.ID);
                             var data = collection[collection.Count - 1];
                             if (trap.IsConstructing)

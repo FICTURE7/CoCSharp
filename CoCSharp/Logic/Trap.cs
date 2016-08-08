@@ -13,6 +13,7 @@ namespace CoCSharp.Logic
     public class Trap : Buildable<TrapData>
     {
         #region Constants
+        internal const int Kind = 4;
         internal const int BaseGameID = 504000000;
 
         private static readonly PropertyChangedEventArgs s_brokenChanged = new PropertyChangedEventArgs("Broken");
@@ -459,6 +460,11 @@ namespace CoCSharp.Logic
             }
 
             return new Trap(village);
+        }
+
+        internal override void Tick(int tick)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

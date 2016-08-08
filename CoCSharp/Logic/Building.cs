@@ -13,6 +13,7 @@ namespace CoCSharp.Logic
     public class Building : Buildable<BuildingData>
     {
         #region Constants
+        internal const int Kind = 0;
         internal const int BaseGameID = 500000000;
 
         private static readonly PropertyChangedEventArgs s_isLockedChanged = new PropertyChangedEventArgs("IsLocked");
@@ -315,7 +316,6 @@ namespace CoCSharp.Logic
             _isLocked = default(bool);
         }
 
-
         #region Json Reading/Writing
         internal override void ToJsonWriter(JsonWriter writer)
         {
@@ -496,6 +496,11 @@ namespace CoCSharp.Logic
             }
 
             return new Building(village);
+        }
+
+        internal override void Tick(int tick)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

@@ -3,8 +3,10 @@ using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace CoCSharp.Logic
 {
@@ -49,12 +51,7 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("manager");
 
             AssetManager = manager;
-
             _villageObjects = new VillageObjectCollection();
-            Buildings = new List<Building>(384);
-            Obstacles = new List<Obstacle>(64);
-            Traps = new List<Trap>(64);
-            Decorations = new List<Decoration>(32);
         }
         #endregion
 
@@ -90,27 +87,62 @@ namespace CoCSharp.Logic
         /// </remarks>
         public int ExperienceVersion { get; set; }
 
-        private VillageObjectCollection _villageObjects;
+        private readonly VillageObjectCollection _villageObjects;
+        /// <summary>
+        /// Gets the <see cref="VillageObjectCollection"/> which contains all the <see cref="VillageObject"/> in
+        /// this <see cref="Village"/>.
+        /// </summary>
+        public VillageObjectCollection VillageObjects
+        {
+            get
+            {
+                return _villageObjects;
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the list of <see cref="Building"/> in the <see cref="Village"/>.
+        /// Gets an enumerator that iterates through the <see cref="Building"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public List<Building> Buildings { get; set; }
+        public IEnumerable<Building> Buildings
+        {
+            get
+            {
+                return _villageObjects.GetRow(Building.Kind).Select(k => (Building)k);
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the list of <see cref="Obstacle"/> in the <see cref="Village"/>.
+        /// Gets an enumerator that iterates through the <see cref="Obstacle"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public List<Obstacle> Obstacles { get; set; }
+        public IEnumerable<Obstacle> Obstacles
+        {
+            get
+            {
+                return _villageObjects.GetRow(Obstacle.Kind).Select(k => (Obstacle)k);
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the list of <see cref="Trap"/> in the <see cref="Village"/>.
+        /// Gets an enumerator that iterates through <see cref="Trap"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public List<Trap> Traps { get; set; }
+        public IEnumerable<Trap> Traps
+        {
+            get
+            {
+                return _villageObjects.GetRow(Trap.Kind).Select(k => (Trap)k);
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the list of <see cref="Decoration"/> in the <see cref="Village"/>.
+        /// Gets an enumerator that iterates through the <see cref="Decoration"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public List<Decoration> Decorations { get; set; }
+        public IEnumerable<Decoration> Decorations
+        {
+            get
+            {
+                return _villageObjects.GetRow(Decoration.Kind).Select(k => (Decoration)k);
+            }
+        }
 
         private Building _townhall;
         /// <summary>
@@ -160,14 +192,14 @@ namespace CoCSharp.Logic
 
             if (disposing)
             {
-                for (int i = 0; i < Buildings.Count; i++)
-                    Buildings[i].PushToPool();
-                for (int i = 0; i < Obstacles.Count; i++)
-                    Obstacles[i].PushToPool();
-                for (int i = 0; i < Traps.Count; i++)
-                    Traps[i].PushToPool();
-                for (int i = 0; i < Decorations.Count; i++)
-                    Decorations[i].PushToPool();
+                foreach (var building in Buildings)
+                    building.PushToPool();
+                foreach (var obstacle in Obstacles)
+                    obstacle.PushToPool();
+                foreach (var trap in Traps)
+                    trap.PushToPool();
+                foreach (var deco in Decorations)
+                    deco.PushToPool();
             }
 
             _disposed = true;
@@ -311,44 +343,36 @@ namespace CoCSharp.Logic
         private void WriteBuildingArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            for (int i = 0; i < Buildings.Count; i++)
-            {
-                var building = Buildings[i];
+            foreach (var building in Buildings)
                 building.ToJsonWriter(writer);
-            }
+
             writer.WriteEndArray();
         }
 
         private void WriteObstacleArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            for (int i = 0; i < Obstacles.Count; i++)
-            {
-                var obstacle = Obstacles[i];
+            foreach (var obstacle in Obstacles)
                 obstacle.ToJsonWriter(writer);
-            }
+
             writer.WriteEndArray();
         }
 
         private void WriteTrapArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            for (int i = 0; i < Traps.Count; i++)
-            {
-                var trap = Traps[i];
+            foreach (var trap in Traps)
                 trap.ToJsonWriter(writer);
-            }
+
             writer.WriteEndArray();
         }
 
         private void WriteDecorationArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            for (int i = 0; i < Decorations.Count; i++)
-            {
-                var decoration = Decorations[i];
-                decoration.ToJsonWriter(writer);
-            }
+            foreach (var deco in Decorations)
+                deco.ToJsonWriter(writer);
+
             writer.WriteEndArray();
         }
         #endregion
@@ -497,10 +521,10 @@ namespace CoCSharp.Logic
                 return;
 
             // Update our Buildable's CanUpgrade property.
-            for (int i = 0; i < Buildings.Count; i++)
-                Buildings[i].UpdateCanUpgade();
-            for (int i = 0; i < Traps.Count; i++)
-                Traps[i].UpdateCanUpgade();
+            //for (int i = 0; i < Buildings.Count; i++)
+            //    Buildings[i].UpdateCanUpgade();
+            //for (int i = 0; i < Traps.Count; i++)
+            //    Traps[i].UpdateCanUpgade();
 
             Debug.WriteLine("Town Hall construction finished. Updated buildings & traps CanUpgrade property.");
         }

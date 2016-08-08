@@ -13,6 +13,7 @@ namespace CoCSharp.Logic
     public class Obstacle : VillageObject<ObstacleData>
     {
         #region Constants
+        internal const int Kind = 3;
         internal const int BaseGameID = 503000000;
 
         private static readonly PropertyChangedEventArgs s_lootMultiplierChanged = new PropertyChangedEventArgs("LootMultiplier");
@@ -420,6 +421,11 @@ namespace CoCSharp.Logic
             }
 
             return new Obstacle(village);
+        }
+
+        internal override void Tick(int tick)
+        {
+            throw new NotImplementedException();
         }
         #endregion
     }

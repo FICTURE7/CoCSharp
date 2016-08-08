@@ -5,6 +5,8 @@ namespace CoCSharp.Test
 {
     public static class TestUtils
     {
+        public static readonly Random Random = new Random();
+
         private static readonly string _baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         private static readonly string _contentDirectory = Path.Combine(_baseDirectory, "Content");

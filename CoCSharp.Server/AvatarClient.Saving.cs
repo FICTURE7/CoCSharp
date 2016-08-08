@@ -60,23 +60,20 @@ namespace CoCSharp.Server
                 return false;
 
             // Set the UserToken of buildings to this instance.
-            for (int i = 0; i < avatar.Home.Buildings.Count; i++)
+            foreach (var building in avatar.Home.Buildings)
             {
-                var building = avatar.Home.Buildings[i];
                 building.UserToken = this;
                 building.ConstructionFinished += CommandHandlers.BuildingConstructionFinished;
             }
 
-            for (int i = 0; i < avatar.Home.Traps.Count; i++)
+            foreach (var trap in avatar.Home.Traps)
             {
-                var trap = avatar.Home.Traps[i];
                 trap.UserToken = this;
                 trap.ConstructionFinished += CommandHandlers.TrapConstructionFinished;
             }
 
-            for (int i = 0; i < avatar.Home.Obstacles.Count; i++)
+            foreach (var obstacle in avatar.Home.Obstacles)
             {
-                var obstacle = avatar.Home.Obstacles[i];
                 obstacle.UserToken = this;
                 obstacle.ClearingFinished += CommandHandlers.ObstacleClearingFinished;
             }

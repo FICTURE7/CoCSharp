@@ -578,9 +578,8 @@ namespace CoCSharp.Logic
             var warElixir = 0;
             var warDarkElixir = 0;
 
-            for (int i = 0; i < Home.Buildings.Count; i++)
+            foreach (var building in Home.Buildings)
             {
-                var building = Home.Buildings[i];
                 // Ignore the building if its locked (from village.json). E.g: Clan Castle level 0.
                 if (building.IsLocked)
                     continue;
