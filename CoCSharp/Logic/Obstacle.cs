@@ -295,7 +295,8 @@ namespace CoCSharp.Logic
 
             //var index = ID - BaseGameID;
             //Village.Obstacles.RemoveAt(index);
-            Village.Obstacles.Remove(this);
+            //Village.Obstacles.Remove(this);
+            Village.VillageObjects.Remove(ID);
             PushToPool();
 
             OnClearingFinished(args);

@@ -50,6 +50,12 @@ namespace CoCSharp.Network.Messages
                 };
             }
 
+            LegenderyTrophy = 99;
+            BestSeasonEnabled = 1;
+            BestSeasonMonth = 1;
+            BestSeasonYear = 1999;
+            BestSeasonTrophies = 99;
+            BestSeasonPosition = 1;
             LeagueLevel = avatar.League;
             TownHallLevel = avatar.Home.TownHall.Data.Level;
             Name = avatar.Name;
@@ -117,54 +123,49 @@ namespace CoCSharp.Network.Messages
         public ClanMessageComponent ClanData;
 
         /// <summary>
-        /// Unknown integer 2.
+        /// Legendery Trophy Count.
         /// </summary>
-        public int Unknown2; // 0
+        public int LegenderyTrophy; // 0
         /// <summary>
-        /// Unknown integer 3.
+        /// Best Season Is Player Legendary Stats.
         /// </summary>
-        public int Unknown3; // 0
+        public int BestSeasonEnabled; // 0
         /// <summary>
-        /// Unknown integer 4.
+        /// Best Season In Legendary Stats Month.
         /// </summary>
-        public int Unknown4; // 0
+        public int BestSeasonMonth; // 0
         /// <summary>
-        /// Unknown integer 5.
+        /// Best Season In Legendary Stats Month.
         /// </summary>
-        public int Unknown5; // 0
+        public int BestSeasonYear; // 0
         /// <summary>
-        /// Unknown integer 6.
+        /// Best Season In Legendary Stats Year.
         /// </summary>
-        public int Unknown6; // 0
+        public int BestSeasonPosition; // 0
         /// <summary>
-        /// Unknown integer 7.
+        /// Best Season In Legendary Stats Trophies.
         /// </summary>
-        public int Unknown7; // 0
+        public int BestSeasonTrophies; // 0
         /// <summary>
-        /// Unknown integer 8.
+        /// Last Season Is Player Legendary Stats.
         /// </summary>
-        public int Unknown8; // 0
+        public int LastSeasonEnabled; // 0
         /// <summary>
-        /// Unknown integer 9.
+        /// Last Season In Legendary Stats Month.
         /// </summary>
-        public int Unknown9; // 0
+        public int LastSeasonMonth; // 0
         /// <summary>
-        /// Unknown integer 10.
+        /// Last Season In Legendary Stats Year.
         /// </summary>
-        public int Unknown10; // 0
+        public int LastSeasonYear; // 0
         /// <summary>
-        /// Unknown integer 11.
+        /// Last Season In Legendary Stats Position.
         /// </summary>
-        public int Unknown11; // 0
+        public int LastSeasonPosition; // 0
         /// <summary>
-        /// Unknown integer 12.
+        /// Last Season In Legendary Stats Trophies.
         /// </summary>
-        public int Unknown12; // 0
-        /// <summary>
-        /// Unknown integer 13.
-        /// </summary>
-        public int Unknown13; // -1
-
+        public int LastSeasonTrophies; // 0
         /// <summary>
         /// League ID.
         /// </summary>
@@ -182,6 +183,14 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int AllianceCastleUsedCapacity;
         /// <summary>
+        /// Unknown integer 13.
+        /// </summary>
+        public int Unknown13; // -1
+        /// <summary>
+        /// Unknown integer 14.
+        /// </summary>
+        public int Unknown14; // -1
+        /// <summary>
         /// TownHall level.
         /// </summary>
         public int TownHallLevel;
@@ -189,12 +198,10 @@ namespace CoCSharp.Network.Messages
         /// Name of avatar.
         /// </summary>
         public string Name;
-
         /// <summary>
-        /// Unknown integer 14.
+        /// Unknown integer 15.
         /// </summary>
-        public int Unknown14; // -1
-
+        public int Unknown15;
         /// <summary>
         /// Level of avatar.
         /// </summary>
@@ -211,11 +218,6 @@ namespace CoCSharp.Network.Messages
         /// Free gems available.
         /// </summary>
         public int FreeGems;
-
-        /// <summary>
-        /// Unknown integer 15.
-        /// </summary>
-        public int Unknown15;
         /// <summary>
         /// Unknown integer 16.
         /// </summary>
@@ -410,17 +412,17 @@ namespace CoCSharp.Network.Messages
                     ClanData.Unknown2 = reader.ReadInt64(); // Clan war ID?
             }
 
-            Unknown2 = reader.ReadInt32();
-            Unknown3 = reader.ReadInt32();
-            Unknown4 = reader.ReadInt32();
-            Unknown5 = reader.ReadInt32();
-            Unknown6 = reader.ReadInt32();
-            Unknown7 = reader.ReadInt32();
-            Unknown8 = reader.ReadInt32();
-            Unknown9 = reader.ReadInt32();
-            Unknown10 = reader.ReadInt32();
-            Unknown11 = reader.ReadInt32();
-            Unknown12 = reader.ReadInt32();
+            LegenderyTrophy = reader.ReadInt32();
+            BestSeasonEnabled = reader.ReadInt32();
+            BestSeasonMonth = reader.ReadInt32();
+            BestSeasonYear = reader.ReadInt32();
+            BestSeasonPosition = reader.ReadInt32();
+            BestSeasonTrophies = reader.ReadInt32();
+            LastSeasonEnabled = reader.ReadInt32();
+            LastSeasonMonth = reader.ReadInt32();
+            LastSeasonYear = reader.ReadInt32();
+            LastSeasonPosition = reader.ReadInt32();
+            LastSeasonTrophies = reader.ReadInt32();
 
             LeagueLevel = reader.ReadInt32();
             AllianceCastleLevel = reader.ReadInt32();
@@ -515,24 +517,24 @@ namespace CoCSharp.Network.Messages
                     writer.Write(ClanData.Unknown2);
             }
 
-            writer.Write(Unknown2);
-            writer.Write(Unknown3);
-            writer.Write(Unknown4);
-            writer.Write(Unknown5);
-            writer.Write(Unknown6);
-            writer.Write(Unknown7);
-            writer.Write(Unknown8);
-            writer.Write(Unknown9);
-            writer.Write(Unknown10);
-            writer.Write(Unknown11); // 1
-            writer.Write(Unknown12);
-            writer.Write(Unknown13); // 1 = 8.x.x
-            writer.Write(Unknown14); // 0 = 8.x.x
+            writer.Write(LegenderyTrophy);
+            writer.Write(BestSeasonEnabled);
+            writer.Write(BestSeasonMonth);
+            writer.Write(BestSeasonYear);
+            writer.Write(BestSeasonPosition);
+            writer.Write(BestSeasonTrophies);
+            writer.Write(LastSeasonEnabled);
+            writer.Write(LastSeasonMonth);
+            writer.Write(LastSeasonYear);
+            writer.Write(LastSeasonPosition); // 1
+            writer.Write(LastSeasonTrophies);
 
             writer.Write(LeagueLevel);
             writer.Write(AllianceCastleLevel);
             writer.Write(AllianceCastleTotalCapacity);
             writer.Write(AllianceCastleUsedCapacity);
+            writer.Write(Unknown13); // 1 = 8.x.x
+            writer.Write(Unknown14); // 0 = 8.x.x
             writer.Write(TownHallLevel);
             writer.Write(Name);
 

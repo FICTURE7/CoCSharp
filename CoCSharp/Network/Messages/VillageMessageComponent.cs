@@ -36,6 +36,7 @@ namespace CoCSharp.Network.Messages
             //GuardDuration = 1800;
             //Unknown3 = 69119;
             Unknown4 = 1200;
+            
 
             Unknown5 = 60;
             Home = avatar.Home;
