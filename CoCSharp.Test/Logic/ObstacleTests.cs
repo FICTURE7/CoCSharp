@@ -28,7 +28,7 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void Was_AddedToVillage()
         {
-            Assert.That(_village.Obstacles.Contains(_obstacle));
+            Assert.That(_village.VillageObjects.Contains(_obstacle));
         }
 
         [Test]

@@ -175,14 +175,15 @@ namespace CoCSharp.Server.Handlers
                         break;
 
                     case "clearobstacles":
-                        var count = client.Home.Obstacles.Count;
-                        for (int i = 0; i < count; i++)
+                        var count = 0;
+                        foreach (var obstacle in client.Home.Obstacles)
                         {
-                            var obstacle = client.Home.Obstacles[i];
                             if (obstacle.IsClearing)
                                 obstacle.CancelClearing();
+
+                            client.Home.VillageObjects.Remove(obstacle.ID);
+                            count++;
                         }
-                        client.Home.Obstacles.Clear();
 
                         cmsMessage.Message = "Cleared " + count + " obstacles.";
                         client.SendMessage(cmsMessage);
