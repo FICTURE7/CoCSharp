@@ -1,4 +1,4 @@
-﻿using CoCSharp.Server.Core;
+using CoCSharp.Server.Core;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -31,30 +31,36 @@ namespace CoCSharp.Server
             }
         }
 
-        static void k()
-        {
-            k();
-        }
-
         public static void Main(string[] args)
         {
-            Console.ReadLine();
-            throw new ArgumentException();
-
             FancyConsole.Enabled = false;
             Console.Title = "CoC# - Server";
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            Console.WriteLine("starting server...");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine(
+@"
+_________        _________   _________.__                         
+\_   ___ \  ____ \_   ___ \ /   _____/|  |__ _____ _____________  
+/    \  \/ /  _ \/    \  \/ \_____  \ |  |  \\__  \\_  __ \____ \ 
+\     \___(  <_> )     \____/        \|   Y  \/ __ \|  | \/  |_> >
+ \______  /\____/ \______  /_______  /|___|  (____  /__|  |   __/ 
+        \/               \/        \/      \/     \/      |__|    
+");
+            Console.ResetColor();
+            Console.WriteLine("Starting CoC# - Server Emulator for Clash of Clans...");
+            Console.WriteLine("Visit https://github.com/FICTURE7/CoCSharp/tree/server-dev for the latest news.\n");
 
             Server = new Server();
             Server.Start();
 
             stopwatch.Stop();
 
-            Console.WriteLine("done({0}ms): listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\nServer loaded successfully in {0} ms. Listening on port 9339.", stopwatch.Elapsed.TotalMilliseconds);
+            Console.ResetColor();
             Console.WriteLine();
             while (true)
             {
@@ -64,7 +70,7 @@ namespace CoCSharp.Server
                 }
                 catch (Exception ex)
                 {
-                    Log.Exception("flushing avatars", ex);
+                    Log.Exception("Flushing avatars", ex);
                 }
 
                 try
@@ -73,7 +79,7 @@ namespace CoCSharp.Server
                 }
                 catch (Exception ex)
                 {
-                    Log.Exception("flushing alliances", ex);
+                    Log.Exception("Flushing alliances", ex);
                 }
 
                 Thread.Sleep(100);
