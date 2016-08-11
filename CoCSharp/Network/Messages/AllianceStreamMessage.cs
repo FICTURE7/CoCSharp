@@ -1,6 +1,4 @@
-﻿using CoCSharp.Network;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace CoCSharp.Network.Messages
 {
@@ -14,7 +12,6 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public AllianceStreamMessage()
         {
-            Entries = new List<AllianceStreamEntry>();
             // Space
         }
 
@@ -26,7 +23,7 @@ namespace CoCSharp.Network.Messages
             /// <summary>
         /// List of <see cref="AllianceStreamEntry"/>.
         /// </summary>
-        public List<AllianceStreamEntry> Entries;
+        public AllianceStreamEntry[] Entries;
 
         /// <summary>
         /// Reads the <see cref="AllianceStreamMessage"/> from the specified <see cref="MessageReader"/>.
@@ -62,7 +59,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            var count = Entries.Count;
+            var count = Entries.Length;
             writer.Write(count);
             for (int i = 0; i < count; i++)
             {

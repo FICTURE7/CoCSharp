@@ -124,10 +124,17 @@ namespace CoCSharp.Server.Handlers
                 Level = 100,
                 Role = ClanMemberRole.Leader,
                 Message = "Alliance Setting Changed"
-              
+
             };
-            var stream = new AllianceStreamMessage();
-            stream.Entries.Add(chat);
+
+            var stream = new AllianceStreamMessage()
+            {
+                Entries = new AllianceStreamEntry[]
+                {
+                    chat
+                }
+            };
+
             client.SendMessage(stream);
 
             var csCommand = new AllianceSettingChangedCommand()
