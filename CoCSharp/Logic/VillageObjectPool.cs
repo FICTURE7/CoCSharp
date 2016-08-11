@@ -32,16 +32,16 @@ namespace CoCSharp.Logic
         // Pushes the specified VillageObject to the corresponding pool.
         public static void Push(VillageObject obj)
         {
-            GetPool(obj.ID).Add(obj);
+            GetPool(obj.KindID).Add(obj);
         }
 
         // Tries to get the VillageObject with the corresponding game ID.
-        public static bool TryPop(int gameId, out VillageObject obj)
+        public static bool TryPop(int kindId, out VillageObject obj)
         {
             //return GetPool(gameId).TryTake(out obj);
 
             obj = default(VillageObject);
-            var success = GetPool(gameId).TryTake(out obj);
+            var success = GetPool(kindId).TryTake(out obj);
             if (success)
             {
                 obj._recycled++;
@@ -50,18 +50,12 @@ namespace CoCSharp.Logic
 
             return success;
         }
-
-        // Returns the amount of VillageObject in a pool with the corresponding game ID.
-        public static int GetCount(int gameId)
-        {
-            return GetPool(gameId).Count;
-        }
-
+        
         // Returns the pool which corresponds to the specified game ID.
-        private static ConcurrentBag<VillageObject> GetPool(int gameId)
+        private static ConcurrentBag<VillageObject> GetPool(int kindId)
         {
             // Potential IndexOutOfRangeException here.
-            return _pools[(gameId / InternalConstants.IDBase) - 500];
+            return _pools[kindId];
         }
     }
 }

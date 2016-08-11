@@ -32,9 +32,7 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("village");
 
             _components = new LogicComponent[8];
-            _village = village;
-            _village.VillageObjects.Add(this);
-
+            SetVillageInternal(village);
             Interlocked.Increment(ref s_created);
         }
 
@@ -74,12 +72,7 @@ namespace CoCSharp.Logic
             {
                 return _village;
             }
-            internal set
-            {
-                _village = value;
-            }
         }
-
 
         internal int _columnIndex;
 
@@ -232,7 +225,10 @@ namespace CoCSharp.Logic
             _y = default(int);
         }
 
-        internal abstract void Tick(int tick);
+        internal virtual void Tick(int tick)
+        {
+            // Space
+        }
         
         // Writes the current VillageObject to the JsonWriter.
         internal abstract void ToJsonWriter(JsonWriter writer);
@@ -246,6 +242,12 @@ namespace CoCSharp.Logic
             _village = null;
             VillageObjectPool.Push(this);
             _count++;
+        }
+
+        internal void SetVillageInternal(Village village)
+        {
+            _village = village;
+            _village.VillageObjects.Add(this);
         }
         #endregion
     }

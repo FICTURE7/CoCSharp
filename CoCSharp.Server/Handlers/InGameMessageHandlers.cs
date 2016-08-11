@@ -13,13 +13,13 @@ namespace CoCSharp.Server.Handlers
     {
         private static KeepAliveResponseMessage s_keepAliveResponse = new KeepAliveResponseMessage();
 
-        private static void HandleKeepAliveRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleKeepAliveRequestMessage(Server server, AvatarClient client, Message message)
         {
             client.UpdateKeepAlive();
             client.SendMessage(s_keepAliveResponse);
         }
 
-        private static void HandleAttackNpcMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleAttackNpcMessage(Server server, AvatarClient client, Message message)
         {
             var anMessage = message as AttackNpcMessage;
 
@@ -46,7 +46,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(ndMessage);
         }
 
-        private static void HandleAttackResultMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleAttackResultMessage(Server server, AvatarClient client, Message message)
         {
             var avatar = client;
             var ohdMessage = client.OwnHomeDataMessage;
@@ -56,7 +56,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(ohdMessage);
         }
 
-        private static void HandleAvatarProfileRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleAvatarProfileRequestMessage(Server server, AvatarClient client, Message message)
         {
             var apreqMessage = (AvatarProfileRequestMessage)message;
 
@@ -87,7 +87,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(aprMessage);
         }
 
-        private static void HandleVisitHomeMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleVisitHomeMessage(Server server, AvatarClient client, Message message)
         {
             var vhMessage = (VisitHomeMessage)message;
 
@@ -109,9 +109,18 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(vhdMessage);
         }
 
-        private static void HandleCommandMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleCommandMessage(Server server, AvatarClient client, Message message)
         {
+            const int TICK_DIFF_MARGIN = 10;
             var cmdMessage = message as CommandMessage;
+            var diff = Math.Abs(cmdMessage.Tick - client.Home.Tick);
+
+            if (diff >= TICK_DIFF_MARGIN)
+            {
+                client.Home.Tick = cmdMessage.Tick;
+                Console.WriteLine("readjusting village tick");
+            }
+
             if (cmdMessage.Commands.Length > 0)
             {
                 for (int i = 0; i < cmdMessage.Commands.Length; i++)
@@ -128,7 +137,7 @@ namespace CoCSharp.Server.Handlers
             }
         }
 
-        private static void HandleChangeAvatarNameRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleChangeAvatarNameRequestMessage(Server server, AvatarClient client, Message message)
         {
             var careqMessage = (ChangeAvatarNameRequestMessage)message;
             client.Name = careqMessage.NewName;
@@ -149,7 +158,7 @@ namespace CoCSharp.Server.Handlers
             client.Save();
         }
 
-        private static void HandleChatMessageClientMessageMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleChatMessageClientMessageMessage(Server server, AvatarClient client, Message message)
         {
             var cmcMessage = message as ChatMessageClientMessage;
             var cmsMessage = new ChatMessageServerMessage();
@@ -261,7 +270,7 @@ namespace CoCSharp.Server.Handlers
             }
         }
 
-        public static void RegisterInGameMessageHandlers(CoCServer server)
+        public static void RegisterInGameMessageHandlers(Server server)
         {
             server.RegisterMessageHandler(new CommandMessage(), HandleCommandMessage);
             server.RegisterMessageHandler(new KeepAliveRequestMessage(), HandleKeepAliveRequestMessage);

@@ -3,14 +3,14 @@ using System.Xml;
 
 namespace CoCSharp.Server
 {
-    public class CoCServerConfiguration
+    public class ServerConfiguration
     {
-        internal CoCServerConfiguration()
+        internal ServerConfiguration()
         {
             // Space
         }
 
-        public CoCServerConfiguration(string path)
+        public ServerConfiguration(string path)
         {
             if (File.Exists(path))
             {
@@ -26,18 +26,18 @@ namespace CoCSharp.Server
             }
         }
 
-        private static CoCServerConfiguration _internalDefault = new CoCServerConfiguration()
+        private static ServerConfiguration _internalDefault = new ServerConfiguration()
         {
             StartingGems = 69696969,
             StartingGold = 69696969,
             StartingElixir = 69696969
         };
 
-        public static CoCServerConfiguration Default
+        public static ServerConfiguration Default
         {
             get
             {
-                return new CoCServerConfiguration("config.xml")
+                return new ServerConfiguration("config.xml")
                 {
                     StartingGems = _internalDefault.StartingGems,
                     StartingGold = _internalDefault.StartingGold,

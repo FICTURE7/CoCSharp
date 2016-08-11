@@ -225,12 +225,12 @@ namespace CoCSharp.Logic
             Debug.Assert(Data != null);
             if (Data.ClearTime == InstantClearTime)
             {
-                DoClearingFinished();
+                //DoClearingFinished();
                 return;
             }
 
             ClearEndTime = DateTime.UtcNow.Add(Data.ClearTime);
-            ScheduleClearing();
+            //ScheduleClearing();
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace CoCSharp.Logic
 
             var endTime = DateTime.UtcNow;
 
-            CancelScheduleClearing();
+            //CancelScheduleClearing();
 
             ClearTEndUnixTimestamp = 0;
             OnClearingFinished(new ClearingFinishedEventArgs()
@@ -266,48 +266,12 @@ namespace CoCSharp.Logic
             if (ClearingFinished != null)
                 ClearingFinished(this, e);
         }
-
-        internal void ScheduleClearing()
-        {
-            Debug.Assert(!_scheduled);
-
-            LogicScheduler.ScheduleLogic(DoClearingFinished, ClearEndTime, userToken: this);
-            _scheduled = true;
-        }
-
-        internal void CancelScheduleClearing()
-        {
-            Debug.Assert(_scheduled);
-
-            LogicScheduler.CancelSchedule(this);
-            _scheduled = false;
-        }
-
-        private void DoClearingFinished()
-        {
-            var endTime = DateTime.UtcNow;
-            var args = new ClearingFinishedEventArgs()
-            {
-                ClearedObstacle = this,
-                EndTime = endTime,
-                UserToken = UserToken
-            };
-
-            //var index = ID - BaseGameID;
-            //Village.Obstacles.RemoveAt(index);
-            //Village.Obstacles.Remove(this);
-            Village.VillageObjects.Remove(ID);
-            PushToPool();
-
-            OnClearingFinished(args);
-
-            _scheduled = false;
-        }
         #endregion
 
         internal override void ResetVillageObject()
         {
             base.ResetVillageObject();
+
             _lootMultiplier = default(int);
             ClearTEndUnixTimestamp = default(int);
         }
@@ -408,16 +372,16 @@ namespace CoCSharp.Logic
                 return;
 
             ClearTSeconds = clearTime;
-            ScheduleClearing();
+            //ScheduleClearing();
         }
         #endregion
 
         internal static Obstacle GetInstance(Village village)
         {
             var obj = (VillageObject)null;
-            if (VillageObjectPool.TryPop(BaseGameID, out obj))
+            if (VillageObjectPool.TryPop(Kind, out obj))
             {
-                obj.Village = village;
+                obj.SetVillageInternal(village);
                 return (Obstacle)obj;
             }
 
@@ -426,7 +390,7 @@ namespace CoCSharp.Logic
 
         internal override void Tick(int tick)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         #endregion
     }

@@ -41,14 +41,14 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it with a value indicating
-        /// whether the <see cref="Trap"/> is a new construction.
+        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it and a value indicating the level of
+        /// the <see cref="Trap"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> containing the <see cref="Trap"/>.</param>
         /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
-        public Trap(Village village, TrapData data, bool newConstruction) : base(village, data, newConstruction)
+        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
+        public Trap(Village village, TrapData data, int level) : base(village, data, level)
         {
             // Space
         }
@@ -68,15 +68,15 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it and user token object with
-        /// a value indicating whether the <see cref="Trap"/> is a new construction. 
+        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it and user token object and a value indicating the level of
+        /// the <see cref="Trap"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
         /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
-        public Trap(Village village, TrapData data, object userToken, bool newConstruction) : base(village, data, userToken)
+        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
+        public Trap(Village village, TrapData data, object userToken, int level) : base(village, data, userToken)
         {
             // Space
         }
@@ -97,16 +97,16 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing the <see cref="Trap"/>
-        /// and <see cref="TrapData"/> which is associated with it, X coordinate and Y coordinate with a value indicating whether the
-        /// <see cref="Trap"/> is in construction.
+        /// and <see cref="TrapData"/> which is associated with it, X coordinate and Y coordinate and a value indicating the level of
+        /// the <see cref="Trap"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
         /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
-        public Trap(Village village, TrapData data, int x, int y, bool newConstruction) : base(village, data, x, y, newConstruction)
+        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
+        public Trap(Village village, TrapData data, int x, int y, int level) : base(village, data, x, y, level)
         {
             // Space
         }
@@ -128,8 +128,8 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing the <see cref="Trap"/>
-        /// and <see cref="TrapData"/> which is associated with it, X coordinate, Y coordinate and user token object with a value indicating
-        /// whether the <see cref="Trap"/> is in construction.
+        /// and <see cref="TrapData"/> which is associated with it, X coordinate, Y coordinate and user token object and a value indicating the level of
+        /// the <see cref="Trap"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
@@ -137,8 +137,8 @@ namespace CoCSharp.Logic
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Trap"/> is a new construction.</param>
-        public Trap(Village village, TrapData data, int x, int y, object userToken, bool newConstruction) : base(village, data, x, y, userToken, newConstruction)
+        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
+        public Trap(Village village, TrapData data, int x, int y, object userToken, int level) : base(village, data, x, y, userToken, level)
         {
             // Space
         }
@@ -176,106 +176,16 @@ namespace CoCSharp.Logic
 
         #region Methods
         #region Construction
-        /// <summary>
-        /// Begins the construction of the <see cref="Trap"/> and increases its level by 1
-        /// when done if <see cref="Buildable{TrapData}.IsConstructing"/> is <c>false</c> and <see cref="VillageObject{TrapData}.Data"/>
-        /// is not null; otherwise it throws an <see cref="InvalidOperationException"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable{TrapData}.IsConstructing"/> is <c>true</c>.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="VillageObject{TrapData}.Data"/> is <c>null</c>.</exception>
-        public override void BeginConstruction()
+        internal override TimeSpan GetBuildTime(TrapData data)
         {
-            if (IsConstructing)
-                throw new InvalidOperationException("Trap object is already in construction.");
-            if (!CanUpgrade)
-                throw new InvalidOperationException("Trap object is maxed or Town Hall level is too low.");
-
-            Debug.Assert(Data != null && NextUpgrade != null);
-
-            var buildData = _constructionLevel > NotConstructedLevel ? NextUpgrade : Data;
-            var startTime = DateTime.UtcNow;
-
-            // No need to schedule construction logic if its construction is instant.
-            // (Initial construction/First level)
-            if (buildData.BuildTime == InstantConstructionTime)
-            {
-                DoConstructionFinished();
-                return;
-            }
-
-            var constructionTime = startTime.Add(buildData.BuildTime);
-            ConstructionEndTime = constructionTime;
-
-            ScheduleBuild();
+            return data.BuildTime;
         }
 
-        /// <summary>
-        /// Cancels the construction of the <see cref="Trap"/> if <see cref="Buildable{TrapData}.IsConstructing"/> is <c>true</c>; otherwise
-        /// it throws an <see cref="InvalidOperationException"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable{TrapData}.IsConstructing"/> is <c>false</c>.</exception>
-        public override void CancelConstruction()
+        internal override int GetTownHallLevel(TrapData data)
         {
-            if (!IsConstructing)
-                throw new InvalidOperationException("Trap object is not in construction.");
-
-            var endTime = DateTime.UtcNow;
-
-            CancelScheduleBuild();
-
-            ConstructionTEndUnixTimestamp = 0;
-            OnConstructionFinished(new ConstructionFinishedEventArgs<TrapData>()
-            {
-                BuildableConstructed = this,
-                EndTime = endTime,
-                UserToken = UserToken,
-                WasCancelled = true
-            });
+            return data.TownHallLevel;
         }
 
-        /// <summary>
-        /// Speeds up the construction of the <see cref="Trap"/> and increases its level by 1
-        /// instantly if <see cref="Buildable{TrapData}.IsConstructing"/> is <c>true</c>; otherwise it throws an
-        /// <see cref="InvalidOperationException"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable{TrapData}.IsConstructing"/> is <c>false</c>.</exception>
-        public override void SpeedUpConstruction()
-        {
-            // Make sure that we not speeding up construction of a trap that is not in construction.
-            if (!IsConstructing)
-                throw new InvalidOperationException("Trap object is not in construction.");
-
-            // Remove the schedule because we don't want it to trigger the events at
-            // the scheduled time.
-            CancelScheduleBuild();
-            DoConstructionFinished();
-        }
-
-        /// <summary/>
-        protected override void DoConstructionFinished()
-        {
-            var endTime = DateTime.UtcNow;
-
-            // If the building is not constructed (level -1) yet we don't update the Data.
-            if (_constructionLevel > NotConstructedLevel)
-            {
-                // Increase level if construction finished successfully.
-                _data = NextUpgrade;
-                UpdateCanUpgade();
-            }
-
-            ConstructionTEndUnixTimestamp = 0;
-            OnConstructionFinished(new ConstructionFinishedEventArgs<TrapData>()
-            {
-                BuildableConstructed = this,
-                UserToken = UserToken,
-                EndTime = endTime
-            });
-
-            Scheduled = false;
-        }
-
-        /// <summary/>
         protected override bool CanUpgradeCheckTownHallLevel()
         {
             Debug.Assert(NextUpgrade != null && Data != null);
@@ -302,6 +212,12 @@ namespace CoCSharp.Logic
             _broken = default(bool);
         }
 
+        internal override void Tick(int tick)
+        {
+            // Ticks the Buildable{T} parent to update construction stuff.
+            base.Tick(tick);
+        }
+
         #region Json Reading/Writing
         internal override void ToJsonWriter(JsonWriter writer)
         {
@@ -314,7 +230,7 @@ namespace CoCSharp.Logic
             writer.WriteValue(ID);
 
             writer.WritePropertyName("lvl");
-            writer.WriteValue(_constructionLevel);
+            writer.WriteValue(Level);
 
             if (ConstructionTEndUnixTimestamp != default(int))
             {
@@ -440,13 +356,13 @@ namespace CoCSharp.Logic
                 {
                     // Date at which building construction was going to end has passed.
                     UpdateCanUpgade();
-                    DoConstructionFinished();
+                    //DoConstructionFinished();
                     return;
                 }
             }
 
             // Schedule the build event and all that stuff.
-            ScheduleBuild();
+            //ScheduleBuild();
         }
         #endregion
 
@@ -455,16 +371,11 @@ namespace CoCSharp.Logic
             var obj = (VillageObject)null;
             if (VillageObjectPool.TryPop(BaseGameID, out obj))
             {
-                obj.Village = village;
+                obj.SetVillageInternal(village);
                 return (Trap)obj;
             }
 
             return new Trap(village);
-        }
-
-        internal override void Tick(int tick)
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }

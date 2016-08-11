@@ -12,24 +12,20 @@ using System.Threading;
 
 namespace CoCSharp.Server
 {
-    public delegate void CommandHandler(CoCServer server, AvatarClient client, Command command);
+    public delegate void CommandHandler(Server server, AvatarClient client, Command command);
 
-    public delegate void MessageHandler(CoCServer server, AvatarClient client, Message message);
+    public delegate void MessageHandler(Server server, AvatarClient client, Message message);
 
-    public partial class CoCServer
+    public partial class Server
     {
-        public CoCServer()
+        public Server()
         {
-            const int KEEPALIVE_TIIMEOUT = 25000;
-
             _settings = new NetworkManagerAsyncSettings(64, 64);
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(8, AcceptOperationCompleted);
 
-            _timer = new Timer(TimerCallback, null, KEEPALIVE_TIIMEOUT, KEEPALIVE_TIIMEOUT);
-
             Console.WriteLine("-> loading config.xml");
-            Configuration = new CoCServerConfiguration("config.xml");
+            Configuration = new ServerConfiguration("config.xml");
 
             Console.WriteLine("-> setting up AvatarManager...");
             AvatarManager = new AvatarManager(this);
@@ -69,7 +65,7 @@ namespace CoCSharp.Server
             Console.WriteLine("done");
         }
 
-        public CoCServerConfiguration Configuration { get; private set; }
+        public ServerConfiguration Configuration { get; private set; }
         public List<AvatarClient> Clients { get; private set; }
 
         public NpcManager NpcManager { get; private set; }
@@ -82,12 +78,15 @@ namespace CoCSharp.Server
         private Dictionary<ushort, MessageHandler> MessageHandlerDictionary { get; set; }
 
         private readonly NetworkManagerAsyncSettings _settings;
-        private readonly Timer _timer;
+        private Timer _timer;
 
         // Starts listening & handling clients async.
         public void Start()
         {
+            const int KEEPALIVE_TIIMEOUT = 25000;
+
             StartListener();
+            _timer = new Timer(TimerCallback, null, KEEPALIVE_TIIMEOUT, KEEPALIVE_TIIMEOUT);
         }
 
         // Registers the specified MessageHandler for the specific Message.

@@ -7,7 +7,7 @@ namespace CoCSharp.Server
 {
     public class Program
     {
-        public static CoCServer Server { get; set; }
+        public static Server Server { get; set; }
 
         public static AvatarManager AvatarManager
         {
@@ -31,8 +31,16 @@ namespace CoCSharp.Server
             }
         }
 
+        static void k()
+        {
+            k();
+        }
+
         public static void Main(string[] args)
         {
+            Console.ReadLine();
+            throw new ArgumentException();
+
             FancyConsole.Enabled = false;
             Console.Title = "CoC# - Server";
 
@@ -41,7 +49,7 @@ namespace CoCSharp.Server
 
             Console.WriteLine("starting server...");
 
-            Server = new CoCServer();
+            Server = new Server();
             Server.Start();
 
             stopwatch.Stop();
@@ -70,6 +78,6 @@ namespace CoCSharp.Server
 
                 Thread.Sleep(100);
             }
-        }   
+        }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace CoCSharp.Server
 {
-    public partial class CoCServer
+    public partial class Server
     {
         // Total number of connection accepted.
         private int _totalConnection;

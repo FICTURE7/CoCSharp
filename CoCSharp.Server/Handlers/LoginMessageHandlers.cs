@@ -8,7 +8,7 @@ namespace CoCSharp.Server.Handlers
 {
     public static class LoginMessageHandlers
     {
-        private static void HandleLoginRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleLoginRequestMessage(Server server, AvatarClient client, Message message)
         {
             //TODO: Send LoginFailed to old client versions.
             //TODO: Check if the client has sent SessionRequestMessage first.
@@ -90,7 +90,7 @@ namespace CoCSharp.Server.Handlers
                 client.SendMessage(client.Alliance.AllianceFullEntryMessage);
         }
 
-        private static void HandleHandshakeRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleHandshakeRequestMessage(Server server, AvatarClient client, Message message)
         {
             client.SessionKey = Crypto8.GenerateNonce();
             var enMessage = new HandshakeSuccessMessage()
@@ -101,7 +101,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(enMessage);
         }
 
-        public static void RegisterLoginMessageHandlers(CoCServer server)
+        public static void RegisterLoginMessageHandlers(Server server)
         {
             server.RegisterMessageHandler(new LoginRequestMessage(), HandleLoginRequestMessage);
             server.RegisterMessageHandler(new HandshakeRequestMessage(), HandleHandshakeRequestMessage);
