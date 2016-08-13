@@ -1,6 +1,7 @@
 using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
+using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
 using System;
 
@@ -11,8 +12,9 @@ namespace CoCSharp.Server.Handlers.Commands
         //TODO: Send an OutOfSyncMessage when things seems wrong.
         //TODO: Consume resources and all that fancy stuff.
 
-        public static void RegisterCommandHandlers(CoCServer server)
+        public static void RegisterCommandHandlers(Server server)
         {
+            server.RegisterCommandHandler(new BuyBuildingCommand(), HandleBuyBuildingCommand);
             //server.RegisterCommandHandler(new BuyBuildingCommand(), HandleBuyBuildingCommand);
             //server.RegisterCommandHandler(new BuyTrapCommand(), HandleBuyTrapCommand);
             //server.RegisterCommandHandler(new BuyDecorationCommand(), HandleBuyDecorationCommand);

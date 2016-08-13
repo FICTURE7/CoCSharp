@@ -60,6 +60,11 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
+        // Decoration objects does not have a ticking logic.
+        internal override void Tick(int tick)
+        {
+            // Space
+        }
 
         #region Json Reading/Writing
         internal override void ToJsonWriter(JsonWriter writer)
@@ -135,18 +140,13 @@ namespace CoCSharp.Logic
         internal static Decoration GetInstance(Village village)
         {
             var obj = (VillageObject)null;
-            if (VillageObjectPool.TryPop(BaseGameID, out obj))
+            if (VillageObjectPool.TryPop(Kind, out obj))
             {
-                obj.Village = village;
+                obj.SetVillageInternal(village);
                 return (Decoration)obj;
             }
 
             return new Decoration(village);
-        }
-
-        internal override void Tick(int tick)
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }

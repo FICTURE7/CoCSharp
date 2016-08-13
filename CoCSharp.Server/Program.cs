@@ -7,7 +7,7 @@ namespace CoCSharp.Server
 {
     public class Program
     {
-        public static CoCServer Server { get; set; }
+        public static Server Server { get; set; }
 
         public static AvatarManager AvatarManager
         {
@@ -53,7 +53,7 @@ _________        _________   _________.__
             Console.WriteLine("Starting CoC# - Server Emulator for Clash of Clans...");
             Console.WriteLine("Visit https://github.com/FICTURE7/CoCSharp/tree/server-dev for the latest news.\n");
 
-            Server = new CoCServer();
+            Server = new Server();
             Server.Start();
 
             stopwatch.Stop();
@@ -84,6 +84,6 @@ _________        _________   _________.__
 
                 Thread.Sleep(100);
             }
-        }   
+        }
     }
 }

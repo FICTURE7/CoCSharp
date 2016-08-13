@@ -7,6 +7,7 @@ namespace CoCSharp.Logic
 {
     // Scheduler/Clock that fires an Action on the specified time. Used for handling of
     // construction time etc.
+    [Obsolete("Moving to fancy stuff.")]
     internal static class LogicScheduler
     {
         //TODO: Consider pooling Schedule object to reduce GC pressure.

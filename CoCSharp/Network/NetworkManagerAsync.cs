@@ -192,7 +192,7 @@ namespace CoCSharp.Network
 
         private void StartSend(SocketAsyncEventArgs args)
         {
-            if (Thread.VolatileRead(ref _disposed) == 1)
+            if (args.SocketError == SocketError.OperationAborted || Thread.VolatileRead(ref _disposed) == 1)
             {
                 _sendPool.Push(args);
                 return;
@@ -225,6 +225,13 @@ namespace CoCSharp.Network
         {
             var bytesToProcess = args.BytesTransferred;
             var token = (MessageSendToken)args.UserToken;
+
+            if (bytesToProcess == 0 || args.SocketError != SocketError.Success)
+            {
+                _sendPool.Push(args);
+                OnDisconnected(new DisconnectedEventArgs(args.SocketError));
+                return;
+            }
 
             Interlocked.Add(ref Statistics._totalSent, args.BytesTransferred);
             Interlocked.Add(ref _settingsStats._totalSent, args.BytesTransferred);

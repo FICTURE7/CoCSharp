@@ -14,7 +14,7 @@ namespace CoCSharp.Server.Core
     // Provides method to save & load avatars.
     public class AvatarManager
     {
-        public AvatarManager(CoCServer server)
+        public AvatarManager(Server server)
         {
             _server = server;
             _saveQueue = new SaveQueue<Avatar>();
@@ -102,7 +102,7 @@ namespace CoCSharp.Server.Core
         }
 
         // Server with which the manager was initialized.
-        private readonly CoCServer _server;
+        private readonly Server _server;
         // Array of random names to choose from when creating a new avatar.
         private readonly string[] _newNames;
         // Default village json.

@@ -16,13 +16,13 @@ namespace CoCSharp.Server
             // Space
         }
 
-        public AvatarClient(CoCServer server, long id) : base()
+        public AvatarClient(Server server, long id) : base()
         {
             Server = server;
             ID = id;
         }
 
-        public AvatarClient(CoCServer server, Socket connection, NetworkManagerAsyncSettings settings) : base()
+        public AvatarClient(Server server, Socket connection, NetworkManagerAsyncSettings settings) : base()
         {
             Server = server;
 
@@ -32,13 +32,14 @@ namespace CoCSharp.Server
             _networkManager.MessageReceived += OnMessageReceived;
             _networkManager.Disconnected += OnDisconnected;
 
+            // Give the client a 30 seconds window to send a KeepAliveRequest.
             UpdateKeepAlive();
         }
 
         [BsonIgnore]
         public ClientFlags Status { get; internal set; }
         [BsonIgnore]
-        public CoCServer Server { get; internal set; }
+        public Server Server { get; internal set; }
         [BsonIgnore]
         public Socket Connection { get; private set; }
         [BsonIgnore]
@@ -67,13 +68,12 @@ namespace CoCSharp.Server
         {
             if (e.Exception != null)
             {
-                Console.WriteLine("Exception occurred while receiving: {0}", e.Exception.ToString());
-            }
-            if (e.Exception is CryptographicException)
-            {
-                Console.WriteLine("\tCryptographicException occurred while decrypting a message.");
-                Disconnect();
-                return;
+                Log.Exception("unable to receive message", e.Exception);
+                if (e.Exception is CryptographicException)
+                {
+                    Disconnect();
+                    return;
+                }
             }
             Server.HandleMessage(this, e.Message);
         }

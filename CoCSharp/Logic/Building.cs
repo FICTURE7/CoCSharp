@@ -26,6 +26,7 @@ namespace CoCSharp.Logic
             // Space
         }
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
         /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it.
@@ -35,21 +36,21 @@ namespace CoCSharp.Logic
         /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         public Building(Village village, BuildingData data) : base(village, data)
         {
-            CheckAndSetTownHall();
+            // Space
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it with a value indicating
-        /// whether the <see cref="Building"/> is a new construction.
+        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and a value indicating the level of
+        /// the <see cref="Building"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> containing the <see cref="Building"/>.</param>
         /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
-        public Building(Village village, BuildingData data, bool newConstruction) : base(village, data, newConstruction)
+        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
+        public Building(Village village, BuildingData data, int level) : base(village, data, level)
         {
-            CheckAndSetTownHall();
+            // Space
         }
 
         /// <summary>
@@ -62,22 +63,22 @@ namespace CoCSharp.Logic
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
         public Building(Village village, BuildingData data, object userToken) : base(village, data, userToken)
         {
-            CheckAndSetTownHall();
+            // Space
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and user token object with
-        /// a value indicating whether the <see cref="Building"/> is a new construction. 
+        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and user token object and a value indicating the level of
+        /// the <see cref="Building"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
         /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
-        public Building(Village village, BuildingData data, object userToken, bool newConstruction) : base(village, data, userToken, newConstruction)
+        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
+        public Building(Village village, BuildingData data, object userToken, int level) : base(village, data, userToken)
         {
-            CheckAndSetTownHall();
+            // Space
         }
 
         /// <summary>
@@ -91,23 +92,23 @@ namespace CoCSharp.Logic
         /// <param name="y">Y coordinate.</param>
         public Building(Village village, BuildingData data, int x, int y) : base(village, data, x, y)
         {
-            CheckAndSetTownHall();
+            // Space
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
-        /// and <see cref="BuildingData"/> which is associated with it, X coordinate and Y coordinate with a value indicating whether the
-        /// <see cref="Building"/> is in construction.
+        /// and <see cref="BuildingData"/> which is associated with it, X coordinate and Y coordinate and a value indicating the level of
+        /// the <see cref="Building"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
         /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
-        public Building(Village village, BuildingData data, int x, int y, bool newConstruction) : base(village, data, x, y, newConstruction)
+        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
+        public Building(Village village, BuildingData data, int x, int y, int level) : base(village, data, x, y, level)
         {
-            CheckAndSetTownHall();
+            // Space
         }
 
         /// <summary>
@@ -122,13 +123,13 @@ namespace CoCSharp.Logic
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
         public Building(Village village, BuildingData data, int x, int y, object userToken) : base(village, data, x, y, userToken)
         {
-            CheckAndSetTownHall();
+            // Space
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
-        /// and <see cref="BuildingData"/> which is associated with it, X coordinate, Y coordinate and user token object with a value indicating
-        /// whether the <see cref="Building"/> is in construction.
+        /// and <see cref="BuildingData"/> which is associated with it, X coordinate, Y coordinate and user token object and a value indicating the level of
+        /// the <see cref="Building"/>.
         /// </summary>
         /// 
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
@@ -136,10 +137,10 @@ namespace CoCSharp.Logic
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        /// <param name="newConstruction">A value indicating whether the <see cref="Building"/> is a new construction.</param>
-        public Building(Village village, BuildingData data, int x, int y, object userToken, bool newConstruction) : base(village, data, x, y, userToken, newConstruction)
+        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
+        public Building(Village village, BuildingData data, int x, int y, object userToken, int level) : base(village, data, x, y, userToken, level)
         {
-            CheckAndSetTownHall();
+            // Space
         }
         #endregion
 
@@ -176,117 +177,14 @@ namespace CoCSharp.Logic
 
         #region Methods
         #region Construction
-        /// <summary>
-        /// Begins the construction of the <see cref="Building"/> and increases its level by 1
-        /// when done if <see cref="Buildable{TCsvData}.IsConstructing"/> is <c>false</c>; otherwise it throws an <see cref="InvalidOperationException"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable{BuildingData}.IsConstructing"/> is <c>true</c>.</exception>
-        public override void BeginConstruction()
+        internal override TimeSpan GetBuildTime(BuildingData data)
         {
-            // Make sure that we not constructing a building that is already in construction.
-            if (IsConstructing)
-                throw new InvalidOperationException("Building object is already in construction.");
-            if (!CanUpgrade && _constructionLevel > NotConstructedLevel)
-                throw new InvalidOperationException("Building object is maxed or Town Hall level too low.");
-
-            //Debug.Assert(Data != null && _nextUpgrade != null);
-
-            //var buildData = _constructionLevel > NotConstructedLevel ? _nextUpgrade : Data;
-            var buildData = (BuildingData)null;
-            if (_constructionLevel > NotConstructedLevel)
-            {
-                Debug.Assert(NextUpgrade != null);
-                buildData = NextUpgrade;
-            }
-            else
-            {
-                Debug.Assert(Data != null);
-                buildData = Data;
-            }
-
-            var startTime = DateTime.UtcNow;
-
-            // No need to schedule construction logic if its construction is instant. (Walls)
-            if (buildData.BuildTime == InstantConstructionTime)
-            {
-                DoConstructionFinished();
-                return;
-            }
-
-            var constructionTime = startTime.Add(buildData.BuildTime);
-            ConstructionEndTime = constructionTime;
-
-            ScheduleBuild();
+            return data.BuildTime;
         }
 
-        /// <summary>
-        /// Cancel the construction of the <see cref="Building"/> if <see cref="Buildable{TCsvData}.IsConstructing"/> is <c>true</c>; otherwise
-        /// it throws an <see cref="InvalidOperationException"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable{TCsvData}.IsConstructing"/> is <c>false</c>.</exception>
-        public override void CancelConstruction()
+        internal override int GetTownHallLevel(BuildingData data)
         {
-            // Make sure that we not canceling construction of a building that is not in construction.
-            if (!IsConstructing)
-                throw new InvalidOperationException("Building object is not in construction.");
-
-            var endTime = DateTime.UtcNow;
-
-            // Remove the schedule because we don't want it to trigger the events anymore.
-            CancelScheduleBuild();
-
-            ConstructionTEndUnixTimestamp = 0;
-            OnConstructionFinished(new ConstructionFinishedEventArgs<BuildingData>()
-            {
-                BuildableConstructed = this,
-                EndTime = endTime,
-                UserToken = UserToken,
-                WasCancelled = true
-            });
-        }
-
-        /// <summary>
-        /// Speeds up the construction of the <see cref="Building"/> and increases its level by 1
-        /// instantly if <see cref="Buildable{TCsvData}.IsConstructing"/> is <c>true</c>; otherwise it throws an
-        /// <see cref="InvalidOperationException"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Buildable{TCsvData}.IsConstructing"/> is <c>false</c>.</exception>
-        public override void SpeedUpConstruction()
-        {
-            // Make sure that we not speeding up construction of a building that is not in construction.
-            if (!IsConstructing)
-                throw new InvalidOperationException("Building object is not in construction.");
-
-            // Remove the schedule because we don't want it to trigger the events anymore.
-            CancelScheduleBuild();
-            DoConstructionFinished();
-        }
-
-        /// <summary/>
-        protected override void DoConstructionFinished()
-        {
-            var endTime = DateTime.UtcNow;
-
-            // If the building is not constructed (level -1) yet we don't update the Data.
-            if (_constructionLevel > NotConstructedLevel)
-            {
-                // Increase level if construction finished successfully.
-                //var dataId = Data.ID;
-                //var lvl = Data.Level + 1;
-
-                _data = NextUpgrade;
-                UpdateCanUpgade();
-            }
-
-            ConstructionTEndUnixTimestamp = 0;
-            OnConstructionFinished(new ConstructionFinishedEventArgs<BuildingData>()
-            {
-                BuildableConstructed = this,
-                UserToken = UserToken,
-                EndTime = endTime
-            });
-
-            Scheduled = false;
+            return data.TownHallLevel;
         }
 
         /// <summary/>
@@ -313,7 +211,14 @@ namespace CoCSharp.Logic
         internal override void ResetVillageObject()
         {
             base.ResetVillageObject();
+
             _isLocked = default(bool);
+        }
+
+        internal override void Tick(int tick)
+        {
+            // Ticks the Buildable{T} parent to update construction stuff.
+            base.Tick(tick);
         }
 
         #region Json Reading/Writing
@@ -328,7 +233,7 @@ namespace CoCSharp.Logic
             writer.WriteValue(ID);
 
             writer.WritePropertyName("lvl");
-            writer.WriteValue(_constructionLevel);
+            writer.WriteValue(Level);
 
             if (IsLocked != default(bool))
             {
@@ -462,12 +367,12 @@ namespace CoCSharp.Logic
                 {
                     // Date at which building construction was going to end has passed.
                     UpdateCanUpgade();
-                    DoConstructionFinished();
+                    //DoConstructionFinished();
                     return;
                 }
             }
 
-            ScheduleBuild();
+            //ScheduleBuild();
         }
         #endregion
 
@@ -489,18 +394,13 @@ namespace CoCSharp.Logic
         internal static Building GetInstance(Village village)
         {
             var obj = (VillageObject)null;
-            if (VillageObjectPool.TryPop(BaseGameID, out obj))
+            if (VillageObjectPool.TryPop(Kind, out obj))
             {
-                obj.Village = village;
+                obj.SetVillageInternal(village);
                 return (Building)obj;
             }
 
             return new Building(village);
-        }
-
-        internal override void Tick(int tick)
-        {
-            throw new NotImplementedException();
         }
         #endregion
     }

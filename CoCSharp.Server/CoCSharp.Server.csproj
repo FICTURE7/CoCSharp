@@ -54,15 +54,18 @@
       <DependentUpon>AvatarClient.cs</DependentUpon>
     </Compile>
     <Compile Include="ClientFlags.cs" />
-    <Compile Include="CoCServer.cs" />
+    <Compile Include="Handlers\Commands\CommandHandlers.BuyBuilding.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Server.cs" />
     <Compile Include="CoCServer.Listening.cs">
-      <DependentUpon>CoCServer.cs</DependentUpon>
+      <DependentUpon>Server.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\AllianceManager.cs" />
     <Compile Include="Core\AvatarManager.cs" />
     <Compile Include="Core\NpcManager.cs" />
     <Compile Include="Core\SaveQueue{T}.cs" />
-    <Compile Include="CoCServerConfiguration.cs" />
+    <Compile Include="ServerConfiguration.cs" />
     <Compile Include="DirectoryPaths.cs" />
     <Compile Include="Core\FancyConsole.cs" />
     <Compile Include="Core\FancyConsole.Write.cs" />

@@ -30,12 +30,12 @@ namespace CoCSharp.Logic
 
         internal Buildable(Village village, TCsvData data) : base(village, data)
         {
-            Initialize();
+            Initialize(NotConstructedLevel);
         }
 
-        internal Buildable(Village village, TCsvData data, bool newConstruction) : base(village, data)
+        internal Buildable(Village village, TCsvData data, int level) : base(village, data)
         {
-            Initialize(newConstruction);
+            Initialize(level);
         }
 
         internal Buildable(Village village, TCsvData data, object userToken) : this(village, data)
@@ -43,20 +43,20 @@ namespace CoCSharp.Logic
             UserToken = userToken;
         }
 
-        internal Buildable(Village village, TCsvData data, object userToken, bool newConstruction) : base(village, data)
+        internal Buildable(Village village, TCsvData data, object userToken, int level) : base(village, data)
         {
-            Initialize(newConstruction);
+            Initialize(level);
             UserToken = userToken;
         }
 
         internal Buildable(Village village, TCsvData data, int x, int y) : base(village, data, x, y)
         {
-            Initialize();
+            Initialize(NotConstructedLevel);
         }
-        
-        internal Buildable(Village village, TCsvData data, int x, int y, bool newConstruction) : base(village, data, x, y)
+
+        internal Buildable(Village village, TCsvData data, int x, int y, int level) : base(village, data, x, y)
         {
-            Initialize(newConstruction);
+            Initialize(level);
         }
 
         internal Buildable(Village village, TCsvData data, int x, int y, object userToken) : this(village, data, x, y)
@@ -64,37 +64,29 @@ namespace CoCSharp.Logic
             UserToken = userToken;
         }
 
-        internal Buildable(Village village, TCsvData data, int x, int y, object userToken, bool newConstruction) : base(village, data, x, y)
+        internal Buildable(Village village, TCsvData data, int x, int y, object userToken, int level) : base(village, data, x, y)
         {
-            Initialize(newConstruction);
+            Initialize(level);
             UserToken = userToken;
         }
 
-        private void Initialize()
+        private void Initialize(int level)
         {
-            // If the level of the Data associated with the Buildable is 0,
-            // we assume its a new construction.
-            var newConstruction = Data.Level == 0;
-            Initialize(newConstruction);
-        }
+            if (level < NotConstructedLevel)
+                throw new ArgumentOutOfRangeException("level", "level cannot be less than NotConstructedLevel, that is, level -1.");
 
-        private void Initialize(bool newConstruction)
-        {
+            _level = NotConstructedLevel;
             UpdateData(Data.ID, Data.Level);
             UpdateCanUpgade();
 
-            if (newConstruction)
+            if (level == NotConstructedLevel)
             {
                 if (Data.Level != 0)
-                    throw new ArgumentException("A new construction's Data level must be 0.", "data");
+                    throw new ArgumentException("A new construction, that is, a level -1 Buildable, Data level must be 0.", "data");
 
-                _constructionLevel = NotConstructedLevel;
                 // Begin construction of the new construction.
+                // New buildings are automatically constructed.
                 BeginConstruction();
-            }
-            else
-            {
-                _constructionLevel = Data.Level;
             }
         }
         #endregion
@@ -108,8 +100,9 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the user token associated with the <see cref="Buildable{TCsvData}"/>.
         /// </summary>
+        /// 
         /// <remarks>
-        /// Reference to the object in <see cref="ConstructionFinishedEventArgs{TCsvData}.UserToken"/>.
+        /// <see cref="ConstructionFinishedEventArgs{TCsvData}.UserToken"/> will refer to this value.
         /// </remarks>
         public object UserToken { get; set; }
 
@@ -136,14 +129,47 @@ namespace CoCSharp.Logic
             }
         }
 
+        private int _level;
+        /// <summary>
+        /// Gets the level of the <see cref="Buildable{TCsvData}"/> object.
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// <see cref="VillageObject{TCsvData}.Data"/>'s level and the <see cref="Level"/> property are
+        /// two different values.
+        /// </remarks>
+        public int Level
+        {
+            get
+            {
+                return _level;
+            }
+        }
+
+        private TCsvData _nextUprade;
         /// <summary>
         /// Gets the next upgrade's <typeparamref name="TCsvData"/>.
         /// </summary>
-        public TCsvData NextUpgrade { get; protected set; }
+        /// 
+        /// <remarks>
+        /// All construction data will be taken from this. 
+        /// </remarks>
+        public TCsvData NextUpgrade
+        {
+            get
+            {
+                return _nextUprade;
+            }
+            protected set
+            {
+                _nextUprade = value;
+            }
+        }
 
         /// <summary>
         /// Gets the duration of the construction of the <see cref="Buildable{TCsvData}"/> object.
         /// </summary>
+        /// 
         /// <exception cref="InvalidOperationException">The <see cref="Buildable{TCsvData}"/> object is not in construction.</exception>
         public TimeSpan ConstructionDuration
         {
@@ -159,6 +185,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the UTC time at which the construction of the <see cref="Buildable{TCsvData}"/> object will end.
         /// </summary>
+        /// 
         /// <exception cref="InvalidOperationException">The <see cref="Buildable{TCsvData}"/> object is not in construction.</exception>
         /// <exception cref="ArgumentException"><paramref name="value"/>.Kind is not of <see cref="DateTimeKind.Utc"/>.</exception>
         public DateTime ConstructionEndTime
@@ -182,9 +209,13 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Duration of construction in seconds. 
+        /// Gets the duration of construction in seconds. 
         /// Changes <see cref="ConstructionTEndUnixTimestamp"/> to 0 if duration is less than 0.
         /// </summary>
+        /// 
+        /// <remarks>
+        /// Represents the "const_t" field of the village JSONs.
+        /// </remarks>
         protected int ConstructionTSeconds
         {
             get
@@ -207,13 +238,16 @@ namespace CoCSharp.Logic
             // ConstructionTime does not need a setter because it is relative to ConstructionTimeEnd.
             // Changing ConstructionTimeEnd would also change ConstructionTime.
         }
-        /// <summary>
-        /// Date of when the construction is going to end in UNIX timestamps. Everything is relative to this.
-        /// </summary>
-        protected int ConstructionTEndUnixTimestamp { get; set; }
 
-        /// <sumary>Determines whether the Buildable Build event was scheduled.</sumary>
-        protected bool Scheduled { get; set; }
+        /// <summary>
+        /// Gets or sets the date of when the construction is going to end in UNIX timestamps. 
+        /// Everything is relative to this, changing this will also change the other values.
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// Represents the "const_t_end" field of village JSONs.
+        /// </remarks>
+        protected int ConstructionTEndUnixTimestamp { get; set; }
         #endregion
 
         #region Methods
@@ -222,43 +256,71 @@ namespace CoCSharp.Logic
         /// Begins the construction of the <see cref="Buildable{TCsvData}"/> and increases its level by 1
         /// when done.
         /// </summary>
-        public abstract void BeginConstruction();
+        public void BeginConstruction()
+        {
+            if (IsConstructing)
+                throw new InvalidOperationException("Buildable object is already in construction.");
+            if (!CanUpgrade)
+                throw new InvalidOperationException("Buildable object is maxed or Town Hall level too low.");
+
+            Console.WriteLine("started construction of building");
+            var startTime = DateTimeConverter.UnixUtcNow;
+            var buildData = NextUpgrade;
+            var buildTime = GetBuildTime(buildData);
+            if (buildTime == InstantConstructionTime)
+            {
+                Console.WriteLine("construction instant");
+                DoConstructionFinished();
+            }
+            else
+            {
+                var endTime = startTime + (int)buildTime.TotalSeconds;
+                ConstructionTEndUnixTimestamp = endTime;
+            }
+        }
 
         /// <summary>
         /// Cancels the construction of the <see cref="Buildable{TCsvData}"/>.
         /// </summary>
-        public abstract void CancelConstruction();
+        public void CancelConstruction()
+        {
+
+        }
 
         /// <summary>
         /// Speeds up the construction of the <see cref="Buildable{TCsvData}"/> and finishes the construction instantly
         /// and increases its level by 1.
         /// </summary>
-        public abstract void SpeedUpConstruction();
+        public void SpeedUpConstruction()
+        {
 
-        ///<summary>Called by the LogicScheduler when the constructionTime has been reached or by the SpeedUpConstruction() method.</summary>
-        protected abstract void DoConstructionFinished();
+        }
 
         ///<summary>Determines if the Buildable can upgraded based on the townhall level required</summary>
         protected abstract bool CanUpgradeCheckTownHallLevel();
 
-        ///<summary>Schedules the construction logic at ConstructionEndTime with userToken as this object.</summary>
-        protected void ScheduleBuild()
+        private void DoConstructionFinished()
         {
-            Debug.Assert(!Scheduled);
+            Console.WriteLine("construction finished");
+            var endTime = DateTime.UtcNow;
 
-            // Schedule it with the userToken as this object so that it can be cancelled later.
-            LogicScheduler.ScheduleLogic(DoConstructionFinished, ConstructionEndTime, userToken: this);
-            Scheduled = true;
+            _level++;
+            UpdateCanUpgade();
+            ConstructionTEndUnixTimestamp = default(int);
+            OnConstructionFinished(new ConstructionFinishedEventArgs<TCsvData>()
+            {
+                EndTime = endTime,
+                BuildableConstructed = this,
+                UserToken = UserToken,
+                WasCancelled = false
+            });
         }
 
-        ///<summary>Cancels the construction of the logic with userToken as this object.</summary>
-        protected void CancelScheduleBuild()
-        {
-            Debug.Assert(Scheduled);
+        // Returns the BuildTime of the specified data.
+        internal abstract TimeSpan GetBuildTime(TCsvData data);
 
-            LogicScheduler.CancelSchedule(this);
-            Scheduled = false;
-        }
+        // Returns the Town Hall level at which the Buildable can upgrade from the specified data.
+        internal abstract int GetTownHallLevel(TCsvData data);
 
         // Updates the Data of the Buildable and update the _collectionCache if its null.
         internal void UpdateData(int dataId, int lvl)
@@ -272,34 +334,55 @@ namespace CoCSharp.Logic
                     throw new InvalidOperationException("Could not find CsvData collection with ID '" + dataId + "'.");
             }
 
-            var data = CollectionCache[lvl];
-            if (data == null)
-                throw new InvalidOperationException("Could not find CsvData with ID '" + dataId + "' and with level '" + lvl + "'.");
-
-            _data = data;
+            // Can be null when lvl is -1
+            if (lvl == NotConstructedLevel)
+            {
+                _data = null;
+            }
+            else
+            {
+                _data = CollectionCache[lvl];
+                if (_data == null)
+                    throw new InvalidOperationException("Could not find CsvData with ID '" + dataId + "' and with level '" + lvl + "'.");
+            }
         }
 
         // Updates CanUpgrade's value based on next upgrade and townhall of Village.
-        // This method will also set the _nextUpgrade field.
+        // This method will also set the NextUpgrade property.
         internal void UpdateCanUpgade()
         {
             //NOTE: CollectionCache can be null, if we change Data to a data with a different Data ID.
-            Debug.Assert(Data != null && CollectionCache != null);
+            Debug.Assert(CollectionCache != null, "CollectionCache was null.");
 
-            var nextLvl = Data.Level + 1;
-            NextUpgrade = CollectionCache[nextLvl];
-
-            var data = _constructionLevel > NotConstructedLevel ? NextUpgrade : Data;
+            NextUpgrade = CollectionCache[_level + 1];
             if (NextUpgrade == null)
             {
-                // Theirs no upgrade left.
+                // There are no upgrades left.
                 _canUpgrade = false;
             }
             else
             {
                 // Check if the level of the Buildable suits the
                 // TownHallLevel required.
-                _canUpgrade = CanUpgradeCheckTownHallLevel();
+                _canUpgrade = CheckTownHallLevel();
+            }
+        }
+
+        private bool CheckTownHallLevel()
+        {
+            Debug.Assert(NextUpgrade != null, "NextUpgrade was null.");
+
+            var thLevel = GetTownHallLevel(NextUpgrade);
+            if (Village.TownHall == null)
+                throw new InvalidOperationException("Village does not contain a Town Hall.");
+
+            if (Village.TownHall.Level >= thLevel - 1 || thLevel == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
         #endregion
@@ -307,12 +390,26 @@ namespace CoCSharp.Logic
         internal override void ResetVillageObject()
         {
             base.ResetVillageObject();
+
             _data = default(TCsvData);
-            CollectionCache = default(CsvDataSubCollection<TCsvData>);
             _canUpgrade = default(bool);
-            Scheduled = default(bool);
+            CollectionCache = default(CsvDataSubCollection<TCsvData>);
             UserToken = default(object);
             ConstructionTEndUnixTimestamp = default(int);
+        }
+
+        internal override void Tick(int tick)
+        {
+            if (ConstructionTEndUnixTimestamp != default(int))
+            {
+                var diff = DateTimeConverter.UnixUtcNow - ConstructionTEndUnixTimestamp;
+                if (diff >= 0)
+                {
+                    // Construction done!
+                    ConstructionTEndUnixTimestamp = default(int);
+                    DoConstructionFinished();
+                }
+            }
         }
 
         /// <summary>
@@ -321,9 +418,6 @@ namespace CoCSharp.Logic
         /// <param name="e">The arguments data.</param>
         protected virtual void OnConstructionFinished(ConstructionFinishedEventArgs<TCsvData> e)
         {
-            if (!e.WasCancelled)
-                _constructionLevel++;
-
             if (ConstructionFinished != null)
                 ConstructionFinished(this, e);
         }

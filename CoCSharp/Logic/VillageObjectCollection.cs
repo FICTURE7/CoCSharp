@@ -225,7 +225,24 @@ namespace CoCSharp.Logic
 
         internal List<VillageObject> GetRow(int kind)
         {
-            return _table[kind];
+            lock (_sync)
+            {
+                return _table[kind];
+            }
+        }
+
+        // Calls Tick(int) method with the specified tick to all VillageObject in the collection. 
+        internal void TickAll(int tick)
+        {
+            lock (_sync)
+            {
+                for (int i = 0; i < _table.Length; i++)
+                {
+                    var row = _table[i];
+                    for (int k = 0; k < row.Count; k++)
+                        row[k].Tick(tick);
+                }
+            }
         }
 
         #region Internals

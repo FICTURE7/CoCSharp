@@ -9,14 +9,14 @@ namespace CoCSharp.Server.Handlers
 {
     public static class AllianceMessageHandlers
     {
-        private static void HandleAllianceDataRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleAllianceDataRequestMessage(Server server, AvatarClient client, Message message)
         {
             var adreqMessage = (AllianceDataRequestMessage)message;
             var clan = server.AllianceManager.LoadClan(adreqMessage.ClanID);
             client.SendMessage(clan.AllianceDataResponseMessage);
         }
 
-        private static void HandleJoinableAllianceListRequestMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleJoinableAllianceListRequestMessage(Server server, AvatarClient client, Message message)
         {
             var clansComponent = new List<CompleteClanMessageComponent>();
             var clans = server.AllianceManager.GetAllClan();
@@ -39,7 +39,7 @@ namespace CoCSharp.Server.Handlers
             });
         }
 
-        private static void HandleCreateAllianceMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleCreateAllianceMessage(Server server, AvatarClient client, Message message)
         {
             var caMessage = (CreateAllianceMessage)message;
             var clan = server.AllianceManager.CreateNewClan();
@@ -94,7 +94,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(rocMessage);
         }
 
-        private static void HandleChangeAllianceSettingMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleChangeAllianceSettingMessage(Server server, AvatarClient client, Message message)
         {
             var edAlliance = (ChangeAllianceSettingMessage)message;
             var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
@@ -152,7 +152,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(ascMessage);
         }
     
-        private static void HandleAllianceRoleUpdateMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleAllianceRoleUpdateMessage(Server server, AvatarClient client, Message message)
         {
             var caAlliance = (AllianceChangeRoleMessage)message;
             var clan = server.AllianceManager.LoadClan(client.Alliance.ID);
@@ -222,7 +222,7 @@ namespace CoCSharp.Server.Handlers
             }
         }
 
-        private static void HandleJoinAllianceMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleJoinAllianceMessage(Server server, AvatarClient client, Message message)
         {
             var jaAlliance = (JoinAllianceMessage)message;
             var clan = server.AllianceManager.LoadClan(jaAlliance.ClanID);
@@ -256,7 +256,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(ascMessage);
         }
 
-        private static void HandleLeaveAllianceMessage(CoCServer server, AvatarClient client, Message message)
+        private static void HandleLeaveAllianceMessage(Server server, AvatarClient client, Message message)
         {
             var laMessage = (LeaveAllianceMessage)message;
             var clan = client.Alliance;
@@ -335,7 +335,7 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(ascMessage);
         }
 
-        public static void RegisterAllianceMessageHandlers(CoCServer server)
+        public static void RegisterAllianceMessageHandlers(Server server)
         {
             server.RegisterMessageHandler(new AllianceDataRequestMessage(), HandleAllianceDataRequestMessage);
 

@@ -3,10 +3,10 @@ using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace CoCSharp.Logic
 {
@@ -15,8 +15,6 @@ namespace CoCSharp.Logic
     /// </summary>
     public class Village : IDisposable
     {
-        //TODO: Implement VillageObjectCollection class.
-
         #region Constants
         /// <summary>
         /// Represents the width of a <see cref="Village"/> layout.
@@ -34,7 +32,7 @@ namespace CoCSharp.Logic
         /// Initializes a new instance of the <see cref="Village"/> class and uses <see cref="AssetManager.DefaultInstance"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><see cref="AssetManager.DefaultInstance"/> is null.</exception>
-        public Village() : this(AssetManager.DefaultInstance)
+        public Village() : this(AssetManager.DefaultInstance, true)
         {
             // Space
         }
@@ -45,17 +43,27 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <param name="manager"><see cref="Data.AssetManager"/> to use.</param>
         /// <exception cref="ArgumentNullException"><paramref name="manager"/> is null.</exception>
-        public Village(AssetManager manager)
+        public Village(AssetManager manager) : this(manager, true)
+        {
+            // Space
+        }
+
+        private Village(AssetManager manager, bool register)
         {
             if (manager == null)
                 throw new ArgumentNullException("manager");
 
             AssetManager = manager;
             _villageObjects = new VillageObjectCollection();
+
+            if (register)
+                VillageTicker.Register(this);
         }
         #endregion
 
         #region Fields & Properties
+        private bool _disposed;
+
         private AssetManager _assetManager;
         /// <summary>
         /// Gets or sets the <see cref="AssetManager"/> from which data will be
@@ -86,6 +94,22 @@ namespace CoCSharp.Logic
         /// if it does not find it.
         /// </remarks>
         public int ExperienceVersion { get; set; }
+
+        internal int _tick;
+        /// <summary>
+        /// Gets the current tick the <see cref="Village"/> is in.
+        /// </summary>
+        public int Tick
+        {
+            get
+            {
+                return Thread.VolatileRead(ref _tick);
+            }
+            set
+            {
+                Thread.VolatileWrite(ref _tick, value);
+            }
+        }
 
         private readonly VillageObjectCollection _villageObjects;
         /// <summary>
@@ -168,7 +192,11 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
-        private bool _disposed;
+        internal void Update()
+        {
+            _villageObjects.TickAll(_tick);
+        }
+
         /// <summary>
         /// Releases all resources used by this <see cref="Village"/> instance.
         /// </summary>
@@ -192,6 +220,8 @@ namespace CoCSharp.Logic
 
             if (disposing)
             {
+                VillageTicker.Unregister(this);
+
                 foreach (var building in Buildings)
                     building.PushToPool();
                 foreach (var obstacle in Obstacles)
@@ -300,7 +330,10 @@ namespace CoCSharp.Logic
             if (!manager.IsCsvLoaded<DecorationData>())
                 throw new ArgumentException("manager did not load CsvData of type '" + typeof(DecorationData) + "'.", "manager");
 
-            var village = new Village(manager);
+            // Set register to false -> 
+            // Don't register the Village to the VillageTicker until we have loaded every
+            // VillageObjects.
+            var village = new Village(manager, false);
 
             var textReader = new StringReader(value);
             using (var jsonReader = new JsonTextReader(textReader))
@@ -336,6 +369,11 @@ namespace CoCSharp.Logic
                 }
             }
 
+            village.Update();
+            village._tick++;
+
+            // Now that we have loaded the VillageObjects we can start ticking.
+            VillageTicker.Register(village);
             return village;
         }
 
