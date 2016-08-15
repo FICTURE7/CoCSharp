@@ -57,7 +57,7 @@ namespace CoCSharp.Network.Messages
             BestSeasonTrophies = 99;
             BestSeasonPosition = 1;
             LeagueLevel = avatar.League;
-            TownHallLevel = avatar.Home.TownHall.Data.Level;
+            TownHallLevel = avatar.Home.TownHall.Level;
             Name = avatar.Name;
 
             //Unknown13 = -1;

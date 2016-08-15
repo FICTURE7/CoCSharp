@@ -145,22 +145,22 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
-        private bool _broken;
+        private bool _isBroken;
         /// <summary>
         /// Gets or sets a value indicating whether the trap needs to be repaired.
         /// </summary>
-        public bool Broken
+        public bool IsBroken
         {
             get
             {
-                return _broken;
+                return _isBroken;
             }
             set
             {
-                if (_broken == value)
+                if (_isBroken == value)
                     return;
 
-                _broken = value;
+                _isBroken = value;
                 OnPropertyChanged(s_brokenChanged);
             }
         }
@@ -175,41 +175,23 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
-        #region Construction
-        internal override TimeSpan GetBuildTime(TrapData data)
+        /// <summary/>
+        protected override TimeSpan GetBuildTime(TrapData data)
         {
             return data.BuildTime;
         }
 
-        internal override int GetTownHallLevel(TrapData data)
+        /// <summary/>
+        protected override int GetTownHallLevel(TrapData data)
         {
             return data.TownHallLevel;
         }
 
-        protected override bool CanUpgradeCheckTownHallLevel()
-        {
-            Debug.Assert(NextUpgrade != null && Data != null);
-
-            var buildData = _constructionLevel > NotConstructedLevel ? NextUpgrade : Data;
-            if (buildData.TownHallLevel == 0)
-                return true;
-
-            var th = Village.TownHall;
-            if (th == null)
-                throw new InvalidOperationException("Village does not contain a Town Hall.");
-
-            // TownHallLevel field is not a zero-based so we subtract 1.
-            if (th.Data.Level >= buildData.TownHallLevel - 1)
-                return true;
-
-            return false;
-        }
-        #endregion
-
         internal override void ResetVillageObject()
         {
             base.ResetVillageObject();
-            _broken = default(bool);
+
+            _isBroken = default(bool);
         }
 
         internal override void Tick(int tick)
@@ -224,7 +206,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(Data.ID);
+            writer.WriteValue(CollectionCache.ID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);
@@ -244,10 +226,10 @@ namespace CoCSharp.Logic
                 writer.WriteValue(ConstructionTSeconds);
             }
 
-            if (Broken != default(bool))
+            if (IsBroken != default(bool))
             {
                 writer.WritePropertyName("need_repair");
-                writer.WriteValue(Broken);
+                writer.WriteValue(IsBroken);
             }
 
             writer.WritePropertyName("x");
@@ -296,7 +278,7 @@ namespace CoCSharp.Logic
                             break;
 
                         case "needs_repair":
-                            _broken = reader.ReadAsBoolean().Value;
+                            _isBroken = reader.ReadAsBoolean().Value;
                             break;
 
                         case "const_t_end":
@@ -321,7 +303,6 @@ namespace CoCSharp.Logic
             if (!dataIdSet)
                 throw new InvalidOperationException("Trap JSON does not contain a 'data' field.");
 
-            _constructionLevel = lvl;
             // If its not constructed yet, the level is -1,
             // therefore it must be a lvl 0 building.
             if (lvl == NotConstructedLevel)
@@ -338,34 +319,35 @@ namespace CoCSharp.Logic
             // Village.ReadTrapArray() method will call the UpdateCanUpgrade() method.
 
             // Try to use const_t if we were not able to get const_t_end's value.
-            if (constTimeEnd == -1)
-            {
-                // We don't have const_t either so we can exit early.
-                if (constTime == -1)
-                    return;
+            //if (constTimeEnd == -1)
+            //{
+            //    // We don't have const_t either so we can exit early.
+            //    if (constTime == -1)
+            //        return;
 
-                ConstructionEndTime = DateTime.UtcNow.AddSeconds(constTime);
-            }
-            else
-            {
-                if (constTimeEnd > DateTimeConverter.UnixUtcNow + 100)
-                {
-                    ConstructionTEndUnixTimestamp = constTimeEnd;
-                }
-                else
-                {
-                    // Date at which building construction was going to end has passed.
-                    UpdateCanUpgade();
-                    //DoConstructionFinished();
-                    return;
-                }
-            }
+            //    ConstructionEndTime = DateTime.UtcNow.AddSeconds(constTime);
+            //}
+            //else
+            //{
+            //    if (constTimeEnd > TimeUtils.UnixUtcNow + 100)
+            //    {
+            //        ConstructionTEndUnixTimestamp = constTimeEnd;
+            //    }
+            //    else
+            //    {
+            //        // Date at which building construction was going to end has passed.
+            //        UpdateCanUpgrade();
+            //        //DoConstructionFinished();
+            //        return;
+            //    }
+            //}
 
             // Schedule the build event and all that stuff.
             //ScheduleBuild();
         }
         #endregion
 
+        // Tries to return an instance of the Building class from the VillageObjectPool.
         internal static Trap GetInstance(Village village)
         {
             var obj = (VillageObject)null;

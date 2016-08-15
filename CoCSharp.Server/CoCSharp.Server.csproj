@@ -57,6 +57,9 @@
     <Compile Include="Handlers\Commands\CommandHandlers.BuyBuilding.cs">
       <DependentUpon>CommandHandlers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeBuildable.cs">
+      <DependentUpon>CommandHandlers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Server.cs" />
     <Compile Include="CoCServer.Listening.cs">
       <DependentUpon>Server.cs</DependentUpon>

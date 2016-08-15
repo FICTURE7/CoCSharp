@@ -5,6 +5,7 @@ using System.Threading;
 namespace CoCSharp.Logic
 {
     // Class where all the ticking on Villages are done.
+    // Aka the game loop.
     internal static class VillageTicker
     {
         static VillageTicker()
@@ -12,7 +13,6 @@ namespace CoCSharp.Logic
             s_sync = new object();
             s_villages = new List<Village>();
             s_stopwatch = new Stopwatch();
-            t_worker = new Thread(DoTick);
         }
 
         private static object s_sync;
@@ -28,58 +28,76 @@ namespace CoCSharp.Logic
         {
             lock (s_sync)
             {
+                village.Logger.Info(village.Tick, "registering Village for ticking");
+
+                village._registeredTime = TimeUtils.UnixUtcNow;
                 s_villages.Add(village);
 
                 // Start the worker thread if its not started yet.
-                if (!t_worker.IsAlive)
+                if (t_worker == null || !t_worker.IsAlive)
+                {
+                    t_worker = new Thread(DoTick);
+                    t_worker.Name = "VillageTicker_Thread";
                     t_worker.Start();
+                }
             }
         }
 
         // Unregisters the specified village for ticking.
         public static void Unregister(Village village)
         {
+            var join = false;
             lock (s_sync)
             {
+                village.Logger.Info(village.Tick, "unregistering Village for ticking");
+
                 if (!s_villages.Remove(village))
+                {
                     Debug.WriteLine("Tried to unregister an unregistered village.");
+                }
+                else
+                {
+                    // Wait for the t_worker thread to end if it has to villages left
+                    // to tick. 
+                    if (s_villages.Count == 0)
+                        join = true;
+                }
             }
+
+            Debug.WriteLine("Waiting for t_worker to end.");
+            t_worker.Join();
+            t_worker = null;
         }
 
-        // Tick duration in milliseconds.
-        private static readonly double TickDuration = 16;
         private static void DoTick()
         {
             var count = 0;
+            // Measure how much we are lagging.
             var lag = (double)0;
 
             do
             {
                 s_stopwatch.Restart();
-                count = s_villages.Count;
+                count = TickAllRegisteredVillages();
 
-                TickRegisteredVillages();
-
+                // Catch up with the lag.
                 var tickCaughtUp = 0;
-                while (lag >= TickDuration)
+                while (lag >= TimeUtils.TickDuration)
                 {
-                    TickRegisteredVillages();
-                    lag -= TickDuration;
+                    count = TickAllRegisteredVillages();
+                    lag -= TimeUtils.TickDuration;
                     tickCaughtUp++;
                 }
 
-                if (tickCaughtUp > 0)
-                    Debug.WriteLine("Tick caught up: {0}", args: tickCaughtUp);
-
-                Thread.Sleep((int)TickDuration);
+                Thread.Sleep((int)TimeUtils.TickDuration);
                 s_stopwatch.Stop();
 
-                lag += s_stopwatch.Elapsed.TotalMilliseconds - TickDuration;
+                lag += s_stopwatch.Elapsed.TotalMilliseconds - TimeUtils.TickDuration;
             }
             while (count > 0);
         }
 
-        private static void TickRegisteredVillages()
+        private static int TickAllRegisteredVillages()
         {
             lock (s_sync)
             {
@@ -90,6 +108,7 @@ namespace CoCSharp.Logic
                     village.Update();
                     village._tick++;
                 }
+                return count;
             }
         }
     }

@@ -2,15 +2,15 @@
 {
     /// <summary>
     /// Message that is sent by the client to server to tell
-    /// it that an attack was finished; the server then should
+    /// it that it wants to return home; the server then should
     /// send an <see cref="OwnHomeDataMessage"/>.
     /// </summary>
-    public class AttackResultMessage : Message
+    public class ReturnHomeMessage : Message
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AttackResultMessage"/> class.
+        /// Initializes a new instance of the <see cref="ReturnHomeMessage"/> class.
         /// </summary>
-        public AttackResultMessage()
+        public ReturnHomeMessage()
         {
             // Space
         }
@@ -21,15 +21,15 @@
         public long Unknown1;
 
         /// <summary>
-        /// Gets the ID of the <see cref="AttackResultMessage"/>.
+        /// Gets the ID of the <see cref="ReturnHomeMessage"/>.
         /// </summary>
         public override ushort ID { get { return 14101; } }
 
         /// <summary>
-        /// Reads the <see cref="AttackResultMessage"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="ReturnHomeMessage"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="AttackResultMessage"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="ReturnHomeMessage"/>.
         /// </param>
         public override void ReadMessage(MessageReader reader)
         {
@@ -37,10 +37,10 @@
         }
 
         /// <summary>
-        /// Writes the <see cref="AttackResultMessage"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="ReturnHomeMessage"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="AttackResultMessage"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ReturnHomeMessage"/>.
         /// </param>
         public override void WriteMessage(MessageWriter writer)
         {

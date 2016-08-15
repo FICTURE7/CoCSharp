@@ -1,7 +1,6 @@
 ﻿using CoCSharp.Data;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
@@ -12,7 +11,7 @@ namespace CoCSharp.Logic
     /// Represents an object in a <see cref="Logic.Village"/>.
     /// </summary>
     [DebuggerDisplay("ID = {ID}")]
-    public abstract class VillageObject
+    public abstract class VillageObject : INotifyPropertyChanged
     {
         #region Constants
         // Represents the Base ID of every game ID & data ID.
@@ -34,6 +33,8 @@ namespace CoCSharp.Logic
             _components = new LogicComponent[8];
             SetVillageInternal(village);
             Interlocked.Increment(ref s_created);
+
+            Village.Logger.Info(village.Tick, "created new VillageObject {0}", ID);
         }
 
         internal VillageObject(Village village, int x, int y) : this(village)
@@ -54,7 +55,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// The event raised when a property value has changed.
         /// </summary>
-        public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
@@ -75,18 +76,22 @@ namespace CoCSharp.Logic
         }
 
         internal int _columnIndex;
-
         // ID of the VillageObject (IDs above or equal to 500000000). E.g: 500000001
         // This value should be relative to the Village the VillageObject is in.
 
         /// <summary>
-        /// Gets or sets the game ID of the <see cref="VillageObject"/>.
+        /// Gets the game ID of the <see cref="VillageObject"/>.
         /// </summary>
+        /// 
+        /// <remarks>
+        /// The value of <see cref="ID"/> is dependent on its <see cref="VillageObject"/> kind
+        /// and on <see cref="Village.VillageObjects"/> collection.
+        /// </remarks>
         public int ID
         {
             get
             {
-                return Thread.VolatileRead(ref _columnIndex) + ((500 + KindID) * 1000000);
+                return Thread.VolatileRead(ref _columnIndex) + ((500 + KindID) * InternalConstants.IDBase);
             }
         }
 
@@ -218,7 +223,6 @@ namespace CoCSharp.Logic
         internal virtual void ResetVillageObject()
         {
             Interlocked.Increment(ref s_rested);
-
             _village = default(Village);
             _columnIndex = default(int);
             _x = default(int);
@@ -229,13 +233,15 @@ namespace CoCSharp.Logic
         {
             // Space
         }
-        
+
         // Writes the current VillageObject to the JsonWriter.
         internal abstract void ToJsonWriter(JsonWriter writer);
 
         // Reads the current VillageObject to the JsonReader.
         internal abstract void FromJsonReader(JsonReader reader);
 
+        // Pushes the VillageObject to the VillageObjectPool where it will
+        // be reused when Village.FromJson is called.
         internal void PushToPool()
         {
             // Set village to null, so it can get picked up by the GC.

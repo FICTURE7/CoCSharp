@@ -95,7 +95,7 @@ namespace CoCSharp.Logic
         /// Gets or sets the user token associated with the <see cref="VillageObject"/>.
         /// </summary>
         /// <remarks>
-        /// This object is referenced in the <see cref="ConstructionFinishedEventArgs{ObstacleData}.UserToken"/>.
+        /// This object is referenced in the <see cref="ConstructionEventArgs{ObstacleData}.UserToken"/>.
         /// </remarks>
         public object UserToken { get; set; }
 
@@ -157,7 +157,7 @@ namespace CoCSharp.Logic
                 if (!IsClearing)
                     throw new InvalidOperationException("Obstacle object is not clearing.");
 
-                return DateTimeConverter.FromUnixTimestamp(ClearTEndUnixTimestamp);
+                return TimeUtils.FromUnixTimestamp(ClearTEndUnixTimestamp);
             }
             set
             {
@@ -165,7 +165,7 @@ namespace CoCSharp.Logic
                     throw new ArgumentException("DateTime.Kind of value must be a DateTimeKind.Utc.", "value");
 
                 // Convert the specified DateTime into UNIX timestamps.
-                ClearTEndUnixTimestamp = (int)DateTimeConverter.ToUnixTimestamp(value);
+                ClearTEndUnixTimestamp = (int)TimeUtils.ToUnixTimestamp(value);
             }
         }
 
@@ -175,7 +175,7 @@ namespace CoCSharp.Logic
             get
             {
                 // Json.Net will get this value then write it to a Json string or whatever.
-                var clearDuration = ClearTEndUnixTimestamp - DateTimeConverter.UnixUtcNow;
+                var clearDuration = ClearTEndUnixTimestamp - TimeUtils.UnixUtcNow;
 
                 // Make sure we don't get any negative durations.
                 if (clearDuration < 0)
@@ -189,15 +189,12 @@ namespace CoCSharp.Logic
             }
             set
             {
-                ClearTEndUnixTimestamp = (DateTimeConverter.UnixUtcNow + value);
+                ClearTEndUnixTimestamp = (TimeUtils.UnixUtcNow + value);
             }
         }
 
         // End time of the clearing of the obstacle in UNIX timestamps.
         private int ClearTEndUnixTimestamp { get; set; }
-
-        // Determines whether the Obstacle is scheduled.
-        private bool _scheduled;
 
         internal override int KindID
         {
@@ -372,7 +369,6 @@ namespace CoCSharp.Logic
                 return;
 
             ClearTSeconds = clearTime;
-            //ScheduleClearing();
         }
         #endregion
 

@@ -11,7 +11,7 @@ namespace CoCSharp.Server.Handlers
 {
     public static class InGameMessageHandlers
     {
-        private static KeepAliveResponseMessage s_keepAliveResponse = new KeepAliveResponseMessage();
+        private static readonly KeepAliveResponseMessage s_keepAliveResponse = new KeepAliveResponseMessage();
 
         private static void HandleKeepAliveRequestMessage(Server server, AvatarClient client, Message message)
         {
@@ -26,6 +26,7 @@ namespace CoCSharp.Server.Handlers
             var npcVillage = server.NpcManager.LoadNpc(anMessage.NpcID);
             if (npcVillage == null)
             {
+                Log.Warning("unable to load npc " + anMessage.NpcID);
                 client.SendMessage(client.OwnHomeDataMessage);
                 return;
             }
@@ -46,12 +47,10 @@ namespace CoCSharp.Server.Handlers
             client.SendMessage(ndMessage);
         }
 
-        private static void HandleAttackResultMessage(Server server, AvatarClient client, Message message)
+        private static void HandleReturnHomeMessage(Server server, AvatarClient client, Message message)
         {
             var avatar = client;
             var ohdMessage = client.OwnHomeDataMessage;
-
-            FancyConsole.WriteLine(LogFormats.Attack_ReturnHome, client.Token);
 
             client.SendMessage(ohdMessage);
         }
@@ -82,8 +81,6 @@ namespace CoCSharp.Server.Handlers
             //    new AchievementProgessSlot(23000062, 306) // 23000060 to 23000062 -> War Stars count.
             //};
 
-            FancyConsole.WriteLine(LogFormats.Avatar_ProfileReq, client.Token);
-
             client.SendMessage(aprMessage);
         }
 
@@ -111,22 +108,22 @@ namespace CoCSharp.Server.Handlers
 
         private static void HandleCommandMessage(Server server, AvatarClient client, Message message)
         {
+            // Value indicating the maximum amount of difference between the
+            // client tick and the server local tick.
             const int TICK_DIFF_MARGIN = 10;
-            var cmdMessage = message as CommandMessage;
-            var diff = Math.Abs(cmdMessage.Tick - client.Home.Tick);
 
-            if (diff >= TICK_DIFF_MARGIN)
-            {
+            var cmdMessage = message as CommandMessage;
+            var dtick = Math.Abs(cmdMessage.Tick - client.Home.Tick);
+
+            // Synchronize tick with client.
+            if (dtick >= TICK_DIFF_MARGIN)
                 client.Home.Tick = cmdMessage.Tick;
-                Console.WriteLine("readjusting village tick");
-            }
 
             if (cmdMessage.Commands.Length > 0)
             {
                 for (int i = 0; i < cmdMessage.Commands.Length; i++)
                 {
                     var cmd = cmdMessage.Commands[i];
-
                     if (cmd == null)
                         break;
 
@@ -146,15 +143,21 @@ namespace CoCSharp.Server.Handlers
             var count = client.TutorialProgess.Count;
             for (int i = count; i < count + 3; i++)
                 client.TutorialProgess.Add(new TutorialProgressSlot(21000000 + i));
+            client.IsNamed = true;
 
-            var ascMessage = new AvailableServerCommandMessage();
-            var canCommand = new AvatarNameChangedCommand();
-            canCommand.NewName = careqMessage.NewName;
-            canCommand.Unknown1 = 1;
-            canCommand.Unknown2 = -1;
-            ascMessage.Command = canCommand;
+            var ancCommand = new AvatarNameChangedCommand()
+            {
+                NewName = careqMessage.NewName,
+                Unknown1 = 1,
+                Unknown2 = -1
+            };
+
+            var ascMessage = new AvailableServerCommandMessage()
+            {
+                Command = ancCommand
+            };
+
             client.SendMessage(ascMessage);
-
             client.Save();
         }
 
@@ -203,26 +206,27 @@ namespace CoCSharp.Server.Handlers
                         var countBuilding = 0;
                         foreach (var building in client.Home.Buildings)
                         {
-                            var collection = AssetManager.DefaultInstance.SearchCsv<BuildingData>(building.Data.ID);
+                            var collection = AssetManager.DefaultInstance.SearchCsv<BuildingData>(building.CollectionCache.ID);
                             var data = collection[collection.Count - 1];
                             if (building.IsConstructing)
                                 building.CancelConstruction();
                             if (building.IsLocked)
                                 building.IsLocked = false;
 
-                            building.Data = data;
+                            building.Level = data.Level;
                             countBuilding++;
                         }
 
                         var countTraps = 0;
                         foreach (var trap in client.Home.Traps)
                         {
-                            var collection = AssetManager.DefaultInstance.SearchCsv<TrapData>(trap.Data.ID);
+                            var collection = AssetManager.DefaultInstance.SearchCsv<TrapData>(trap.CollectionCache.ID);
                             var data = collection[collection.Count - 1];
                             if (trap.IsConstructing)
                                 trap.CancelConstruction();
 
-                            trap.Data = data;
+                            trap.Level = data.Level;
+                            countTraps++;
                         }
 
                         cmsMessage.Message = "Maxed " + countBuilding + " buildings and " + countTraps + " traps.";
@@ -236,7 +240,7 @@ namespace CoCSharp.Server.Handlers
                         break;
 
 #if DEBUG
-                    // Add this feature only in the DEBUG build
+                    // Add this feature only in the DEBUG build.
                     case "populatedb":
                         for (int i = 0; i < 50; i++)
                             server.AvatarManager.CreateNewAvatar();
@@ -275,7 +279,7 @@ namespace CoCSharp.Server.Handlers
             server.RegisterMessageHandler(new CommandMessage(), HandleCommandMessage);
             server.RegisterMessageHandler(new KeepAliveRequestMessage(), HandleKeepAliveRequestMessage);
             server.RegisterMessageHandler(new AttackNpcMessage(), HandleAttackNpcMessage);
-            server.RegisterMessageHandler(new AttackResultMessage(), HandleAttackResultMessage);
+            server.RegisterMessageHandler(new ReturnHomeMessage(), HandleReturnHomeMessage);
             server.RegisterMessageHandler(new ChatMessageClientMessage(), HandleChatMessageClientMessageMessage);
             server.RegisterMessageHandler(new AvatarProfileRequestMessage(), HandleAvatarProfileRequestMessage);
             server.RegisterMessageHandler(new ChangeAvatarNameRequestMessage(), HandleChangeAvatarNameRequestMessage);

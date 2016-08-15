@@ -85,18 +85,29 @@ namespace CoCSharp.Server
 
         internal void InternalDisconnect(bool dueToKeepAlive)
         {
-            // Close connection to client.
-            // Push the VillageObjects to the VillageObjectPool.
-            if (Home != null)
-                Home.Dispose();
+            try
+            {
+                // Close connection to client.
+                // Push the VillageObjects to the VillageObjectPool.
+                if (Home != null)
+                    Home.Dispose();
 
-            var remoteEndPoint = _networkManager.Socket.RemoteEndPoint;
-            Save();
-            _networkManager.Dispose();
-            Server.Clients.Remove(this);
+                var remoteEndPoint = _networkManager.Socket.RemoteEndPoint;
+                Save();
+                _networkManager.Dispose();
+                Server.Clients.Remove(this);
 
-            var extraInfo = dueToKeepAlive ? "; keepalive expired" : string.Empty;
-            Log.Info("listener", string.Format("disconnected {0}{1}", remoteEndPoint, extraInfo));
+                var extraInfo = dueToKeepAlive ? "; keepalive expired" : string.Empty;
+                Log.Info("listener", string.Format("disconnected {0}{1}", remoteEndPoint, extraInfo));
+            }
+            catch (Exception ex)
+            {
+                Log.Exception("unable to disconnect client", ex);
+            }
+            finally
+            {
+                Home = null;
+            }
         }
 
         internal void UpdateKeepAlive()

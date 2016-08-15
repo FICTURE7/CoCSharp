@@ -164,7 +164,7 @@ namespace CoCSharp.Logic
         {
             get
             {
-                var duration = DateTimeConverter.ToUnixTimestamp(ShieldEndTime) - DateTimeConverter.UnixUtcNow;
+                var duration = TimeUtils.ToUnixTimestamp(ShieldEndTime) - TimeUtils.UnixUtcNow;
 
                 if (duration < 0)
                     return TimeSpan.FromSeconds(0);
@@ -584,8 +584,9 @@ namespace CoCSharp.Logic
                 if (building.IsLocked)
                     continue;
 
-                Debug.Assert(building.Data != null);
                 var data = building.Data;
+                if (data == null)
+                    continue;
 
                 // Ignore the building if its locked (from building.csv). E.g: Clan Castle level 0.
                 if (data.Locked)
@@ -608,7 +609,7 @@ namespace CoCSharp.Logic
                 ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_ELIXIR", 0).ID, warElixir));
 
             // Dark Elixir is unlocked at townhall 7.
-            if (darkElixir > 0 || Home.TownHall.Data.Level >= 7)
+            if (darkElixir > 0 || Home.TownHall.Level >= 7)
                 ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_DARK_ELIXIR", 0).ID, darkElixir));
             if (warDarkElixir > 0)
                 ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0).ID, warDarkElixir));

@@ -99,8 +99,11 @@
     <Compile Include="Logic\Components\UnitStorageComponent.cs" />
     <Compile Include="Logic\LogicComponent.cs" />
     <Compile Include="Logic\LogicComponentPool.cs" />
-    <Compile Include="Logic\LogicOperations.cs" />
+    <Compile Include="Logic\LogicEventArgs.cs" />
+    <Compile Include="Logic\LogicOperation.cs" />
     <Compile Include="Logic\LogicUtils.cs" />
+    <Compile Include="Logic\TickTimer.cs" />
+    <Compile Include="Logic\VillageLogger.cs" />
     <Compile Include="Logic\VillageObjectCollection.cs" />
     <Compile Include="Logic\VillageObjectPool.cs" />
     <Compile Include="Logic\VillageObject{T}.cs" />
@@ -114,7 +117,7 @@
     <Compile Include="Network\Messages\AllianceStreamEntry.cs" />
     <Compile Include="Network\Messages\AllianceStreamMessage.cs" />
     <Compile Include="Network\Messages\AttackNpcMessage.cs" />
-    <Compile Include="Network\Messages\AttackResultMessage.cs" />
+    <Compile Include="Network\Messages\ReturnHomeMessage.cs" />
     <Compile Include="Network\Messages\AvailableServerCommandMessage.cs" />
     <Compile Include="Network\Messages\AvatarMessageComponent.cs" />
     <Compile Include="Data\Models\BuildingData.cs" />
@@ -183,15 +186,14 @@
     <Compile Include="Network\Messages\VisitHomeMessage.cs" />
     <Compile Include="Network\StreamEntryFactory.cs" />
     <Compile Include="Network\Messages\VillageMessageComponent.cs" />
-    <Compile Include="DateTimeConverter.cs" />
+    <Compile Include="TimeUtils.cs" />
     <Compile Include="Logic\Avatar.cs" />
     <Compile Include="Logic\Buildable{T}.cs" />
     <Compile Include="Logic\Building.cs" />
     <Compile Include="Logic\Clan.cs" />
-    <Compile Include="Logic\ConstructionFinishedEventArgs.cs" />
+    <Compile Include="Logic\ConstructionEventArgs.cs" />
     <Compile Include="Logic\Decoration.cs" />
     <Compile Include="Logic\Obstacle.cs" />
-    <Compile Include="Logic\LogicScheduler.cs" />
     <Compile Include="Logic\Trap.cs" />
     <Compile Include="Logic\Village.cs" />
     <Compile Include="Logic\VillageObject.cs" />
@@ -247,6 +249,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="Logic\Village.Json.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

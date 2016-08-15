@@ -77,7 +77,7 @@ namespace CoCSharp.Network.Messages
 
             Unknown1 = reader.ReadString(); // -1
 
-            Timestamp = DateTimeConverter.FromUnixTimestamp(reader.ReadInt32());
+            Timestamp = TimeUtils.FromUnixTimestamp(reader.ReadInt32());
             EnemyVillageData = new VillageMessageComponent();
             EnemyVillageData.ReadMessageComponent(reader);
             EnemyAvatarData = new AvatarMessageComponent();
@@ -115,7 +115,7 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown1);
 
-            writer.Write((int)DateTimeConverter.ToUnixTimestamp(Timestamp));
+            writer.Write((int)TimeUtils.ToUnixTimestamp(Timestamp));
             EnemyVillageData.WriteMessageComponent(writer);
             EnemyAvatarData.WriteMessageComponent(writer);
             OwnAvatarData.WriteMessageComponent(writer);

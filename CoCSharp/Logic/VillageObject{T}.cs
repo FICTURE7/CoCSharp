@@ -44,41 +44,34 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
-        // Level of the construction.
-        internal int _constructionLevel;
-
-        ///<summary>Cache to the sub-collection in which Data is found.</summary>
-        protected CsvDataSubCollection<TCsvData> CollectionCache { get; set; }
+        /// <summary>
+        /// Gets the cache to the sub-collection in which Data is found.
+        /// </summary>
+        public CsvDataSubCollection<TCsvData> CollectionCache { get; protected set; }
 
         internal TCsvData _data;
         /// <summary>
-        /// Gets or sets the <typeparamref name="TCsvData"/> associated with this <see cref="VillageObject"/>.
+        /// Gets the <typeparamref name="TCsvData"/> associated with this <see cref="VillageObject"/>.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
+        /// 
+        /// <remarks>
+        /// In <see cref="Buildable{TCsvData}"/> this value can be null when 
+        /// <see cref="Buildable{TCsvData}.Level"/> is -1 or <see cref="Buildable{TCsvData}.NotConstructedLevel"/>.
+        /// </remarks>
         public TCsvData Data
         {
             get
             {
                 return _data;
             }
-            set
-            {
-                //NOTE: Changing this might break the UpdateCanUpgrade() method.
+        }
 
-                if (value == null)
-                    throw new ArgumentNullException("value");
+        internal override void ResetVillageObject()
+        {
+            base.ResetVillageObject();
 
-                if (_data == value)
-                    return;
-
-                // We have changed CsvDataSubCollection.
-                if (_data.ID != value.ID)
-                    CollectionCache = null;
-
-                _constructionLevel = value.Level;
-                _data = value;
-                OnPropertyChanged(s_dataChanged);
-            }
+            _data = default(TCsvData);
+            CollectionCache = default(CsvDataSubCollection<TCsvData>);
         }
         #endregion
     }

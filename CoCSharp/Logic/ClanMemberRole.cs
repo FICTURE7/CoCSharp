@@ -21,7 +21,7 @@
         Elder = 3,
 
         /// <summary>
-        /// A co-leader of th clan.
+        /// A co-leader of the clan.
         /// </summary>
         CoLeader = 4
     };

@@ -53,9 +53,10 @@
     <Compile Include="Data\FingerprintTests.cs" />
     <Compile Include="Data\SlotCollectionTests.cs" />
     <Compile Include="Logic\AvatarTests.cs" />
+    <Compile Include="Logic\BuildingTests.cs" />
     <Compile Include="Logic\ComponentTests.cs" />
-    <Compile Include="Logic\LogicSchedulerTests.cs" />
     <Compile Include="Logic\ObstacleTests.cs" />
+    <Compile Include="Logic\VillageTests.cs" />
     <Compile Include="Logic\VillageObjectCollectionTests.cs" />
     <Compile Include="Logic\VillageObjectTests.cs" />
     <Compile Include="Network\CommandFactoryTests.cs" />
@@ -104,6 +105,18 @@
     <None Include="Content\layouts\test_village.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\layouts\village_buildings1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\layouts\village_buildings2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\layouts\village_exp_ver.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\layouts\village_notownhall.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +124,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

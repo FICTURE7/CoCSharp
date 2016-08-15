@@ -20,6 +20,8 @@ namespace CoCSharp.Server
     {
         public Server()
         {
+            Log.FullException = true;
+
             _settings = new NetworkManagerAsyncSettings(64, 64);
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(8, AcceptOperationCompleted);
@@ -122,43 +124,35 @@ namespace CoCSharp.Server
         // Tries to handles the specified Message with the registered MessageHandlers.
         public void HandleMessage(AvatarClient client, Message message)
         {
-#if !DEBUG
             try
             {
-#endif
                 var handler = (MessageHandler)null;
                 if (MessageHandlerDictionary.TryGetValue(message.ID, out handler))
                 {
                     handler(this, client, message);
                 }
-#if !DEBUG
             }
             catch (Exception ex)
             {
                 Log.Exception("Failed to handle message", ex);
             }
-#endif
         }
 
         // Tries to handles the specified Command with the registered CommandHandlers.
         public void HandleCommand(AvatarClient client, Command command)
         {
-#if !DEBUG
             try
             {
-#endif
                 var handler = (CommandHandler)null;
                 if (CommandHandlerDictionary.TryGetValue(command.ID, out handler))
                 {
                     handler(this, client, command);
                 }
-#if !DEBUG
             }
             catch (Exception ex)
             {
                 Log.Exception("Failed to handle command", ex);
             }
-#endif
         }
 
         // Sends a Message to all connected clients.
@@ -182,7 +176,7 @@ namespace CoCSharp.Server
             var totalMsgReceived = _settings.Statistics.TotalMessagesReceived;
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("LOG: Active Connections / Total Connections: {0} / {1}, Sent / Received: {2} / {3} bytes, Sent / Received: {4} / {5} messages.",
+            Console.WriteLine("LOG: Active Connections/Total Connections: {0}/{1}, Sent/Received: {2}/{3} bytes, Sent/Received: {4}/{5} messages.",
                               activeConn, totalConn, totalSent, totalReceived, totalMsgSent, totalMsgReceived);
             Console.ResetColor();
         }

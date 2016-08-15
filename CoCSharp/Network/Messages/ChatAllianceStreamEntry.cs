@@ -92,7 +92,7 @@ namespace CoCSharp.Network.Messages
             Level = reader.ReadInt32();
             League = reader.ReadInt32();
             Role = (ClanMemberRole)reader.ReadInt32();
-            MessageTime = DateTimeConverter.FromUnixTimestamp(reader.ReadInt32());
+            MessageTime = TimeUtils.FromUnixTimestamp(reader.ReadInt32());
             Message = reader.ReadString();
         }
 
@@ -117,7 +117,7 @@ namespace CoCSharp.Network.Messages
             writer.Write(Level);
             writer.Write(League);
             writer.Write((int)Role);
-            writer.Write(DateTimeConverter.ToUnixTimestamp(MessageTime));
+            writer.Write(TimeUtils.ToUnixTimestamp(MessageTime));
             writer.Write(Message);
         }
     }

@@ -145,8 +145,8 @@ namespace CoCSharp.Network.Messages
             Unknown1 = reader.ReadInt32();
 
             FacebookAppID = reader.ReadString();
-            DateLastPlayed = DateTimeConverter.FromJavaTimestamp(double.Parse(reader.ReadString()));
-            DateJoined = DateTimeConverter.FromJavaTimestamp(double.Parse(reader.ReadString()));
+            DateLastPlayed = TimeUtils.FromJavaTimestamp(double.Parse(reader.ReadString()));
+            DateJoined = TimeUtils.FromJavaTimestamp(double.Parse(reader.ReadString()));
 
             Unknown2 = reader.ReadInt32();
 
@@ -192,8 +192,8 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown1);
 
             writer.Write(FacebookAppID);
-            writer.Write(DateTimeConverter.ToJavaTimestamp(DateLastPlayed).ToString());
-            writer.Write(DateTimeConverter.ToJavaTimestamp(DateJoined).ToString());
+            writer.Write(TimeUtils.ToJavaTimestamp(DateLastPlayed).ToString());
+            writer.Write(TimeUtils.ToJavaTimestamp(DateJoined).ToString());
 
             writer.Write(Unknown2);
 

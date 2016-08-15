@@ -2,7 +2,6 @@ using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 using CoCSharp.Network.Messages.Commands;
-using CoCSharp.Server.Core;
 using System;
 
 namespace CoCSharp.Server.Handlers.Commands
@@ -59,96 +58,30 @@ namespace CoCSharp.Server.Handlers.Commands
                     return -1;
             }
         }
-
-        public static void BuildingConstructionFinished(object sender, ConstructionFinishedEventArgs<BuildingData> e)
+        internal static void DoLogic(object sender, LogicEventArgs e)
         {
-#if !DEBUG
-            try
+            if (e is ConstructionEventArgs<BuildingData>)
             {
-#endif
-            var building = (Building)e.BuildableConstructed;
-            var client = (AvatarClient)e.UserToken;
+                var args = (ConstructionEventArgs<BuildingData>)e;
+                var building = (Building)args.Buildable;
+                var client = (AvatarClient)args.UserToken;
+                if (client == null)
+                    return;
 
-            if (e.WasCancelled)
-            {
-                FancyConsole.WriteLine(LogFormats.Logic_Construction_Cancelled, client.Token, building.X, building.Y, building.Data.Level);
-            }
-            else
-            {
-                FancyConsole.WriteLine(LogFormats.Logic_Construction_Finished, client.Token, building.X, building.Y, building.Data.Level);
-                var exp = LogicUtils.CalculateExperience(building.Data.BuildTime);
-                client.Experience += exp;
-            }
+                if (e.Operation.HasFlag(LogicOperation.Cancel))
+                {
+                    //FancyConsole.WriteLine(LogFormats.Logic_Construction_Cancelled, client.Token, building.X, building.Y, building.Data.Level);
+                }
+                else
+                {
+                    Console.WriteLine("Hi mom!");
+                    //FancyConsole.WriteLine(LogFormats.Logic_Construction_Finished, client.Token, building.X, building.Y, building.Data.Level);
+                    var exp = LogicUtils.CalculateExperience(building.Data.BuildTime);
+                    client.Experience += exp;
+                }
 
-            client.Save();
-#if !DEBUG
+                client.Save();
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception occurred while handling Building construction finished; {0} -> {1}", ex.GetType().Name, ex.Message);
-            }
-#endif
-        }
-
-        public static void TrapConstructionFinished(object sende, ConstructionFinishedEventArgs<TrapData> e)
-        {
-#if !DEBUG
-            try
-            {
-#endif
-            var trap = (Trap)e.BuildableConstructed;
-            var client = (AvatarClient)e.UserToken;
-
-            if (e.WasCancelled)
-            {
-                FancyConsole.WriteLine(LogFormats.Logic_Construction_Cancelled, client.Token, trap.X, trap.Y, trap.Data.Level);
-            }
-            else
-            {
-                FancyConsole.WriteLine(LogFormats.Logic_Construction_Finished, client.Token, trap.X, trap.Y, trap.Data.Level);
-
-                var exp = LogicUtils.CalculateExperience(trap.Data.BuildTime);
-                client.Experience += exp;
-            }
-
-            client.Save();
-#if !DEBUG
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception occurred while handling Trap construction finished; {0} -> {1}", ex.GetType().Name, ex.Message);
-            }
-#endif
-        }
-
-        public static void ObstacleClearingFinished(object sender, ClearingFinishedEventArgs e)
-        {
-#if !DEBUG
-            try
-            {
-#endif
-            var obstacle = e.ClearedObstacle;
-            var client = (AvatarClient)e.UserToken;
-
-            if (e.WasCancelled)
-            {
-                FancyConsole.WriteLine(LogFormats.Logic_Clearing_Cancelled, client.Token, obstacle.X, obstacle.Y);
-            }
-            else
-            {
-                FancyConsole.WriteLine(LogFormats.Logic_Clearing_Finished, client.Token, obstacle.X, obstacle.Y);
-                var exp = LogicUtils.CalculateExperience(obstacle.Data.ClearTime);
-                client.Experience += exp;
-            }
-
-            client.Save();
-#if !DEBUG
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception occurred while handling Obstacle clearing finished; {0} -> {1}", ex.GetType().Name, ex.Message);
-            }
-#endif
         }
     }
 }

@@ -3,7 +3,6 @@ using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 
 namespace CoCSharp.Logic
 {
@@ -177,34 +176,16 @@ namespace CoCSharp.Logic
 
         #region Methods
         #region Construction
-        internal override TimeSpan GetBuildTime(BuildingData data)
+        /// <summary/>
+        protected override TimeSpan GetBuildTime(BuildingData data)
         {
             return data.BuildTime;
         }
 
-        internal override int GetTownHallLevel(BuildingData data)
+        /// <summary/>
+        protected override int GetTownHallLevel(BuildingData data)
         {
             return data.TownHallLevel;
-        }
-
-        /// <summary/>
-        protected override bool CanUpgradeCheckTownHallLevel()
-        {
-            Debug.Assert(NextUpgrade != null && Data != null);
-
-            var buildData = _constructionLevel > NotConstructedLevel ? NextUpgrade : Data;
-            if (buildData.TownHallLevel == 0)
-                return true;
-
-            var th = Village.TownHall;
-            if (th == null)
-                throw new InvalidOperationException("Village does not contain a Town Hall.");
-
-            // TownHallLevel field is not a zero-based so we subtract 1.
-            if (th.Data.Level >= buildData.TownHallLevel - 1)
-                return true;
-
-            return false;
         }
         #endregion
 
@@ -219,6 +200,17 @@ namespace CoCSharp.Logic
         {
             // Ticks the Buildable{T} parent to update construction stuff.
             base.Tick(tick);
+
+            // Determines if the current VillageObject is a TownHall building based on Data.TID
+            // and set the townhall of the Village to this VillageObject. 
+            if (CollectionCache.ID == AssetManager.TownHallID)
+            {
+                // A Village cannot contain more than 1 townhall.
+                if (Village.TownHall != this && Village.TownHall != null)
+                    throw new InvalidOperationException("Cannot add a Town Hall building to Village if it already contains one.");
+
+                Village._townhall = this;
+            }
         }
 
         #region Json Reading/Writing
@@ -227,7 +219,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(Data.ID);
+            writer.WriteValue(CollectionCache.ID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);
@@ -328,67 +320,35 @@ namespace CoCSharp.Logic
             if (!lvlSet)
                 throw new InvalidOperationException("Building JSON does not contain a 'lvl' field.");
 
-            _constructionLevel = lvl;
-            // If its not constructed yet, the level is -1,
-            // therefore it must be a lvl 0 building.
-            if (lvl == NotConstructedLevel)
-            {
-                //_isConstructed = false;
-                lvl = 0;
-            }
-
             if (instance.InvalidDataID(dataId))
                 throw new InvalidOperationException("Building JSON contained an invalid BuildingData ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
+            // Don't use the setter of the Level property to prevent
+            // UpdateIsUpgradable from being called which can cause an InvalidOperationException when
+            // the TownHall building is no loaded yet.
+            _level = lvl;
             UpdateData(dataId, lvl);
-            // UpdateCanUpgade();
-            // Village.ReadBuildingArray() method will call the UpdateCanUpgrade() method.
 
-            // Check if the current building is a townhall.
-            // If yes set Village.TownHall to this building.
-            CheckAndSetTownHall();
-
-            // Try to use const_t if we were not able to get const_t_end's value.
-            if (constTimeEnd == -1)
+            // Try to use const_t_end if we were not able to get const_t's value.
+            if (constTime == -1)
             {
-                // We don't have const_t either so we can exit early.
-                if (constTime == -1)
-                    return;
+                // We don't have const_t_end either so we can exit early.
+                if (constTimeEnd == -1)
+                {
+                    if (_level == NotConstructedLevel)
+                        _level = 0;
 
-                ConstructionEndTime = DateTime.UtcNow.AddSeconds(constTime);
+                    return;
+                }
+
+                _timer.Start(constTimeEnd);
             }
             else
             {
-                if (constTimeEnd > DateTimeConverter.UnixUtcNow + 100)
-                {
-                    ConstructionTEndUnixTimestamp = constTimeEnd;
-                }
-                else
-                {
-                    // Date at which building construction was going to end has passed.
-                    UpdateCanUpgade();
-                    //DoConstructionFinished();
-                    return;
-                }
+                _timer.Start(TimeUtils.UnixUtcNow + constTime);
             }
-
-            //ScheduleBuild();
         }
         #endregion
-
-        // Determines if the current VillageObject is a TownHall building based on Data.TID
-        // and set the townhall of the Village to this VillageObject. 
-        private void CheckAndSetTownHall()
-        {
-            if (Data.ID == AssetManager.TownHallID)
-            {
-                // A Village cannot contain more than 1 townhall.
-                if (Village.TownHall != null)
-                    throw new InvalidOperationException("Cannot add a Town Hall building if it already contains one.");
-
-                Village.TownHall = this;
-            }
-        }
 
         // Tries to return an instance of the Building class from the VillageObjectPool.
         internal static Building GetInstance(Village village)
