@@ -11,7 +11,7 @@ namespace CoCSharp.Logic
     /// <summary>
     /// Represents a Clash of Clans avatar.
     /// </summary>
-    public class Avatar
+    public class Avatar : INotifyPropertyChanged
     {
         #region Constants
         private static readonly PropertyChangedEventArgs s_namedChanged = new PropertyChangedEventArgs("Name");
@@ -39,7 +39,7 @@ namespace CoCSharp.Logic
         /// </summary>
         public Avatar()
         {
-            // If _level is less that 1 then the client crashes.
+            // If _level is less than 1 then the client crashes.
             _level = 1;
 
             ResourcesCapacity = new SlotCollection<ResourceCapacitySlot>();
@@ -70,7 +70,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// The event raised when a property value has changed.
         /// </summary>
-        public event EventHandler<PropertyChangedEventArgs> PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private string _name;
         /// <summary>
@@ -116,7 +116,6 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the user token of the <see cref="Avatar"/>.
         /// </summary>
-        ///// <exception cref="ArgumentException"><paramref name="value"/> is not a valid token.</exception>
         public string Token
         {
             get
@@ -125,9 +124,6 @@ namespace CoCSharp.Logic
             }
             set
             {
-                //if (value != null && !TokenUtils.CheckToken(value))
-                //    throw new ArgumentException("'" + value + "' is not a valid token.");
-
                 if (_token == value)
                     return;
 
@@ -186,9 +182,6 @@ namespace CoCSharp.Logic
             }
             set
             {
-                //if (value.Kind != DateTimeKind.Utc)
-                //    throw new ArgumentException("value.Kind must be a kind of DateTimeKind.Utc.", "value");
-
                 if (_shieldEndTime == value)
                     return;
 
