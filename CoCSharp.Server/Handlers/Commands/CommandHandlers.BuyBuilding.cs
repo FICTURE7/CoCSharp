@@ -1,8 +1,6 @@
-﻿using System;
-using CoCSharp.Data.Models;
+﻿using CoCSharp.Data.Models;
 using CoCSharp.Logic;
-using CoCSharp.Network;
-using CoCSharp.Network.Messages.Commands;
+using CoCSharp.Logic.Commands;
 
 namespace CoCSharp.Server.Handlers.Commands
 {

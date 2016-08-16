@@ -64,9 +64,12 @@ namespace CoCSharp.Logic
                 }
             }
 
-            Debug.WriteLine("Waiting for t_worker to end.");
-            t_worker.Join();
-            t_worker = null;
+            if (join)
+            {
+                Debug.WriteLine("Waiting for t_worker to end.");
+                t_worker.Join();
+                t_worker = null;
+            }
         }
 
         private static void DoTick()

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoCSharp.Network
+namespace CoCSharp.Logic
 {
     /// <summary>
     /// Use this attribute to prevent the <see cref="CommandFactory"/> to add it

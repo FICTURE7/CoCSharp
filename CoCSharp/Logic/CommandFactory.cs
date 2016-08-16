@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-namespace CoCSharp.Network
+namespace CoCSharp.Logic
 {
     /// <summary>
     /// Provides methods to create <see cref="Command"/> instances.

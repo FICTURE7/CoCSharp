@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Logic;
+using System;
 
 namespace CoCSharp.Network.Messages
 {

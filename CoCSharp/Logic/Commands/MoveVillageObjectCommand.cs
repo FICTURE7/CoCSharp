@@ -1,7 +1,8 @@
 ﻿using CoCSharp.Data;
+using CoCSharp.Network;
 using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
     /// Command that is sent by the client to the server to tell
@@ -10,7 +11,7 @@ namespace CoCSharp.Network.Messages.Commands
     public class MoveVillageObjectCommand : Command
     {
         /// <summary>
-        /// Intializes a new instance of the <see cref="MoveVillageObjectCommand"/> class.
+        /// Initializes a new instance of the <see cref="MoveVillageObjectCommand"/> class.
         /// </summary>
         public MoveVillageObjectCommand()
         {

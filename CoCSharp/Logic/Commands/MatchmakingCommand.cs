@@ -1,30 +1,26 @@
-﻿using System;
+﻿using CoCSharp.Network;
+using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
-    /// Command that is sent by the server to the client to
-    /// tell it that its name was changed.
+    /// Command that is sent by the client to the server to tell
+    /// it that the clients wants to attack a village.
     /// </summary>
-    public class AvatarNameChangedCommand : Command
+    public class MatchmakingCommand : Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AvatarNameChangedCommand"/> class.
+        /// Initializes a new instance of the <see cref="MatchmakingCommand"/> class.
         /// </summary>
-        public AvatarNameChangedCommand()
+        public MatchmakingCommand()
         {
             // Space
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="AvatarNameChangedCommand"/>.
+        /// Gets the ID of the <see cref="MatchmakingCommand"/>.
         /// </summary>
-        public override int ID { get { return 3; } }
-
-        /// <summary>
-        /// New name confirmed by server.
-        /// </summary>
-        public string NewName;
+        public override int ID { get { return 700; } }
 
         /// <summary>
         /// Unknown integer 1.
@@ -36,37 +32,42 @@ namespace CoCSharp.Network.Messages.Commands
         public int Unknown2;
 
         /// <summary>
-        /// Reads the <see cref="AvatarNameChangedCommand"/> from the specified <see cref="MessageReader"/>.
+        /// Current tick.
+        /// </summary>
+        public int Tick;
+
+        /// <summary>
+        /// Reads the <see cref="MatchmakingCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="AvatarNameChangedCommand"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="MatchmakingCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
 
-            NewName = reader.ReadString();
-
             Unknown1 = reader.ReadInt32();
             Unknown2 = reader.ReadInt32();
+
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
-        /// Writes the <see cref="AvatarNameChangedCommand"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="MatchmakingCommand"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="AvatarNameChangedCommand"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="MatchmakingCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(NewName);
-
             writer.Write(Unknown1);
             writer.Write(Unknown2);
+
+            writer.Write(Tick);
         }
     }
 }

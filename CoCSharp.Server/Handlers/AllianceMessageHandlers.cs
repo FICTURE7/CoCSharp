@@ -1,7 +1,7 @@
 ﻿using CoCSharp.Logic;
+using CoCSharp.Logic.Commands;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
-using CoCSharp.Network.Messages.Commands;
 using System;
 using System.Collections.Generic;
 

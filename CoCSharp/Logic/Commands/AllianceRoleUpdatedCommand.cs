@@ -1,7 +1,8 @@
 ﻿using CoCSharp.Logic;
+using CoCSharp.Network;
 using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
     ///  Command that is sent by the server to the client
@@ -26,18 +27,20 @@ namespace CoCSharp.Network.Messages.Commands
         /// Clan ID which the client in.
         /// </summary>
         public long ClanID;
+       
         /// <summary>
-        /// Current tick.
+        /// Unknown integer 1.
         /// </summary>
-        public int Tick;
+        public int Unknown1;
+
         /// <summary>
         /// Role.
         /// </summary>
         public ClanMemberRole Role;
         /// <summary>
-        /// Unknown Interger 1.
+        /// Current tick.
         /// </summary>
-        public int Unknown1;
+        public int Tick;
 
         /// Reads the <see cref="AllianceRoleUpdatedCommand"/> from the specified <see cref="MessageReader"/>.
         /// <summary>
@@ -51,7 +54,9 @@ namespace CoCSharp.Network.Messages.Commands
             ThrowIfReaderNull(reader);
 
             ClanID = reader.ReadInt64();
+
             Unknown1 = reader.ReadInt32();
+
             Role = (ClanMemberRole)reader.ReadInt32();
             Tick = reader.ReadInt32();
         }
@@ -68,7 +73,9 @@ namespace CoCSharp.Network.Messages.Commands
             ThrowIfWriterNull(writer);
 
             writer.Write(ClanID);
+
             writer.Write(Unknown1);
+
             writer.Write((int)Role);
             writer.Write(Tick);
         }

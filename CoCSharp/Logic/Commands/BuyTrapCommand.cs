@@ -1,7 +1,7 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Network;
 using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
     /// Command that is sent by the client to the server to tell

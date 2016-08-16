@@ -1,6 +1,7 @@
-﻿using System;
+﻿using CoCSharp.Network;
+using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
     ///  Command that is sent by the server to the client
@@ -28,7 +29,7 @@ namespace CoCSharp.Network.Messages.Commands
         /// <summary>
         /// Reason why the client left.
         /// </summary>
-        public int Reason;
+        public int Reason; // TODO: Implement enum for it.
         /// <summary>
         /// Current tick.
         /// </summary>

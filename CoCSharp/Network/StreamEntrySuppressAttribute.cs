@@ -3,7 +3,7 @@
 namespace CoCSharp.Network
 {
     /// <summary>
-    /// Use this attribute to prevent the <see cref="CommandFactory"/> to add it
+    /// Use this attribute to prevent the <see cref="StreamEntryFactory"/> to add it
     /// in the <see cref="StreamEntryFactory.s_allianceStreamDictionary"/> 
     /// or <see cref="StreamEntryFactory.s_avatarStreamDictionary"/>. This class cannot be inherited.
     /// </summary>

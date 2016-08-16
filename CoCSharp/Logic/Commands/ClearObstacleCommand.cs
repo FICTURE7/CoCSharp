@@ -1,66 +1,65 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Network;
 using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
     /// Command that is sent by the client to the server to tell
-    /// it that a construction was cancelled.
+    /// it that an obstacle was cleared.
     /// </summary>
-    public class CancelConsturctionCommand : Command
+    public class ClearObstacleCommand : Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CancelConsturctionCommand"/> class.
+        /// Initializes a new instance of the <see cref="ClearObstacleCommand"/> class.
         /// </summary>
-        public CancelConsturctionCommand()
+        public ClearObstacleCommand()
         {
             // Space
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="BuyDecorationCommand"/>.
+        /// Gets the ID of the <see cref="ClearObstacleCommand"/>.
         /// </summary>
-        public override int ID { get { return 505; } }
+        public override int ID { get { return 507; } }
 
         /// <summary>
-        /// Game ID of the <see cref="VillageObject"/> whose
-        /// construction was cancelled.
+        /// Game ID of the <see cref="Obstacle"/> that was cleared.
         /// </summary>
-        public int VillageObjectID;
-
+        public int ObstacleGameID;
+        
         /// <summary>
         /// Unknown integer 1.
         /// </summary>
         public int Unknown1;
 
         /// <summary>
-        /// Reads the <see cref="CancelConsturctionCommand"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="ClearObstacleCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="CancelConsturctionCommand"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="ClearObstacleCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
 
-            VillageObjectID = reader.ReadInt32();
+            ObstacleGameID = reader.ReadInt32();
 
             Unknown1 = reader.ReadInt32();
         }
 
         /// <summary>
-        /// Writes the <see cref="CancelConsturctionCommand"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="ClearObstacleCommand"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="CancelConsturctionCommand"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ClearObstacleCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(VillageObjectID);
+            writer.Write(ObstacleGameID);
 
             writer.Write(Unknown1);
         }

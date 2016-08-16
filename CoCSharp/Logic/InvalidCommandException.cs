@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CoCSharp.Network
+namespace CoCSharp.Logic
 {
     /// <summary>
     /// The exception that is thrown when a <see cref="Command"/> is invalid.

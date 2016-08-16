@@ -1,39 +1,40 @@
 ﻿using CoCSharp.Logic;
+using CoCSharp.Network;
 using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
     /// Command that is sent by the client to the server to tell
-    /// it that a decoration was bought.
+    /// it that a building was bought.
     /// </summary>
-    public class BuyDecorationCommand : Command
+    public class BuyBuildingCommand : Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuyDecorationCommand"/> class.
+        /// Initializes a new instance of the <see cref="BuyBuildingCommand"/> class.
         /// </summary>
-        public BuyDecorationCommand()
+        public BuyBuildingCommand()
         {
             // Space
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="BuyDecorationCommand"/>.
+        /// Gets the ID of the <see cref="BuyBuildingCommand"/>.
         /// </summary>
-        public override int ID { get { return 512; } }
+        public override int ID { get { return 500; } }
 
         /// <summary>
-        /// X coordinates of the <see cref="Decoration"/> where it was placed.
+        /// X coordinates of the <see cref="Building"/> where it was placed.
         /// </summary>
         public int X;
         /// <summary>
-        /// Y coordinates of the <see cref="Decoration"/> where it was placed.
+        /// Y coordinates of the <see cref="Building"/> where it was placed.
         /// </summary>
         public int Y;
         /// <summary>
-        /// Data ID of the <see cref="Decoration"/> that was bought.
+        /// Data ID of the <see cref="Building"/> that was bought.
         /// </summary>
-        public int DecorationDataID;
+        public int BuildingDataID;
 
         /// <summary>
         /// Unknown integer 1.
@@ -41,10 +42,10 @@ namespace CoCSharp.Network.Messages.Commands
         public int Unknown1;
 
         /// <summary>
-        /// Reads the <see cref="BuyDecorationCommand"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="BuyBuildingCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="BuyDecorationCommand"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="BuyBuildingCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
@@ -53,16 +54,16 @@ namespace CoCSharp.Network.Messages.Commands
 
             X = reader.ReadInt32();
             Y = reader.ReadInt32();
-            DecorationDataID = reader.ReadInt32();
+            BuildingDataID = reader.ReadInt32();
 
             Unknown1 = reader.ReadInt32();
         }
 
         /// <summary>
-        /// Writes the <see cref="BuyDecorationCommand"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="BuyBuildingCommand"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="BuyDecorationCommand"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="BuyBuildingCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
@@ -71,7 +72,7 @@ namespace CoCSharp.Network.Messages.Commands
 
             writer.Write(X);
             writer.Write(Y);
-            writer.Write(DecorationDataID);
+            writer.Write(BuildingDataID);
 
             writer.Write(Unknown1);
         }

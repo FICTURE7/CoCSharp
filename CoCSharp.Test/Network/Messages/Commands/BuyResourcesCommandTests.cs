@@ -1,5 +1,6 @@
-﻿using CoCSharp.Network;
-using CoCSharp.Network.Messages.Commands;
+﻿using CoCSharp.Logic;
+using CoCSharp.Logic.Commands;
+using CoCSharp.Network;
 using NUnit.Framework;
 using System.IO;
 

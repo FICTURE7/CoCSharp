@@ -1,9 +1,9 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
+using CoCSharp.Logic.Commands;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
-using CoCSharp.Network.Messages.Commands;
 using CoCSharp.Server.Core;
 using System;
 

@@ -1,31 +1,26 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Network;
 using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
-    /// Command that is sent by the client to the server to tell
-    /// it that a building was upgraded.
+    /// Command that is sent by the client to server to tell it
+    /// that some shield was removed.
     /// </summary>
-    public class UpgradeBuildableCommand : Command
+    public class RemoveShieldCommand : Command
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UpgradeBuildableCommand"/> class.
+        /// Initializes a new instance of the <see cref="RemoveShieldCommand"/> class.
         /// </summary>
-        public UpgradeBuildableCommand()
+        public RemoveShieldCommand()
         {
             // Space
         }
 
         /// <summary>
-        /// Gets the ID of the <see cref="UpgradeBuildableCommand"/>.
+        /// Gets the ID of the <see cref="RemoveShieldCommand"/>.
         /// </summary>
-        public override int ID { get { return 502; } }
-
-        /// <summary>
-        /// Game ID of the <see cref="Buildable{TCsvData}"/> that was upgraded.
-        /// </summary>
-        public int BuildableGameID;
+        public override int ID { get { return 573; } }
 
         /// <summary>
         /// Unknown byte 1.
@@ -37,37 +32,42 @@ namespace CoCSharp.Network.Messages.Commands
         public int Unknown2;
 
         /// <summary>
-        /// Reads the <see cref="UpgradeBuildableCommand"/> from the specified <see cref="MessageReader"/>.
+        /// Current tick.
+        /// </summary>
+        public int Tick;
+
+        /// <summary>
+        /// Reads the <see cref="RemoveShieldCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="UpgradeBuildableCommand"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="RemoveShieldCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadCommand(MessageReader reader)
         {
             ThrowIfReaderNull(reader);
 
-            BuildableGameID = reader.ReadInt32();
-
             Unknown1 = reader.ReadByte();
             Unknown2 = reader.ReadInt32();
+
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
-        /// Writes the <see cref="UpgradeBuildableCommand"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="RemoveShieldCommand"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="UpgradeBuildableCommand"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="RemoveShieldCommand"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteCommand(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(BuildableGameID);
-
             writer.Write(Unknown1);
             writer.Write(Unknown2);
+
+            writer.Write(Tick);
         }
     }
 }

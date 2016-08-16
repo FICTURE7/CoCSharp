@@ -1,6 +1,7 @@
-﻿using System;
+﻿using CoCSharp.Network;
+using System;
 
-namespace CoCSharp.Network
+namespace CoCSharp.Logic
 {
     /// <summary>
     /// Represents a Clash of Clans command sent in CommandMessage.

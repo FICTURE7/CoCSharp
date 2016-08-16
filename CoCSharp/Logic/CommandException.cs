@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CoCSharp.Network
+namespace CoCSharp.Logic
 {
     /// <summary>
     /// The exception that is thrown when there is an error with a 
@@ -42,7 +42,7 @@ namespace CoCSharp.Network
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandException"/> class with a 
-        /// specified error message and <see cref="Message"/> instance that caused the error.
+        /// specified error message and <see cref="Command"/> instance that caused the error.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="commandInstance">

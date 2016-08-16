@@ -1,6 +1,7 @@
-﻿using System;
+﻿using CoCSharp.Network;
+using System;
 
-namespace CoCSharp.Network.Messages.Commands
+namespace CoCSharp.Logic.Commands
 {
     /// <summary>
     /// Command that is sent by the client to the server to tell
@@ -34,7 +35,7 @@ namespace CoCSharp.Network.Messages.Commands
         /// </summary>
         public bool EmbedCommand;
         /// <summary>
-        /// <see cref="Network.Command"/> that was embedded inside of the
+        /// <see cref="Logic.Command"/> that was embedded inside of the
         /// <see cref="BuyResourcesCommand"/>.
         /// </summary>
         public Command Command;
