@@ -1,10 +1,11 @@
 ﻿using CoCSharp.Network;
+using CoCSharp.Network.Messages;
 using System;
 
 namespace CoCSharp.Logic
 {
     /// <summary>
-    /// Represents a Clash of Clans command sent in CommandMessage.
+    /// Represents a Clash of Clans command sent in <see cref="CommandMessage"/> and <see cref="AvailableServerCommandMessage"/>.
     /// </summary>
     public abstract class Command
     {
@@ -23,7 +24,7 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Gets or sets the ID of the <see cref="Command"/>.
+        /// Gets the ID of the <see cref="Command"/>.
         /// </summary>
         public abstract int ID { get; }
 
@@ -43,18 +44,31 @@ namespace CoCSharp.Logic
         /// </param>
         public abstract void WriteCommand(MessageWriter writer);
 
-        /// <summary>Throws ArgumentNullException if reader is null.</summary>
-        protected void ThrowIfReaderNull(MessageReader reader)
+        /// <summary>
+        /// Performs the <see cref="Command"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="avatar"><see cref="Avatar"/> on which to perform the <see cref="Command"/>.</param>
+        public virtual void Execute(Avatar avatar)
+        {
+            // Space
+        }
+
+        internal void ThrowIfReaderNull(MessageReader reader)
         {
             if (reader == null)
                 throw new ArgumentNullException("reader");
         }
 
-        /// <summary>Throws ArgumentNullException if writer is null.</summary>
-        protected void ThrowIfWriterNull(MessageWriter writer)
+        internal void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
                 throw new ArgumentNullException("writer");
+        }
+
+        internal void ThrowIfAvatarNull(Avatar avatar)
+        {
+            if (avatar == null)
+                throw new ArgumentNullException("avatar");
         }
 
         // Depth of this command. This is mostly for checking embedded command recursion.

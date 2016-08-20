@@ -3,6 +3,7 @@ using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
 using CoCSharp.Network.Messages;
 using System;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -41,6 +42,7 @@ namespace CoCSharp.Logic
         {
             // If _level is less than 1 then the client crashes.
             _level = 1;
+            _commands = new ConcurrentQueue<Command>();
 
             ResourcesCapacity = new SlotCollection<ResourceCapacitySlot>();
             ResourcesAmount = new SlotCollection<ResourceAmountSlot>();
@@ -62,6 +64,9 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
+        // Queue of commands to execute.
+        private ConcurrentQueue<Command> _commands;
+
         /// <summary>
         /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
         /// </summary>
@@ -601,17 +606,29 @@ namespace CoCSharp.Logic
             if (warElixir > 0)
                 ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_ELIXIR", 0).ID, warElixir));
 
-            // Dark Elixir is unlocked at townhall 7.
-            if (darkElixir > 0 || Home.TownHall.Level >= 7)
+            // Dark Elixir is unlocked at townhall 7(6).
+            if (darkElixir > 0 || Home.TownHall.Level >= 6)
                 ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_DARK_ELIXIR", 0).ID, darkElixir));
             if (warDarkElixir > 0)
                 ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0).ID, warDarkElixir));
         }
 
+        internal void Flush()
+        {
+            while (!_commands.IsEmpty)
+            {
+                var cmd = (Command)null;
+                if (!_commands.TryDequeue(out cmd))
+                    continue;
+
+                cmd.Execute(this);
+            }
+        }
+
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event with the specified <see cref="PropertyChangedEventArgs"/>.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">The data.</param>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
         {
             if (IsPropertyChangedEnabled && PropertyChanged != null)

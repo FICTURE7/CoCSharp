@@ -1,4 +1,4 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Data.Models;
 using CoCSharp.Network;
 using System;
 
@@ -75,6 +75,24 @@ namespace CoCSharp.Logic.Commands
             writer.Write(BuildingDataID);
 
             writer.Write(Unknown1);
+        }
+
+        /// <summary>
+        /// Performs the <see cref="BuyBuildingCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="avatar"><see cref="Avatar"/> on which to perform the <see cref="BuyBuildingCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="avatar"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="avatar.Home"/> is null.</exception>
+        public override void Execute(Avatar avatar)
+        {
+            ThrowIfAvatarNull(avatar);
+
+            if (avatar.Home == null)
+                throw new ArgumentNullException("avatar.Home");
+
+            var data = avatar.Home.AssetManager.SearchCsv<BuildingData>(BuildingDataID, 0);
+            var resource = data.BuildResource;
+            new Building(avatar.Home, data, X, Y, -1);
         }
     }
 }
