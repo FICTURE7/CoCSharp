@@ -12,19 +12,13 @@ namespace CoCSharp.Test.Csv
         public void SetUp()
         {
             var tablePath = Path.Combine(TestUtils.CsvDirectory, "com_buildings.csv");
-            _table = new CsvTable(tablePath, true);
+            _table = new CsvTable(tablePath, CsvTableCompression.Compressed);
         }
 
         private CsvTable _table;
 
         [Test]
         public void DeserializeNew()
-        {
-            var t = CsvConvert.DeserializeNew<BuildingData>(_table);
-        }
-
-        [Test]
-        public void Deserialize()
         {
             var t = CsvConvert.Deserialize<BuildingData>(_table);
         }

@@ -55,6 +55,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Csv\Compression\Common\CommandLineParser.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Csv\CsvAliasAttribute.cs" />
     <Compile Include="Csv\CsvConvert.cs" />
     <Compile Include="Csv\CsvTable.cs" />
+    <Compile Include="Csv\CsvTableCompression.cs" />
     <Compile Include="Csv\PropertyMap.cs" />
     <Compile Include="Csv\ObjectMapper.cs" />
     <Compile Include="Data\AssetDownloader.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Logic\Components\ResourceStorageComponent.cs" />
     <Compile Include="Logic\Components\UnitProductionComponent.cs" />
     <Compile Include="Logic\Components\UnitStorageComponent.cs" />
+    <Compile Include="Logic\InsufficientResourcesException.cs" />
     <Compile Include="Logic\LogicComponent.cs" />
     <Compile Include="Logic\LogicComponentPool.cs" />
     <Compile Include="Logic\LogicEventArgs.cs" />

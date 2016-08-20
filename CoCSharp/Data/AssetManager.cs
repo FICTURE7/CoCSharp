@@ -140,8 +140,8 @@ namespace CoCSharp.Data
                 throw new FileNotFoundException("Could not find CSV file at '" + fullPath + "'.");
 
             var type = typeof(TCsvData);
-            var table = new CsvTable(fullPath, compressed);
-            var data = CsvConvert.DeserializeNew<TCsvData>(table);
+            var table = new CsvTable(fullPath);
+            var data = CsvConvert.Deserialize<TCsvData>(table);
             data.IsReadOnly = true;
 
             var index = GetIndex(CsvData.GetInstance<TCsvData>().BaseDataID);
