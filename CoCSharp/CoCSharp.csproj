@@ -73,7 +73,6 @@
     <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoderBit.cs" />
     <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
     <Compile Include="Csv\Compression\ICoder.cs" />
-    <Compile Include="Csv\Compression\LzmaUtils.cs" />
     <Compile Include="Csv\CsvAttributeHelper.cs" />
     <Compile Include="Csv\CsvDataCollection{T}.cs" />
     <Compile Include="Csv\CsvDataSubCollection{T}.cs" />
