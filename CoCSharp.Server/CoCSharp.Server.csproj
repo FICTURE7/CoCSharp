@@ -70,9 +70,6 @@
     <Compile Include="Core\SaveQueue{T}.cs" />
     <Compile Include="ServerConfiguration.cs" />
     <Compile Include="DirectoryPaths.cs" />
-    <Compile Include="Core\FancyConsole.cs" />
-    <Compile Include="Core\FancyConsole.Write.cs" />
-    <Compile Include="Core\FancyConsole.WriteLine.cs" />
     <Compile Include="Handlers\AllianceMessageHandlers.cs" />
     <Compile Include="Handlers\Commands\CommandHandlers.cs" />
     <Compile Include="Handlers\InGameMessageHandlers.cs" />

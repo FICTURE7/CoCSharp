@@ -42,8 +42,6 @@ namespace CoCSharp.Server.Handlers
             ndMessage.NpcVillage = npcVillage;
             ndMessage.NpcID = anMessage.NpcID;
 
-            FancyConsole.WriteLine(LogFormats.Attack_Npc, client.Token, anMessage.NpcID);
-
             client.SendMessage(ndMessage);
         }
 

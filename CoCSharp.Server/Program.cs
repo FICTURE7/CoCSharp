@@ -33,7 +33,6 @@ namespace CoCSharp.Server
 
         public static void Main(string[] args)
         {
-            FancyConsole.Enabled = false;
             Console.Title = "CoC# - Server";
 
             var stopwatch = new Stopwatch();
