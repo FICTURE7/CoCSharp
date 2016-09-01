@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Csv;
 using CoCSharp.Data.Models;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace CoCSharp.Test.Csv
@@ -8,19 +9,34 @@ namespace CoCSharp.Test.Csv
     [TestFixture]
     public class CsvConvertTests
     {
+        private readonly string _tablePath = Path.Combine(TestUtils.CsvDirectory, "buildings.csv");
+        private CsvTable _table;
+
         [SetUp]
         public void SetUp()
         {
-            var tablePath = Path.Combine(TestUtils.CsvDirectory, "com_buildings.csv");
-            _table = new CsvTable(tablePath, CsvTableCompression.Compressed);
+            _table = new CsvTable(_tablePath);
         }
 
-        private CsvTable _table;
+        [Test]
+        public void Deserialize_InvalidArgs_Exception()
+        {
+            Assert.Throws<ArgumentNullException>(() => CsvConvert.Deserialize(null, null));
+            Assert.Throws<ArgumentNullException>(() => CsvConvert.Deserialize(_table, null));
+            Assert.Throws<ArgumentException>(() => CsvConvert.Deserialize(_table, typeof(TestType)));
+            Assert.Throws<ArgumentException>(() => CsvConvert.Deserialize(_table, typeof(CsvData)));
+        }
 
         [Test]
-        public void DeserializeNew()
+        public void Deserialize_ReturnType()
         {
-            var t = CsvConvert.Deserialize<BuildingData>(_table);
+            var row = CsvConvert.Deserialize(_table, typeof(BuildingData));
+            Assert.IsInstanceOf<CsvDataRow<BuildingData>>(row);
+        }
+
+        private class TestType
+        {
+            // Space
         }
     }
 }

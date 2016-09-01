@@ -9,24 +9,14 @@ namespace CoCSharp.Test.Logic
     [TestFixture]
     public class VillageObjectCollectionTests
     {
-        public VillageObjectCollectionTests()
-        {
-            _manager = new AssetManager(TestUtils.CsvDirectory);
-            _manager.LoadCsv<BuildingData>("buildings.csv");
-            _manager.LoadCsv<ObstacleData>("obstacles.csv");
-            _manager.LoadCsv<TrapData>("traps.csv");
-            _manager.LoadCsv<DecorationData>("decos.csv");
-        }
-
-        private AssetManager _manager;
         private Village _village;
         private VillageObjectCollection _collection;
 
         [SetUp]
         public void SetUp()
         {
-            _village = new Village(_manager);
-            var thdata = _manager.SearchCsv<BuildingData>(1000001, 0);
+            _village = new Village(new AssetManager(TestUtils.ContentDirectory));
+            var thdata = new BuildingData();
             var thbuilding = new Building(_village, thdata);
 
             _collection = _village.VillageObjects;
@@ -43,7 +33,7 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void Add_NewItem_IDsUpdated()
         {
-            var data = _manager.SearchCsv<BuildingData>(1000000, 2);
+            var data = new BuildingData();
             var troopbuilding = new Building(_village, data);
 
             Assert.AreEqual(500000001, troopbuilding.ID);
@@ -56,7 +46,7 @@ namespace CoCSharp.Test.Logic
             Assert.AreEqual(1, _collection.Count);
             for (int i = 0; i < 50; i++)
             {
-                var data = _manager.SearchCsv<BuildingData>(1000000, 2);
+                var data = new BuildingData();
                 var troopbuilding = new Building(_village, data);
 
                 Assert.AreEqual(500000001 + i, troopbuilding.ID);
@@ -70,7 +60,7 @@ namespace CoCSharp.Test.Logic
         {
             for (int i = 0; i < 50; i++)
             {
-                var data = _manager.SearchCsv<BuildingData>(1000000, 2);
+                var data = new BuildingData();
                 var troopbuilding = new Building(_village, data);
 
                 Assert.AreEqual(500000001 + i, troopbuilding.ID);

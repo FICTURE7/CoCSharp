@@ -17,9 +17,12 @@ namespace CoCSharp.Data.Models
         }
 
         #region Fields & Properties
-        internal override int BaseDataID
+        internal override int KindID
         {
-            get { return 1000000; }
+            get
+            {
+                return 1;
+            }
         }
 
         /// <summary>

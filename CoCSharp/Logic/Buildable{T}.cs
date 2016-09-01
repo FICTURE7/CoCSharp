@@ -80,7 +80,7 @@ namespace CoCSharp.Logic
 
             // If level is -1 (NotConstructedLevel), VillageObject.Data will be null.
             // and NextUpgrade will point to a CsvData of level 0 from CollectionCache.
-            UpdateData(Data.ID, level);
+            //UpdateData(Data._OldID, level);
             UpdateIsUpgradable();
 
             if (level == NotConstructedLevel)
@@ -327,7 +327,7 @@ namespace CoCSharp.Logic
             // is found, we do it.
             if (CollectionCache == null)
             {
-                CollectionCache = AssetManager.SearchCsvNoCheck<TCsvData>(dataId);
+                //CollectionCache = AssetManager.SearchCsvNoCheck<TCsvData>(dataId);
                 if (CollectionCache == null)
                     throw new InvalidOperationException("Could not find CsvData collection with ID '" + dataId + "'.");
             }

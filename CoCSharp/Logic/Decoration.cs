@@ -72,7 +72,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(Data.ID);
+            //writer.WriteValue(Data._OldID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);
@@ -129,7 +129,8 @@ namespace CoCSharp.Logic
             if (instance.InvalidDataID(dataId))
                 throw new InvalidOperationException("Decoration JSON contained an invalid DecorationData ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
-            var data = AssetManager.SearchCsvNoCheck<DecorationData>(dataId, 0);
+            //var data = AssetManager.SearchCsvNoCheck<DecorationData>(dataId, 0);
+            var data = default(DecorationData);
             if (data == null)
                 throw new InvalidOperationException("Could not find DecorationData with ID '" + dataId + "'.");
 

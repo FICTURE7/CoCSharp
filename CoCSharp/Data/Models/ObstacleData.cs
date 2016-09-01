@@ -16,9 +16,12 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int BaseDataID
+        internal override int KindID
         {
-            get { return 8000000; }
+            get
+            {
+                return 8;
+            }
         }
 
         // NOTE: This was generated from the obstacles.csv using gen_csv_properties.py script.

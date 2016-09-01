@@ -70,20 +70,20 @@ namespace CoCSharp.Logic
         /// <returns>A <see cref="Village"/> that is deserialized from the specified JSON string.</returns>
         /// 
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null or whitespace.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="AssetManager.DefaultInstance"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="AssetManager.Default"/> is null.</exception>
         /// 
         /// <remarks>
-        /// The default <see cref="Data.AssetManager"/> instance is the value <see cref="AssetManager.DefaultInstance"/>.
+        /// The default <see cref="Data.AssetManager"/> instance is the value <see cref="AssetManager.Default"/>.
         /// </remarks>
         public static Village FromJson(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException("value");
 
-            if (AssetManager.DefaultInstance == null)
+            if (AssetManager.Default == null)
                 throw new InvalidOperationException("DefaultInstance of AssetManager cannot be null.");
 
-            return FromJson(value, AssetManager.DefaultInstance);
+            return FromJson(value, AssetManager.Default);
         }
 
         /// <summary>
@@ -118,14 +118,14 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException("manager");
 
             // Make sure the AssetManager provided has loaded all the required CsvData.
-            if (!manager.IsCsvLoaded<BuildingData>())
-                throw new ArgumentException("manager did not load CsvData of type '" + typeof(BuildingData) + "'.", "manager");
-            if (!manager.IsCsvLoaded<ObstacleData>())
-                throw new ArgumentException("manager did not load CsvData of type '" + typeof(ObstacleData) + "'.", "manager");
-            if (!manager.IsCsvLoaded<TrapData>())
-                throw new ArgumentException("manager did not load CsvData of type '" + typeof(TrapData) + "'.", "manager");
-            if (!manager.IsCsvLoaded<DecorationData>())
-                throw new ArgumentException("manager did not load CsvData of type '" + typeof(DecorationData) + "'.", "manager");
+            //if (!manager.IsCsvLoaded<BuildingData>())
+            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(BuildingData) + "'.", "manager");
+            //if (!manager.IsCsvLoaded<ObstacleData>())
+            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(ObstacleData) + "'.", "manager");
+            //if (!manager.IsCsvLoaded<TrapData>())
+            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(TrapData) + "'.", "manager");
+            //if (!manager.IsCsvLoaded<DecorationData>())
+            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(DecorationData) + "'.", "manager");
 
             // Set register to false -> 
             // Don't register the Village to the VillageTicker until we have loaded every

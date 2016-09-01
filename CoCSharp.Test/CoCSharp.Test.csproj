@@ -47,18 +47,16 @@
   <ItemGroup>
     <Compile Include="Csv\CsvConvertTests.cs" />
     <Compile Include="Csv\CsvDataCollectionTests.cs" />
-    <Compile Include="Csv\CsvDataSubCollectionTests.cs" />
+    <Compile Include="Csv\CsvDataRowTests.cs" />
+    <Compile Include="Csv\CsvDataTableTests.cs" />
     <Compile Include="Data\AssetDownloaderTests.cs" />
     <Compile Include="Csv\CsvTableTests.cs" />
+    <Compile Include="Data\AssetManagerTests.cs" />
+    <Compile Include="Data\AssetProviders\CsvDataTableAssetProviderTests.cs" />
     <Compile Include="Data\FingerprintTests.cs" />
     <Compile Include="Data\SlotCollectionTests.cs" />
-    <Compile Include="Logic\AvatarTests.cs" />
-    <Compile Include="Logic\BuildingTests.cs" />
-    <Compile Include="Logic\ComponentTests.cs" />
-    <Compile Include="Logic\ObstacleTests.cs" />
     <Compile Include="Logic\VillageTests.cs" />
     <Compile Include="Logic\VillageObjectCollectionTests.cs" />
-    <Compile Include="Logic\VillageObjectTests.cs" />
     <Compile Include="Network\CommandFactoryTests.cs" />
     <Compile Include="Network\MessageBufferManagerTests.cs" />
     <Compile Include="Network\MessageFactoryTests.cs" />

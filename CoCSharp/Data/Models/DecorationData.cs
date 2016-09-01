@@ -1,4 +1,5 @@
-﻿using CoCSharp.Csv;
+﻿using System;
+using CoCSharp.Csv;
 
 namespace CoCSharp.Data.Models
 {
@@ -15,9 +16,12 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int BaseDataID
+        internal override int KindID
         {
-            get { return 18000000; }
+            get
+            {
+                return 18;
+            }
         }
 
         // NOTE: This was generated from the decos.csv using gen_csv_properties.py script.

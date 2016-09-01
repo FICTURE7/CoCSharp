@@ -1,25 +1,25 @@
 ﻿using System;
+using System.Data;
 using System.Reflection;
 
 namespace CoCSharp.Csv
 {
-    internal class PropertyMap
+    internal struct PropertyMap
     {
-        public PropertyMap()
-        {
-            // Space
-        }
+        public string Name;
 
-        public string Name { get; set; }
+        public DataColumn Column;
 
-        public string PropertyName { get; set; }
+        public int ColumnIndex;
 
-        public Type PropertyType { get; set; }
+        public string PropertyName;
 
-        public MethodInfo Getter { get; set; }
+        public Type PropertyType;
 
-        public MethodInfo Setter { get; set; }
+        public MethodInfo Getter;
 
-        public Type DeclaringType { get; set; }
+        public MethodInfo Setter;
+
+        public Type DeclaringType;
     }
 }

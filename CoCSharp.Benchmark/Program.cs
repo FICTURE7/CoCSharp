@@ -12,11 +12,11 @@ namespace CoCSharp.Benchmark
 
         public static void Main(string[] args)
         {
-            AssetManager.DefaultInstance = new AssetManager("Content");
-            AssetManager.DefaultInstance.LoadCsv<BuildingData>("buildings.csv");
-            AssetManager.DefaultInstance.LoadCsv<ObstacleData>("obstacles.csv");
-            AssetManager.DefaultInstance.LoadCsv<TrapData>("traps.csv");
-            AssetManager.DefaultInstance.LoadCsv<DecorationData>("decos.csv");
+            AssetManager.Default = new AssetManager("Content");
+            //AssetManager.Default.LoadCsv<BuildingData>("buildings.csv");
+            //AssetManager.Default.LoadCsv<ObstacleData>("obstacles.csv");
+            //AssetManager.Default.LoadCsv<TrapData>("traps.csv");
+            //AssetManager.Default.LoadCsv<DecorationData>("decos.csv");
 
             Benchmarker = new Benchmarker();
 #if (!DEBUG)
@@ -24,6 +24,10 @@ namespace CoCSharp.Benchmark
             Console.ReadLine();
 #endif
             //NOTE: Benchmarks were run on DEBUG mode.
+
+            // ~13.0ms
+            // ~12.3ms
+            Run<CsvConvert_Deserialize>();
 
             // ~0.00015ms
             //Run<CsvData_GetInstance>();
@@ -45,7 +49,7 @@ namespace CoCSharp.Benchmark
             // ~0.00051ms with dictionary(Type,LogicComponent) implementation.
             // ~0.00021ms with array implementation.
             // ~0.00050ms with dictionary(Type,int) with array implementation.
-            Run<VillageObject_AddComponent>();
+            //Run<VillageObject_AddComponent>();
             
             Console.WriteLine();
             Console.WriteLine("Benchmark done!");

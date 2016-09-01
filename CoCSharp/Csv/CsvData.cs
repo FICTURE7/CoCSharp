@@ -7,13 +7,13 @@ namespace CoCSharp.Csv
     /// <summary>
     /// Represents a Clash of Clans .csv file.
     /// </summary>
-    [DebuggerDisplay("TID = {TID}, ID = {ID}, Level = {Level}")]
+    [DebuggerDisplay("Level = {Level}")]
     public abstract class CsvData
     {
         #region Constants
         // Contains instances of TCsvData.
         // To reduce the amount of _instance object duplicates.
-        internal static Dictionary<Type, CsvData> s_instances = new Dictionary<Type, CsvData>();
+        internal static readonly Dictionary<Type, CsvData> s_instances = new Dictionary<Type, CsvData>();
 
         internal const int MaxIndex = 999999;
         #endregion
@@ -21,118 +21,39 @@ namespace CoCSharp.Csv
         #region Constructors
         internal CsvData()
         {
-            _minId = BaseDataID;
-            _maxId = BaseDataID + MaxIndex;
+            _level = -1;
+
+            _minId = KindID * InternalConstants.IDBase;
+            _maxId = _minId + MaxIndex;
         }
         #endregion
 
         #region Fields & Properties
-        // Determines if the CsvData object is in a CsvDataSubCollection.
-        // We don't want them to modify the TID, ID and Level of the CsvData after they added it to the collection.
-        internal bool _isInCollection;
-
         // Max data ID of the type.
         private readonly int _minId;
         // Min data ID of the type.
         private readonly int _maxId;
 
-        // Base data ID, Example: 1000000 for BuildingData
-        // Uses this to provide better error messages and ID checks.
         [CsvIgnore]
-        internal abstract int BaseDataID { get; }
+        internal abstract int KindID { get; }
 
-        /// <summary>
-        /// Gets or sets the data ID of the <see cref="CsvData"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="CsvData"/> is in a <see cref="CsvDataSubCollection{TCsvData}"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is not within the range of the <see cref="CsvData"/>'s ID.</exception>
-        [CsvIgnore]
-        public int ID
-        {
-            get
-            {
-                return Index + BaseDataID;
-            }
-            set
-            {
-                // Prevent user from modifying a CsvData after adding it to a CsvDataSubCollection.
-                if (_isInCollection)
-                    throw new InvalidOperationException("Cannot modify ID, TID or Level when it is in a CsvDataSubCollection.");
-
-                if (InvalidDataID(value))
-                    throw new ArgumentOutOfRangeException("value", GetArgsOutOfRangeMessage("value"));
-
-                Index = value - BaseDataID;
-            }
-        }
-
-        private string _tid;
-        /// <summary>
-        /// Gets or sets the text ID of the <see cref="CsvData"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="CsvData"/> is in a <see cref="CsvDataSubCollection{TCsvData}"/>.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-        public string TID
-        {
-            get
-            {
-                return _tid;
-            }
-            set
-            {
-                // Prevent user from modifying a CsvData after adding it to a CsvDataSubCollection.
-                if (_isInCollection)
-                    throw new InvalidOperationException("Cannot modify ID, TID or Level when it is in a CsvDataSubCollection.");
-
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                _tid = value;
-            }
-        }
-
-        private int _level;
+        // Index of CsvData in a CsvDataCollection,
+        // Also the Level of the CsvData.
+        internal int _level;
         /// <summary>
         /// Gets or sets the level of <see cref="CsvData"/>.
         /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="CsvData"/> is in a <see cref="CsvDataSubCollection{TCsvData}"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+        /// <exception cref="InvalidOperationException">The <see cref="CsvData"/> is not in a <see cref="CsvDataCollection{TCsvData}"/>.</exception>
         [CsvIgnore]
         public int Level
         {
             get
             {
+                Debug.Assert(_level >= -1, "_level was less than -1.");
+                if (_level == -1)
+                    throw new InvalidOperationException("CsvData must be in a CsvDataCollection to have a Level.");
+
                 return _level;
-            }
-            set
-            {
-                // Prevent user from modifying a CsvData after adding it to a CsvDataSubCollection.
-                if (_isInCollection)
-                    throw new InvalidOperationException("Cannot modify ID, TID or Level when it is in a CsvDataSubCollection.");
-
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException("value", "Level must be non-negative.");
-
-                _level = value;
-            }
-        }
-
-        private int _index;
-        // Index of the CsvData in the CSV file. Aka parent ID.
-        [CsvIgnore]
-        internal int Index
-        {
-            get
-            {
-                return _index;
-            }
-            set
-            {
-                // This exception can occur if there is more than 1000000 child object.
-                if (value < 0 || value > MaxIndex)
-                    throw new ArgumentOutOfRangeException("value");
-
-                _index = value;
             }
         }
         #endregion
@@ -163,6 +84,21 @@ namespace CoCSharp.Csv
             return (TCsvData)instance;
         }
 
+        internal static CsvData GetInstance(Type type)
+        {
+            if (type.IsAbstract || type.BaseType != typeof(CsvData))
+                throw new Exception();
+
+            var instance = (CsvData)null;
+            if (!s_instances.TryGetValue(type, out instance))
+            {
+                instance = (CsvData)Activator.CreateInstance(type);
+                s_instances.Add(type, instance);
+            }
+
+            return instance;
+        }
+        
         // Returns the index of data ID.
         // This value depends on BaseGameID.
         // E.g: 1000000 => 0

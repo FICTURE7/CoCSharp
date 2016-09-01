@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Data.Models;
+using System;
 using System.Collections;
 
 namespace CoCSharp.Csv
@@ -21,38 +22,48 @@ namespace CoCSharp.Csv
         private static readonly ObjectMapper s_mapper;
 
         /// <summary>
-        /// Deserializes the specified <see cref="CsvTable"/> with the specified <typeparamref name="TCsvData"/>.
+        /// Deserializes the specified <see cref="CsvTable"/> into a <see cref="CsvDataRow{TCsvData}"/> with type as generic
+        /// argument.
         /// </summary>
-        /// <typeparam name="TCsvData">Type with which the <see cref="CsvTable"/> will be deserialized.</typeparam>
-        /// <param name="table"><see cref="CsvTable"/> from which the data will be deserialize.</param>
-        /// <returns>A <see cref="CsvDataCollection{TCsvData}"/> which contains the deserialized objects.</returns>
+        /// <param name="table"><see cref="CsvTable"/> to deserialize.</param>
+        /// <param name="type">Type of <see cref="CsvData"/> to deserialize.</param>
+        /// <returns>
+        /// Deserialized <see cref="CsvDataRow{TCsvData}"/> with <paramref name="type"/> as generic argument.
+        /// </returns>
+        /// 
         /// <exception cref="ArgumentNullException"><paramref name="table"/> is null.</exception>
-        public static CsvDataCollection<TCsvData> Deserialize<TCsvData>(CsvTable table) where TCsvData : CsvData, new()
+        /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="type"/> does not inherit from <see cref="CsvData"/> or is an abstract class.</exception>
+        public static CsvDataRow Deserialize(CsvTable table, Type type)
         {
             if (table == null)
                 throw new ArgumentNullException("table");
+            if (type == null)
+                throw new ArgumentNullException("type");
+            if (type.IsAbstract || type.BaseType != typeof(CsvData))
+                throw new ArgumentException("type must be inherited from CsvData type and non-abstract.");
 
-            var type = typeof(TCsvData);
+            // Instance of the CsvDataTable<type> we're going to return.
+            var dataRow = CsvDataRow.CreateInstance(type);
+            // Instance of the CsvDataRow<type> we're going to add to dataTable at the beginning
+            // of a new parent.
+            var dataCollection = (CsvDataCollection)null;
             // Map of all properties of the specified Type T.
-            var propertyMap = s_mapper.MapProperties(type);
+            var propertyMap = s_mapper.MapProperties(type, table);
 
             var rows = table.Rows;
 
-            var parentObj = (TCsvData)null;
+            var parentObj = (object)null;
             // Hashtable of property name and parameters(property values).
             var parentCache = new Hashtable();
-            var collection = new CsvDataCollection<TCsvData>();
-            var subCollection = (CsvDataSubCollection<TCsvData>)null;
 
             //var getterCalls = 0;
             //var setterCalls = 0;
-            var index = -1;
-            var level = -1;
 
             for (int i = 0; i < rows.Count; i++)
             {
                 // We create a new instance of the Type T.
-                var childObj = new TCsvData();
+                var childObj = (CsvData)Activator.CreateInstance(type);
                 var curRow = rows[i];
                 var isParent = false;
 
@@ -66,11 +77,11 @@ namespace CoCSharp.Csv
 
                     // Check if the table contains a column with its name == propertyName.
                     // If the table does not then we ignore the property.
-                    if (!table.Columns.Contains(propertyName))
-                        continue;
+                    //if (!table.Columns.Contains(propertyName))
+                    //    continue;
 
                     // Value from CSV table.
-                    var value = curRow[propertyName];
+                    var value = curRow[property.ColumnIndex];
                     // Parameters we will pass to the property.
                     var parameters = (object[])null;
 
@@ -161,34 +172,21 @@ namespace CoCSharp.Csv
                     isParent = property.PropertyName == "Name" && value != DBNull.Value;
                     if (isParent)
                     {
-                        // Increase the index because its a new parent.
-                        index++;
-                        // Reset the level because its a new parent.
-                        level = -1;
+                        dataCollection = CsvDataCollection.CreateInstance(type, (string)parameters[0]);
+                        dataRow.ProxyAdd(dataCollection);
+
                         // Child object is now the parent object.
                         parentObj = childObj;
                         // Reset cache when we hit a new parent.
                         parentCache.Clear();
-
-                        if (subCollection != null)
-                            collection.Add(subCollection);
-
-                        subCollection = new CsvDataSubCollection<TCsvData>(parentObj.ID + index, parentObj.TID);
                     }
                 }
-
-                childObj.Index = index;
-                childObj.Level = ++level;
-                subCollection.Add(childObj);
+                dataCollection.ProxyAdd(childObj);
             }
 
             //Console.WriteLine(getterCalls);
             //Console.WriteLine(setterCalls);
-
-            // Last subCollection does not get added
-            // so we add it here.
-            collection.Add(subCollection);
-            return collection;
+            return dataRow;
         }
     }
 }

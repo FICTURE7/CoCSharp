@@ -40,6 +40,7 @@
     <Compile Include="BenchmarkTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test\CsvConvert_Deserialize.cs" />
     <Compile Include="Test\VillageObject_AddComponent.cs" />
     <Compile Include="Test\Village_FromJson1.cs" />
     <Compile Include="Test\Village_FromJson2.cs" />

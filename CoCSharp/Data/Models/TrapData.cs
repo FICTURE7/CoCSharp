@@ -16,9 +16,12 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int BaseDataID
+        internal override int KindID
         {
-            get { return 12000000; }
+            get
+            {
+                return 12;
+            }
         }
 
         // NOTE: This was generated from the traps.csv using gen_csv_properties.py script.

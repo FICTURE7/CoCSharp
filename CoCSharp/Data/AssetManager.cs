@@ -1,7 +1,8 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data.Models;
+using CoCSharp.Data.AssetProviders;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace CoCSharp.Data
@@ -22,23 +23,28 @@ namespace CoCSharp.Data
             if (string.IsNullOrWhiteSpace(path))
                 throw new ArgumentNullException("path");
             if (!Directory.Exists(path))
-                throw new DirectoryNotFoundException("Could not find directory at '" + path + "'.");
+                throw new DirectoryNotFoundException("Could not find directory at '" + Path.GetFullPath(path) + "'.");
 
-            _tid2subCollection = new Dictionary<string, object>();
-            _arrayCsv = new object[30];
             _assetPath = path;
+            _providers = new Dictionary<Type, AssetProvider>();
+
+            // Register the AssetProviders.
+            var dataProvider = new CsvDataTableAssetProvider();
+            RegisterProvider(typeof(CsvDataRow<>), dataProvider);
+            // Register typeof(CsvDataTable) to the same instance of the type CsvDataRow<>.
+            // Which enables us to do things like this AssetManaget.Get<CsvDataTable>();
+            RegisterProvider(typeof(CsvDataTable), dataProvider);
         }
         #endregion
 
         #region Fields & Properties
         /// <summary>
-        /// Gets or sets the default <see cref="AssetManager"/>.
+        /// Gets or sets the default <see cref="AssetManager"/> instance.
         /// </summary>
-        public static AssetManager DefaultInstance { get; set; }
+        public static AssetManager Default { get; set; }
 
-        private Dictionary<string, object> _tid2subCollection;
-        // Array of CsvDataCollection.
-        private readonly object[] _arrayCsv;
+        // Dictionary of AssetLoaders that will load assets of the specified type.
+        private readonly Dictionary<Type, AssetProvider> _providers;
 
         private readonly string _assetPath;
         /// <summary>
@@ -53,287 +59,112 @@ namespace CoCSharp.Data
         }
 
         private int _thId;
+        [Obsolete]
         internal int TownHallID
         {
             get
             {
-                if (_thId == default(int))
-                {
-                    if (IsCsvLoaded<BuildingData>())
-                        _thId = SearchCsv<BuildingData>("TID_BUILDING_TOWN_HALL", 0).ID;
-                }
-
                 return _thId;
             }
         }
         #endregion
 
         #region Methods
-
-        #region SC Loading
         /// <summary>
-        /// Not implemented yet.
-        /// Loads the SC file at the specified path relative to <see cref="AssetPath"/> in memory.
+        /// Loads the specified asset type at the specified path relative to <see cref="AssetPath"/> in memory.
         /// </summary>
-        /// <typeparam name="TSc">Type of SC file.</typeparam>
-        /// <param name="path">Path relative to <see cref="AssetPath"/> pointing to the SC file.</param>
-        public void LoadSc<TSc>(string path)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-
-        #region CSV Management
-        #region IsLoaded
-        /// <summary>
-        /// Determines if the specified <typeparamref name="TCsvData"/> is loaded in memory.
-        /// </summary>
-        /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> to check if its loaded.</typeparam>
-        /// <returns><c>true</c> if its loaded; otherwise, false.</returns>
-        public bool IsCsvLoaded<TCsvData>() where TCsvData : CsvData, new()
-        {
-            var instance = CsvData.GetInstance<TCsvData>();
-            var index = GetIndex(instance.BaseDataID);
-            return _arrayCsv[index] != null;
-        }
-        #endregion
-
-        #region Load
-        /// <summary>
-        /// Loads the uncompressed CSV file at the specified path relative to <see cref="AssetPath"/> in memory.
-        /// </summary>
+        /// <typeparam name="TAsset">Type of asset to load.</typeparam>
+        /// <param name="path">Path to asset file relative to <see cref="AssetPath"/>.</param>
         /// 
-        /// <typeparam name="TCsvData">Type of <see cref="CsvData"/>.</typeparam>
-        /// <param name="path">Path relative to <see cref="AssetPath"/> pointing to the CSV file.</param>
-        /// <returns>A <see cref="CsvDataCollection{TCsvData}"/> which contains the loaded <typeparamref name="TCsvData"/>.</returns>
-        /// 
-        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null or whitespace.</exception>
-        /// <exception cref="FileNotFoundException">File at <paramref name="path"/> not found.</exception>
-        public CsvDataCollection<TCsvData> LoadCsv<TCsvData>(string path) where TCsvData : CsvData, new()
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null.</exception>
+        /// <exception cref="InvalidOperationException"><typeparamref name="TAsset"/> is already loaded.</exception>
+        /// <exception cref="InvalidOperationException">Unknown asset type.</exception>
+        /// <exception cref="FileNotFoundException">File at <paramref name="path"/> does not exists.</exception>
+        public void Load<TAsset>(string path) where TAsset : new()
         {
-            if (string.IsNullOrWhiteSpace(path))
+            if (path == null)
                 throw new ArgumentNullException("path");
 
-            // Load CSV assuming its not compressed.
-            return LoadCsv<TCsvData>(path, false);
+            if (IsLoaded<TAsset>())
+                throw new InvalidOperationException("Asset is already loaded.");
+
+            // Path pointing to asset relative to _assetPath.
+            var newPath = Path.Combine(_assetPath, path);
+            if (!File.Exists(newPath))
+                throw new FileNotFoundException("File at '" + Path.GetFullPath(newPath) + "' does not exists.");
+
+            var type = typeof(TAsset);
+            // Gets the AssetLoader associated with the type.
+            var provider = GetProvider(type);
+
+            Debug.WriteLine("Loading asset of type {0} with AssetProvider {1} at {2}", args: new object[] { type, provider, path });
+
+            provider.LoadAsset(type, newPath);
         }
 
         /// <summary>
-        /// Loads the compressed if specified, CSV file at the specified path relative to <see cref="AssetPath"/> in memory.
+        /// Returns a value indicating whether the specified asset type is loaded.
         /// </summary>
+        /// <typeparam name="TAsset">Type of asset to check whether its loaded.</typeparam>
+        /// <returns><c>tru</c> if the asset is loaded; otherwise, <c>false</c>.</returns>
         /// 
-        /// <typeparam name="TCsvData">Type of <see cref="CsvData"/>.</typeparam>
-        /// <param name="path">Path relative to <see cref="AssetPath"/> pointing to the CSV file.</param>
-        /// <param name="compressed">If set to <c>true</c>, the CSV file will be decompressed; otherwise, no.</param>
-        /// <returns>A <see cref="CsvDataCollection{TCsvData}"/> which contains the loaded <typeparamref name="TCsvData"/>.</returns>
-        /// 
-        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null or whitespace.</exception>
-        /// <exception cref="FileNotFoundException">File at <paramref name="path"/> not found.</exception>
-        public CsvDataCollection<TCsvData> LoadCsv<TCsvData>(string path, bool compressed) where TCsvData : CsvData, new()
+        /// <exception cref="InvalidOperationException">Unknown asset type.</exception>
+        public bool IsLoaded<TAsset>()
         {
-            if (string.IsNullOrWhiteSpace(path))
-                throw new ArgumentNullException("path");
-
-            // Parameter 'path' must be relative to AssetPath.
-            var fullPath = Path.Combine(_assetPath, path);
-            if (!File.Exists(fullPath))
-                throw new FileNotFoundException("Could not find CSV file at '" + fullPath + "'.");
-
-            var type = typeof(TCsvData);
-            var table = new CsvTable(fullPath);
-            var data = CsvConvert.Deserialize<TCsvData>(table);
-            data.IsReadOnly = true;
-
-            var index = GetIndex(CsvData.GetInstance<TCsvData>().BaseDataID);
-            _arrayCsv[index] = data;
-            return data;
-        }
-        #endregion
-
-        #region Searching
-        /// <summary>
-        /// Searches for a <see cref="CsvDataSubCollection{TCsvData}"/> of <typeparamref name="TCsvData"/> with the specified data ID and
-        /// returns the <see cref="CsvDataSubCollection{TCsvData}"/> of <typeparamref name="TCsvData"/>.
-        /// </summary>
-        /// 
-        /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> to look for.</typeparam>
-        /// <param name="id">Specific data ID to look for.</param>
-        /// <returns>
-        /// A <see cref="CsvDataSubCollection{TCsvData}"/> of<typeparamref name="TCsvData"/> with the same data ID as specified if successful.
-        /// </returns>
-        /// 
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is not within the range of <typeparamref name="TCsvData"/>.</exception>
-        /// <exception cref="InvalidOperationException"><typeparamref name="TCsvData"/> was not loaded.</exception>
-        public CsvDataSubCollection<TCsvData> SearchCsv<TCsvData>(int id) where TCsvData : CsvData, new()
-        {
-            var instance = CsvData.GetInstance<TCsvData>();
-            if (instance.InvalidDataID(id))
-                throw new ArgumentOutOfRangeException("id", instance.GetArgsOutOfRangeMessage("id"));
-
-            var index = GetIndex(id);
-            var collection = (CsvDataCollection<TCsvData>)_arrayCsv[index];
-            if (collection == null)
-            {
-                var type = typeof(TCsvData);
-                throw new InvalidOperationException("CsvData of type '" + type + "' was not loaded. Call LoadCsv<" + type.Name + ">() first.");
-            }
-
-            return collection[id];
+            var type = typeof(TAsset);
+            var provider = GetProvider(type);
+            return provider.GetAsset(type) != null;
         }
 
         /// <summary>
-        /// Searches for a <typeparamref name="TCsvData"/> with the specified data ID and level and
-        /// returns the searched <typeparamref name="TCsvData"/>.
+        /// Returns the asset of the specified type that was loaded.
         /// </summary>
+        /// <typeparam name="TAsset">Type of asset to return.</typeparam>
+        /// <returns><typeparamref name="TAsset"/> that was loaded.</returns>
         /// 
-        /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> to look for.</typeparam>
-        /// <param name="id">Specific data ID to look for.</param>
-        /// <param name="level">Specific level to look for.</param>
-        /// <returns>A <typeparamref name="TCsvData"/> with the same data ID and level as specified if successful.</returns>
-        /// 
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is not within the range of <typeparamref name="TCsvData"/>.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="level"/> is less than 0.</exception>
-        /// <exception cref="InvalidOperationException"><typeparamref name="TCsvData"/> was not loaded.</exception>
-        public TCsvData SearchCsv<TCsvData>(int id, int level) where TCsvData : CsvData, new()
+        /// <exception cref="InvalidOperationException">Type of <typeparamref name="TAsset"/> is not loaded.</exception>
+        /// <exception cref="InvalidOperationException">Unknown asset type.</exception>
+        public TAsset Get<TAsset>()
         {
-            var instance = CsvData.GetInstance<TCsvData>();
-            if (instance.InvalidDataID(id))
-                throw new ArgumentOutOfRangeException("id", instance.GetArgsOutOfRangeMessage("id"));
-            if (level < 0)
-                throw new ArgumentOutOfRangeException("level", "level must be non-negative.");
+            //if (!IsLoaded<T>())
+            //    throw new InvalidOperationException("Asset is not loaded.");
+            var type = typeof(TAsset);
+            var provider = GetProvider(type);
+            var asset = provider.GetAsset(type);
+            if (asset == null)
+                throw new InvalidOperationException("Asset is not loaded.");
 
-            var index = GetIndex(id);
-            var collection = (CsvDataCollection<TCsvData>)_arrayCsv[index];
-            if (collection == null)
-            {
-                var type = typeof(TCsvData);
-                throw new InvalidOperationException("CsvData of type '" + type + "' was not loaded. Call LoadCsv<" + type.Name + ">() first.");
-            }
-
-            var subcollection = collection[id];
-            if (subcollection == null)
-                return null;
-
-            return subcollection[level];
+            return (TAsset)asset;
         }
 
-        // Searches a CsvDataSubCollection without checks.
-        internal CsvDataSubCollection<TCsvData> SearchCsvNoCheck<TCsvData>(int id) where TCsvData : CsvData, new()
+        // Returns the AssetLoader instance associated with the specified type.
+        private AssetProvider GetProvider(Type type)
         {
-            var index = GetIndex(id);
-            var collection = ((CsvDataCollection<TCsvData>)_arrayCsv[index]);
-            if (collection == null)
-                return null;
+            var loader = (AssetProvider)null;
 
-            return collection[id];
+            // If the type is generic, we use its type definition.
+            if (type.IsGenericType)
+                type = type.GetGenericTypeDefinition();
+
+            if (!_providers.TryGetValue(type, out loader))
+                throw new InvalidOperationException("Couldn't find loader for the specified type '" + type + "'.");
+
+            return loader;
         }
 
-        // Searches a CsvData without checks which is a little bit faster.
-        internal TCsvData SearchCsvNoCheck<TCsvData>(int id, int level) where TCsvData : CsvData, new()
+        // Registers an AssetProvider for the specified type.
+        private void RegisterProvider(Type type, AssetProvider loader)
         {
-            var index = GetIndex(id);
-            var collection = ((CsvDataCollection<TCsvData>)_arrayCsv[index]);
-            if (collection == null)
-                return null;
+            if (type == null)
+                throw new ArgumentNullException("type");
+            if (loader == null)
+                throw new ArgumentNullException("loader");
 
-            var subcollection = collection[id];
-            if (subcollection == null)
-                return null;
+            if (_providers.ContainsKey(type))
+                throw new Exception("Already have a loader registered for the specified type.");
 
-            return subcollection[level];
+            _providers.Add(type, loader);
         }
-        #endregion       
-
-        /// <summary>
-        /// Searches for an array <typeparamref name="TCsvData"/> have the same specified TID.
-        /// </summary>
-        /// <typeparam name="TCsvData"></typeparam>
-        /// <param name="tid"></param>
-        /// <returns></returns>
-        public CsvDataSubCollection<TCsvData> SearchCsv<TCsvData>(string tid) where TCsvData : CsvData, new()
-        {
-            if (tid == null)
-                throw new ArgumentNullException("tid");
-
-            var type = typeof(TCsvData);
-            if (!IsCsvLoaded<TCsvData>())
-                throw new InvalidOperationException("CsvData of type '" + type + "' was not loaded. Call LoadCsv<" + type.Name + ">() first.");
-
-            var objCollection = (object)null;
-            if (_tid2subCollection.TryGetValue(tid, out objCollection))
-            {
-                var collection = (CsvDataSubCollection<TCsvData>)objCollection;
-                return collection;
-            }
-            else
-            {
-                var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
-                var index = GetIndex(baseDataId);
-                var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
-                for (int i = 0; i < data.Count; i++)
-                {
-                    var collection = data[baseDataId + i];
-                    if (collection.TID == tid)
-                    {
-                        _tid2subCollection.Add(tid, collection);
-                        return collection;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Searches for a <typeparamref name="TCsvData"/> have the same specified TID and level.
-        /// </summary>
-        /// <typeparam name="TCsvData"></typeparam>
-        /// <param name="tid"></param>
-        /// <param name="level"></param>
-        /// <returns></returns>
-        public TCsvData SearchCsv<TCsvData>(string tid, int level) where TCsvData : CsvData, new()
-        {
-            if (tid == null)
-                throw new ArgumentNullException("tid");
-
-            var type = typeof(TCsvData);
-            if (!IsCsvLoaded<TCsvData>())
-                throw new InvalidOperationException("CsvData of type '" + type + "' was not loaded. Call LoadCsv<" + type.Name + ">() first.");
-
-            var objCollection = (object)null;
-            if (_tid2subCollection.TryGetValue(tid, out objCollection))
-            {
-                var collection = (CsvDataSubCollection<TCsvData>)objCollection;
-                return collection[level];
-            }
-            else
-            {
-                var baseDataId = CsvData.GetInstance<TCsvData>().BaseDataID;
-                var index = GetIndex(baseDataId);
-                var data = (CsvDataCollection<TCsvData>)_arrayCsv[index];
-                for (int i = 0; i < data.Count; i++)
-                {
-                    var collection = data[baseDataId + i];
-                    if (collection.TID == tid)
-                    {
-                        _tid2subCollection.Add(tid, collection);
-                        return collection[level];
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        // Gets the index in _arrayCsv of a CsvDataCollection from a data ID.
-        // Eg: 1000001  => 1
-        //     12000003 => 12
-        //     28000032 => 28
-        private static int GetIndex(int id)
-        {
-            return id / InternalConstants.IDBase;
-        }
-        #endregion
         #endregion
     }
 }

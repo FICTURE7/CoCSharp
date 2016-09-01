@@ -59,7 +59,7 @@ namespace CoCSharp.Logic
                 lock (_sync)
                 {
                     if (!SetInternal(rowIndex, columnIndex, value))
-                        throw new ArgumentOutOfRangeException("value");
+                        throw new ArgumentOutOfRangeException("id");
 
                     value._columnIndex = columnIndex;
                 }

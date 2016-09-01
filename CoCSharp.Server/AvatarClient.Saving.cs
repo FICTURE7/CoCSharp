@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data.Models;
+﻿using CoCSharp.Csv;
+using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using CoCSharp.Server.Handlers.Commands;
@@ -96,8 +97,10 @@ namespace CoCSharp.Server
 
         private void SetNewAvatarSlots()
         {
-            var gold = Home.AssetManager.SearchCsv<ResourceData>("TID_GOLD").ID;
-            var elixir = Home.AssetManager.SearchCsv<ResourceData>("TID_ELIXIR").ID;
+            var resourcesData = Home.AssetManager.Get<CsvDataRow<ResourceData>>();
+
+            var gold = resourcesData["Gold"].ID;
+            var elixir = resourcesData["Elixir"].ID;
 
             NpcStars = Server.NpcManager.CompleteNpcStarList;
             ResourcesAmount.Add(new ResourceAmountSlot(gold, Server.Configuration.StartingGold));

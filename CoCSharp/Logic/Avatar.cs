@@ -598,19 +598,19 @@ namespace CoCSharp.Logic
                 warDarkElixir += data.MaxStoredWarDarkElixir;
             }
 
-            ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_GOLD", 0).ID, gold));
-            if (warGold > 0)
-                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_GOLD", 0).ID, warGold));
+            //    ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_GOLD", 0)._OldID, gold));
+            //    if (warGold > 0)
+            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_GOLD", 0)._OldID, warGold));
 
-            ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_ELIXIR", 0).ID, elixir));
-            if (warElixir > 0)
-                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_ELIXIR", 0).ID, warElixir));
+            //    ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_ELIXIR", 0)._OldID, elixir));
+            //    if (warElixir > 0)
+            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_ELIXIR", 0)._OldID, warElixir));
 
-            // Dark Elixir is unlocked at townhall 7(6).
-            if (darkElixir > 0 || Home.TownHall.Level >= 6)
-                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_DARK_ELIXIR", 0).ID, darkElixir));
-            if (warDarkElixir > 0)
-                ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0).ID, warDarkElixir));
+            //    // Dark Elixir is unlocked at townhall 7(6).
+            //    if (darkElixir > 0 || Home.TownHall.Level >= 6)
+            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_DARK_ELIXIR", 0)._OldID, darkElixir));
+            //    if (warDarkElixir > 0)
+            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0)._OldID, warDarkElixir));
         }
 
         internal void Flush()

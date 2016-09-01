@@ -47,7 +47,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets the cache to the sub-collection in which Data is found.
         /// </summary>
-        public CsvDataSubCollection<TCsvData> CollectionCache { get; protected set; }
+        public CsvDataCollection<TCsvData> CollectionCache { get; protected set; }
 
         internal TCsvData _data;
         /// <summary>
@@ -71,7 +71,7 @@ namespace CoCSharp.Logic
             base.ResetVillageObject();
 
             _data = default(TCsvData);
-            CollectionCache = default(CsvDataSubCollection<TCsvData>);
+            CollectionCache = default(CsvDataCollection<TCsvData>);
         }
         #endregion
     }

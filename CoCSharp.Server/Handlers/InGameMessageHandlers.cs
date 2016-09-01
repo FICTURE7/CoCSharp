@@ -201,33 +201,33 @@ namespace CoCSharp.Server.Handlers
                         break;
 
                     case "max":
-                        var countBuilding = 0;
-                        foreach (var building in client.Home.Buildings)
-                        {
-                            var collection = AssetManager.DefaultInstance.SearchCsv<BuildingData>(building.CollectionCache.ID);
-                            var data = collection[collection.Count - 1];
-                            if (building.IsConstructing)
-                                building.CancelConstruction();
-                            if (building.IsLocked)
-                                building.IsLocked = false;
+                        //var countBuilding = 0;
+                        //foreach (var building in client.Home.Buildings)
+                        //{
+                        //    var collection = AssetManager.Default.SearchCsv<BuildingData>(building.CollectionCache.ID);
+                        //    var data = collection[collection.Count - 1];
+                        //    if (building.IsConstructing)
+                        //        building.CancelConstruction();
+                        //    if (building.IsLocked)
+                        //        building.IsLocked = false;
 
-                            building.Level = data.Level;
-                            countBuilding++;
-                        }
+                        //    building.Level = data.Level;
+                        //    countBuilding++;
+                        //}
 
-                        var countTraps = 0;
-                        foreach (var trap in client.Home.Traps)
-                        {
-                            var collection = AssetManager.DefaultInstance.SearchCsv<TrapData>(trap.CollectionCache.ID);
-                            var data = collection[collection.Count - 1];
-                            if (trap.IsConstructing)
-                                trap.CancelConstruction();
+                        //var countTraps = 0;
+                        //foreach (var trap in client.Home.Traps)
+                        //{
+                        //    var collection = AssetManager.Default.SearchCsv<TrapData>(trap.CollectionCache.ID);
+                        //    var data = collection[collection.Count - 1];
+                        //    if (trap.IsConstructing)
+                        //        trap.CancelConstruction();
 
-                            trap.Level = data.Level;
-                            countTraps++;
-                        }
+                        //    trap.Level = data.Level;
+                        //    countTraps++;
+                        //}
 
-                        cmsMessage.Message = "Maxed " + countBuilding + " buildings and " + countTraps + " traps.";
+                        //cmsMessage.Message = "Maxed " + countBuilding + " buildings and " + countTraps + " traps.";
                         client.SendMessage(cmsMessage);
 
                         client.SendMessage(client.OwnHomeDataMessage);

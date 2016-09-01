@@ -13,7 +13,7 @@ namespace CoCSharp.Csv
             // Space
         }
 
-        public PropertyMap[] MapProperties(Type type)
+        public PropertyMap[] MapProperties(Type type, CsvTable table)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
@@ -36,7 +36,13 @@ namespace CoCSharp.Csv
                     continue;
 
                 var map = new PropertyMap();
-                map.Name = CsvAttributeHelper.GetPropertyAlias(property);
+                var name = CsvAttributeHelper.GetPropertyAlias(property);
+                var index = table.Columns.IndexOf(name);
+                if (index == -1)
+                    continue;
+
+                map.Name = name;
+                map.ColumnIndex = index;
                 map.PropertyName = property.Name;
                 map.PropertyType = property.PropertyType;
                 map.Getter = getter;

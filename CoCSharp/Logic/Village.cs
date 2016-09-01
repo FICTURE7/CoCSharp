@@ -25,10 +25,10 @@ namespace CoCSharp.Logic
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Village"/> class and uses <see cref="AssetManager.DefaultInstance"/>.
+        /// Initializes a new instance of the <see cref="Village"/> class and uses <see cref="AssetManager.Default"/>.
         /// </summary>
-        /// <exception cref="ArgumentNullException"><see cref="AssetManager.DefaultInstance"/> is null.</exception>
-        public Village() : this(AssetManager.DefaultInstance, true)
+        /// <exception cref="ArgumentNullException"><see cref="AssetManager.Default"/> is null.</exception>
+        public Village() : this(AssetManager.Default, true)
         {
             // Space
         }

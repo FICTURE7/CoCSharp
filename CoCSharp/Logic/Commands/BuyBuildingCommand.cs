@@ -90,7 +90,8 @@ namespace CoCSharp.Logic.Commands
             if (avatar.Home == null)
                 throw new ArgumentNullException("avatar.Home");
 
-            var data = avatar.Home.AssetManager.SearchCsv<BuildingData>(BuildingDataID, 0);
+            //var data = avatar.Home.AssetManager.SearchCsv<BuildingData>(BuildingDataID, 0);
+            var data = (BuildingData)null;
             var resource = data.BuildResource;
             new Building(avatar.Home, data, X, Y, -1);
         }

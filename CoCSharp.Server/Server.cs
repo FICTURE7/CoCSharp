@@ -39,13 +39,13 @@ namespace CoCSharp.Server
             Console.WriteLine("> Setting up AssetManager...\n");
             AssetManager = new AssetManager(DirectoryPaths.Content);
 
+            LoadCsv<ResourceData>("resources.csv");
             LoadCsv<BuildingData>("buildings.csv");
             LoadCsv<TrapData>("traps.csv");
             LoadCsv<ObstacleData>("obstacles.csv");
             LoadCsv<DecorationData>("decos.csv");
-            LoadCsv<ResourceData>("resources.csv");
 
-            AssetManager.DefaultInstance = AssetManager;
+            AssetManager.Default = AssetManager;
 
             Console.WriteLine("\n> Setting up NpcManager...");
             NpcManager = new NpcManager();
@@ -66,7 +66,7 @@ namespace CoCSharp.Server
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("-> Loading {0}...", path);
             Console.ResetColor();
-            AssetManager.LoadCsv<T>(path);
+            AssetManager.Load<CsvDataRow<T>>(path);
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine(" DONE");
             Console.ResetColor();

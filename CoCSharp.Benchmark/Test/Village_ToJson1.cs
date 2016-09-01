@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data;
+﻿using CoCSharp.Csv;
+using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 
@@ -8,30 +9,31 @@ namespace CoCSharp.Benchmark.Test
     {
         public Village_ToJson1()
         {
-            var manager = AssetManager.DefaultInstance;
+            var manager = AssetManager.Default;
             _village = new Village();
 
+            var table = manager.Get<CsvDataTable>();
             for (int i = 0; i < 100; i++)
             {
-                var data = manager.SearchCsv<BuildingData>(1000000, 1);
+                var data = table.GetRow<BuildingData>()[1][1];
                 new Building(_village, data);
             }
 
             for (int i = 0; i < 100; i++)
             {
-                var data = manager.SearchCsv<ObstacleData>(8000000, 0);
+                var data = table.GetRow<ObstacleData>()[1][0];
                 new Obstacle(_village, data);
             }
 
             for (int i = 0; i < 100; i++)
             {
-                var data = manager.SearchCsv<TrapData>(12000000, 1);
+                var data = table.GetRow<TrapData>()[0][0];
                 new Trap(_village, data);
             }
 
             for (int i = 0; i < 100; i++)
             {
-                var data = manager.SearchCsv<DecorationData>(18000000, 0);
+                var data = table.GetRow<DecorationData>()[0][0];
                 new Decoration(_village, data);
             }
         }

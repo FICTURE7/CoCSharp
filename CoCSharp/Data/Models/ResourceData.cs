@@ -1,4 +1,5 @@
-﻿using CoCSharp.Csv;
+﻿using System;
+using CoCSharp.Csv;
 
 namespace CoCSharp.Data.Models
 {
@@ -15,9 +16,12 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int BaseDataID
+        internal override int KindID
         {
-            get { return 3000000; }
+            get
+            {
+                return 3;
+            }
         }
 
         /// <summary>

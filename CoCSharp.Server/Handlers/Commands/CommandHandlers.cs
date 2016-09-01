@@ -37,27 +37,6 @@ namespace CoCSharp.Server.Handlers.Commands
             //server.RegisterCommandHandler(new MatchmakingCommand(), HandleMatchmakingCommand);
         }
 
-        // Doing this because a lot of stuff made incorrectly.
-        private static int GetResourceID(string name)
-        {
-            switch (name)
-            {
-                case "Gold":
-                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_GOLD").ID;
-
-                case "Elixir":
-                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_ELIXIR").ID;
-
-                case "DarkElixir":
-                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_DARK_ELIXIR").ID;
-
-                case "Diamonds":
-                    return AssetManager.DefaultInstance.SearchCsv<ResourceData>("TID_DIAMONDS").ID;
-
-                default:
-                    return -1;
-            }
-        }
         internal static void DoLogic(object sender, LogicEventArgs e)
         {
             if (e is ConstructionEventArgs<BuildingData>)

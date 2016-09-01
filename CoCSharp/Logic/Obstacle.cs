@@ -279,7 +279,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(Data.ID);
+            //writer.WriteValue(Data._OldID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);
@@ -359,7 +359,8 @@ namespace CoCSharp.Logic
                 throw new InvalidOperationException("Obstacle JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
             // No need to cache the sub-collection the ObstacleData is in, because we can't upgrade Obstacles.
-            var data = AssetManager.SearchCsvNoCheck<ObstacleData>(dataId, 0);
+            //var data = AssetManager.SearchCsvNoCheck<ObstacleData>(dataId, 0);
+            var data = default(ObstacleData);
             if (data == null)
                 throw new InvalidOperationException("Could not find ObstacleData with ID '" + dataId + "'.");
 
