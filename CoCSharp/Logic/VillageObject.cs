@@ -148,7 +148,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets the <see cref="Data.AssetManager"/> of <see cref="Village"/>.
         /// </summary>
-        protected AssetManager AssetManager
+        protected AssetManager Assets
         {
             get
             {

@@ -1,14 +1,13 @@
 ﻿using CoCSharp.Csv;
 using System;
 using System.Diagnostics;
-using System.ComponentModel;
 
 namespace CoCSharp.Logic
 {
     /// <summary>
     /// Represents a Clash of Clans <see cref="VillageObject"/> that can be constructed.
     /// </summary>
-    [DebuggerDisplay("ID = {ID}, Data.TID = {Data.TID}")]
+    [DebuggerDisplay("ID = {ID}, Data.ID = {Data.ID}")]
     public abstract class Buildable<TCsvData> : VillageObject<TCsvData> where TCsvData : CsvData, new()
     {
         #region Constants
@@ -28,44 +27,23 @@ namespace CoCSharp.Logic
             // Space
         }
 
-
-        internal Buildable(Village village, TCsvData data) : base(village, data)
-        {
-            Initialize(data.Level);
-        }
-
-        internal Buildable(Village village, TCsvData data, int level) : base(village, data)
+        internal Buildable(Village village, CsvDataCollectionRef<TCsvData> data, int level) : base(village, data)
         {
             Initialize(level);
         }
 
-        internal Buildable(Village village, TCsvData data, object userToken) : this(village, data)
-        {
-            UserToken = userToken;
-        }
-
-        internal Buildable(Village village, TCsvData data, object userToken, int level) : base(village, data)
+        internal Buildable(Village village, CsvDataCollectionRef<TCsvData> data, object userToken, int level) : base(village, data)
         {
             Initialize(level);
             UserToken = userToken;
         }
 
-        internal Buildable(Village village, TCsvData data, int x, int y) : base(village, data, x, y)
-        {
-            Initialize(data.Level);
-        }
-
-        internal Buildable(Village village, TCsvData data, int x, int y, int level) : base(village, data, x, y)
+        internal Buildable(Village village, CsvDataCollectionRef<TCsvData> data, int x, int y, int level) : base(village, data, x, y)
         {
             Initialize(level);
         }
 
-        internal Buildable(Village village, TCsvData data, int x, int y, object userToken) : this(village, data, x, y)
-        {
-            UserToken = userToken;
-        }
-
-        internal Buildable(Village village, TCsvData data, int x, int y, object userToken, int level) : base(village, data, x, y)
+        internal Buildable(Village village, CsvDataCollectionRef<TCsvData> data, int x, int y, object userToken, int level) : base(village, data, x, y)
         {
             Initialize(level);
             UserToken = userToken;

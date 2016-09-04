@@ -37,6 +37,24 @@ namespace CoCSharp.Csv
         [CsvIgnore]
         internal abstract int KindID { get; }
 
+        internal CsvDataCollectionRef _ref;
+        [CsvIgnore]
+        public CsvDataCollectionRef CollectionRef
+        {
+            get
+            {
+                return _ref;
+            }
+        }
+
+        public int ID
+        {
+            get
+            {
+                return _ref.ID;
+            }
+        }
+
         // Index of CsvData in a CsvDataCollection,
         // Also the Level of the CsvData.
         internal int _level;
@@ -51,7 +69,10 @@ namespace CoCSharp.Csv
             {
                 Debug.Assert(_level >= -1, "_level was less than -1.");
                 if (_level == -1)
+                {
+                    Debug.Assert(_ref == null, "_ref was not null but _level was -1");
                     throw new InvalidOperationException("CsvData must be in a CsvDataCollection to have a Level.");
+                }
 
                 return _level;
             }
@@ -98,7 +119,7 @@ namespace CoCSharp.Csv
 
             return instance;
         }
-        
+
         // Returns the index of data ID.
         // This value depends on BaseGameID.
         // E.g: 1000000 => 0

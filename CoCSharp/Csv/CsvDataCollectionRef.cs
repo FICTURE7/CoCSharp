@@ -1,21 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Csv
 {
     /// <summary>
     /// Represents a reference to a <see cref="CsvDataCollection"/>.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Column = {ColumnIndex}, Row = {RowIndex}")]
     public class CsvDataCollectionRef
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvDataCollectionRef"/> class with the specified ID.
         /// </summary>
         /// <param name="id">ID from which the row index and column index will be calculated.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is less than 0 or is less than 1000000.</exception>
         public CsvDataCollectionRef(int id)
         {
+            if (id < 0 || id < InternalConstants.IDBase)
+                throw new ArgumentOutOfRangeException("id", "id must be non-negative and greater or equal to 1000000.");
+
             _id = id;
             _rowIndex = id / InternalConstants.IDBase;
             _columnIndex = id - (_rowIndex * InternalConstants.IDBase);
+        }
+
+        public CsvDataCollectionRef(int rowIndex, int columnIndex)
+        {
+            if (rowIndex < 0 || columnIndex < 0)
+                throw new ArgumentOutOfRangeException("rowIndex, columnIndex", "rowIndex and columnIndex must be non-negative.");
+            if (columnIndex > CsvDataRow.MaxWidth)
+                throw new ArgumentOutOfRangeException("columnIndex", "columnIndex must be less or equal to CsvDataRow.MaxWidth.");
+
+            _rowIndex = rowIndex;
+            _columnIndex = ColumnIndex;
+            _id = rowIndex * InternalConstants.IDBase + columnIndex;
         }
 
         private readonly int _id;
@@ -72,6 +90,28 @@ namespace CoCSharp.Csv
             if (row == null)
                 return null;
             return row.GetByIndex(ColumnIndex);
+        }
+    }
+
+    /// <summary>
+    /// Represents a reference to a <see cref="CsvDataCollection{TCsvData}"/>.
+    /// </summary>
+    /// <typeparam name="TCsvData">Type of <see cref="CsvData"/>.</typeparam>
+    public class CsvDataCollectionRef<TCsvData> : CsvDataCollectionRef where TCsvData : CsvData, new()
+    {
+        public CsvDataCollectionRef(int id) : base(id)
+        {
+            // Space
+        }
+
+        public CsvDataCollectionRef(int rowIndex, int columnIndex) : base(rowIndex, columnIndex)
+        {
+            // Space
+        }
+
+        public CsvDataCollection<TCsvData> Get(CsvDataTable table)
+        {
+            return (CsvDataCollection<TCsvData>)base.Get(table);
         }
     }
 }

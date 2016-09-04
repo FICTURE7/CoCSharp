@@ -37,7 +37,7 @@ namespace CoCSharp.Logic
         /// 
         /// <param name="village"><see cref="Village"/> containing the <see cref="Obstacle"/>.</param>
         /// <param name="data"><see cref="ObstacleData"/> which is associated with this <see cref="Obstacle"/>.</param>
-        public Obstacle(Village village, ObstacleData data) : base(village, data)
+        public Obstacle(Village village, CsvDataCollectionRef<ObstacleData> data) : base(village, data)
         {
             // Space
         }
@@ -50,7 +50,7 @@ namespace CoCSharp.Logic
         /// <param name="village"><see cref="Village"/> which contains the <see cref="Obstacle"/>.</param>
         /// <param name="data"><see cref="ObstacleData"/> which is associated with this <see cref="Obstacle"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Obstacle"/>.</param>
-        public Obstacle(Village village, ObstacleData data, object userToken) : base(village, data)
+        public Obstacle(Village village, CsvDataCollectionRef<ObstacleData> data, object userToken) : base(village, data)
         {
             UserToken = userToken;
         }
@@ -64,7 +64,7 @@ namespace CoCSharp.Logic
         /// <param name="data"><see cref="ObstacleData"/> which is associated with this <see cref="Obstacle"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Obstacle(Village village, ObstacleData data, int x, int y) : base(village, data, x, y)
+        public Obstacle(Village village, CsvDataCollectionRef<ObstacleData> data, int x, int y) : base(village, data, x, y)
         {
             // Space
         }
@@ -79,7 +79,7 @@ namespace CoCSharp.Logic
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Obstacle"/>.</param>
-        public Obstacle(Village village, ObstacleData data, int x, int y, object userToken) : base(village, data, x, y)
+        public Obstacle(Village village, CsvDataCollectionRef<ObstacleData> data, int x, int y, object userToken) : base(village, data, x, y)
         {
             UserToken = userToken;
         }

@@ -29,7 +29,7 @@ namespace CoCSharp.Logic
         /// 
         /// <param name="village"><see cref="Village"/> containing the <see cref="Decoration"/>.</param>
         /// <param name="data"><see cref="DecorationData"/> which is associated with this <see cref="Decoration"/>.</param>
-        public Decoration(Village village, DecorationData data) : base(village, data)
+        public Decoration(Village village, CsvDataCollectionRef<DecorationData> data) : base(village, data)
         {
             // Space
         }
@@ -43,7 +43,7 @@ namespace CoCSharp.Logic
         /// <param name="data"><see cref="DecorationData"/> which is associated with this <see cref="Decoration"/>.</param>
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
-        public Decoration(Village village, DecorationData data, int x, int y) : base(village, data, x, y)
+        public Decoration(Village village, CsvDataCollectionRef<DecorationData> data, int x, int y) : base(village, data, x, y)
         {
             // Space
         }

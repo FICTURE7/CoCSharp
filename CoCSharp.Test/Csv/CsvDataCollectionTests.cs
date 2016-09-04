@@ -12,7 +12,7 @@ namespace CoCSharp.Test.Csv
         [SetUp]
         public void SetUp()
         {
-            _data = new CsvDataCollection<BuildingData>(null);
+            _data = new CsvDataCollection<BuildingData>("Test Collection");
         }
     }
 }

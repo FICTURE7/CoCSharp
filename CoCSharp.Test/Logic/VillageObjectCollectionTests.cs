@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data;
+﻿using CoCSharp.Csv;
+using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Logic;
 using NUnit.Framework;
@@ -16,8 +17,8 @@ namespace CoCSharp.Test.Logic
         public void SetUp()
         {
             _village = new Village(new AssetManager(TestUtils.ContentDirectory));
-            var thdata = new BuildingData();
-            var thbuilding = new Building(_village, thdata);
+            var thdata = new CsvDataCollectionRef<BuildingData>(1000001);
+            var thbuilding = new Building(_village, thdata, 0);
 
             _collection = _village.VillageObjects;
             Assert.AreEqual(500000000, thbuilding.ID);
@@ -33,8 +34,8 @@ namespace CoCSharp.Test.Logic
         [Test]
         public void Add_NewItem_IDsUpdated()
         {
-            var data = new BuildingData();
-            var troopbuilding = new Building(_village, data);
+            var data = new CsvDataCollectionRef<BuildingData>(1000001);
+            var troopbuilding = new Building(_village, data, 0);
 
             Assert.AreEqual(500000001, troopbuilding.ID);
             Assert.AreEqual(1, troopbuilding._columnIndex);
@@ -46,8 +47,8 @@ namespace CoCSharp.Test.Logic
             Assert.AreEqual(1, _collection.Count);
             for (int i = 0; i < 50; i++)
             {
-                var data = new BuildingData();
-                var troopbuilding = new Building(_village, data);
+                var data = new CsvDataCollectionRef<BuildingData>(1000001);
+                var troopbuilding = new Building(_village, data, 0);
 
                 Assert.AreEqual(500000001 + i, troopbuilding.ID);
                 Assert.AreEqual(1 + i, troopbuilding._columnIndex);
@@ -60,8 +61,8 @@ namespace CoCSharp.Test.Logic
         {
             for (int i = 0; i < 50; i++)
             {
-                var data = new BuildingData();
-                var troopbuilding = new Building(_village, data);
+                var data = new CsvDataCollectionRef<BuildingData>(1000001);
+                var troopbuilding = new Building(_village, data, 0);
 
                 Assert.AreEqual(500000001 + i, troopbuilding.ID);
                 Assert.AreEqual(1 + i, troopbuilding._columnIndex);

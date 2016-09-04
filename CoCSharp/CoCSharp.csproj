@@ -75,6 +75,7 @@
     <Compile Include="Csv\Compression\ICoder.cs" />
     <Compile Include="Csv\CsvAttributeHelper.cs" />
     <Compile Include="Csv\CsvDataCollection.cs" />
+    <Compile Include="Csv\CsvDataCollectionRef.cs" />
     <Compile Include="Csv\CsvDataTable.cs" />
     <Compile Include="Csv\CsvDataRow.cs" />
     <Compile Include="Csv\CsvException.cs" />

@@ -19,6 +19,11 @@ namespace CoCSharp.Csv
         }
 
         /// <summary>
+        /// Gets the <see cref="CsvDataCollectionRef"/> of the <see cref="CsvDataCollection"/>.
+        /// </summary>
+        public abstract CsvDataCollectionRef Ref { get; }
+
+        /// <summary>
         /// Gets the ID of the <see cref="CsvDataCollection"/>.
         /// </summary>
         public abstract int ID { get; }
@@ -104,11 +109,13 @@ namespace CoCSharp.Csv
             _name = name;
             _data = new List<TCsvData>(16);
             _kindId = CsvData.GetInstance<TCsvData>().KindID;
-            _columnIndex = -1;
+            //_columnIndex = -1;
         }
         #endregion
 
         #region Fields & Properties
+        // CsvDataCollectionRef pointing to this.
+        internal CsvDataCollectionRef<TCsvData> _ref;
         // Kind ID of the TCsvData.
         private readonly int _kindId;
         // List containing the TCsvData in the row.
@@ -132,9 +139,17 @@ namespace CoCSharp.Csv
             }
         }
 
-        // Row index of the CsvDataCollection{T}.
-        // This value is set by the CsvDataRow the collection was added to.
-        internal int _columnIndex;
+        /// <summary>
+        /// Gets the <see cref="CsvDataCollectionRef"/> of the <see cref="CsvDataCollection{TCsvData}"/>.
+        /// </summary>
+        public override CsvDataCollectionRef Ref
+        {
+            get
+            {
+                return _ref;
+            }
+        }
+
         /// <summary>
         /// Gets the ID of the <see cref="CsvDataCollection{TCsvData}"/>.
         /// </summary>
@@ -142,11 +157,15 @@ namespace CoCSharp.Csv
         {
             get
             {
-                Debug.Assert(_columnIndex >= -1, "_columnIndex was less than -1.");
-                if (_columnIndex == -1)
+                //Debug.Assert(_columnIndex >= -1, "_columnIndex was less than -1.");
+                //if (_columnIndex == -1)
+                //    throw new InvalidOperationException("CsvDataCollection must be in a CsvDataRow to have an ID.");
+
+                //return (_kindId * InternalConstants.IDBase) + _columnIndex;
+                if (_ref == null)
                     throw new InvalidOperationException("CsvDataCollection must be in a CsvDataRow to have an ID.");
 
-                return (_kindId * InternalConstants.IDBase) + _columnIndex;
+                return _ref.ID;
             }
         }
 
@@ -215,6 +234,7 @@ namespace CoCSharp.Csv
 
             // Set level of data to that of the last index.
             data._level = _data.Count;
+            data._ref = _ref;
             _data.Add(data);
         }
 
@@ -226,6 +246,7 @@ namespace CoCSharp.Csv
             for (int i = 0; i < _data.Count; i++)
             {
                 _data[i]._level = -1;
+                _data[i]._ref = null;
                 _data.RemoveAt(i);
                 i--;
             }
@@ -292,6 +313,7 @@ namespace CoCSharp.Csv
                 return false;
 
             _data[level]._level = -1;
+            _data[level]._ref = null;
             _data.RemoveAt(level);
             return true;
         }

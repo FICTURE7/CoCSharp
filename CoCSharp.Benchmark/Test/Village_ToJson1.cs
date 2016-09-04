@@ -15,25 +15,25 @@ namespace CoCSharp.Benchmark.Test
             var table = manager.Get<CsvDataTable>();
             for (int i = 0; i < 100; i++)
             {
-                var data = table.GetRow<BuildingData>()[1][1];
-                new Building(_village, data);
+                var data = table.GetRow<BuildingData>()[1].Ref as CsvDataCollectionRef<BuildingData>;
+                new Building(_village, data, 1);
             }
 
             for (int i = 0; i < 100; i++)
             {
-                var data = table.GetRow<ObstacleData>()[1][0];
+                var data = table.GetRow<ObstacleData>()[1].Ref as CsvDataCollectionRef<ObstacleData>;
                 new Obstacle(_village, data);
             }
 
             for (int i = 0; i < 100; i++)
             {
-                var data = table.GetRow<TrapData>()[0][0];
-                new Trap(_village, data);
+                var data = table.GetRow<TrapData>()[0].Ref as CsvDataCollectionRef<TrapData>;
+                new Trap(_village, data, 1);
             }
 
             for (int i = 0; i < 100; i++)
             {
-                var data = table.GetRow<DecorationData>()[0][0];
+                var data = table.GetRow<DecorationData>()[0].Ref as CsvDataCollectionRef<DecorationData>;
                 new Decoration(_village, data);
             }
         }

@@ -32,7 +32,7 @@ namespace CoCSharp.Test.Csv
             var retData = _row[0];
 
             Assert.AreEqual(1, _row.Count);
-            Assert.AreEqual(0, data._columnIndex);
+            Assert.AreEqual(0, data._ref.ColumnIndex);
             Assert.AreSame(data, retData);
         }
 
@@ -45,7 +45,7 @@ namespace CoCSharp.Test.Csv
             var retData = _row["Test Collection"];
 
             Assert.AreEqual(1, _row.Count);
-            Assert.AreEqual(0, data._columnIndex);
+            Assert.AreEqual(0, data._ref.ColumnIndex);
             Assert.AreSame(data, retData);
         }
 
@@ -68,7 +68,7 @@ namespace CoCSharp.Test.Csv
                 var data = dataList[i];
                 var retData = _row["Test Collection " + i];
 
-                Assert.AreEqual(data._columnIndex, i);
+                Assert.AreEqual(data._ref.ColumnIndex, i);
                 Assert.AreSame(data, retData);
             }
         }
@@ -94,7 +94,7 @@ namespace CoCSharp.Test.Csv
             var data = new CsvDataCollection<BuildingData>("Tests");
             _row.Add(data);
 
-            Assert.AreEqual(0, data._columnIndex);
+            Assert.AreEqual(0, data._ref.ColumnIndex);
             Assert.AreEqual(1, _row.Count);
         }
     }

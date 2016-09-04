@@ -184,18 +184,19 @@ namespace CoCSharp.Csv
         {
             if (dataCollection == null)
                 throw new ArgumentNullException("dataCollection");
-            if (dataCollection._columnIndex != -1)
+            if (dataCollection._ref != null)
                 throw new ArgumentException("dataCollection is already in another CsvDataRow.", "dataCollection");
 
-            // Set index of dataCollection to last index in the row,
-            // that way the dataCollection has a correct ID.
-            dataCollection._columnIndex = _columns.Count;
             // Can have duplicate column names.
             // E.g: obstacles.csv => Large Stone.
             if (!_columnName2columnIndex.ContainsKey(dataCollection.Name))
-                _columnName2columnIndex.Add(dataCollection.Name, dataCollection._columnIndex);
+                _columnName2columnIndex.Add(dataCollection.Name, _columns.Count);
             else
                 Debug.WriteLine("Duplicate column names added: {0}", args: dataCollection.Name);
+
+            // Set index of dataCollection to last index in the row,
+            // that way the dataCollection has a correct ID.
+            dataCollection._ref = new CsvDataCollectionRef<TCsvData>(_kindId, _columns.Count);
             _columns.Add(dataCollection);
         }
 
@@ -210,11 +211,11 @@ namespace CoCSharp.Csv
             if (dataCollection == null)
                 throw new ArgumentNullException("dataCollection");
 
-            var columnIndex = dataCollection._columnIndex;
-            // dataCollection is not a CsvDataRow.
-            if (columnIndex == -1)
+            var dataRef = dataCollection._ref;
+            if (dataRef == null)
                 return false;
 
+            var columnIndex = dataRef.ColumnIndex;
             return RemoveInternal(columnIndex);
         }
 
@@ -259,7 +260,7 @@ namespace CoCSharp.Csv
             {
                 var column = _columns[i];
 
-                column._columnIndex = -1;
+                column._ref = null; 
                 _columns.RemoveAt(i);
             }
         }
@@ -275,7 +276,11 @@ namespace CoCSharp.Csv
             if (dataCollection == null)
                 throw new ArgumentNullException("dataCollection");
 
-            var columnIndex = dataCollection._columnIndex;
+            var dataRef = dataCollection._ref;
+            if (dataRef == null)
+                return false;
+
+            var columnIndex = dataRef.ColumnIndex;
             if (columnIndex == -1)
                 return false;
 
@@ -345,7 +350,7 @@ namespace CoCSharp.Csv
 
             var column = _columns[columnIndex];
             // Mark it as its not a CsvDataRow.
-            column._columnIndex = -1;
+            column._ref = null;
 
             _columnName2columnIndex.Remove(column.Name);
             _columns.RemoveAt(columnIndex);

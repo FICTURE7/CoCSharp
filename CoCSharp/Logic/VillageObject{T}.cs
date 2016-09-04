@@ -26,20 +26,22 @@ namespace CoCSharp.Logic
         }
 
 
-        internal VillageObject(Village village, TCsvData data) : base(village)
+        internal VillageObject(Village village, CsvDataCollectionRef<TCsvData> dataRef) : base(village)
         {
-            if (data == null)
+            if (dataRef == null)
                 throw new ArgumentNullException("data");
 
-            _data = data;
+            var table = Assets.Get<CsvDataTable>();
+            _data = dataRef.Get(table)[0];
         }
 
-        internal VillageObject(Village village, TCsvData data, int x, int y) : base(village, x, y)
+        internal VillageObject(Village village, CsvDataCollectionRef<TCsvData> dataRef, int x, int y) : base(village, x, y)
         {
-            if (data == null)
+            if (dataRef == null)
                 throw new ArgumentNullException("data");
 
-            _data = data;
+            var table = Assets.Get<CsvDataTable>();
+            _data = dataRef.Get(table)[0];
         }
         #endregion
 

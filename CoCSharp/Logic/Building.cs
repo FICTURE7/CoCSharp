@@ -28,18 +28,6 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it.
-        /// </summary>
-        /// 
-        /// <param name="village"><see cref="Village"/> containing the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        public Building(Village village, BuildingData data) : base(village, data)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
         /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and a value indicating the level of
         /// the <see cref="Building"/>.
         /// </summary>
@@ -47,20 +35,7 @@ namespace CoCSharp.Logic
         /// <param name="village"><see cref="Village"/> containing the <see cref="Building"/>.</param>
         /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, BuildingData data, int level) : base(village, data, level)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and user token object.
-        /// </summary>
-        /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        public Building(Village village, BuildingData data, object userToken) : base(village, data, userToken)
+        public Building(Village village, CsvDataCollectionRef<BuildingData> data, int level) : base(village, data, level)
         {
             // Space
         }
@@ -75,21 +50,7 @@ namespace CoCSharp.Logic
         /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
         /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, BuildingData data, object userToken, int level) : base(village, data, userToken)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
-        /// and <see cref="BuildingData"/> which is associated with it, X coordinate and Y coordinate.
-        /// </summary>
-        /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        public Building(Village village, BuildingData data, int x, int y) : base(village, data, x, y)
+        public Building(Village village, CsvDataCollectionRef<BuildingData> data, object userToken, int level) : base(village, data, userToken, level)
         {
             // Space
         }
@@ -105,22 +66,7 @@ namespace CoCSharp.Logic
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, BuildingData data, int x, int y, int level) : base(village, data, x, y, level)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
-        /// and <see cref="BuildingData"/> which is associated with it, X coordinate, Y coordinate and user token object.
-        /// </summary>
-        /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        public Building(Village village, BuildingData data, int x, int y, object userToken) : base(village, data, x, y, userToken)
+        public Building(Village village, CsvDataCollectionRef<BuildingData> data, int x, int y, int level) : base(village, data, x, y, level)
         {
             // Space
         }
@@ -137,7 +83,7 @@ namespace CoCSharp.Logic
         /// <param name="y">Y coordinate.</param>
         /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
         /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, BuildingData data, int x, int y, object userToken, int level) : base(village, data, x, y, userToken, level)
+        public Building(Village village, CsvDataCollectionRef<BuildingData> data, int x, int y, object userToken, int level) : base(village, data, x, y, userToken, level)
         {
             // Space
         }
@@ -203,7 +149,7 @@ namespace CoCSharp.Logic
 
             // Determines if the current VillageObject is a TownHall building based on Data.TID
             // and set the townhall of the Village to this VillageObject. 
-            if (CollectionCache.ID == AssetManager.TownHallID)
+            if (CollectionCache.ID == Assets.TownHallID)
             {
                 // A Village cannot contain more than 1 townhall.
                 if (Village.TownHall != this && Village.TownHall != null)
