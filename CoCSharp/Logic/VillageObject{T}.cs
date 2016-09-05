@@ -9,7 +9,7 @@ namespace CoCSharp.Logic
     /// Represents an object in a <see cref="Village"/> which has a <see cref="CsvData"/> associated with it.
     /// </summary>
     /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> associated with it.</typeparam>
-    [DebuggerDisplay("ID = {ID}, Data.TID = {Data.TID}")]
+    [DebuggerDisplay("ID = {ID}, DataRef = {DataRef}")]
     public abstract class VillageObject<TCsvData> : VillageObject where TCsvData : CsvData, new()
     {
         #region Constants
@@ -29,18 +29,20 @@ namespace CoCSharp.Logic
         internal VillageObject(Village village, CsvDataCollectionRef<TCsvData> dataRef) : base(village)
         {
             if (dataRef == null)
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException("dataRef");
 
             var table = Assets.Get<CsvDataTable>();
+            _dataRef = dataRef;
             _data = dataRef.Get(table)[0];
         }
 
         internal VillageObject(Village village, CsvDataCollectionRef<TCsvData> dataRef, int x, int y) : base(village, x, y)
         {
             if (dataRef == null)
-                throw new ArgumentNullException("data");
+                throw new ArgumentNullException("dataRef");
 
             var table = Assets.Get<CsvDataTable>();
+            _dataRef = dataRef;
             _data = dataRef.Get(table)[0];
         }
         #endregion
@@ -50,6 +52,15 @@ namespace CoCSharp.Logic
         /// Gets the cache to the sub-collection in which Data is found.
         /// </summary>
         public CsvDataCollection<TCsvData> CollectionCache { get; protected set; }
+
+        private readonly CsvDataCollectionRef<TCsvData> _dataRef;
+        public CsvDataCollectionRef<TCsvData> DataRef
+        {
+            get
+            {
+                return _dataRef;
+            }
+        }
 
         internal TCsvData _data;
         /// <summary>

@@ -305,7 +305,9 @@ namespace CoCSharp.Logic
             // is found, we do it.
             if (CollectionCache == null)
             {
-                //CollectionCache = AssetManager.SearchCsvNoCheck<TCsvData>(dataId);
+                var table = Assets.Get<CsvDataTable>();
+                var dataRef = new CsvDataCollectionRef<TCsvData>(dataId);
+                CollectionCache = dataRef.Get(table);
                 if (CollectionCache == null)
                     throw new InvalidOperationException("Could not find CsvData collection with ID '" + dataId + "'.");
             }
