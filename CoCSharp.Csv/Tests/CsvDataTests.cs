@@ -8,7 +8,7 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void Constructors_CollectionRef_IsNull()
         {
-            var data = new TestData();
+            var data = new Test1Data();
 
             Assert.Null(data.CollectionRef);
         }
@@ -16,7 +16,7 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void When_CollectionRef_IsNull_ID_Throws()
         {
-            var data = new TestData();
+            var data = new Test1Data();
 
             Assert.Throws<InvalidOperationException>(() => data.ID);
         }
@@ -24,20 +24,9 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void When_CollectionRef_IsNull_Level_Throws()
         {
-            var data = new TestData();
+            var data = new Test1Data();
 
             Assert.Throws<InvalidOperationException>(() => data.Level);
-        }
-
-        private class TestData : CsvData
-        {
-            internal override int KindID
-            {
-                get
-                {
-                    return 69;
-                }
-            }
         }
     }
 }

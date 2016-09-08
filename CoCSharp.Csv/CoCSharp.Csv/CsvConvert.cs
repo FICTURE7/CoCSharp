@@ -180,7 +180,7 @@ namespace CoCSharp.Csv
                         parentCache.Clear();
                     }
                 }
-                dataCollection.ProxyAdd(childObj);
+                dataCollection.Add(childObj);
             }
 
             //Console.WriteLine(getterCalls);

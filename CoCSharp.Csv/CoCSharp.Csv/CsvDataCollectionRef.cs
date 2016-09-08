@@ -9,6 +9,15 @@ namespace CoCSharp.Csv
     [DebuggerDisplay("ID = {ID}, Column = {ColumnIndex}, Row = {RowIndex}")]
     public class CsvDataCollectionRef
     {
+        public static readonly CsvDataCollectionRef NullRef = new CsvDataCollectionRef();
+
+        protected CsvDataCollectionRef()
+        {
+            _rowIndex = -1;
+            _columnIndex = -1;
+            _id = -1;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvDataCollectionRef"/> class with the specified ID.
         /// </summary>
@@ -92,28 +101,6 @@ namespace CoCSharp.Csv
             if (row == null)
                 return null;
             return row.GetByIndex(ColumnIndex);
-        }
-    }
-
-    /// <summary>
-    /// Represents a reference to a <see cref="CsvDataCollection{TCsvData}"/>.
-    /// </summary>
-    /// <typeparam name="TCsvData">Type of <see cref="CsvData"/>.</typeparam>
-    public class CsvDataCollectionRef<TCsvData> : CsvDataCollectionRef where TCsvData : CsvData, new()
-    {
-        public CsvDataCollectionRef(int id) : base(id)
-        {
-            // Space
-        }
-
-        public CsvDataCollectionRef(int rowIndex, int columnIndex) : base(rowIndex, columnIndex)
-        {
-            // Space
-        }
-
-        public CsvDataCollection<TCsvData> Get(CsvDataTable table)
-        {
-            return (CsvDataCollection<TCsvData>)base.Get(table);
         }
     }
 }

@@ -56,6 +56,9 @@
     <Compile Include="CsvConvert.cs" />
     <Compile Include="CsvData.cs" />
     <Compile Include="CsvDataCollection.cs" />
+    <Compile Include="CsvDataCollectionRef{T}.cs" />
+    <Compile Include="CsvDataCollection{T}.cs" />
+    <Compile Include="CsvDataCollectionDebugView.cs" />
     <Compile Include="CsvDataCollectionRef.cs" />
     <Compile Include="CsvDataRow.cs" />
     <Compile Include="CsvDataTable.cs" />

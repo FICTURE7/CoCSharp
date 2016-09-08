@@ -35,6 +35,7 @@ namespace CoCSharp.Csv
         #endregion
 
         #region Fields & Properties
+        internal CsvDataCollectionRef _ref;
         // Max data ID of the type.
         private readonly int _minId;
         // Min data ID of the type.
@@ -44,15 +45,8 @@ namespace CoCSharp.Csv
         [CsvIgnore]
         internal abstract int KindID { get; }
 
-        internal CsvDataCollectionRef _ref;
         [CsvIgnore]
-        public CsvDataCollectionRef CollectionRef
-        {
-            get
-            {
-                return _ref;
-            }
-        }
+        public CsvDataCollectionRef CollectionRef => _ref;
 
         [CsvIgnore]
         public int ID
@@ -80,11 +74,8 @@ namespace CoCSharp.Csv
             {
                 Debug.Assert(_level >= -1, "_level was less than -1.");
 
-                if (_level == -1)
-                {
-                    Debug.Assert(_ref == null, "_ref was not null but _level was -1");
+                if (_ref == null)
                     throw new InvalidOperationException("CsvData must be in a CsvDataCollection to have an ID and a Level.");
-                }
 
                 return _level;
             }

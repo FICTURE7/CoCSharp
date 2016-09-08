@@ -184,7 +184,7 @@ namespace CoCSharp.Csv
         {
             if (dataCollection == null)
                 throw new ArgumentNullException("dataCollection");
-            if (dataCollection._ref != null)
+            if (dataCollection._ref != CsvDataCollectionRef<TCsvData>.NullRef)
                 throw new ArgumentException("dataCollection is already in another CsvDataRow.", "dataCollection");
 
             // Can have duplicate column names.
@@ -196,7 +196,14 @@ namespace CoCSharp.Csv
 
             // Set index of dataCollection to last index in the row,
             // that way the dataCollection has a correct ID.
-            dataCollection._ref = new CsvDataCollectionRef<TCsvData>(_kindId, _columns.Count);
+            var newRef = new CsvDataCollectionRef<TCsvData>(_kindId, _columns.Count);
+            dataCollection._ref = newRef;
+
+            // Updates the old CsvData's ref in the dataCollection.
+            // So we have the ref up to date.
+            for (int i = 0; i < dataCollection.Count; i++)
+                dataCollection[i]._ref = newRef;
+
             _columns.Add(dataCollection);
         }
 
