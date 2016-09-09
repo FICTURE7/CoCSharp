@@ -20,6 +20,14 @@ namespace CoCSharp.Csv
         private static readonly Hashtable s_defaultValueCache;
         private static readonly ObjectMapper s_mapper;
 
+        public static CsvDataRow<TCsvData> Deserialize<TCsvData>(CsvTable table) where TCsvData : CsvData, new()
+        {
+            if (table == null)
+                throw new ArgumentNullException(nameof(table));
+
+            return (CsvDataRow<TCsvData>)DeserializeInternal(table, typeof(TCsvData));
+        }
+
         /// <summary>
         /// Deserializes the specified <see cref="CsvTable"/> into a <see cref="CsvDataRow{TCsvData}"/> with type as generic
         /// argument.
@@ -42,6 +50,11 @@ namespace CoCSharp.Csv
             if (type.IsAbstract || type.BaseType != typeof(CsvData))
                 throw new ArgumentException("type must be inherited from CsvData type and non-abstract.");
 
+            return DeserializeInternal(table, type);
+        }
+
+        private static CsvDataRow DeserializeInternal(CsvTable table, Type type)
+        {
             // Instance of the CsvDataTable<type> we're going to return.
             var dataRow = CsvDataRow.CreateInstance(type);
             // Instance of the CsvDataRow<type> we're going to add to dataTable at the beginning
@@ -172,7 +185,7 @@ namespace CoCSharp.Csv
                     if (isParent)
                     {
                         dataCollection = CsvDataCollection.CreateInstance(type, (string)parameters[0]);
-                        dataRow.ProxyAdd(dataCollection);
+                        dataRow.Add(dataCollection);
 
                         // Child object is now the parent object.
                         parentObj = childObj;
@@ -186,6 +199,7 @@ namespace CoCSharp.Csv
             //Console.WriteLine(getterCalls);
             //Console.WriteLine(setterCalls);
             return dataRow;
+
         }
     }
 }

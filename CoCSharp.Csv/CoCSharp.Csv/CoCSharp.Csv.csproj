@@ -61,6 +61,8 @@
     <Compile Include="CsvDataCollectionDebugView.cs" />
     <Compile Include="CsvDataCollectionRef.cs" />
     <Compile Include="CsvDataRow.cs" />
+    <Compile Include="CsvDataRowDebugView.cs" />
+    <Compile Include="CsvDataRow{T}.cs" />
     <Compile Include="CsvDataTable.cs" />
     <Compile Include="CsvException.cs" />
     <Compile Include="CsvIgnoreAttribute.cs" />

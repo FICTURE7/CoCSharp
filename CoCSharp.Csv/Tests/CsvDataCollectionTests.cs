@@ -69,17 +69,12 @@ namespace CoCSharp.Csv.Tests
         }
 
         [Fact]
-        public void Indexer_Getter_NegativeValue_Throws()
-        {
-            var datacol = new CsvDataCollection<Test1Data>("kek4");
-            Assert.Throws<ArgumentOutOfRangeException>("level", () => datacol[-1]);
-            Assert.Throws<ArgumentOutOfRangeException>("level", () => datacol[int.MinValue]);
-        }
-
-        [Fact]
         public void Indexer_Getter_ReturnsNull_If_Item_DoesNot_Exists()
         {
             var datacol = new CsvDataCollection<Test1Data>("kek5");
+            Assert.Null(datacol[-1]);
+            Assert.Null(datacol[int.MinValue]);
+
             Assert.Null(datacol[0]);
             Assert.Null(datacol[int.MaxValue]);
         }

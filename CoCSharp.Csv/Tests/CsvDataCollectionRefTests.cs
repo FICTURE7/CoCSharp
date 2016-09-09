@@ -7,7 +7,7 @@ namespace CoCSharp.Csv.Tests
     {
         [Fact]
         public void Constructors_id_LessThan1000000_Throws()
-        {
+        {            
             Assert.Throws<ArgumentOutOfRangeException>("id", () => new CsvDataCollectionRef(-1));
             Assert.Throws<ArgumentOutOfRangeException>("id", () => new CsvDataCollectionRef(int.MinValue));
             Assert.Throws<ArgumentOutOfRangeException>("id", () => new CsvDataCollectionRef(32));
@@ -33,7 +33,7 @@ namespace CoCSharp.Csv.Tests
         [InlineData(14000345, 14, 345)]
         [InlineData(89000008, 89, 8)]
         [InlineData(9999999, 9, 999999)]
-        [InlineData(3000080, 3, 13)]
+        [InlineData(3000080, 3, 80)]
         public void Constructor_id_ColumnIndex_And_RowIndex_Calculated(int id, int expectedRowIndex, int expectedColumnIndex)
         {
             var dref = new CsvDataCollectionRef(id);

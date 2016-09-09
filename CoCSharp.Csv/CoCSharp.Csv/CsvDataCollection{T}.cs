@@ -103,14 +103,23 @@ namespace CoCSharp.Csv
                 return _data[index];
             }
         }
+
+        /// <summary>
+        /// Gets the lowest level <typeparamref name="TCsvData"/> in the <see cref="CsvDataCollection{TCsvData}"/>.
+        /// </summary>
+        public TCsvData Min
+        {
+            get
+            {
+                if (_data.Count == 0)
+                    return null;
+
+                return _data[0];
+            }
+        }
         #endregion
 
         #region Methods
-        internal override object[] GetAllData()
-        {
-            return _data.ToArray();
-        }
-
         public bool Contains(TCsvData data)
         {
             if (data == null)
@@ -171,14 +180,7 @@ namespace CoCSharp.Csv
 
         public override void Insert(int level, CsvData data)
         {
-            if (level < 0 || level > Count)
-                throw new ArgumentOutOfRangeException(nameof(level));
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
-            if (data._ref != null)
-                throw new ArgumentException("Data is already in a CsvDataCollection.", nameof(data));
-
-            InsertInternal(level, (TCsvData)data);
+            Insert(level, (TCsvData)data);
         }
 
         private void InsertInternal(int level, TCsvData data)

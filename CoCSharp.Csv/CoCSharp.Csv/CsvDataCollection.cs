@@ -38,9 +38,6 @@ namespace CoCSharp.Csv
         /// </summary>
         public abstract int Count { get; }
 
-        // Needed to get the CsvDataCollectionDebugView to work correctly.
-        internal abstract object[] GetAllData();
-
         private static readonly BindingFlags s_flags = BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.Public;
         // Returns an instance of the CsvDataRow<> class with the specified type as generic parameter.
         internal static CsvDataCollection CreateInstance(Type type, string name)
@@ -54,7 +51,7 @@ namespace CoCSharp.Csv
 
         public abstract void Add(CsvData data);
 
-        public abstract void Insert(int index, CsvData data);
+        public abstract void Insert(int level, CsvData data);
 
         public abstract void Clear();
 
