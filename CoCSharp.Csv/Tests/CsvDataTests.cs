@@ -8,15 +8,15 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void Constructors_CollectionRef_IsNull()
         {
-            var data = new Test1Data();
+            var data = new Mock1Data();
 
-            Assert.Null(data.CollectionRef);
+            Assert.Same(CsvDataCollectionRef.NullRef, data.CollectionRef);
         }
 
         [Fact]
         public void When_CollectionRef_IsNull_ID_Throws()
         {
-            var data = new Test1Data();
+            var data = new Mock1Data();
 
             Assert.Throws<InvalidOperationException>(() => data.ID);
         }
@@ -24,7 +24,7 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void When_CollectionRef_IsNull_Level_Throws()
         {
-            var data = new Test1Data();
+            var data = new Mock1Data();
 
             Assert.Throws<InvalidOperationException>(() => data.Level);
         }

@@ -25,7 +25,7 @@ namespace CoCSharp.Csv
             if (KindID <= 0)
                 throw new Exception("Invalid implementation, KindID must be greater than 0.");
 
-            _ref = null;
+            _ref = CsvDataCollectionRef.NullRef;
             _level = -1;
 
             _minId = KindID * InternalConstants.IDBase;
@@ -53,8 +53,8 @@ namespace CoCSharp.Csv
         {
             get
             {
-                if (_ref == null)
-                    throw new InvalidOperationException("CsvData must be in a CsvDataCollection to have an ID and a Level.");
+                if (_ref == CsvDataCollectionRef.NullRef)
+                    throw new InvalidOperationException("CsvData must be in a CsvDataCollection which itself in a CsvDataRow to have an ID and a Level.");
 
                 return _ref.ID;
             }
@@ -73,9 +73,8 @@ namespace CoCSharp.Csv
             get
             {
                 Debug.Assert(_level >= -1, "_level was less than -1.");
-
-                if (_ref == null)
-                    throw new InvalidOperationException("CsvData must be in a CsvDataCollection to have an ID and a Level.");
+                if (_ref == CsvDataCollectionRef.NullRef)
+                    throw new InvalidOperationException("CsvData must be in a CsvDataCollection which itself in a CsvDataRow to have an ID and a Level.");
 
                 return _level;
             }
@@ -90,33 +89,32 @@ namespace CoCSharp.Csv
             return paramName + _argsOutOfRangeMessage;
         }
 
-        // Returns an instance of the specified type.
-        // To prevent extra creation of objects.
-        internal static TCsvData GetInstance<TCsvData>() where TCsvData : CsvData, new()
+        // To determine if we're inside a collection or not.
+        private bool _inCollection;
+        // Called when the CsvData is added to a CsvDataCollection.
+        internal void OnAdd(CsvDataCollection dataCollection, int level)
         {
-            var type = typeof(TCsvData);
-            var instance = (CsvData)null;
-            if (!s_instances.TryGetValue(type, out instance))
-            {
-                instance = new TCsvData();
-                s_instances.Add(type, instance);
-            }
+            _ref = dataCollection.CollectionRef;
+            _level = level;
+            _inCollection = true;
+        }
 
-            return (TCsvData)instance;
+        // Called when the CsvData is removed from a CsvDataCollection.
+        internal void OnRemove()
+        {
+            _ref = CsvDataCollectionRef.NullRef;
+            _level = -1;
+            _inCollection = false;
         }
 
         internal static CsvData GetInstance(Type type)
         {
-            if (type.IsAbstract || type.BaseType != typeof(CsvData))
-                throw new Exception();
-
             var instance = (CsvData)null;
             if (!s_instances.TryGetValue(type, out instance))
             {
                 instance = (CsvData)Activator.CreateInstance(type);
                 s_instances.Add(type, instance);
             }
-
             return instance;
         }
 

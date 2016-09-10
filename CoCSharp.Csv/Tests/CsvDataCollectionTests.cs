@@ -9,23 +9,23 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void CsvDataCollection_Is_ICollectionCsvData_And_ICollectionTCsvData()
         {
-            CsvDataCollection data = new CsvDataCollection<Test1Data>("name");
+            CsvDataCollection data = new CsvDataCollection<Mock1Data>("name");
             Assert.IsAssignableFrom<ICollection<CsvData>>(data);
-            Assert.IsAssignableFrom<ICollection<Test1Data>>(data); // TCsvData
+            Assert.IsAssignableFrom<ICollection<Mock1Data>>(data); // TCsvData
         }
 
         [Fact]
         public void ID_Throws_When_Not_In_CsvDataRow()
         {
-            var datacol = new CsvDataCollection<Test1Data>("kek");
+            var datacol = new CsvDataCollection<Mock1Data>("kek");
             Assert.Throws<InvalidOperationException>(() => datacol.ID);
         }
 
         [Fact]
         public void Add_Value_Not_TypeOf_CsvData_Throws()
         {
-            CsvDataCollection datacol = new CsvDataCollection<Test1Data>("name");
-            var data = new Test2Data();
+            CsvDataCollection datacol = new CsvDataCollection<Mock1Data>("name");
+            var data = new Mock2Data();
 
             Assert.Throws<InvalidCastException>(() => datacol.Add(data));
         }
@@ -33,15 +33,15 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void Add_NullValue_Throws()
         {
-            var datacol = new CsvDataCollection<Test1Data>("kek");
+            var datacol = new CsvDataCollection<Mock1Data>("kek");
             Assert.Throws<ArgumentNullException>("data", () => datacol.Add(null));
         }
 
         [Fact]
         public void Add_Data_Already_Which_Has_Already_Been_Added_Throws()
         {
-            var datacol = new CsvDataCollection<Test1Data>("kek2");
-            var data = new Test1Data();
+            var datacol = new CsvDataCollection<Mock1Data>("kek2");
+            var data = new Mock1Data();
             datacol.Add(data);
 
             Assert.Equal(0, data.Level);
@@ -52,10 +52,10 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void Add_ValidData_DataLevel_IsSet()
         {
-            var datacol = new CsvDataCollection<Test1Data>("kek2");
+            var datacol = new CsvDataCollection<Mock1Data>("kek2");
             for (int i = 0; i < 50; i++)
             {
-                var data = new Test1Data();
+                var data = new Mock1Data();
                 datacol.Add(data);
             }
 
@@ -64,14 +64,14 @@ namespace CoCSharp.Csv.Tests
             {
                 var data = datacol[i];
                 Assert.Equal(i, data.Level);
-                Assert.Same(CsvDataCollectionRef<Test1Data>.NullRef, data.CollectionRef);
+                Assert.Same(CsvDataCollectionRef<Mock1Data>.NullRef, data.CollectionRef);
             }
         }
 
         [Fact]
         public void Indexer_Getter_ReturnsNull_If_Item_DoesNot_Exists()
         {
-            var datacol = new CsvDataCollection<Test1Data>("kek5");
+            var datacol = new CsvDataCollection<Mock1Data>("kek5");
             Assert.Null(datacol[-1]);
             Assert.Null(datacol[int.MinValue]);
 
@@ -82,13 +82,13 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void If_CsvDataCollection_IsIn_CsvDataRow_Ref_Changes()
         {
-            var datarow = new CsvDataRow<Test1Data>();
-            var datacol = new CsvDataCollection<Test1Data>("kek");
-            Assert.Same(CsvDataCollectionRef<Test1Data>.NullRef, datacol.CollectionRef);
+            var datarow = new CsvDataRow<Mock1Data>();
+            var datacol = new CsvDataCollection<Mock1Data>("kek");
+            Assert.Same(CsvDataCollectionRef<Mock1Data>.NullRef, datacol.CollectionRef);
 
             datarow.Add(datacol);
 
-            Assert.NotSame(CsvDataCollectionRef<Test1Data>.NullRef, datacol.CollectionRef);
+            Assert.NotSame(CsvDataCollectionRef<Mock1Data>.NullRef, datacol.CollectionRef);
             Assert.Equal(69, datacol.CollectionRef.RowIndex);
             Assert.Equal(0, datacol.CollectionRef.ColumnIndex);
             Assert.Equal(69000000, datacol.CollectionRef.ID);
@@ -97,9 +97,9 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void If_CsvDataCollection_IsIn_CsvDataRow_NewlyAdded_Data_Ref_Changes()
         {
-            var datarow = new CsvDataRow<Test1Data>();
-            var datacol = new CsvDataCollection<Test1Data>("kek");
-            var data = new Test1Data();
+            var datarow = new CsvDataRow<Mock1Data>();
+            var datacol = new CsvDataCollection<Mock1Data>("kek");
+            var data = new Mock1Data();
             datarow.Add(datacol);
 
             datacol.Add(data);
@@ -109,12 +109,12 @@ namespace CoCSharp.Csv.Tests
         [Fact]
         public void If_CsvDataCollection_IsIn_CsvDataRow_OldData_Ref_Changes()
         {
-            var dataRow = new CsvDataRow<Test1Data>();
-            var dataCollection = new CsvDataCollection<Test1Data>("kek");
-            var data = new Test1Data();
+            var dataRow = new CsvDataRow<Mock1Data>();
+            var dataCollection = new CsvDataCollection<Mock1Data>("kek");
+            var data = new Mock1Data();
 
             // dataCollection not yet added to dataRow, therefore dataCollection should have a NullRef value.
-            Assert.Same(CsvDataCollectionRef<Test1Data>.NullRef, dataCollection.CollectionRef);
+            Assert.Same(CsvDataCollectionRef<Mock1Data>.NullRef, dataCollection.CollectionRef);
             dataCollection.Add(data);
 
             // data added to dataCollection, therefore data should have a NullRef value, 

@@ -50,7 +50,7 @@ namespace CoCSharp.Csv
             get
             {
                 if (rowIndex < 0 || rowIndex > Count)
-                    throw new ArgumentOutOfRangeException("index", "index must be non-negative and less than Count.");
+                    throw new ArgumentOutOfRangeException(nameof(rowIndex), "Row index must be non-negative and less than Count.");
 
                 return _rows[rowIndex];
             }
@@ -60,13 +60,7 @@ namespace CoCSharp.Csv
         /// <summary>
         /// Gets the number of <see cref="CsvDataRow"/> in the <see cref="CsvDataTable"/>.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _count;
-            }
-        }
+        public int Count => _count;
         #endregion
 
         #region Methods
@@ -74,7 +68,7 @@ namespace CoCSharp.Csv
         public void Add(CsvDataRow row)
         {
             if (row == null)
-                throw new ArgumentNullException("table");
+                throw new ArgumentNullException(nameof(row));
 
             AddInternal(row);
         }
@@ -117,7 +111,8 @@ namespace CoCSharp.Csv
         /// <returns><see cref="CsvDataRow{TCsvData}"/> for the specified type; returns null if not loaded.</returns>
         public CsvDataRow<TCsvData> GetRow<TCsvData>() where TCsvData : CsvData, new()
         {
-            return (CsvDataRow<TCsvData>)GetRow(typeof(TCsvData));
+            var type = typeof(TCsvData);
+            return (CsvDataRow<TCsvData>)GetRowInternal(type);
         }
 
         /// <summary>
@@ -130,23 +125,28 @@ namespace CoCSharp.Csv
         public CsvDataRow GetRow(Type type)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             if (type.IsAbstract || type.BaseType != typeof(CsvData))
                 throw new ArgumentException("type must be inherited from CsvData and non-abstract.", "type");
 
+            return GetRowInternal(type);
+        }
+
+        private CsvDataRow GetRowInternal(Type type)
+        {
             var kindId = CsvData.GetInstance(type).KindID;
             return _rows[kindId];
         }
 
-        private static int GetRowIndex(int id)
-        {
-            return id / InternalConstants.IDBase;
-        }
+        //private static int GetRowIndex(int id)
+        //{
+        //    return id / InternalConstants.IDBase;
+        //}
 
-        private static int GetColumnIndex(int id, int rowIndex)
-        {
-            return id - (rowIndex * InternalConstants.IDBase);
-        }
+        //private static int GetColumnIndex(int id, int rowIndex)
+        //{
+        //    return id - (rowIndex * InternalConstants.IDBase);
+        //}
 
         private void AddInternal(CsvDataRow item)
         {

@@ -18,7 +18,7 @@ namespace CoCSharp.Csv
         /// </summary>
         public CsvDataRow()
         {
-            _kindId = CsvData.GetInstance<TCsvData>().KindID;
+            _kindId = CsvData.GetInstance(typeof(TCsvData)).KindID;
             _columns = new List<CsvDataCollection<TCsvData>>(48);
             _columnName2columnIndex = new Dictionary<string, int>();
         }
@@ -72,6 +72,7 @@ namespace CoCSharp.Csv
 
         // Kind ID of TCsvData, also known as the row index.
         private readonly int _kindId;
+
         internal override int KindID => _kindId;
 
         /// <summary>
@@ -184,7 +185,7 @@ namespace CoCSharp.Csv
                 throw new ArgumentOutOfRangeException(nameof(index));
             if (dataCollection == null)
                 throw new ArgumentNullException(nameof(dataCollection));
-            if (dataCollection.CollectionRef != null)
+            if (dataCollection.CollectionRef != CsvDataCollectionRef<TCsvData>.NullRef)
                 throw new ArgumentException("CsvDataCollection is already in a CsvDataRow.", nameof(dataCollection));
 
             InsertInternal(index, dataCollection);

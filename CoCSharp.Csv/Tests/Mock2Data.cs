@@ -1,12 +1,12 @@
 ﻿namespace CoCSharp.Csv.Tests
 {
-    public class Test1Data : CsvData
+    public class Mock2Data : CsvData
     {
         internal override int KindID
         {
             get
             {
-                return 69;
+                return 420;
             }
         }
     }

@@ -149,7 +149,7 @@ namespace CoCSharp.Csv
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            if (data._ref != null)
+            if (data.CollectionRef != CsvDataCollectionRef.NullRef)
                 throw new ArgumentException("Data is already in a CsvDataCollection.", nameof(data));
 
             // Set level of data to that of the last index.
@@ -160,7 +160,7 @@ namespace CoCSharp.Csv
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            if (data._ref != null)
+            if (data.CollectionRef != CsvDataCollectionRef.NullRef)
                 throw new ArgumentException("Data is already in a CsvDataCollection.", nameof(data));
 
             InsertInternal(_data.Count, (TCsvData)data);
@@ -172,7 +172,7 @@ namespace CoCSharp.Csv
                 throw new ArgumentOutOfRangeException(nameof(level));
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
-            if (data._ref != null)
+            if (data.CollectionRef != CsvDataCollectionRef.NullRef)
                 throw new ArgumentException("Data is already in a CsvDataCollection.", nameof(data));
 
             InsertInternal(level, data);
@@ -185,8 +185,7 @@ namespace CoCSharp.Csv
 
         private void InsertInternal(int level, TCsvData data)
         {
-            data._level = level;
-            data._ref = _ref;
+            data.OnAdd(this, level);
             _data.Insert(level, data);
         }
 
@@ -231,9 +230,7 @@ namespace CoCSharp.Csv
             Debug.Assert(ContainsInternal(level));
 
             var data = _data[level];
-            data._level = -1;
-            data._ref = null;
-
+            data.OnRemove();
             _data.RemoveAt(level);
             return true;
         }
@@ -247,7 +244,7 @@ namespace CoCSharp.Csv
             {
                 var data = _data[i];
                 data._level = -1;
-                data._ref = null;
+                data._ref = CsvDataCollectionRef.NullRef;
             }
             _data.Clear();
         }
