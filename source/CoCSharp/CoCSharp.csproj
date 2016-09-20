@@ -1,0 +1,278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7481E33E-B214-421B-8F9B-A812958395DD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CoCSharp</RootNamespace>
+    <AssemblyName>CoCSharp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CoCSharp.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\CoCSharp.XML</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.ZLib, Version=2.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MarkerMetro.Unity.Ionic.Zlib.2.0.0.14\lib\net35\Ionic.ZLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Sodium, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\libsodium-net.0.9.0\lib\Net40\Sodium.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Csv\Compression\Common\CommandLineParser.cs" />
+    <Compile Include="Csv\Compression\Common\CRC.cs" />
+    <Compile Include="Csv\Compression\Common\InBuffer.cs" />
+    <Compile Include="Csv\Compression\Common\OutBuffer.cs" />
+    <Compile Include="Csv\Compression\Compress\LZMA\LzmaBase.cs" />
+    <Compile Include="Csv\Compression\Compress\LZMA\LzmaDecoder.cs" />
+    <Compile Include="Csv\Compression\Compress\LZMA\LzmaEncoder.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\IMatchFinder.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\LzBinTree.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\LzInWindow.cs" />
+    <Compile Include="Csv\Compression\Compress\LZ\LzOutWindow.cs" />
+    <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoder.cs" />
+    <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoderBit.cs" />
+    <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
+    <Compile Include="Csv\Compression\ICoder.cs" />
+    <Compile Include="Csv\CsvAttributeHelper.cs" />
+    <Compile Include="Csv\CsvDataRow.cs" />
+    <Compile Include="Csv\CsvDataRowDebugView.cs" />
+    <Compile Include="Csv\CsvDataRow{T}.cs" />
+    <Compile Include="Csv\CsvDataRowCollection.cs" />
+    <Compile Include="Csv\CsvDataRowCollection{T}.cs" />
+    <Compile Include="Csv\CsvDataRowRef.cs" />
+    <Compile Include="Csv\CsvDataTableCollection.cs" />
+    <Compile Include="Csv\CsvDataTable.cs" />
+    <Compile Include="Csv\CsvDataTableDebugView.cs" />
+    <Compile Include="Csv\CsvDataTable{T}.cs" />
+    <Compile Include="Csv\CsvException.cs" />
+    <Compile Include="Csv\CsvIgnoreAttribute.cs" />
+    <Compile Include="Csv\CsvAliasAttribute.cs" />
+    <Compile Include="Csv\CsvConvert.cs" />
+    <Compile Include="Csv\CsvTable.cs" />
+    <Compile Include="Csv\CsvTableCompression.cs" />
+    <Compile Include="Csv\PropertyMap.cs" />
+    <Compile Include="Csv\ObjectMapper.cs" />
+    <Compile Include="Data\AssetDownloader.cs" />
+    <Compile Include="Data\AssetProvider.cs" />
+    <Compile Include="Data\AssetManager.cs" />
+    <Compile Include="Data\AssetProviders\CsvDataTableAssetProvider.cs" />
+    <Compile Include="Data\Models\DecorationData.cs" />
+    <Compile Include="Data\Models\ObstacleData.cs" />
+    <Compile Include="Data\Models\TrapData.cs" />
+    <Compile Include="Data\Slot.cs" />
+    <Compile Include="Data\SlotCollection{T}.cs" />
+    <Compile Include="InternalConstants.cs" />
+    <Compile Include="Logic\ClanMember.cs" />
+    <Compile Include="Logic\ClanMemberRole.cs" />
+    <Compile Include="Logic\ClearingFinishedEventArgs.cs" />
+    <Compile Include="Logic\Components\ResourceStorageComponent.cs" />
+    <Compile Include="Logic\Components\UnitProductionComponent.cs" />
+    <Compile Include="Logic\Components\UnitStorageComponent.cs" />
+    <Compile Include="Logic\InsufficientResourcesException.cs" />
+    <Compile Include="Logic\LogicComponent.cs" />
+    <Compile Include="Logic\LogicComponentPool.cs" />
+    <Compile Include="Logic\LogicEventArgs.cs" />
+    <Compile Include="Logic\LogicOperation.cs" />
+    <Compile Include="Logic\LogicUtils.cs" />
+    <Compile Include="Logic\TickTimer.cs" />
+    <Compile Include="Logic\VillageLogger.cs" />
+    <Compile Include="Logic\VillageObjectCollection.cs" />
+    <Compile Include="Logic\VillageObjectPool.cs" />
+    <Compile Include="Logic\VillageObject{T}.cs" />
+    <Compile Include="Logic\VillageTicker.cs" />
+    <Compile Include="Network\DisconnectedEventArgs.cs" />
+    <Compile Include="Network\Messages\AllianceChangeRoleOkMessage.cs" />
+    <Compile Include="Network\Messages\AllianceDataRequestMessage.cs" />
+    <Compile Include="Network\Messages\AllianceDataResponseMessage.cs" />
+    <Compile Include="Network\Messages\AllianceFullEntryMessage.cs" />
+    <Compile Include="Network\Messages\AllianceChangeRoleMessage.cs" />
+    <Compile Include="Network\Messages\AllianceStreamEntry.cs" />
+    <Compile Include="Network\Messages\AllianceStreamMessage.cs" />
+    <Compile Include="Network\Messages\AttackNpcMessage.cs" />
+    <Compile Include="Network\Messages\ReturnHomeMessage.cs" />
+    <Compile Include="Network\Messages\AvailableServerCommandMessage.cs" />
+    <Compile Include="Network\Messages\AvatarMessageComponent.cs" />
+    <Compile Include="Data\Models\BuildingData.cs" />
+    <Compile Include="Network\Messages\AvatarProfileRequestMessage.cs" />
+    <Compile Include="Network\Messages\AvatarProfileResponseMessage.cs" />
+    <Compile Include="Network\Messages\AvatarStreamEntry.cs" />
+    <Compile Include="Network\Messages\AvatarStreamMessage.cs" />
+    <Compile Include="Network\Messages\ChangeAllianceSettingMessage.cs" />
+    <Compile Include="Network\Messages\ChangeAvatarNameRequestMessage.cs" />
+    <Compile Include="Network\Messages\ChatAllianceStreamEntry.cs" />
+    <Compile Include="Network\Messages\ClanMemberMessageComponent.cs" />
+    <Compile Include="Network\Messages\ClanMessageComponent.cs" />
+    <Compile Include="Csv\CsvData.cs" />
+    <Compile Include="Data\AssetDownloadCompletedEventArgs.cs" />
+    <Compile Include="Data\AssetDownloadProgressChangedEventArgs.cs" />
+    <Compile Include="Data\Fingerprint.cs" />
+    <Compile Include="Data\FingerprintFile.cs" />
+    <Compile Include="Logic\Commands\AllianceRoleUpdatedCommand.cs" />
+    <Compile Include="Logic\Commands\AvatarNameChangedCommand.cs" />
+    <Compile Include="Logic\Commands\AllianceJoinedCommand.cs" />
+    <Compile Include="Logic\Commands\AllianceLeftCommand.cs" />
+    <Compile Include="Logic\Commands\AllianceSettingChangedCommand.cs" />
+    <Compile Include="Logic\Commands\MatchmakingCommand.cs" />
+    <Compile Include="Logic\Commands\RemoveShieldCommand.cs" />
+    <Compile Include="Logic\Commands\UnlockBuildingCommand.cs" />
+    <Compile Include="Network\Messages\CompleteClanMessageComponent.cs" />
+    <Compile Include="Network\Messages\CreateAllianceMessage.cs" />
+    <Compile Include="Network\Messages\DefenseLogAvatarStreamEntry.cs" />
+    <Compile Include="Network\Messages\EnemyHomeDataMessage.cs" />
+    <Compile Include="Network\Messages\AttackLogAvatarStreamEntry.cs" />
+    <Compile Include="Network\Messages\JoinableAllianceListRequestMessage.cs" />
+    <Compile Include="Network\Messages\JoinableAllianceListResponseMessage.cs" />
+    <Compile Include="Network\Messages\JoinAllianceMessage.cs" />
+    <Compile Include="Network\Messages\LeaveAllianceMessage.cs" />
+    <Compile Include="Network\Messages\MoveVillageObjectMessageComponent.cs" />
+    <Compile Include="Data\Slots\AchievementProgessSlot.cs" />
+    <Compile Include="Data\Slots\AchievementSlot.cs" />
+    <Compile Include="Data\Slots\AllianceUnitSlot.cs" />
+    <Compile Include="Data\Slots\HeroHealthSlot.cs" />
+    <Compile Include="Data\Slots\HeroStateSlot.cs" />
+    <Compile Include="Data\Slots\HeroUpgradeSlot.cs" />
+    <Compile Include="Data\Slots\NpcElixirSlot.cs" />
+    <Compile Include="Data\Slots\NpcGoldSlot.cs" />
+    <Compile Include="Data\Slots\NpcStarSlot.cs" />
+    <Compile Include="Data\Slots\ResourceAmountSlot.cs" />
+    <Compile Include="Data\Models\ResourceData.cs" />
+    <Compile Include="Data\Slots\ResourceCapacitySlot.cs" />
+    <Compile Include="Data\Slot{T}.cs" />
+    <Compile Include="Data\Slots\SpellSlot.cs" />
+    <Compile Include="Data\Slots\SpellUpgradeSlot.cs" />
+    <Compile Include="Data\Slots\TutorialProgressSlot.cs" />
+    <Compile Include="Data\Slots\UnitSlot.cs" />
+    <Compile Include="Data\Slots\UnitUpgradeSlot.cs" />
+    <Compile Include="Data\Slots\UnknownSlot.cs" />
+    <Compile Include="Logic\Commands\BuyResourcesCommand.cs" />
+    <Compile Include="Logic\Commands\BuyTrapCommand.cs" />
+    <Compile Include="Logic\Commands\CancelConsturctionCommand.cs" />
+    <Compile Include="Logic\Commands\RearmTrapCommand.cs" />
+    <Compile Include="Logic\Commands\SellDecorationCommand.cs" />
+    <Compile Include="Logic\Commands\SpeedUpConstructionCommand.cs" />
+    <Compile Include="Logic\Commands\UpgradeMultipleBuildableCommand.cs" />
+    <Compile Include="Network\Messages\NpcDataMessage.cs" />
+    <Compile Include="Network\Messages\ServerShutdownInfoMessage.cs" />
+    <Compile Include="Network\Messages\StreamEntry.cs" />
+    <Compile Include="Network\Messages\VisitHomeDataMessage.cs" />
+    <Compile Include="Network\Messages\VisitHomeMessage.cs" />
+    <Compile Include="Network\StreamEntryFactory.cs" />
+    <Compile Include="Network\Messages\VillageMessageComponent.cs" />
+    <Compile Include="TimeUtils.cs" />
+    <Compile Include="Logic\Avatar.cs" />
+    <Compile Include="Logic\Buildable{T}.cs" />
+    <Compile Include="Logic\Building.cs" />
+    <Compile Include="Logic\Clan.cs" />
+    <Compile Include="Logic\ConstructionEventArgs.cs" />
+    <Compile Include="Logic\Decoration.cs" />
+    <Compile Include="Logic\Obstacle.cs" />
+    <Compile Include="Logic\Trap.cs" />
+    <Compile Include="Logic\Village.cs" />
+    <Compile Include="Logic\VillageObject.cs" />
+    <Compile Include="Logic\Command.cs" />
+    <Compile Include="Logic\CommandException.cs" />
+    <Compile Include="Logic\CommandFactory.cs" />
+    <Compile Include="Logic\CommandFactorySuppressAttribute.cs" />
+    <Compile Include="Network\Cryptography\CoCKeyPair.cs" />
+    <Compile Include="Network\Cryptography\Crypto7.cs" />
+    <Compile Include="Network\Cryptography\Crypto8.cs" />
+    <Compile Include="Network\Cryptography\UpdateNonceType.cs" />
+    <Compile Include="Logic\InvalidCommandException.cs" />
+    <Compile Include="Network\MessageComponent.cs" />
+    <Compile Include="Network\MessageDirection.cs" />
+    <Compile Include="Network\Messages\ChatMessageClientMessage.cs" />
+    <Compile Include="Network\Messages\ChatMessageServerMessage.cs" />
+    <Compile Include="Network\Messages\CommandMessage.cs" />
+    <Compile Include="Logic\Commands\BuyBuildingCommand.cs" />
+    <Compile Include="Logic\Commands\BuyDecorationCommand.cs" />
+    <Compile Include="Logic\Commands\ClearObstacleCommand.cs" />
+    <Compile Include="Logic\Commands\MoveMultipleVillageObjectCommand.cs" />
+    <Compile Include="Logic\Commands\MoveVillageObjectCommand.cs" />
+    <Compile Include="Logic\Commands\UpgradeBuildableCommand.cs" />
+    <Compile Include="Network\Messages\LoginFailedMessage.cs" />
+    <Compile Include="Network\Messages\LoginSuccessMessage.cs" />
+    <Compile Include="Network\Messages\OwnHomeDataMessage.cs" />
+    <Compile Include="Network\MessageToken.cs" />
+    <Compile Include="Network\StreamEntrySuppressAttribute.cs" />
+    <Compile Include="TokenUtils.cs" />
+    <Compile Include="InternalUtils.cs" />
+    <Compile Include="Network\Cryptography\CoCCrypto.cs" />
+    <Compile Include="Network\InvalidMessageException.cs" />
+    <Compile Include="Network\Message.cs" />
+    <Compile Include="Network\MessageBufferManager.cs" />
+    <Compile Include="Network\MessageException.cs" />
+    <Compile Include="Network\MessageFactory.cs" />
+    <Compile Include="Network\MessageFactorySuppressAttribute.cs" />
+    <Compile Include="Network\MessageReader.cs" />
+    <Compile Include="Network\MessageReceivedEventArgs.cs" />
+    <Compile Include="Network\Messages\EncryptionMessage.cs" />
+    <Compile Include="Network\Messages\KeepAliveRequestMessage.cs" />
+    <Compile Include="Network\Messages\KeepAliveResponseMessage.cs" />
+    <Compile Include="Network\Messages\LoginRequestMessage.cs" />
+    <Compile Include="Network\Messages\HandshakeRequestMessage.cs" />
+    <Compile Include="Network\Messages\HandshakeSuccessMessage.cs" />
+    <Compile Include="Network\Messages\UnknownMessage.cs" />
+    <Compile Include="Network\MessageWriter.cs" />
+    <Compile Include="Network\NetworkManagerAsync.cs" />
+    <Compile Include="Network\NetworkManagerAsyncSettings.cs" />
+    <Compile Include="Network\NetworkManagerAsyncStatistics.cs" />
+    <Compile Include="Network\SocketAsyncEventArgsPool.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Logic\Village.Json.cs" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>mono ../../../PostBuild/bin/Debug/PostBuild.exe $(OutDir)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
