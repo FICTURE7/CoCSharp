@@ -74,6 +74,10 @@
     <Compile Include="Csv\Compression\Compress\RangeCoder\RangeCoderBitTree.cs" />
     <Compile Include="Csv\Compression\ICoder.cs" />
     <Compile Include="Csv\CsvAttributeHelper.cs" />
+    <Compile Include="Csv\CsvDataColumn.cs" />
+    <Compile Include="Csv\CsvDataColumn{T}.cs" />
+    <Compile Include="Csv\CsvDataColumnCollection.cs" />
+    <Compile Include="Csv\CsvDataColumnCollection{T}.cs" />
     <Compile Include="Csv\CsvDataRow.cs" />
     <Compile Include="Csv\CsvDataRowDebugView.cs" />
     <Compile Include="Csv\CsvDataRow{T}.cs" />

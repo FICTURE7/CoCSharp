@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Csv\CsvConvertTests.cs" />
+    <Compile Include="Csv\CsvDataRowCollectionTests.cs" />
     <Compile Include="Csv\CsvDataRowRefTests.cs" />
     <Compile Include="Csv\CsvDataRowTests.cs" />
     <Compile Include="Csv\CsvDataTableTests.cs" />

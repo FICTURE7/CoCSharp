@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace CoCSharp.Csv
 {
     /// <summary>
-    /// Represents a Clash of Clans .csv file.
+    /// Represents Clash of Clans data deserialized from .csv file.
     /// </summary>
     public abstract class CsvData
     {
@@ -26,6 +26,7 @@ namespace CoCSharp.Csv
         #endregion
 
         #region Fields & Properties
+        internal CsvDataRowRef _ref;
         // Max data ID of the type.
         private readonly int _minId;
         // Min data ID of the type.
@@ -34,35 +35,16 @@ namespace CoCSharp.Csv
         [CsvIgnore]
         internal abstract int KindID { get; }
 
-        internal CsvDataRowRef _ref;
         [CsvIgnore]
-        public CsvDataRowRef RowRef
-        {
-            get
-            {
-                return _ref;
-            }
-        }
+        public CsvDataRowRef RowRef => _ref;
 
-        public int ID
-        {
-            get
-            {
-                return _ref.ID;
-            }
-        }
+        [CsvIgnore]
+        public int ID => _ref == null ? -1 : _ref.ID;
         #endregion
 
         #region Methods
-        private string _argsOutOfRangeMessage;
         // Returns a proper ArgumentOutOfRangeException.Message for the specified parameter name.
-        internal string GetArgsOutOfRangeMessage(string paramName)
-        {
-            if (_argsOutOfRangeMessage == null)
-                _argsOutOfRangeMessage = " must be between " + _minId + " and " + _maxId + ".";
-
-            return paramName + _argsOutOfRangeMessage;
-        }
+        internal string GetArgsOutOfRangeMessage(string paramName) => paramName + " must be between " + _minId + " and " + _maxId + ".";
 
         // Returns an instance of the specified type.
         // To prevent extra creation of objects.
@@ -79,25 +61,8 @@ namespace CoCSharp.Csv
             return (TCsvData)instance;
         }
 
-        private static CsvData GetInstance(Type type)
-        {
-            if (type.IsAbstract || type.BaseType != typeof(CsvData))
-                throw new Exception();
-
-            var instance = (CsvData)null;
-            if (!s_instances.TryGetValue(type, out instance))
-            {
-                instance = (CsvData)Activator.CreateInstance(type);
-                s_instances.Add(type, instance);
-            }
-
-            return instance;
-        }
-
         internal static int GetKindID(Type type)
         {
-            Debug.Assert(type.IsAbstract || type.BaseType != typeof(CsvData));
-
             var instance = (CsvData)null;
             if (!s_instances.TryGetValue(type, out instance))
             {

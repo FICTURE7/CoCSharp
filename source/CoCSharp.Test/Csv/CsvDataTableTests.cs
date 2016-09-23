@@ -1,15 +1,13 @@
 ﻿using CoCSharp.Csv;
 using CoCSharp.Data.Models;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace CoCSharp.Test.Csv
 {
     [TestFixture]
     public class CsvDataTableTests
     {
-        private CsvDataTable<BuildingData> _table;
+        private CsvDataTable _table;
 
         [SetUp]
         public void SetUp()
@@ -18,84 +16,23 @@ namespace CoCSharp.Test.Csv
         }
 
         [Test]
-        public void KindID_Is_Same_As_CsvData_GenericArgs_KindID()
+        public void Rows_And_Column_Are_GenericTypes()
         {
-            Assert.AreEqual(1, _table.KindID);
+            var castedTable = (CsvDataTable<BuildingData>)_table;
+            Assert.IsAssignableFrom(typeof(CsvDataColumnCollection<BuildingData>), castedTable.Columns);
+            Assert.IsAssignableFrom(typeof(CsvDataRowCollection<BuildingData>), castedTable.Rows);
         }
 
         [Test]
-        public void IndexerGetter_Using_Column_Index()
+        public void NewRow_Table_Name_Set()
         {
-            var data = new CsvDataRow<BuildingData>("Test Collection");
-            _table.Add(data);
+            var row = _table.NewRow("test");
 
-            var retData = _table[0];
-
-            Assert.AreEqual(1, _table.Count);
-            Assert.AreEqual(0, data._ref.ColumnIndex);
-            Assert.AreSame(data, retData);
-        }
-
-        [Test]
-        public void IndexerGetter_Using_Column_Name()
-        {
-            var data = new CsvDataRow<BuildingData>("Test Collection");
-            _table.Add(data);
-
-            var retData = _table["Test Collection"];
-
-            Assert.AreEqual(1, _table.Count);
-            Assert.AreEqual(0, data._ref.ColumnIndex);
-            Assert.AreSame(data, retData);
-        }
-
-        [Test]
-        public void IndexerGetter_Using_Column_Names_MultipleItems_In_Collection()
-        {
-            var dataList = new List<CsvDataRow<BuildingData>>();
-
-            for (int i = 0; i < 50; i++)
-            {
-                var data = new CsvDataRow<BuildingData>("Test Collection " + i);
-                dataList.Add(data);
-                _table.Add(data);
-            }
-
-            Assert.AreEqual(50, _table.Count);
-
-            for (int i = 0; i < 50; i++)
-            {
-                var data = dataList[i];
-                var retData = _table["Test Collection " + i];
-
-                Assert.AreEqual(data._ref.ColumnIndex, i);
-                Assert.AreSame(data, retData);
-            }
-        }
-
-        [Test]
-        public void Add_Item_Null_Exception()
-        {
-            Assert.Throws<ArgumentNullException>(() => _table.Add(null));
-        }
-
-        [Test]
-        public void Add_Item_With_Same_Name_Exists_Exception()
-        {
-            _table.Add(new CsvDataRow<BuildingData>("Already Exists"));
-
-            Assert.AreEqual(1, _table.Count);
-            Assert.Throws<ArgumentException>(() => _table.Add(new CsvDataRow<BuildingData>("Already Exists")));
-        }
-
-        [Test]
-        public void Add_Item_Valid_CountIncreases_columnIndexChanges()
-        {
-            var data = new CsvDataRow<BuildingData>("Tests");
-            _table.Add(data);
-
-            Assert.AreEqual(0, data._ref.ColumnIndex);
-            Assert.AreEqual(1, _table.Count);
+            var actualTable = row.Table;
+            var actualName = row.Name;
+             
+            Assert.AreSame(_table, actualTable);
+            Assert.AreEqual("test", actualName);
         }
     }
 }

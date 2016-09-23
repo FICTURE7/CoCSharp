@@ -94,7 +94,11 @@ namespace CoCSharp.Csv
         /// <returns><see cref="CsvDataTable{TCsvData}"/> for the specified type; returns null if not loaded.</returns>
         public CsvDataTable<T> GetTable<T>() where T : CsvData, new()
         {
-            return (CsvDataTable<T>)GetTable(typeof(T));
+            var kindId = CsvData.GetKindID(typeof(T));
+            var table = _tables[kindId];
+            var castedTable = table as CsvDataTable<T>;
+            Debug.Assert(castedTable != null, "KindID associated with type failed to cast.");
+            return castedTable;
         }
 
         /// <summary>
@@ -113,16 +117,6 @@ namespace CoCSharp.Csv
 
             var kindId = CsvData.GetKindID(type);
             return _tables[kindId];
-        }
-
-        private static int GetRowIndex(int id)
-        {
-            return id / InternalConstants.IDBase;
-        }
-
-        private static int GetColumnIndex(int id, int rowIndex)
-        {
-            return id - (rowIndex * InternalConstants.IDBase);
         }
 
         private void AddInternal(CsvDataTable item)

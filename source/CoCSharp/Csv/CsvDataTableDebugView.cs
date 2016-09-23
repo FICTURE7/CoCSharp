@@ -5,17 +5,17 @@ namespace CoCSharp.Csv
 {
     internal sealed class CsvDataTableDebugView
     {
-        public CsvDataTableDebugView(CsvDataTable row)
+        public CsvDataTableDebugView(CsvDataTable table)
         {
-            if (row == null)
-                throw new ArgumentNullException(nameof(row));
+            if (table == null)
+                throw new ArgumentNullException(nameof(table));
 
-            _row = row;
+            _table = table;
         }
 
-        private readonly CsvDataTable _row;
+        private readonly CsvDataTable _table;
 
         [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-        public object[] Columns => _row.GetAllColumns();
+        public object[] Rows => _table.GetAllColumns();
     }
 }

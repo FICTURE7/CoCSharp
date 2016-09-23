@@ -20,19 +20,6 @@ namespace CoCSharp.Csv
         private static readonly Hashtable s_defaultValueCache;
         private static readonly ObjectMapper s_mapper;
 
-        /// <summary>
-        /// Deserializes the specified <see cref="CsvTable"/> into a <see cref="CsvDataTable{TCsvData}"/> with type as generic
-        /// argument.
-        /// </summary>
-        /// <param name="table"><see cref="CsvTable"/> to deserialize.</param>
-        /// <param name="type">Type of <see cref="CsvData"/> to deserialize.</param>
-        /// <returns>
-        /// Deserialized <see cref="CsvDataTable{TCsvData}"/> with <paramref name="type"/> as generic argument.
-        /// </returns>
-        /// 
-        /// <exception cref="ArgumentNullException"><paramref name="table"/> is null.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="type"/> does not inherit from <see cref="CsvData"/> or is an abstract class.</exception>
         public static CsvDataTable Deserialize(CsvTable table, Type type)
         {
             if (table == null)
@@ -43,10 +30,10 @@ namespace CoCSharp.Csv
                 throw new ArgumentException("type must be inherited from CsvData type and non-abstract.");
 
             // Instance of the CsvDataTable<type> we're going to return.
-            var dataRow = CsvDataTable.CreateInstance(type);
+            var dataTable = CsvDataTable.CreateInternal(type);
             // Instance of the CsvDataRow<type> we're going to add to dataTable at the beginning
             // of a new parent.
-            var dataCollection = (CsvDataRow)null;
+            var dataRow = (CsvDataRow)null;
             // Map of all properties of the specified Type T.
             var propertyMap = s_mapper.MapProperties(type, table);
 
@@ -171,8 +158,8 @@ namespace CoCSharp.Csv
                     isParent = property.PropertyName == "Name" && value != DBNull.Value;
                     if (isParent)
                     {
-                        dataCollection = CsvDataRow.CreateInstance(type, (string)parameters[0]);
-                        dataRow.ProxyAdd(dataCollection);
+                        dataRow = CsvDataRow.CreateInternal(type, null, (string)parameters[0]);
+                        //dataTable.ProxyAdd(dataRow);
 
                         // Child object is now the parent object.
                         parentObj = childObj;
@@ -180,12 +167,12 @@ namespace CoCSharp.Csv
                         parentCache.Clear();
                     }
                 }
-                dataCollection.ProxyAdd(childObj);
+                //dataRow.ProxyAdd(childObj);
             }
 
             //Console.WriteLine(getterCalls);
             //Console.WriteLine(setterCalls);
-            return dataRow;
+            return dataTable;
         }
     }
 }

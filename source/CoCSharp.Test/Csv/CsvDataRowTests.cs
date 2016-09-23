@@ -7,12 +7,14 @@ namespace CoCSharp.Test.Csv
     [TestFixture]
     public class CsvDataRowTests
     {
-        private CsvDataRow<BuildingData> _data;
+        private CsvDataTable<BuildingData> _table;
+        private CsvDataRow<BuildingData> _row;
 
         [SetUp]
         public void SetUp()
         {
-            _data = new CsvDataRow<BuildingData>("Test Collection");
+            _table = new CsvDataTable<BuildingData>();
+            _row = new CsvDataRow<BuildingData>(_table, "Test Collection");
         }
     }
 }
