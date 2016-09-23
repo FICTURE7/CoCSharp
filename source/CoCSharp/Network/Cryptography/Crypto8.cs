@@ -5,7 +5,7 @@ namespace CoCSharp.Network.Cryptography
 {
     /// <summary>
     /// Implements method to encrypt or decrypt network traffic of the Clash of Clan protocol
-    /// version 8.x.x. This was based of of clugh's work(https://github.com/clugh/cocdp/wiki/Protocol) and
+    /// version 8.x.x. This was based of clugh's work(https://github.com/clugh/cocdp/wiki/Protocol) and
     /// (https://github.com/clugh/coc-proxy-csharp). :]
     /// </summary>
     public class Crypto8 : CoCCrypto
