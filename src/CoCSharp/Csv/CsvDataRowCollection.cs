@@ -25,9 +25,11 @@ namespace CoCSharp.Csv
 
         #region Fields & Properties
         private readonly CsvDataTable _table;
-        internal CsvDataTable Table => _table;
 
         bool ICollection<CsvDataRow>.IsReadOnly => false;
+
+        // Table which contains this collection.
+        internal CsvDataTable Table => _table;
 
         /// <summary>
         /// 
@@ -39,11 +41,11 @@ namespace CoCSharp.Csv
             get
             {
                 if (index < 0)
-                    throw new IndexOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(index));
                 if (index > Count - 1)
-                    throw new IndexOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(index));
 
-                return GetAtIndex(index);
+                return GetByIndex(index);
             }
         }
 
@@ -59,7 +61,7 @@ namespace CoCSharp.Csv
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
-                return GetFromName(name);
+                return GetByName(name);
             }
         }
 
@@ -117,9 +119,11 @@ namespace CoCSharp.Csv
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        internal abstract CsvDataRow GetAtIndex(int index);
+        // Needed to get the indexer working.
+        internal abstract CsvDataRow GetByIndex(int index);
 
-        internal abstract CsvDataRow GetFromName(string name);
+        // Needed to get the indexer working.
+        internal abstract CsvDataRow GetByName(string name);
 
         internal static CsvDataRowCollection CreateInternal(Type csvDataType, CsvDataTable table)
         {

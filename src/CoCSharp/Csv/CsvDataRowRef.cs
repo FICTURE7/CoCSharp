@@ -24,6 +24,11 @@ namespace CoCSharp.Csv
             _columnIndex = id - (_rowIndex * InternalConstants.IDBase);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rowIndex"></param>
+        /// <param name="columnIndex"></param>
         public CsvDataRowRef(int rowIndex, int columnIndex)
         {
             if (rowIndex < 0 || columnIndex < 0)
@@ -32,45 +37,28 @@ namespace CoCSharp.Csv
                 throw new ArgumentOutOfRangeException("columnIndex", "columnIndex must be less or equal to CsvDataRow.MaxWidth.");
 
             _rowIndex = rowIndex;
-            _columnIndex = ColumnIndex;
+            _columnIndex = columnIndex;
             _id = rowIndex * InternalConstants.IDBase + columnIndex;
         }
 
         private readonly int _id;
+        private readonly int _rowIndex;
+        private readonly int _columnIndex;
+  
         /// <summary>
         /// Gets the ID of the <see cref="CsvDataRowRef"/> class.
         /// </summary>
-        public int ID
-        {
-            get
-            {
-                return _id;
-            }
-        }
+        public int ID => _id;
 
-        private readonly int _rowIndex;
         /// <summary>
         /// Gets the row index of the <see cref="CsvDataRowRef"/> class.
         /// </summary>
-        public int RowIndex
-        {
-            get
-            {
-                return _rowIndex;
-            }
-        }
+        public int RowIndex => _rowIndex;
 
-        private readonly int _columnIndex;
         /// <summary>
         /// Gets the column index of the <see cref="CsvDataRowRef"/> class.
         /// </summary>
-        public int ColumnIndex
-        {
-            get
-            {
-                return _columnIndex;
-            }
-        }
+        public int ColumnIndex => _columnIndex;
 
         /// <summary>
         /// Returns the <see cref="CsvDataRow"/> which this <see cref="CsvDataRowRef"/> is pointing to

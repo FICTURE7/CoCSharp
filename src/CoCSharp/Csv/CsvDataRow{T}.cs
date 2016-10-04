@@ -30,6 +30,11 @@ namespace CoCSharp.Csv
         // List containing the TCsvData in the row.
         private readonly List<TCsvData> _data;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
         public new TCsvData this[int columnIndex]
         {
             get
@@ -38,6 +43,9 @@ namespace CoCSharp.Csv
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public override CsvDataRowRef Ref => _ref;
         #endregion
 

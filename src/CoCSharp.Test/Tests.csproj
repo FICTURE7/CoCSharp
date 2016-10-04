@@ -51,6 +51,7 @@
     <Compile Include="Csv\CsvDataRowTests.cs" />
     <Compile Include="Csv\CsvDataTableTests.cs" />
     <Compile Include="Csv\CsvDataTableCollectionTests.cs" />
+    <Compile Include="Csv\TestData.cs" />
     <Compile Include="Data\AssetDownloaderTests.cs" />
     <Compile Include="Csv\CsvTableTests.cs" />
     <Compile Include="Data\AssetManagerTests.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace CoCSharp.Csv
 {
@@ -10,13 +11,16 @@ namespace CoCSharp.Csv
     /// </summary>
     public abstract class CsvDataColumnCollection : ICollection<CsvDataColumn>
     {
-        internal CsvDataColumnCollection(Type csvDataType)
+        internal CsvDataColumnCollection(Type csvDataType, CsvDataTable table)
         {
-            // Space
+            _table = table;
         }
 
         #region Fields & Properties
+        private readonly CsvDataTable _table;
+
         bool ICollection<CsvDataColumn>.IsReadOnly => false;
+        internal CsvDataTable Table => _table;
 
         /// <summary>
         /// Gets the number of <see cref="CsvDataColumn"/> in the <see cref="CsvDataColumnCollection"/>.
@@ -67,10 +71,12 @@ namespace CoCSharp.Csv
 
         // Creates a new instance of the generic CsvDataColumnCollection<> with 'type' as the generic
         // parameter and returns it.
-        internal static CsvDataColumnCollection CreateInternal(Type type)
+        internal static CsvDataColumnCollection CreateInternal(Type type, CsvDataTable table)
         {
+            const BindingFlags BINDING_FLAGS = BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic;
+
             var ntype = typeof(CsvDataColumnCollection<>).MakeGenericType(type);
-            return (CsvDataColumnCollection)Activator.CreateInstance(ntype, true);
+            return (CsvDataColumnCollection)Activator.CreateInstance(ntype, bindingAttr: BINDING_FLAGS, args: new object[] { table }, binder: null, culture: null);
         }
         #endregion
     }

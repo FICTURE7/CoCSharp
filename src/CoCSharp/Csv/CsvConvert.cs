@@ -159,7 +159,7 @@ namespace CoCSharp.Csv
                     if (isParent)
                     {
                         dataRow = CsvDataRow.CreateInternal(type, null, (string)parameters[0]);
-                        //dataTable.ProxyAdd(dataRow);
+                        dataTable.Rows.Add(dataRow);
 
                         // Child object is now the parent object.
                         parentObj = childObj;
@@ -167,7 +167,8 @@ namespace CoCSharp.Csv
                         parentCache.Clear();
                     }
                 }
-                //dataRow.ProxyAdd(childObj);
+
+                dataRow[dataTable.Columns.Count] = childObj;
             }
 
             //Console.WriteLine(getterCalls);

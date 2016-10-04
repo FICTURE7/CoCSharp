@@ -7,7 +7,6 @@ namespace CoCSharp.Csv
     /// Represents a table of <see cref="CsvData"/>.
     /// Base class of the <see cref="CsvDataTable{TCsvData}"/> class.
     /// </summary>
-    [DebuggerTypeProxy(typeof(CsvDataTableDebugView))]
     public abstract class CsvDataTable
     {
         #region Constants
@@ -28,15 +27,18 @@ namespace CoCSharp.Csv
             _csvDataType = csvDataType;
             _kindId = CsvData.GetKindID(csvDataType);
             // Creates an instance of CsvDataColumnCollection<csvDataType>.
-            _columns = CsvDataColumnCollection.CreateInternal(csvDataType);
+            _columns = CsvDataColumnCollection.CreateInternal(csvDataType, this);
             // Creates an instance of CsvDataRowCollection<csvDataType>.
             _rows = CsvDataRowCollection.CreateInternal(csvDataType, this);
         }
         #endregion
 
         #region Fields & Properties
+        // Type of TCsvData.
         private readonly Type _csvDataType;
+        // Collection of CsvDataColumn.
         private readonly CsvDataColumnCollection _columns;
+        // Collection of CsvDataRow<TCsvData>.
         private readonly CsvDataRowCollection _rows;
         // KindID of the type of CsvData the CsvDataTable is storing.
         // Aka the index at which the table is in CsvDataTableCollection.
@@ -81,21 +83,6 @@ namespace CoCSharp.Csv
         {
             var ntype = typeof(CsvDataTable<>).MakeGenericType(type);
             return (CsvDataTable)Activator.CreateInstance(ntype);
-        }
-
-        public static CsvDataTable Create(Type csvDataType)
-        {
-            if (csvDataType == null)
-                throw new ArgumentNullException(nameof(csvDataType));
-            if (csvDataType.IsAbstract || !typeof(CsvData).IsAssignableFrom(csvDataType))
-                throw new ArgumentException("Specified type must be non-abstract and assignable from type of CsvData.", nameof(csvDataType));
-
-            return CreateInternal(csvDataType);
-        }
-
-        public static CsvDataTable<TCsvData> Create<TCsvData>() where TCsvData : CsvData, new()
-        {
-            return new CsvDataTable<TCsvData>();
         }
         #endregion
     }

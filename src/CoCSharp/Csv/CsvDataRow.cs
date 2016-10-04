@@ -26,7 +26,9 @@ namespace CoCSharp.Csv
         #endregion
 
         #region Fields & Properties
+        // Name of the CsvDataRow.
         private readonly string _name;
+        // Table to which this CsvDataRow belongs.
         private readonly CsvDataTable _table;
 
         /// <summary>
@@ -54,6 +56,11 @@ namespace CoCSharp.Csv
             get
             {
                 return null;
+            }
+            set
+            {
+                // TODO: Implement.
+                throw new NotImplementedException();
             }
         }
 
