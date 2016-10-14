@@ -13,18 +13,6 @@ namespace CoCSharp.Server
     {
         public static CoCProxy Proxy { get; set; }
 
-        public static void m()
-        {
-            var file = File.ReadAllBytes("kekdump");
-            using (var reader = new MessageReader(new MemoryStream(file)))
-            {
-                var msg = new OwnHomeDataMessage();
-                msg.ReadMessage(reader);
-
-                var k = reader.BaseStream.Position == reader.BaseStream.Length;
-            }
-        }
-
         public static void Main(string[] args)
         {
             Console.Title = "CoC# - Proxy";
