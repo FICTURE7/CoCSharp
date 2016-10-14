@@ -30,8 +30,8 @@ namespace CoCSharp.Test.Csv
         [Test]
         public void Deserialize_ReturnType()
         {
-            var row = CsvConvert.Deserialize(_table, typeof(BuildingData));
-            Assert.IsInstanceOf<CsvDataTable<BuildingData>>(row);
+            var table = CsvConvert.Deserialize(_table, typeof(BuildingData));
+            Assert.IsInstanceOf<CsvDataTable<BuildingData>>(table);
         }
 
         private class TestType

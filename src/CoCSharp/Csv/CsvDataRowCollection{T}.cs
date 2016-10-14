@@ -13,6 +13,9 @@ namespace CoCSharp.Csv
         #region Constructors
         internal CsvDataRowCollection(CsvDataTable<TCsvData> table) : base(typeof(TCsvData), table)
         {
+            if (table == null)
+                throw new ArgumentNullException(nameof(table));
+
             _rows = new List<CsvDataRow<TCsvData>>(48);
             _name2index = new Dictionary<string, int>(48);
         }
@@ -34,9 +37,9 @@ namespace CoCSharp.Csv
             get
             {
                 if (index < 0)
-                    throw new IndexOutOfRangeException();
-                if (index > Count - 1)
-                    throw new IndexOutOfRangeException();
+                    throw new ArgumentOutOfRangeException();
+                if (index >= Count)
+                    throw new ArgumentOutOfRangeException();
 
                 return _rows[index];
             }
@@ -54,7 +57,7 @@ namespace CoCSharp.Csv
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
-                return (CsvDataRow<TCsvData>)GetByName(name);
+                return (CsvDataRow<TCsvData>)GetRowByName(name);
             }
         }
 
@@ -72,12 +75,7 @@ namespace CoCSharp.Csv
         /// <exception cref="ArgumentNullException"><paramref name="row"/> is null.</exception>
         public override void Add(CsvDataRow row)
         {
-            if (row == null)
-                throw new ArgumentNullException(nameof(row));
-            if (row.Table != Table)
-                throw new ArgumentException("Row belongs to another table.", nameof(row));
-            if (row.Ref != null)
-                throw new ArgumentException("Row already belongs to this table.", nameof(row));
+            CheckRow(row);
 
             var nrow = TryCastCsvDataRow(row);
             InternalInsert(nrow, Count);
@@ -90,12 +88,7 @@ namespace CoCSharp.Csv
         /// <exception cref="ArgumentNullException"><paramref name="row"/> is null.</exception>
         public void Add(CsvDataRow<TCsvData> row)
         {
-            if (row == null)
-                throw new ArgumentNullException(nameof(row));
-            if (row.Table != Table)
-                throw new ArgumentException("Row belongs to another table.", nameof(row));
-            if (row.Ref != null)
-                throw new ArgumentException("Row already belongs to this table.", nameof(row));
+            CheckRow(row);
 
             InternalInsert(row, Count);
         }
@@ -108,15 +101,10 @@ namespace CoCSharp.Csv
         /// <exception cref="ArgumentNullException"><paramref name="row"/> is null.</exception>
         public override bool Remove(CsvDataRow row)
         {
-            if (row == null)
-                throw new ArgumentNullException(nameof(row));
-            if (row.Table != Table)
-                throw new ArgumentException("Row belongs to another table.", nameof(row));
-            if (row.Ref != null)
-                throw new ArgumentException("Row already belongs to this table.", nameof(row));
+            CheckRow(row);
 
             var nrow = TryCastCsvDataRow(row);
-            return _rows.Remove(nrow);
+            return InternalRemove(nrow);
         }
 
         /// <summary>
@@ -127,14 +115,22 @@ namespace CoCSharp.Csv
         /// <exception cref="ArgumentNullException"><paramref name="row"/> is null.</exception>
         public bool Remove(CsvDataRow<TCsvData> row)
         {
-            if (row == null)
-                throw new ArgumentNullException(nameof(row));
-            if (row.Table != Table)
-                throw new ArgumentException("Row belongs to another table.", nameof(row));
-            if (row.Ref != null)
-                throw new ArgumentException("Row already belongs to this table.", nameof(row));
+            CheckRow(row);
 
-            return _rows.Remove(row);
+            return InternalRemove(row);
+        }
+
+        private bool InternalRemove(CsvDataRow<TCsvData> row)
+        {
+            var index = _rows.IndexOf(row);
+            if (index == -1)
+                return false;
+            _rows.RemoveAt(index);
+            row._table = null;
+            row._ref = null;
+            for (; index < _rows.Count; index++)
+                _rows[index]._ref = new CsvDataRowRef<TCsvData>(Table.KindID, index);
+            return true;
         }
 
         /// <summary>
@@ -224,12 +220,8 @@ namespace CoCSharp.Csv
         /// <param name="index"></param>
         public override void InsertAt(CsvDataRow row, int index)
         {
-            if (row == null)
-                throw new ArgumentNullException(nameof(row));
-            if (row.Table != Table)
-                throw new ArgumentException("Row belongs to another table.", nameof(row));
-            if (row.Ref != null)
-                throw new ArgumentException("Row already belongs to this table.", nameof(row));
+            CheckRow(row);
+
             if (index < 0 || index > Count)
                 throw new ArgumentOutOfRangeException("Index must be non-negative and less or equal the number of item in the collection.", nameof(index));
 
@@ -244,12 +236,8 @@ namespace CoCSharp.Csv
         /// <param name="index"></param>
         public void InsertAt(CsvDataRow<TCsvData> row, int index)
         {
-            if (row == null)
-                throw new ArgumentNullException(nameof(row));
-            if (row.Table != Table)
-                throw new ArgumentException("Row belongs to another table.", nameof(row));
-            if (row.Ref != null)
-                throw new ArgumentException("Row already belongs to this table.", nameof(row));
+            CheckRow(row);
+
             if (index < 0 || index > Count)
                 throw new ArgumentOutOfRangeException("Index must be non-negative and less or equal the number of item in the collection.", nameof(index));
 
@@ -260,6 +248,7 @@ namespace CoCSharp.Csv
         {
             Debug.Assert(row.Name != null);
             // Add the row name to the dictionary which maps row names to row indexes.
+            // And ignore rows with name having duplicates.
             if (!_name2index.ContainsKey(row.Name))
                 _name2index.Add(row.Name, index);
 
@@ -269,6 +258,16 @@ namespace CoCSharp.Csv
             // Update the Ref of CsvDataRow after the index where the insert occurred.
             for (; index < _rows.Count; index++)
                 _rows[index]._ref = new CsvDataRowRef<TCsvData>(Table.KindID, index);
+        }
+
+        private void CheckRow(CsvDataRow row)
+        {
+            if (row == null)
+                throw new ArgumentNullException(nameof(row));
+            if (row.Table != Table)
+                throw new ArgumentException("Row belongs to another table.", nameof(row));
+            if (row.Ref != null)
+                throw new ArgumentException("Row already belongs to this table.", nameof(row));
         }
 
         /// <summary>
@@ -283,9 +282,9 @@ namespace CoCSharp.Csv
 
         IEnumerator<CsvDataRow<TCsvData>> IEnumerable<CsvDataRow<TCsvData>>.GetEnumerator() => (IEnumerator<CsvDataRow<TCsvData>>)GetEnumerator();
 
-        internal override CsvDataRow GetByIndex(int index) => _rows[index];
+        internal override CsvDataRow GetRowByIndex(int index) => _rows[index];
 
-        internal override CsvDataRow GetByName(string name)
+        internal override CsvDataRow GetRowByName(string name)
         {
             var index = 0;
             if (_name2index.TryGetValue(name, out index))

@@ -54,7 +54,7 @@ namespace CoCSharp.Test.Csv
 
             var rowRef = row.Ref;
             Assert.NotNull(rowRef);
-            Assert.AreEqual(0, rowRef.ColumnIndex);
+            Assert.AreEqual(0, rowRef.RowIndex);
             Assert.AreEqual(row.ID, rowRef.ID);
         }
 
@@ -78,7 +78,7 @@ namespace CoCSharp.Test.Csv
                 var rowRef = _rows[i].Ref;
 
                 Assert.NotNull(rowRef);
-                Assert.AreEqual(i, rowRef.ColumnIndex);
+                Assert.AreEqual(i, rowRef.RowIndex);
             }
         }
 

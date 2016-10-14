@@ -1,6 +1,6 @@
 ﻿using CoCSharp.Csv;
-using CoCSharp.Data.Models;
 using NUnit.Framework;
+using System;
 
 namespace CoCSharp.Test.Csv
 {
@@ -13,21 +13,45 @@ namespace CoCSharp.Test.Csv
         [SetUp]
         public void SetUp()
         {
-            _table = new CsvDataTable<BuildingData>();
-            _row = new CsvDataRow<BuildingData>(_table, "Test Collection");
+            _table = new CsvDataTable<TestData>();
+            _row = _table.NewRow("LeRow");
+        }
+
+        [TestCase(0, ExpectedResult = null)]
+        [TestCase(1337, ExpectedResult = null)]
+        [TestCase(int.MaxValue, ExpectedResult = null)]
+        public CsvData Indexer_Getter_Column_AtIndex_DoesNot_Exists_ReturnsNull(int index)
+        {
+            return _row[index];
         }
 
         [Test]
-        public void When_Ref_IsNull_ID_Is_Negative_1()
+        public void Indexer_Setter_Column_DoesNot_Belong_ToTable_Exception()
         {
-            Assert.Null(_row.Ref);
-            Assert.AreEqual(-1, _row.ID);
+            var column = new CsvDataColumn();
+            Assert.Throws<ArgumentException>(() => _row[column] = new TestData());
         }
 
         [Test]
-        public void K()
+        public void Indexer_Getter_Column_Belongs_ToTable_ReturnsValue()
         {
-            var data = _row[0];            
+            var column = new CsvDataColumn();
+            _table.Columns.Add(column);
+
+            Assert.Null(_row[column]);
+        }
+
+        [Test]
+        public void Indexer_Setter_Column_Belongs_ToTable_ValueSet()
+        {
+            var column = new CsvDataColumn();
+            _table.Columns.Add(column);
+
+            var value = new TestData();
+
+            _row[column] = value;
+            Assert.NotNull(_row[column]);
+            Assert.AreSame(value, _row[column]);
         }
     }
 }

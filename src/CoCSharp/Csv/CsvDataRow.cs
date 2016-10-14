@@ -8,7 +8,6 @@ namespace CoCSharp.Csv
     /// Represents a row in the <see cref="CsvDataRowCollection"/>.
     /// Base class of <see cref="CsvDataRow{TCsvData}"/> class. 
     /// </summary>
-    [DebuggerTypeProxy(typeof(CsvDataRowDebugView))]
     [DebuggerDisplay("Name = {Name}")]
     public abstract class CsvDataRow
     {
@@ -29,7 +28,7 @@ namespace CoCSharp.Csv
         // Name of the CsvDataRow.
         private readonly string _name;
         // Table to which this CsvDataRow belongs.
-        private readonly CsvDataTable _table;
+        internal CsvDataTable _table;
 
         /// <summary>
         /// Gets the name of the <see cref="CsvDataRow"/>.
@@ -44,7 +43,15 @@ namespace CoCSharp.Csv
         /// <summary>
         /// Gets the ID of the <see cref="CsvDataRow"/>; returns -1 if not in a <see cref="CsvDataTable"/>.
         /// </summary>
-        public int ID => Ref == null ? -1 : Ref.ID;
+        public int ID
+        {
+            get
+            {
+                Debug.Assert(Ref != null);
+
+                return Ref.ID;
+            }
+        }
 
         /// <summary>
         /// 
@@ -55,14 +62,39 @@ namespace CoCSharp.Csv
         {
             get
             {
-                return null;
+                return GetDataAtColumnIndex(columnIndex);
             }
             set
             {
-                // TODO: Implement.
-                throw new NotImplementedException();
+                SetDataAtColumnIndex(columnIndex, value);
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public CsvData this[CsvDataColumn column]
+        {
+            get
+            {
+                CheckColumn(column);
+
+                return GetDataAtColumnIndex(column.DataLevel);
+            }
+            set
+            {
+                CheckColumn(column);
+
+                SetDataAtColumnIndex(column.DataLevel, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets an array of <see cref="CsvData"/> that are in this <see cref="CsvDataRow"/>.
+        /// </summary>
+        public CsvData[] DataArray => GetDataArray();
 
         /// <summary>
         /// Gets the <see cref="CsvDataRowRef"/> of the <see cref="CsvDataRow"/>.
@@ -71,8 +103,23 @@ namespace CoCSharp.Csv
         #endregion
 
         #region Methods
-        // Needed to get the CsvDataCollectionDebugView to work correctly.
-        internal abstract object[] GetAllData();
+        /// <summary/>
+        protected abstract CsvData GetDataAtColumnIndex(int index);
+
+        /// <summary/>
+        protected abstract void SetDataAtColumnIndex(int index, CsvData data);
+
+        /// <summary/>
+        protected abstract CsvData[] GetDataArray();
+
+        /// <summary/>
+        protected void CheckColumn(CsvDataColumn column)
+        {
+            if (column == null)
+                throw new ArgumentNullException(nameof(column));
+            if (column.Table != Table)
+                throw new ArgumentException("Column is not in the same CsvDataTable.", nameof(column));
+        }
 
         // Returns an instance of the CsvDataRow<> class with the specified type as generic parameter.
         internal static CsvDataRow CreateInternal(Type type, CsvDataTable table, string name)

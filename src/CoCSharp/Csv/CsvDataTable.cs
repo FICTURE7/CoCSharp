@@ -13,7 +13,7 @@ namespace CoCSharp.Csv
         /// <summary>
         /// Value indicating the maximum width of a <see cref="CsvDataTable"/>. This field is constant.
         /// </summary>
-        public const int MaxWidth = 999999;
+        public const int MaxHeight = 999999;
         #endregion
 
         #region Constructors
@@ -26,8 +26,8 @@ namespace CoCSharp.Csv
 
             _csvDataType = csvDataType;
             _kindId = CsvData.GetKindID(csvDataType);
-            // Creates an instance of CsvDataColumnCollection<csvDataType>.
-            _columns = CsvDataColumnCollection.CreateInternal(csvDataType, this);
+            // Creates an instance of CsvDataColumnCollection.
+            _columns = new CsvDataColumnCollection(csvDataType, this);
             // Creates an instance of CsvDataRowCollection<csvDataType>.
             _rows = CsvDataRowCollection.CreateInternal(csvDataType, this);
         }
@@ -41,9 +41,16 @@ namespace CoCSharp.Csv
         // Collection of CsvDataRow<TCsvData>.
         private readonly CsvDataRowCollection _rows;
         // KindID of the type of CsvData the CsvDataTable is storing.
-        // Aka the index at which the table is in CsvDataTableCollection.
         private readonly int _kindId;
 
+        /// <summary>
+        /// Gets the Kind ID of the <see cref="CsvData"/> type stored in this table.
+        /// 
+        /// <para>
+        /// This value will also be the index of where this <see cref="CsvDataTable"/> will be
+        /// in a <see cref="CsvDataTableCollection"/>.
+        /// </para>
+        /// </summary>
         internal int KindID => _kindId;
 
         /// <summary>
@@ -71,12 +78,6 @@ namespace CoCSharp.Csv
             var row = CsvDataRow.CreateInternal(_csvDataType, this, name);
             return row;
         }
-
-        // Needed to get the CsvDataRowDebugView to work correctly.
-        internal abstract object[] GetAllColumns();
-
-        // Needed for the CsvDataCollectionRef to work properly.
-        internal abstract CsvDataRow GetByIndex(int index);
 
         // Returns a new instance of the CsvDataTable<> class with the specified type as generic parameter.
         internal static CsvDataTable CreateInternal(Type type)

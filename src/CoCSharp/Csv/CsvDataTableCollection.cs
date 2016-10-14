@@ -32,7 +32,7 @@ namespace CoCSharp.Csv
         {
             get
             {
-                if (tableIndex < 0 || tableIndex > Count)
+                if (tableIndex < 0)
                     throw new ArgumentOutOfRangeException(nameof(tableIndex), "Index must be non-negative and less than Count.");
 
                 return _tables[tableIndex];

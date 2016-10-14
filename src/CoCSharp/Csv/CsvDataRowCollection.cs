@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace CoCSharp.Csv
@@ -9,6 +10,7 @@ namespace CoCSharp.Csv
     /// Represents a collection of <see cref="CsvDataRow"/>.
     /// Base class of <see cref="CsvDataRowCollection{TCsvData}"/>.
     /// </summary>
+    [DebuggerDisplay("Count = {Count}")]
     public abstract class CsvDataRowCollection : ICollection<CsvDataRow>
     {
         #region Constructors
@@ -45,7 +47,7 @@ namespace CoCSharp.Csv
                 if (index > Count - 1)
                     throw new ArgumentOutOfRangeException(nameof(index));
 
-                return GetByIndex(index);
+                return GetRowByIndex(index);
             }
         }
 
@@ -61,7 +63,7 @@ namespace CoCSharp.Csv
                 if (name == null)
                     throw new ArgumentNullException(nameof(name));
 
-                return GetByName(name);
+                return GetRowByName(name);
             }
         }
 
@@ -120,10 +122,10 @@ namespace CoCSharp.Csv
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         // Needed to get the indexer working.
-        internal abstract CsvDataRow GetByIndex(int index);
+        internal abstract CsvDataRow GetRowByIndex(int index);
 
         // Needed to get the indexer working.
-        internal abstract CsvDataRow GetByName(string name);
+        internal abstract CsvDataRow GetRowByName(string name);
 
         internal static CsvDataRowCollection CreateInternal(Type csvDataType, CsvDataTable table)
         {

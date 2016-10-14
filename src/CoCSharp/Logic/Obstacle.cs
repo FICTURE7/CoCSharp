@@ -359,8 +359,10 @@ namespace CoCSharp.Logic
                 throw new InvalidOperationException("Obstacle JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
 
             // No need to cache the sub-collection the ObstacleData is in, because we can't upgrade Obstacles.
-            //var data = AssetManager.SearchCsvNoCheck<ObstacleData>(dataId, 0);
-            var data = default(ObstacleData);
+            //var data = Assets.Get<CsvDataTable<ObstacleData>>().R
+            var dataRef = new CsvDataRowRef<ObstacleData>(dataId);
+            var data = dataRef.Get(Assets.Get<CsvDataTableCollection>())[0];
+            //var data = default(ObstacleData);
             if (data == null)
                 throw new InvalidOperationException("Could not find ObstacleData with ID '" + dataId + "'.");
 

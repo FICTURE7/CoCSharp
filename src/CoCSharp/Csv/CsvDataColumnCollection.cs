@@ -1,31 +1,63 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Diagnostics;
 
 namespace CoCSharp.Csv
 {
     /// <summary>
     /// Represents a collection of <see cref="CsvDataColumn"/>.
-    /// Base class of <see cref="CsvDataColumnCollection{TCsvData}"/>.
     /// </summary>
-    public abstract class CsvDataColumnCollection : ICollection<CsvDataColumn>
+    [DebuggerDisplay("Count = {Count}")]
+    public class CsvDataColumnCollection : ICollection<CsvDataColumn>
     {
+        #region Constructors
         internal CsvDataColumnCollection(Type csvDataType, CsvDataTable table)
         {
+            if (csvDataType == null)
+                throw new ArgumentNullException(nameof(csvDataType));
+            if (table == null)
+                throw new ArgumentNullException(nameof(table));
+
             _table = table;
+            _columns = new List<CsvDataColumn>(16);
         }
+        #endregion
 
         #region Fields & Properties
         private readonly CsvDataTable _table;
+        private readonly List<CsvDataColumn> _columns;
 
         bool ICollection<CsvDataColumn>.IsReadOnly => false;
+
+        /// <summary>
+        /// Gets the <see cref="CsvDataTable"/> to which this <see cref="CsvDataColumnCollection"/> belongs
+        /// to.
+        /// </summary>
         internal CsvDataTable Table => _table;
 
         /// <summary>
         /// Gets the number of <see cref="CsvDataColumn"/> in the <see cref="CsvDataColumnCollection"/>.
         /// </summary>
-        public abstract int Count { get; }
+        public int Count => _columns.Count;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
+        public CsvDataColumn this[int columnIndex]
+        {
+            get
+            {
+                if (columnIndex < 0)
+                    throw new ArgumentOutOfRangeException(nameof(columnIndex), "Column index must be non-negative.");
+
+                if (columnIndex >= _columns.Count)
+                    return null;
+                return _columns[columnIndex];
+            }
+        }
         #endregion
 
         #region Methods
@@ -33,50 +65,93 @@ namespace CoCSharp.Csv
         /// 
         /// </summary>
         /// <param name="column"></param>
-        public abstract void Add(CsvDataColumn column);
+        public void Add(CsvDataColumn column)
+        {
+            CheckColumn(column);
+
+            InternalInsert(column, _columns.Count);
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        public abstract void Clear();
+        public void Clear()
+        {
+            _columns.Clear();
+        }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="column"></param>
         /// <returns></returns>
-        public abstract bool Contains(CsvDataColumn column);
+        public bool Contains(CsvDataColumn column)
+        {
+            CheckColumn(column);
+
+            return _columns.Contains(column);
+        }
 
         /// <summary>
         /// Copies the entire collection into an existing array, starting at a specified index within the array. 
         /// </summary>
         /// <param name="array">An array of <see cref="CsvDataColumn" /> objects to copy the collection into.></param>
         /// <param name="arrayIndex"></param>
-        public abstract void CopyTo(CsvDataColumn[] array, int arrayIndex);
+        public void CopyTo(CsvDataColumn[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+
+            _columns.CopyTo(array, arrayIndex);
+        }
 
         /// <summary>
         /// Removes the specified <see cref="CsvDataColumn"/> from the collection.
         /// </summary>
         /// <param name="column">The <see cref="CsvDataColumn"/> to remove.</param>
         /// <returns><c>true</c> if success; otherwise; <c>false</c>.</returns>
-        public abstract bool Remove(CsvDataColumn column);
+        public bool Remove(CsvDataColumn column)
+        {
+            CheckColumn(column);
+            var index = _columns.IndexOf(column);
+            if (index == -1)
+                return false;
+
+            column._table = null;
+            column._dataLevel = -1;
+            for (; index < _columns.Count; index++)
+                _columns[index]._dataLevel = index;
+
+            _columns.RemoveAt(index);
+            return true;
+        }
 
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="CsvDataColumnCollection"/>.
         /// </summary>
         /// <returns>An enumerator that iterates through the <see cref="CsvDataColumnCollection"/>.</returns>
-        public abstract IEnumerator<CsvDataColumn> GetEnumerator();
+        public IEnumerator<CsvDataColumn> GetEnumerator()
+        {
+            return _columns.GetEnumerator();
+        }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        // Creates a new instance of the generic CsvDataColumnCollection<> with 'type' as the generic
-        // parameter and returns it.
-        internal static CsvDataColumnCollection CreateInternal(Type type, CsvDataTable table)
+        private void InternalInsert(CsvDataColumn column, int index)
         {
-            const BindingFlags BINDING_FLAGS = BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic;
+            _columns.Insert(index, column);
+            column._dataLevel = index;
+            column._table = Table;
+            for (; index < _columns.Count; index++)
+                _columns[index]._dataLevel = index;
+        }
 
-            var ntype = typeof(CsvDataColumnCollection<>).MakeGenericType(type);
-            return (CsvDataColumnCollection)Activator.CreateInstance(ntype, bindingAttr: BINDING_FLAGS, args: new object[] { table }, binder: null, culture: null);
+        private void CheckColumn(CsvDataColumn column)
+        {
+            if (column == null)
+                throw new ArgumentNullException(nameof(column));
+            if (column.Table != null)
+                throw new ArgumentException("Column already belongs to a table.", nameof(column));
         }
         #endregion
     }

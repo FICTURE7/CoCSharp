@@ -6,9 +6,10 @@ namespace CoCSharp.Csv
     /// <summary>
     /// Represents a reference to a <see cref="CsvDataRow"/>.
     /// </summary>
-    [DebuggerDisplay("ID = {ID}, Column = {ColumnIndex}, Row = {RowIndex}")]
+    [DebuggerDisplay("ID = {ID}")]
     public class CsvDataRowRef
     {
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvDataRowRef"/> class with the specified ID.
         /// </summary>
@@ -20,65 +21,70 @@ namespace CoCSharp.Csv
                 throw new ArgumentOutOfRangeException("id", "id must be non-negative and greater or equal to 1000000.");
 
             _id = id;
-            _rowIndex = id / InternalConstants.IDBase;
-            _columnIndex = id - (_rowIndex * InternalConstants.IDBase);
+            _tableIndex = id / InternalConstants.IDBase;
+            _rowIndex = id - (_tableIndex * InternalConstants.IDBase);
         }
 
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="tableIndex"></param>
         /// <param name="rowIndex"></param>
-        /// <param name="columnIndex"></param>
-        public CsvDataRowRef(int rowIndex, int columnIndex)
+        public CsvDataRowRef(int tableIndex, int rowIndex)
         {
-            if (rowIndex < 0 || columnIndex < 0)
-                throw new ArgumentOutOfRangeException("rowIndex, columnIndex", "rowIndex and columnIndex must be non-negative.");
-            if (columnIndex > CsvDataTable.MaxWidth)
-                throw new ArgumentOutOfRangeException("columnIndex", "columnIndex must be less or equal to CsvDataRow.MaxWidth.");
+            if (tableIndex < 0 || rowIndex < 0)
+                throw new ArgumentOutOfRangeException(null, "rowIndex and columnIndex must be non-negative.");
+            if (rowIndex > CsvDataTable.MaxHeight)
+                throw new ArgumentOutOfRangeException(nameof(rowIndex), "columnIndex must be less or equal to CsvDataRow.MaxHeight.");
 
+            _tableIndex = tableIndex;
             _rowIndex = rowIndex;
-            _columnIndex = columnIndex;
-            _id = rowIndex * InternalConstants.IDBase + columnIndex;
+            _id = (tableIndex * InternalConstants.IDBase) + rowIndex;
         }
+        #endregion
 
+        #region Fields & Properties
         private readonly int _id;
+        private readonly int _tableIndex;
         private readonly int _rowIndex;
-        private readonly int _columnIndex;
-  
+
         /// <summary>
         /// Gets the ID of the <see cref="CsvDataRowRef"/> class.
         /// </summary>
         public int ID => _id;
 
         /// <summary>
+        /// Gets the table index of the <see cref="CsvDataRowRef"/> class.
+        /// </summary>
+        public int TableIndex => _tableIndex;
+
+        /// <summary>
         /// Gets the row index of the <see cref="CsvDataRowRef"/> class.
         /// </summary>
         public int RowIndex => _rowIndex;
+        #endregion
 
-        /// <summary>
-        /// Gets the column index of the <see cref="CsvDataRowRef"/> class.
-        /// </summary>
-        public int ColumnIndex => _columnIndex;
-
+        #region Methods
         /// <summary>
         /// Returns the <see cref="CsvDataRow"/> which this <see cref="CsvDataRowRef"/> is pointing to
         /// from the specified <see cref="CsvDataTableCollection"/>.
         /// </summary>
-        /// <param name="table"><see cref="CsvDataTableCollection"/> from which to retrieve the <see cref="CsvDataRow"/>.</param>
+        /// <param name="tableCollection"><see cref="CsvDataTableCollection"/> from which to retrieve the <see cref="CsvDataRow"/>.</param>
         /// <returns>
         /// Returns the instance of <see cref="CsvDataRow"/> which this <see cref="CsvDataRowRef"/> is pointing to.
         /// If not found, null will be returned.
         /// </returns>
-        public CsvDataRow Get(CsvDataTableCollection table)
+        public CsvDataRow Get(CsvDataTableCollection tableCollection)
         {
-            if (table == null)
-                throw new ArgumentNullException("table");
+            if (tableCollection == null)
+                throw new ArgumentNullException(nameof(tableCollection));
 
-            var row = table[RowIndex];
-            if (row == null)
+            var table = tableCollection[TableIndex];
+            if (table == null)
                 return null;
-            return row.GetByIndex(ColumnIndex);
+            return table.Rows[RowIndex];
         }
+        #endregion
     }
 
     /// <summary>
@@ -87,19 +93,37 @@ namespace CoCSharp.Csv
     /// <typeparam name="TCsvData">Type of <see cref="CsvData"/>.</typeparam>
     public class CsvDataRowRef<TCsvData> : CsvDataRowRef where TCsvData : CsvData, new()
     {
+        #region Constructors
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
         public CsvDataRowRef(int id) : base(id)
         {
             // Space
         }
 
-        public CsvDataRowRef(int rowIndex, int columnIndex) : base(rowIndex, columnIndex)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableIndex"></param>
+        /// <param name="rowIndex"></param>
+        public CsvDataRowRef(int tableIndex, int rowIndex) : base(tableIndex, rowIndex)
         {
             // Space
         }
+        #endregion
 
-        public CsvDataRow<TCsvData> Get(CsvDataTableCollection table)
+        #region Methods
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public new CsvDataRow<TCsvData> Get(CsvDataTableCollection table)
         {
             return (CsvDataRow<TCsvData>)base.Get(table);
         }
+        #endregion
     }
 }

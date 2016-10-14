@@ -99,8 +99,8 @@ namespace CoCSharp.Server
         {
             var resourcesData = Home.AssetManager.Get<CsvDataTable<ResourceData>>();
 
-            var gold = resourcesData["Gold"].ID;
-            var elixir = resourcesData["Elixir"].ID;
+            var gold = resourcesData.Rows["Gold"].ID;
+            var elixir = resourcesData.Rows["Elixir"].ID;
 
             NpcStars = Server.NpcManager.CompleteNpcStarList;
             ResourcesAmount.Add(new ResourceAmountSlot(gold, Server.Configuration.StartingGold));

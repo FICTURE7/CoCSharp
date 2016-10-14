@@ -42,6 +42,7 @@ namespace CoCSharp.Csv
             var parentObj = (object)null;
             // Hashtable of property name and parameters(property values).
             var parentCache = new Hashtable();
+            var dataLevel = -1;
 
             //var getterCalls = 0;
             //var setterCalls = 0;
@@ -52,7 +53,6 @@ namespace CoCSharp.Csv
                 var childObj = (CsvData)Activator.CreateInstance(type);
                 var curRow = rows[i];
                 var isParent = false;
-
                 // Set Properties value loop.
                 for (int j = 0; j < propertyMap.Length; j++)
                 {
@@ -158,9 +158,11 @@ namespace CoCSharp.Csv
                     isParent = property.PropertyName == "Name" && value != DBNull.Value;
                     if (isParent)
                     {
-                        dataRow = CsvDataRow.CreateInternal(type, null, (string)parameters[0]);
+                        //dataRow = CsvDataRow.CreateInternal(type, dataTable, (string)parameters[0]);
+                        dataRow = dataTable.NewRow((string)parameters[0]);
                         dataTable.Rows.Add(dataRow);
 
+                        dataLevel = -1;
                         // Child object is now the parent object.
                         parentObj = childObj;
                         // Reset cache when we hit a new parent.
@@ -168,7 +170,10 @@ namespace CoCSharp.Csv
                     }
                 }
 
-                dataRow[dataTable.Columns.Count] = childObj;
+                if (++dataLevel >= dataTable.Columns.Count)
+                    dataTable.Columns.Add(new CsvDataColumn());
+
+                dataRow[dataLevel] = childObj;
             }
 
             //Console.WriteLine(getterCalls);
