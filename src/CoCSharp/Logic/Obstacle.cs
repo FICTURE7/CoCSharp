@@ -279,7 +279,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            //writer.WriteValue(Data._OldID);
+            writer.WriteValue(Data.ID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);

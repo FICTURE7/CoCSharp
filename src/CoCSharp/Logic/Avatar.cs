@@ -540,7 +540,7 @@ namespace CoCSharp.Logic
                 {
                     OwnVillageData = villageData,
                     OwnAvatarData = avatarData,
-                    Unknown4 = 1462629754000,
+                    Unkonwn4 = 1462629754000,
                     Unknown5 = 1462629754000,
                     Unknown6 = 1462631554000,
                 };

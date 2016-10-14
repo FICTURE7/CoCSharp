@@ -299,6 +299,14 @@ namespace CoCSharp.Network.Messages
         /// Unknown integer 28.
         /// </summary>
         public int Unknown28;
+        /// <summary>
+        /// Unknown integer 29.
+        /// </summary>
+        public int Unknown29;
+        /// <summary>
+        /// Unknown byte 30.
+        /// </summary>
+        public byte Unknown30;
 
         /// <summary>
         /// Resources capacity.
@@ -381,6 +389,24 @@ namespace CoCSharp.Network.Messages
         /// Unknown slot 4.
         /// </summary>
         public SlotCollection<UnknownSlot> UnknownSlot4;
+
+        /// <summary>
+        /// Unknown integer 31.
+        /// </summary>
+        public int Unknown31;
+        /// <summary>
+        /// Unknown integer 32.
+        /// </summary>
+        public int Unknown32;
+        /// <summary>
+        /// Unknown integer 33.
+        /// </summary>
+        public int Unknown33;
+
+        /// <summary>
+        /// Unknown slot 5;
+        /// </summary>
+        public SlotCollection<UnitSlot> UnknownSlot5;
         #endregion
 
         #region Methods
@@ -466,6 +492,10 @@ namespace CoCSharp.Network.Messages
             Unknown27 = reader.ReadInt32(); // 0 = 8.x.x
             Unknown28 = reader.ReadInt32(); // 0 = 8.x.x
 
+            // 8.511.4
+            Unknown29 = reader.ReadInt32();
+            Unknown30 = reader.ReadByte();
+
             ResourcesCapacity = reader.Read<ResourceCapacitySlot>();
             ResourcesAmount = reader.Read<ResourceAmountSlot>();
             Units = reader.Read<UnitSlot>();
@@ -487,6 +517,14 @@ namespace CoCSharp.Network.Messages
             UnknownSlot2 = reader.Read<UnknownSlot>();
             UnknownSlot3 = reader.Read<UnknownSlot>();
             UnknownSlot4 = reader.Read<UnknownSlot>();
+
+            // 8.551.4
+            // Those might be resource lists as well.
+            Unknown31 = reader.ReadInt32();
+            Unknown32 = reader.ReadInt32();
+            Unknown33 = reader.ReadInt32();
+
+            UnknownSlot5 = reader.Read<UnitSlot>();
         }
 
         /// <summary>
@@ -570,6 +608,10 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown27); // 1 = 8.x.x
             writer.Write(Unknown28); // 0 = 8.x.x
 
+            // 8.551.4
+            writer.Write(Unknown29); 
+            writer.Write(Unknown30);
+
             writer.Write(ResourcesCapacity);
             writer.Write(ResourcesAmount);
             writer.Write(Units);
@@ -591,6 +633,12 @@ namespace CoCSharp.Network.Messages
             writer.Write(UnknownSlot2);
             writer.Write(UnknownSlot3);
             writer.Write(UnknownSlot4);
+
+            writer.Write(Unknown31);
+            writer.Write(Unknown32);
+            writer.Write(Unknown33);
+
+            writer.Write(UnknownSlot5);
         }
         #endregion
     }

@@ -35,10 +35,10 @@ namespace CoCSharp.Network.Messages
 
             //GuardDuration = 1800;
             //Unknown3 = 69119;
-            Unknown4 = 1200;
+            //Unknown4 = 1200;
             
 
-            Unknown5 = 60;
+            //Unknown5 = 60;
             Home = avatar.Home;
         }
 
@@ -64,14 +64,6 @@ namespace CoCSharp.Network.Messages
         /// Unknown integer 3.
         /// </summary>
         public int Unknown3; // 69119 = 8.x.x seems to change
-        /// <summary>
-        /// Unknown integer 4.
-        /// </summary>
-        public int Unknown4; // 1200
-        /// <summary>
-        /// Unknown integer 5.
-        /// </summary>
-        public int Unknown5; // 60
 
         /// <summary>
         /// Village of the avatar.
@@ -97,8 +89,6 @@ namespace CoCSharp.Network.Messages
 
             GuardDuration = TimeSpan.FromSeconds(reader.ReadInt32()); // 1800 = 8.x.x
             Unknown3 = reader.ReadInt32(); // 69119 = 8.x.x seems to change, might be a TimeSpan.
-            Unknown4 = reader.ReadInt32(); // 1200
-            Unknown5 = reader.ReadInt32(); // 60
 
             if (reader.ReadBoolean())
             {
@@ -115,7 +105,7 @@ namespace CoCSharp.Network.Messages
                         var decompressedLength = br.ReadInt32();
                         var compressedHome = br.ReadBytes(homeData.Length - 4); // -4 to remove the decompressedLength bytes read.
                         var homeJson = ZlibStream.UncompressString(compressedHome);
-                        Home = Village.FromJson(homeJson);
+                        //Home = Village.FromJson(homeJson);
                     }
                 }
             }
@@ -139,8 +129,6 @@ namespace CoCSharp.Network.Messages
 
             writer.Write((int)GuardDuration.TotalSeconds); // 1800 = 8.x.x
             writer.Write(Unknown3); // 69119 = 8.x.x seems to change, might be a TimeSpan.
-            writer.Write(Unknown4); // 1200
-            writer.Write(Unknown5); // 60
 
             if (Home != null)
             {

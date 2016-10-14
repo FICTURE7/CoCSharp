@@ -17,7 +17,7 @@ namespace CoCSharp.Server
             var crypto = new Crypto8(MessageDirection.Server);
             // Configure Crypto with Supercell's public key.
             // This is step 6. according to clugh's Protocol wiki page.
-            crypto.UpdateSharedKey(Crypto8.SupercellPublicKey);
+            //crypto.UpdateSharedKey(Crypto8.SupercellPublicKey);
 
             // Client connection is initiated with standard keys because we are acting as the server.
             ClientConnection = new NetworkManagerAsync(client, settings);
@@ -110,12 +110,12 @@ namespace CoCSharp.Server
             if (e.Exception != null)
                 Console.WriteLine("        => Warning: Exception occurred during reading: {0}", e.Exception.Message);
 
-
             var message = e.Message;
             var messageBytes = (byte[])null;
             if (message is HandshakeSuccessMessage)
             {
                 messageBytes = e.PacketBytes;
+                ServerConnection.Crypto.UpdateSharedKey(Crypto8.SupercellPublicKey);
             }
             else if (message is LoginSuccessMessage)
             {

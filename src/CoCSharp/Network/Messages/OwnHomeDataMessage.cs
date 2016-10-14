@@ -54,15 +54,15 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int Unknown3;
         /// <summary>
-        /// Unknown long 4.
+        /// Unknown long 8.
         /// </summary>
-        public long Unknown4;
+        public long Unkonwn4;
         /// <summary>
-        /// Unknown long 5.
+        /// Unknown long 9.
         /// </summary>
         public long Unknown5;
         /// <summary>
-        /// Unknown long 6.
+        /// Unknown long 10.
         /// </summary>
         public long Unknown6;
 
@@ -89,7 +89,8 @@ namespace CoCSharp.Network.Messages
 
             Unknown2 = reader.ReadInt32();
             Unknown3 = reader.ReadInt32();
-            Unknown4 = reader.ReadInt64(); // 1462629754000
+
+            Unkonwn4 = reader.ReadInt64(); // 1462629754000
             Unknown5 = reader.ReadInt64(); // 1462629754000
             Unknown6 = reader.ReadInt64(); // 1462631554000
         }
@@ -122,7 +123,8 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown2);
             writer.Write(Unknown3);
-            writer.Write(Unknown4); // 1462629754000
+
+            writer.Write(Unkonwn4); // 1462629754000
             writer.Write(Unknown5); // 1462629754000
             writer.Write(Unknown6); // 1462631554000
         }
