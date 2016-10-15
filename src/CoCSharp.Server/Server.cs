@@ -66,9 +66,11 @@ namespace CoCSharp.Server
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("-> Loading {0}...", path);
             Console.ResetColor();
+
             AssetManager.Load<CsvDataTable<T>>(path);
+
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine(" DONE");
+            Console.WriteLine(" done");
             Console.ResetColor();
         }
 
@@ -100,9 +102,9 @@ namespace CoCSharp.Server
         public void RegisterMessageHandler(Message message, MessageHandler handler)
         {
             if (message == null)
-                throw new ArgumentNullException("message");
+                throw new ArgumentNullException(nameof(message));
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
             if (MessageHandlerDictionary.ContainsKey(message.ID))
                 throw new ArgumentException("Already contain handler for message '" + message.ID + "'.", "message");
 
@@ -113,9 +115,9 @@ namespace CoCSharp.Server
         public void RegisterCommandHandler(Command command, CommandHandler handler)
         {
             if (command == null)
-                throw new ArgumentNullException("message");
+                throw new ArgumentNullException(nameof(command));
             if (handler == null)
-                throw new ArgumentNullException("handler");
+                throw new ArgumentNullException(nameof(handler));
             if (CommandHandlerDictionary.ContainsKey(command.ID))
                 throw new ArgumentException("Already contain handler for message '" + command.ID + "'.", "message");
 

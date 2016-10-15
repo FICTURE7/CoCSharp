@@ -74,7 +74,7 @@ namespace CoCSharp.Csv
         /// <summary>
         /// Gets an array of <typeparamref name="TCsvData"/> that are in this <see cref="CsvDataRow{TCsvData}"/>.
         /// </summary>
-        public new TCsvData[] DataArray => _data;
+        public new TCsvData[] DataArray => GetResizedDataArray();
 
         /// <summary>
         /// 
@@ -102,30 +102,47 @@ namespace CoCSharp.Csv
                 throw new ArgumentNullException(nameof(data));
             if (index < 0)
                 throw new ArgumentOutOfRangeException(nameof(index), "Index must be non-negative");
-
-            var tdata = (TCsvData)data;
-            if (Table.Columns.Count > _data.Length)
-                Array.Resize(ref _data, Table.Columns.Count);
-
-            if (index >= _data.Length)
-            {
+            if (index >= Table.Columns.Count)
                 throw new InvalidOperationException("Table does not contain the specified column.");
-                //var count = index - _data.Count;
-                //for (int i = 0; i < count; i++)
-                //    _data.Add(default(TCsvData));
 
-                //_data.Add(tdata);
+            if (data != null)
+            {
+                var tdata = (TCsvData)data;
+                // Resize the _data array to be size of the number of columns in the table.
+                if (Table.Columns.Count > _data.Length)
+                    Array.Resize(ref _data, Table.Columns.Count);
+
+                tdata._ref = Ref;
+                _data[index] = tdata;
             }
             else
             {
-                _data[index] = tdata;
+                var tdata = _data[index];
+                tdata._ref = null;
             }
         }
 
         /// <summary/>
-        protected override CsvData[] GetDataArray()
+        protected override CsvData[] GetDataArray() => Array.ConvertAll(GetResizedDataArray(), (element) => (CsvData)element);
+
+        private TCsvData[] GetResizedDataArray()
         {
-            return Array.ConvertAll(_data, (input) => (CsvData)input);
+            Debug.Assert(_data.Length <= Table.Columns.Count, "Row width was larger than number of columns.");
+
+            if (_data.Length < Table.Columns.Count)
+                Array.Resize(ref _data, Table.Columns.Count);
+
+            return _data;
+        }
+
+        internal void UpdateRefs()
+        {
+            for (int i = 0; i < _data.Length; i++)
+            {
+                var tdata = _data[i];
+                if (tdata != null)
+                    tdata._ref = Ref;
+            }
         }
         #endregion
     }

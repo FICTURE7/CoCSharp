@@ -104,10 +104,6 @@ namespace CoCSharp.Server
             {
                 Log.Exception("unable to disconnect client", ex);
             }
-            finally
-            {
-                Home = null;
-            }
         }
 
         internal void UpdateKeepAlive()

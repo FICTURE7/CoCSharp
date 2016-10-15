@@ -11,6 +11,7 @@ namespace CoCSharp.Csv
     [DebuggerDisplay("Count = {Count}")]
     public class CsvDataTableCollection : ICollection<CsvDataTable>
     {
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="CsvDataTableCollection"/> class.
         /// </summary>
@@ -18,11 +19,13 @@ namespace CoCSharp.Csv
         {
             _tables = new CsvDataTable[32];
         }
+        #endregion
 
         #region Fields & Properties
-        bool ICollection<CsvDataTable>.IsReadOnly { get { return false; } }
-
         private CsvDataTable[] _tables;
+
+        bool ICollection<CsvDataTable>.IsReadOnly => false;
+
         /// <summary>
         /// Gets the <see cref="CsvDataTable"/> at the specified table index.
         /// </summary>
@@ -48,6 +51,10 @@ namespace CoCSharp.Csv
 
         #region Methods
         #region ICollection
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
         public void Add(CsvDataTable table)
         {
             if (table == null)
@@ -56,34 +63,63 @@ namespace CoCSharp.Csv
             AddInternal(table);
         }
 
-        bool ICollection<CsvDataTable>.Remove(CsvDataTable item)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        public bool Remove(CsvDataTable table)
         {
-            throw new NotImplementedException();
+            if (table == null)
+                throw new ArgumentNullException(nameof(table));
+
+            return RemoveInternal(table);
         }
 
-        void ICollection<CsvDataTable>.Clear()
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Clear()
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < _tables.Length; i++)
+                _tables[i] = null;
         }
 
-        bool ICollection<CsvDataTable>.Contains(CsvDataTable item)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public bool Contains(CsvDataTable table)
         {
-            throw new NotImplementedException();
+            if (table == null)
+                throw new ArgumentNullException(nameof(table));
+
+            return ContainsInternal(table);
         }
 
-        void ICollection<CsvDataTable>.CopyTo(CsvDataTable[] array, int arrayIndex)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="arrayIndex"></param>
+        public void CopyTo(CsvDataTable[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            _tables.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<CsvDataTable> GetEnumerator()
+        {
+            for (int i = 0; i < _tables.Length; i++)
+                if (_tables[i] != null) yield return _tables[i];
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator<CsvDataTable> IEnumerable<CsvDataTable>.GetEnumerator()
-        {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
         #endregion
 
@@ -119,21 +155,38 @@ namespace CoCSharp.Csv
             return _tables[kindId];
         }
 
-        private void AddInternal(CsvDataTable item)
+        private void AddInternal(CsvDataTable table)
         {
-            var index = item.KindID;
-            var arrayLength = _tables.Length - 1;
-            if (index > arrayLength)
+            var index = table.KindID;
+            // Resize the array to avoid exceptions.
+            if (index >= _tables.Length)
                 Array.Resize(ref _tables, index + 4);
 
-            _tables[index] = item;
+            if (_tables[index] != null)
+                throw new ArgumentException("Already contain a table of same type.", nameof(table));
+
+            _tables[index] = table;
             _count++;
         }
 
-        private bool RemoveInternal(int kindId)
+        private bool RemoveInternal(CsvDataTable table)
         {
-            var index = kindId;
-            if (index > _tables.Length - 1)
+            var index = table.KindID;
+            if (!ContainsInternal(table))
+                return false;
+
+            _tables[index] = null;
+            _count--;
+            return true;
+        }
+
+        private bool ContainsInternal(CsvDataTable table)
+        {
+            var index = table.KindID;
+            if (index >= _tables.Length)
+                return false;
+
+            if (_tables[index] == null)
                 return false;
 
             return true;

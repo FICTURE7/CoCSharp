@@ -43,30 +43,18 @@ namespace CoCSharp.Data
         /// </summary>
         public static AssetManager Default { get; set; }
 
+        private int _thId;
+        private readonly string _assetPath;
         // Dictionary of AssetLoaders that will load assets of the specified type.
         private readonly Dictionary<Type, AssetProvider> _providers;
 
-        private readonly string _assetPath;
         /// <summary>
         /// Gets the path pointing to the asset directory.
         /// </summary>
-        public string AssetPath
-        {
-            get
-            {
-                return _assetPath;
-            }
-        }
+        public string AssetPath => _assetPath;
 
-        private int _thId;
         [Obsolete]
-        internal int TownHallID
-        {
-            get
-            {
-                return _thId;
-            }
-        }
+        internal int TownHallID => _thId;
         #endregion
 
         #region Methods
@@ -122,18 +110,12 @@ namespace CoCSharp.Data
         /// <typeparam name="TAsset">Type of asset to return.</typeparam>
         /// <returns><typeparamref name="TAsset"/> that was loaded.</returns>
         /// 
-        /// <exception cref="InvalidOperationException">Type of <typeparamref name="TAsset"/> is not loaded.</exception>
         /// <exception cref="InvalidOperationException">Unknown asset type.</exception>
         public TAsset Get<TAsset>()
         {
-            //if (!IsLoaded<T>())
-            //    throw new InvalidOperationException("Asset is not loaded.");
             var type = typeof(TAsset);
             var provider = GetProvider(type);
             var asset = provider.GetAsset(type);
-            if (asset == null)
-                throw new InvalidOperationException("Asset is not loaded.");
-
             return (TAsset)asset;
         }
 

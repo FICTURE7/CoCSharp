@@ -86,8 +86,8 @@ namespace CoCSharp.Network.Messages
 
             HomeID = reader.ReadInt64();
             ShieldDuration = TimeSpan.FromSeconds(reader.ReadInt32());
-
             GuardDuration = TimeSpan.FromSeconds(reader.ReadInt32()); // 1800 = 8.x.x
+
             Unknown3 = reader.ReadInt32(); // 69119 = 8.x.x seems to change, might be a TimeSpan.
 
             if (reader.ReadBoolean())
@@ -105,7 +105,7 @@ namespace CoCSharp.Network.Messages
                         var decompressedLength = br.ReadInt32();
                         var compressedHome = br.ReadBytes(homeData.Length - 4); // -4 to remove the decompressedLength bytes read.
                         var homeJson = ZlibStream.UncompressString(compressedHome);
-                        //Home = Village.FromJson(homeJson);
+                        Home = Village.FromJson(homeJson);
                     }
                 }
             }
@@ -126,8 +126,8 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(HomeID);
             writer.Write((int)ShieldDuration.TotalSeconds);
-
             writer.Write((int)GuardDuration.TotalSeconds); // 1800 = 8.x.x
+
             writer.Write(Unknown3); // 69119 = 8.x.x seems to change, might be a TimeSpan.
 
             if (Home != null)
@@ -145,6 +145,10 @@ namespace CoCSharp.Network.Messages
                     bw.Write(compressedHomeJson);
                     writer.Write(mem.ToArray(), true);
                 }
+            }
+            else
+            {
+                writer.Write(false);
             }
         }
     }

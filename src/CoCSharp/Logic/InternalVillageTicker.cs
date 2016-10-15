@@ -6,9 +6,9 @@ namespace CoCSharp.Logic
 {
     // Class where all the ticking on Villages are done.
     // Aka the game loop.
-    internal static class VillageTicker
+    internal static class InternalVillageTicker
     {
-        static VillageTicker()
+        static InternalVillageTicker()
         {
             s_sync = new object();
             s_villages = new List<Village>();

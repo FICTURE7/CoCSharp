@@ -18,6 +18,7 @@
 
         #region Fields & Properties
         private readonly CsvDataRowCollection<TCsvData> _rows;
+
         /// <summary>
         /// Gets the <see cref="CsvDataRowCollection{TCsvData}"/> associated with this <see cref="CsvDataTable{TCsvData}"/>.
         /// </summary>

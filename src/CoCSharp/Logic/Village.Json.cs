@@ -78,10 +78,10 @@ namespace CoCSharp.Logic
         public static Village FromJson(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
 
             if (AssetManager.Default == null)
-                throw new InvalidOperationException("DefaultInstance of AssetManager cannot be null.");
+                throw new InvalidOperationException("Default instance of AssetManager cannot be null.");
 
             return FromJson(value, AssetManager.Default);
         }
@@ -113,19 +113,9 @@ namespace CoCSharp.Logic
         public static Village FromJson(string value, AssetManager manager)
         {
             if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             if (manager == null)
-                throw new ArgumentNullException("manager");
-
-            // Make sure the AssetManager provided has loaded all the required CsvData.
-            //if (!manager.IsCsvLoaded<BuildingData>())
-            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(BuildingData) + "'.", "manager");
-            //if (!manager.IsCsvLoaded<ObstacleData>())
-            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(ObstacleData) + "'.", "manager");
-            //if (!manager.IsCsvLoaded<TrapData>())
-            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(TrapData) + "'.", "manager");
-            //if (!manager.IsCsvLoaded<DecorationData>())
-            //    throw new ArgumentException("manager did not load CsvData of type '" + typeof(DecorationData) + "'.", "manager");
+                throw new ArgumentNullException(nameof(manager));
 
             // Set register to false -> 
             // Don't register the Village to the VillageTicker until we have loaded every
@@ -171,7 +161,7 @@ namespace CoCSharp.Logic
             village.Tick++;
 
             // Now that we have loaded the VillageObjects we can start ticking.
-            VillageTicker.Register(village);
+            //InternalVillageTicker.Register(village);
             return village;
         }
 

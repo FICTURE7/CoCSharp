@@ -60,25 +60,6 @@ namespace CoCSharp.Server
             if (avatar == null)
                 return false;
 
-            // Set the UserToken of buildings to this instance.
-            //foreach (var building in avatar.Home.Buildings)
-            //{
-            //    building.UserToken = this;
-            //    building.ConstructionFinished += CommandHandlers.BuildingConstructionFinished;
-            //}
-
-            //foreach (var trap in avatar.Home.Traps)
-            //{
-            //    trap.UserToken = this;
-            //    trap.ConstructionFinished += CommandHandlers.TrapConstructionFinished;
-            //}
-
-            //foreach (var obstacle in avatar.Home.Obstacles)
-            //{
-            //    obstacle.UserToken = this;
-            //    obstacle.ClearingFinished += CommandHandlers.ObstacleClearingFinished;
-            //}
-
             avatar.Home.Logic += CommandHandlers.DoLogic;
             SetFromAvatar(avatar, newAvatar);
             if (!newAvatar)

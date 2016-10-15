@@ -144,12 +144,9 @@ namespace CoCSharp.Logic
 
         internal override void Tick(int tick)
         {
-            // Ticks the Buildable{T} parent to update construction stuff.
-            base.Tick(tick);
-
             // Determines if the current VillageObject is a TownHall building based on Data.TID
             // and set the townhall of the Village to this VillageObject. 
-            if (CollectionCache.ID == Assets.TownHallID)
+            if (CollectionCache.Name == "Town Hall")
             {
                 // A Village cannot contain more than 1 townhall.
                 if (Village.TownHall != this && Village.TownHall != null)
@@ -157,6 +154,9 @@ namespace CoCSharp.Logic
 
                 Village._townhall = this;
             }
+
+            // Ticks the Buildable{T} parent to update construction stuff.
+            base.Tick(tick);
         }
 
         #region Json Reading/Writing

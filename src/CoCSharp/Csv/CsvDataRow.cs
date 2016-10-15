@@ -8,7 +8,7 @@ namespace CoCSharp.Csv
     /// Represents a row in the <see cref="CsvDataRowCollection"/>.
     /// Base class of <see cref="CsvDataRow{TCsvData}"/> class. 
     /// </summary>
-    [DebuggerDisplay("Name = {Name}")]
+    [DebuggerDisplay("RowName = {Name}")]
     public abstract class CsvDataRow
     {
         #region Constructors

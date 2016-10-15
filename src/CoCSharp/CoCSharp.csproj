@@ -108,7 +108,6 @@
     <Compile Include="Logic\Components\ResourceStorageComponent.cs" />
     <Compile Include="Logic\Components\UnitProductionComponent.cs" />
     <Compile Include="Logic\Components\UnitStorageComponent.cs" />
-    <Compile Include="Logic\InsufficientResourcesException.cs" />
     <Compile Include="Logic\LogicComponent.cs" />
     <Compile Include="Logic\LogicComponentPool.cs" />
     <Compile Include="Logic\LogicEventArgs.cs" />
@@ -119,7 +118,7 @@
     <Compile Include="Logic\VillageObjectCollection.cs" />
     <Compile Include="Logic\VillageObjectPool.cs" />
     <Compile Include="Logic\VillageObject{T}.cs" />
-    <Compile Include="Logic\VillageTicker.cs" />
+    <Compile Include="Logic\InternalVillageTicker.cs" />
     <Compile Include="Network\DisconnectedEventArgs.cs" />
     <Compile Include="Network\Messages\AllianceChangeRoleOkMessage.cs" />
     <Compile Include="Network\Messages\AllianceDataRequestMessage.cs" />

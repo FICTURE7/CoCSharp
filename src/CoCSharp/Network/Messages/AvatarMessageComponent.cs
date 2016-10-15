@@ -50,18 +50,18 @@ namespace CoCSharp.Network.Messages
                 };
             }
 
-            LegenderyTrophy = 99;
-            BestSeasonEnabled = 1;
-            BestSeasonMonth = 1;
-            BestSeasonYear = 1999;
-            BestSeasonTrophies = 99;
-            BestSeasonPosition = 1;
+            //LegenderyTrophy = 99;
+            //BestSeasonEnabled = 1;
+            //BestSeasonMonth = 1;
+            //BestSeasonYear = 1999;
+            //BestSeasonTrophies = 99;
+            //BestSeasonPosition = 1;
             LeagueLevel = avatar.League;
             TownHallLevel = avatar.Home.TownHall.Level;
             Name = avatar.Name;
 
             //Unknown13 = -1;
-            Unknown14 = -1;
+            //Unknown14 = -1;
             Unknown15 = -1;
 
             Experience = avatar.Experience;
@@ -74,13 +74,15 @@ namespace CoCSharp.Network.Messages
 
             Trophies = avatar.Trophies;
 
-            Unknown21 = 1;
-            Unknown22 = 946720861000;
+            //Unknown21 = 1;
+            //Unknown22 = 946720861000;
+            Unknown22 = 4294967516;
+            Unknown23 = -169129983;
 
             IsNamed = avatar.IsNamed;
 
             Unknown26 = 1;
-            //Unknown27 = 1;
+            Unknown27 = 1;
 
             ResourcesAmount = avatar.ResourcesAmount;
             Units = avatar.Units;

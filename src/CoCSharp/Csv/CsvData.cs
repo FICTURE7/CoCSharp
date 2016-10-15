@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace CoCSharp.Csv
 {
@@ -35,9 +34,15 @@ namespace CoCSharp.Csv
         [CsvIgnore]
         internal abstract int KindID { get; }
 
+        /// <summary>
+        /// Gets the <see cref="CsvDataRowRef"/> which references 
+        /// </summary>
         [CsvIgnore]
         public CsvDataRowRef RowRef => _ref;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [CsvIgnore]
         public int ID => _ref == null ? -1 : _ref.ID;
         #endregion

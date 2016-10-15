@@ -125,11 +125,17 @@ namespace CoCSharp.Csv
             var index = _rows.IndexOf(row);
             if (index == -1)
                 return false;
+
             _rows.RemoveAt(index);
             row._table = null;
             row._ref = null;
+            row.UpdateRefs();
+
             for (; index < _rows.Count; index++)
+            {
                 _rows[index]._ref = new CsvDataRowRef<TCsvData>(Table.KindID, index);
+                _rows[index].UpdateRefs();
+            }
             return true;
         }
 
@@ -257,7 +263,10 @@ namespace CoCSharp.Csv
 
             // Update the Ref of CsvDataRow after the index where the insert occurred.
             for (; index < _rows.Count; index++)
+            {
                 _rows[index]._ref = new CsvDataRowRef<TCsvData>(Table.KindID, index);
+                _rows[index].UpdateRefs();
+            }
         }
 
         private void CheckRow(CsvDataRow row)

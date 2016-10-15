@@ -1,13 +1,9 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using LiteDB;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 
 namespace CoCSharp.Server.Core
 {
@@ -54,7 +50,12 @@ namespace CoCSharp.Server.Core
             (
                 serialize: (village) =>
                 {
-                    return village.ToJson();
+                    var json = village.ToJson();
+                    if (string.IsNullOrEmpty(json))
+                    {
+
+                    }
+                    return json;
                 },
                 deserialize: (bson) =>
                 {

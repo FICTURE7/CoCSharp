@@ -53,8 +53,8 @@ namespace CoCSharp.Logic
             _villageObjects = new VillageObjectCollection();
             _logger = new VillageLogger();
 
-            if (register)
-                VillageTicker.Register(this);
+            //if (register)
+            //    InternalVillageTicker.Register(this);
         }
         #endregion
 
@@ -62,34 +62,24 @@ namespace CoCSharp.Logic
         private bool _disposed;
         // Unix timestamp at which the village was registered to the ticker.
         internal int _registeredTime;
-
+        internal int _tick;
+        internal Building _townhall;
+        private readonly AssetManager _assetManager;
+        private readonly VillageObjectCollection _villageObjects;
         // VillageLogger which will log logic stuff happening.
         private readonly VillageLogger _logger;
-        internal VillageLogger Logger
-        {
-            get
-            {
-                return _logger;
-            }
-        }
+        internal VillageLogger Logger => _logger;
 
         /// <summary>
         /// The event raised when a logic action has taken place.
         /// </summary>
         public event EventHandler<LogicEventArgs> Logic;
 
-        private readonly AssetManager _assetManager;
         /// <summary>
         /// Gets the <see cref="AssetManager"/> from which data will be
         /// used.
         /// </summary>
-        public AssetManager AssetManager
-        {
-            get
-            {
-                return _assetManager;
-            }
-        }
+        public AssetManager AssetManager => _assetManager;
 
         /// <summary>
         /// Gets or sets the experience version? (Not completely sure if thats its full name).
@@ -102,7 +92,6 @@ namespace CoCSharp.Logic
         /// </remarks>
         public int ExperienceVersion { get; set; }
 
-        internal int _tick;
         /// <summary>
         /// Gets the current tick the <see cref="Village"/> is in.
         /// </summary>
@@ -118,64 +107,31 @@ namespace CoCSharp.Logic
             }
         }
 
-        private readonly VillageObjectCollection _villageObjects;
         /// <summary>
         /// Gets the <see cref="VillageObjectCollection"/> which contains all the <see cref="VillageObject"/> in
         /// this <see cref="Village"/>.
         /// </summary>
-        public VillageObjectCollection VillageObjects
-        {
-            get
-            {
-                return _villageObjects;
-            }
-        }
+        public VillageObjectCollection VillageObjects => _villageObjects;
 
         /// <summary>
         /// Gets an enumerator that iterates through the <see cref="Building"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Building> Buildings
-        {
-            get
-            {
-                return _villageObjects.GetRow(Building.Kind).Select(k => (Building)k);
-            }
-        }
-
+        public IEnumerable<Building> Buildings => _villageObjects.GetRow(Building.Kind).Select(k => (Building)k);
         /// <summary>
         /// Gets an enumerator that iterates through the <see cref="Obstacle"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Obstacle> Obstacles
-        {
-            get
-            {
-                return _villageObjects.GetRow(Obstacle.Kind).Select(k => (Obstacle)k);
-            }
-        }
+        public IEnumerable<Obstacle> Obstacles => _villageObjects.GetRow(Obstacle.Kind).Select(k => (Obstacle)k);
 
         /// <summary>
         /// Gets an enumerator that iterates through <see cref="Trap"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Trap> Traps
-        {
-            get
-            {
-                return _villageObjects.GetRow(Trap.Kind).Select(k => (Trap)k);
-            }
-        }
+        public IEnumerable<Trap> Traps => _villageObjects.GetRow(Trap.Kind).Select(k => (Trap)k);
 
         /// <summary>
         /// Gets an enumerator that iterates through the <see cref="Decoration"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Decoration> Decorations
-        {
-            get
-            {
-                return _villageObjects.GetRow(Decoration.Kind).Select(k => (Decoration)k);
-            }
-        }
+        public IEnumerable<Decoration> Decorations => _villageObjects.GetRow(Decoration.Kind).Select(k => (Decoration)k);
 
-        internal Building _townhall;
         /// <summary>
         /// Gets the TownHall <see cref="Building"/> of the <see cref="Village"/>; 
         /// returns <c>null</c> if there is no TownHall in the <see cref="Village"/>.
@@ -184,18 +140,14 @@ namespace CoCSharp.Logic
         /// <remarks>
         /// Only one TownHall building is allowed in a Village. 
         /// </remarks>
-        public Building TownHall
-        {
-            get
-            {
-                return _townhall;
-            }
-        }
+        public Building TownHall => _townhall;
         #endregion
 
         #region Methods
-        // Call the Tick method in all the VillageObject contained in this village. 
-        internal void Update()
+        /// <summary>
+        /// Updates all <see cref="VillageObject"/> in the <see cref="Village"/>.
+        /// </summary>
+        public void Update()
         {
             // Exit out of the Update function gently.
             if (_disposed)
@@ -228,7 +180,7 @@ namespace CoCSharp.Logic
 
             if (disposing)
             {
-                VillageTicker.Unregister(this);
+                InternalVillageTicker.Unregister(this);
 
                 foreach (var building in Buildings)
                     building.PushToPool();
@@ -247,8 +199,7 @@ namespace CoCSharp.Logic
 
         internal void OnLogic(LogicEventArgs args)
         {
-            if (Logic != null)
-                Logic(this, args);
+            Logic?.Invoke(this, args);
         }
         #endregion
     }

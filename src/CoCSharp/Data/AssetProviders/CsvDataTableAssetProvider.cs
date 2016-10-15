@@ -15,9 +15,9 @@ namespace CoCSharp.Data.AssetProviders
         }
 
         // Set of CsvDataTable where we store the loaded CsvDataTables.
-        private CsvDataTableCollection _table;
+        private readonly CsvDataTableCollection _table;
         // Dictionary mapping types of loaded CsvData to their KindIDs.
-        private Dictionary<Type, int> _type2id;
+        private readonly Dictionary<Type, int> _type2id;
 
         // Loads the specified CsvDataTable<TCsvData> type at the specified path, where type must be a generic.
         public override void LoadAsset(Type type, string path)

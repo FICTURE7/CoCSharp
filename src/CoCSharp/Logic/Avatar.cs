@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Data;
-using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
 using CoCSharp.Network.Messages;
 using System;
