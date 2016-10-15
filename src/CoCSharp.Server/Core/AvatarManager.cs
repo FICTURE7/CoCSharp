@@ -50,12 +50,7 @@ namespace CoCSharp.Server.Core
             (
                 serialize: (village) =>
                 {
-                    var json = village.ToJson();
-                    if (string.IsNullOrEmpty(json))
-                    {
-
-                    }
-                    return json;
+                    return village.ToJson();
                 },
                 deserialize: (bson) =>
                 {
@@ -141,6 +136,7 @@ namespace CoCSharp.Server.Core
             avatar.ID = id;
             avatar.Level = 9;
             avatar.Home = Village.FromJson(_startingVillage);
+            avatar.IsNamed = false;
             avatar.Name = GetRandomName();
             avatar.Gems = _server.Configuration.StartingGems;
             avatar.FreeGems = _server.Configuration.StartingGems;

@@ -105,7 +105,7 @@ namespace CoCSharp.Network.Messages
                         var decompressedLength = br.ReadInt32();
                         var compressedHome = br.ReadBytes(homeData.Length - 4); // -4 to remove the decompressedLength bytes read.
                         var homeJson = ZlibStream.UncompressString(compressedHome);
-                        Home = Village.FromJson(homeJson);
+                        //Home = Village.FromJson(homeJson);
                     }
                 }
             }

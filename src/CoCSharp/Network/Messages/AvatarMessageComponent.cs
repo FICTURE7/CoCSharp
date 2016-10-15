@@ -74,10 +74,10 @@ namespace CoCSharp.Network.Messages
 
             Trophies = avatar.Trophies;
 
-            //Unknown21 = 1;
-            //Unknown22 = 946720861000;
-            Unknown22 = 4294967516;
-            Unknown23 = -169129983;
+            Unknown21 = 1;
+            Unknown22 = 946720861000;
+            //Unknown22 = 4294967516;
+            //Unknown23 = -169129983;
 
             IsNamed = avatar.IsNamed;
 
@@ -456,7 +456,7 @@ namespace CoCSharp.Network.Messages
             AllianceCastleLevel = reader.ReadInt32();
             AllianceCastleTotalCapacity = reader.ReadInt32();
             AllianceCastleUsedCapacity = reader.ReadInt32();
-            
+
             Unknown13 = reader.ReadInt32(); // 0 = 8.x.x
             Unknown14 = reader.ReadInt32(); // -1 = 8.x.x
 
@@ -482,6 +482,10 @@ namespace CoCSharp.Network.Messages
             Unknown18 = reader.ReadInt32();
             Unknown19 = reader.ReadInt32();
             Unknown20 = reader.ReadInt32();
+
+            // 8.511.4
+            Unknown29 = reader.ReadInt32();
+
             Unknown21 = reader.ReadByte(); // 1, might be a bool
             Unknown22 = reader.ReadInt64(); // 946720861000
 
@@ -494,8 +498,7 @@ namespace CoCSharp.Network.Messages
             Unknown27 = reader.ReadInt32(); // 0 = 8.x.x
             Unknown28 = reader.ReadInt32(); // 0 = 8.x.x
 
-            // 8.511.4
-            Unknown29 = reader.ReadInt32();
+            // 8.551.4
             Unknown30 = reader.ReadByte();
 
             ResourcesCapacity = reader.Read<ResourceCapacitySlot>();
@@ -598,6 +601,10 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown18);
             writer.Write(Unknown19);
             writer.Write(Unknown20);
+
+            // 8.551.4
+            writer.Write(Unknown29);
+
             writer.Write(Unknown21); // 1, might be a bool
             writer.Write(Unknown22); // 946720861000
 
@@ -611,7 +618,6 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown28); // 0 = 8.x.x
 
             // 8.551.4
-            writer.Write(Unknown29); 
             writer.Write(Unknown30);
 
             writer.Write(ResourcesCapacity);

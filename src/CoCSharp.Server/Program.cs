@@ -1,9 +1,6 @@
-using CoCSharp.Network;
-using CoCSharp.Network.Messages;
 using CoCSharp.Server.Core;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 
 namespace CoCSharp.Server
