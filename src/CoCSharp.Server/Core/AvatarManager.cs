@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
+using CoCSharp.Server.API.Core;
 using LiteDB;
 using System;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ using System.IO;
 namespace CoCSharp.Server.Core
 {
     // Provides method to save & load avatars.
-    public class AvatarManager
+    public class AvatarManager : IDbManager
     {
         public AvatarManager(Server server)
         {
@@ -86,7 +87,8 @@ namespace CoCSharp.Server.Core
                    .Id(x => x.ID)
                    .Ignore(x => x.OwnHomeDataMessage)
                    .Ignore(x => x.ShieldDuration)
-                   .Ignore(x => x.IsPropertyChangedEnabled);
+                   .Ignore(x => x.IsPropertyChangedEnabled)
+                   .Ignore(x => x.ExpLevel);
 
 
             _dbLock = new object();
@@ -134,7 +136,7 @@ namespace CoCSharp.Server.Core
             avatar.ShieldEndTime = DateTime.UtcNow.AddDays(3);
             avatar.Token = token;
             avatar.ID = id;
-            avatar.Level = 9;
+            avatar.ExpLevel = 9;
             avatar.Home = Village.FromJson(_startingVillage);
             avatar.IsNamed = false;
             avatar.Name = GetRandomName();

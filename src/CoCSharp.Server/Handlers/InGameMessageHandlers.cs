@@ -1,10 +1,7 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Data.Models;
-using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data.Slots;
 using CoCSharp.Logic.Commands;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
-using CoCSharp.Server.Core;
 using System;
 
 namespace CoCSharp.Server.Handlers
@@ -119,15 +116,8 @@ namespace CoCSharp.Server.Handlers
 
             if (cmdMessage.Commands.Length > 0)
             {
-                for (int i = 0; i < cmdMessage.Commands.Length; i++)
-                {
-                    var cmd = cmdMessage.Commands[i];
-                    if (cmd == null)
-                        break;
-
-                    server.HandleCommand(client, cmd);
-                }
-
+                // Execute all commands in the CommandQueue of the avatar.
+                client.ExecuteCommands(cmdMessage.Commands);
                 client.Save();
             }
         }
@@ -261,7 +251,7 @@ namespace CoCSharp.Server.Handlers
             }
             else
             {
-                cmsMessage.Level = client.Level;
+                cmsMessage.Level = client.ExpLevel;
                 cmsMessage.CurrentUserID = client.ID;
                 cmsMessage.UserID = client.ID; // <- might have an issue here.
                 cmsMessage.Name = client.Name;

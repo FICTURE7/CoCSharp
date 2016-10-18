@@ -2,7 +2,6 @@
 using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
-using CoCSharp.Server.Handlers.Commands;
 
 namespace CoCSharp.Server
 {
@@ -60,7 +59,6 @@ namespace CoCSharp.Server
             if (avatar == null)
                 return false;
 
-            avatar.Home.Logic += CommandHandlers.DoLogic;
             SetFromAvatar(avatar, newAvatar);
             if (!newAvatar)
             {
@@ -99,8 +97,8 @@ namespace CoCSharp.Server
             ShieldEndTime = avatar.ShieldEndTime;
             Alliance = avatar.Alliance;
             League = avatar.League;
-            Level = avatar.Level;
-            Experience = avatar.Experience;
+            ExpLevel = avatar.ExpLevel;
+            ExpPoints = avatar.ExpPoints;
             Gems = avatar.Gems;
             FreeGems = avatar.FreeGems;
             Trophies = avatar.Trophies;

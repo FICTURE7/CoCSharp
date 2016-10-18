@@ -64,8 +64,8 @@ namespace CoCSharp.Network.Messages
             //Unknown14 = -1;
             Unknown15 = -1;
 
-            Experience = avatar.Experience;
-            Level = avatar.Level;
+            Experience = avatar.ExpPoints;
+            Level = avatar.ExpLevel;
             Gems = avatar.Gems;
             FreeGems = avatar.FreeGems;
 

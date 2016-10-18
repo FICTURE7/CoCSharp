@@ -7,29 +7,12 @@ namespace CoCSharp.Server
 {
     public class Program
     {
-        public static Server Server { get; set; }
+        public static OldServer Server { get; set; }
 
-        public static AvatarManager AvatarManager
-        {
-            get
-            {
-                if (Server == null)
-                    return null;
+        public static AvatarManager AvatarManager => Server.AvatarManager;
+        
+        public static AllianceManager AllianceManager => Server.AllianceManager;
 
-                return Server.AvatarManager;
-            }
-        }
-
-        public static AllianceManager AllianceManager
-        {
-            get
-            {
-                if (Server == null)
-                    return null;
-
-                return Server.AllianceManager;
-            }
-        }
 
         public static void Main(string[] args)
         {
@@ -52,7 +35,7 @@ _________        _________   _________.__
             Console.WriteLine("Starting CoC# - Server Emulator for Clash of Clans...");
             Console.WriteLine("Visit https://github.com/FICTURE7/CoCSharp/tree/server-dev for the latest news.\n");
 
-            Server = new Server();
+            Server = new OldServer();
             Server.Start();
 
             stopwatch.Stop();
@@ -61,6 +44,7 @@ _________        _________   _________.__
             Console.WriteLine("\nServer loaded successfully in {0} ms. Listening on port 9339.", stopwatch.Elapsed.TotalMilliseconds);
             Console.ResetColor();
             Console.WriteLine();
+
             while (true)
             {
                 try

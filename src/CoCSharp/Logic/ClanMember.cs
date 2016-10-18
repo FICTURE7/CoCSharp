@@ -22,7 +22,7 @@
         {
             ID = avatar.ID;
             Name = avatar.Name;
-            Level = avatar.Level;
+            Level = avatar.ExpLevel;
             LeagueLevel = avatar.League;
             Trophies = avatar.Trophies;
         }

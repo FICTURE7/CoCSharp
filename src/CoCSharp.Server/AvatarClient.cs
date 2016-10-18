@@ -13,16 +13,16 @@ namespace CoCSharp.Server
     {
         public AvatarClient() : base()
         {
-            // Space
+            Level = new Level();
         }
 
-        public AvatarClient(Server server, long id) : base()
+        public AvatarClient(OldServer server, long id) : base()
         {
             Server = server;
             ID = id;
         }
 
-        public AvatarClient(Server server, Socket connection, NetworkManagerAsyncSettings settings) : base()
+        public AvatarClient(OldServer server, Socket connection, NetworkManagerAsyncSettings settings) : base()
         {
             Server = server;
 
@@ -37,9 +37,11 @@ namespace CoCSharp.Server
         }
 
         [BsonIgnore]
+        public Level Level { get; internal set; }
+        [BsonIgnore]
         public ClientFlags Status { get; internal set; }
         [BsonIgnore]
-        public Server Server { get; internal set; }
+        public OldServer Server { get; internal set; }
         [BsonIgnore]
         public Socket Connection { get; private set; }
         [BsonIgnore]

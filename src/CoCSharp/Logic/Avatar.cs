@@ -3,6 +3,7 @@ using CoCSharp.Data.Slots;
 using CoCSharp.Network.Messages;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -64,7 +65,12 @@ namespace CoCSharp.Logic
 
         #region Fields & Properties
         // Queue of commands to execute.
-        private ConcurrentQueue<Command> _commands;
+        private readonly ConcurrentQueue<Command> _commands;
+
+        /// <summary>
+        /// Gets the <see cref="ConcurrentQueue{T}"/> of <see cref="Command"/> waiting to be flushed and executed.
+        /// </summary>
+        public ConcurrentQueue<Command> CommandQueue => _commands;
 
         /// <summary>
         /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
@@ -259,7 +265,7 @@ namespace CoCSharp.Logic
         /// Gets or sets the level of the <see cref="Avatar"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is less than 1.</exception>
-        public int Level
+        public int ExpLevel
         {
             get
             {
@@ -283,7 +289,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the experience of the <see cref="Avatar"/>.
         /// </summary>
-        public int Experience
+        public int ExpPoints
         {
             get
             {
@@ -612,7 +618,10 @@ namespace CoCSharp.Logic
             //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0)._OldID, warDarkElixir));
         }
 
-        internal void Flush()
+        /// <summary>
+        /// Executes queued command in <see cref="CommandQueue"/>.
+        /// </summary>
+        public void ExecuteCommands()
         {
             while (!_commands.IsEmpty)
             {
@@ -620,7 +629,25 @@ namespace CoCSharp.Logic
                 if (!_commands.TryDequeue(out cmd))
                     continue;
 
-                cmd.Execute(this);
+                //cmd.Execute();
+            }
+        }
+
+        /// <summary>
+        /// Executes queued commands in <see cref="CommandQueue"/> then the specified
+        /// <see cref="ICollection{T}"/> of <see cref="Command"/>.
+        /// </summary>
+        /// <param name="commands"><see cref="ICollection{T}"/> of <see cref="Command"/> to execute.</param>
+        public void ExecuteCommands(ICollection<Command> commands)
+        {
+            ExecuteCommands();
+
+            foreach (var command in commands)
+            {
+                if (command == null)
+                    break;
+
+                //command.Execute(this);
             }
         }
 
