@@ -180,8 +180,6 @@ namespace CoCSharp.Logic
 
             if (disposing)
             {
-                InternalVillageTicker.Unregister(this);
-
                 foreach (var building in Buildings)
                     building.PushToPool();
                 foreach (var obstacle in Obstacles)

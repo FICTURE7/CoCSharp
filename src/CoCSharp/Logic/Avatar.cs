@@ -3,6 +3,7 @@ using CoCSharp.Data.Slots;
 using CoCSharp.Network.Messages;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -54,8 +55,8 @@ namespace CoCSharp.Logic
             HeroStates = new SlotCollection<HeroStateSlot>();
             AllianceUnits = new SlotCollection<AllianceUnitSlot>();
             TutorialProgess = new SlotCollection<TutorialProgressSlot>();
-            Acheivements = new SlotCollection<AchievementSlot>();
-            AcheivementProgress = new SlotCollection<AchievementProgessSlot>();
+            Achievements = new SlotCollection<AchievementSlot>();
+            AchievementProgress = new SlotCollection<AchievementProgessSlot>();
             NpcStars = new SlotCollection<NpcStarSlot>();
             NpcGold = new SlotCollection<NpcGoldSlot>();
             NpcElixir = new SlotCollection<NpcElixirSlot>();
@@ -64,7 +65,12 @@ namespace CoCSharp.Logic
 
         #region Fields & Properties
         // Queue of commands to execute.
-        private ConcurrentQueue<Command> _commands;
+        private readonly ConcurrentQueue<Command> _commands;
+
+        /// <summary>
+        /// Gets the <see cref="ConcurrentQueue{T}"/> of <see cref="Command"/> waiting to be flushed and executed.
+        /// </summary>
+        public ConcurrentQueue<Command> CommandQueue => _commands;
 
         /// <summary>
         /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
@@ -259,7 +265,7 @@ namespace CoCSharp.Logic
         /// Gets or sets the level of the <see cref="Avatar"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is less than 1.</exception>
-        public int Level
+        public int ExpLevel
         {
             get
             {
@@ -283,7 +289,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the experience of the <see cref="Avatar"/>.
         /// </summary>
-        public int Experience
+        public int ExpPoints
         {
             get
             {
@@ -497,12 +503,12 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the achievements state.
         /// </summary>
-        public SlotCollection<AchievementSlot> Acheivements { get; set; }
+        public SlotCollection<AchievementSlot> Achievements { get; set; }
 
         /// <summary>
         /// Gets or sets the achievements progress.
         /// </summary>
-        public SlotCollection<AchievementProgessSlot> AcheivementProgress { get; set; }
+        public SlotCollection<AchievementProgessSlot> AchievementProgress { get; set; }
 
         /// <summary>
         /// Gets or sets the NPC stars.
@@ -531,14 +537,14 @@ namespace CoCSharp.Logic
                 if (Home == null)
                     throw new InvalidOperationException("Home cannot be null.");
 
-                UpdateSlots();
+                //UpdateSlots();
 
                 var villageData = new VillageMessageComponent(this);
                 var avatarData = new AvatarMessageComponent(this);
                 var ohdMessage = new OwnHomeDataMessage()
                 {
-                    OwnVillageData = villageData,
-                    OwnAvatarData = avatarData,
+                    OwnVillageData = null,
+                    OwnAvatarData = null,
                     Unkonwn4 = 1462629754000,
                     Unknown5 = 1462629754000,
                     Unknown6 = 1462631554000,
@@ -612,7 +618,10 @@ namespace CoCSharp.Logic
             //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0)._OldID, warDarkElixir));
         }
 
-        internal void Flush()
+        /// <summary>
+        /// Executes queued command in <see cref="CommandQueue"/>.
+        /// </summary>
+        public void ExecuteCommands()
         {
             while (!_commands.IsEmpty)
             {
@@ -620,7 +629,25 @@ namespace CoCSharp.Logic
                 if (!_commands.TryDequeue(out cmd))
                     continue;
 
-                cmd.Execute(this);
+                //cmd.Execute();
+            }
+        }
+
+        /// <summary>
+        /// Executes queued commands in <see cref="CommandQueue"/> then the specified
+        /// <see cref="ICollection{T}"/> of <see cref="Command"/>.
+        /// </summary>
+        /// <param name="commands"><see cref="ICollection{T}"/> of <see cref="Command"/> to execute.</param>
+        public void ExecuteCommands(ICollection<Command> commands)
+        {
+            ExecuteCommands();
+
+            foreach (var command in commands)
+            {
+                if (command == null)
+                    break;
+
+                //command.Execute(this);
             }
         }
 

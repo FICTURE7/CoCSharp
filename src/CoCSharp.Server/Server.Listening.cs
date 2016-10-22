@@ -1,63 +1,57 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace CoCSharp.Server
 {
     public partial class Server
     {
-        // Total number of connection accepted.
-        private int _totalConnection;
         private readonly Socket _listener;
         private readonly SocketAsyncEventArgsPool _acceptPool;
-
-        // Returns a new SocketAsyncEventArgs object with Completed
-        // set to AcceptOperationCompleted. 
-        private SocketAsyncEventArgs CreateNewAcceptArgs()
-        {
-            var args = new SocketAsyncEventArgs();
-            args.Completed += AcceptOperationCompleted;
-            return args;
-        }
 
         private void StartListener()
         {
             const int PORT = 9339;
+            const int BACKLOG = 100;
 
+            // Binds the _listener socket to 0.0.0.0:9339 and begins an AcceptAsync operation
+            // on the _listener socket.
             var endpoint = new IPEndPoint(IPAddress.Any, PORT);
             try
             {
                 _listener.Bind(endpoint);
-                _listener.Listen(100);
+                _listener.Listen(BACKLOG);
+
+                StartAccept(null);
             }
             catch (Exception ex)
             {
-                Log.Exception("unable to start listener on " + endpoint, ex);
+                Console.WriteLine(ex);
+
                 Environment.Exit(1);
             }
-
-            StartAccept(null);
         }
 
         private void StartAccept(SocketAsyncEventArgs args)
         {
             try
             {
+                // If the args is null, we take one from the pool.
                 if (args == null)
                 {
                     args = _acceptPool.Pop();
+                    // If the args is null, it means the pool is empty,
+                    // we create a new instance to start accepting again.
                     if (args == null)
-                        args = CreateNewAcceptArgs();
+                        args = _acceptPool.CreateNew();
                 }
 
-                args.AcceptSocket = null;
                 if (!_listener.AcceptAsync(args))
                     ProcessAccept(args);
             }
             catch (Exception ex)
             {
-                Log.Exception("***unable to start accept", ex);
+                Console.WriteLine("Unable to start accept! " + ex);
             }
         }
 
@@ -65,22 +59,16 @@ namespace CoCSharp.Server
         {
             try
             {
-                Interlocked.Increment(ref _totalConnection);
                 var remoteSocket = args.AcceptSocket;
-                var remoteEndPoint = args.AcceptSocket.RemoteEndPoint;
-                Console.WriteLine("listener: accepted new remote connection: {0}", remoteEndPoint);
-                args.AcceptSocket = null;
+                var client = new Client(this, remoteSocket);
+                _clients.Add(client);
 
-                // Start accepting new connection ASAP.
-                ThreadPool.QueueUserWorkItem((object state) =>
-                {
-                    var client = new AvatarClient(this, remoteSocket, _settings);
-                    Clients.Add(client);
-                });
+                // Clean AcceptSocket to accept even more.
+                args.AcceptSocket = null;
             }
             catch (Exception ex)
             {
-                Log.Exception("***unable to process accept: ", ex);
+                Console.WriteLine("Unable to process accept! " + ex);
             }
             finally
             {
@@ -88,34 +76,17 @@ namespace CoCSharp.Server
             }
         }
 
-        private void ProcessBadAccept(SocketAsyncEventArgs args)
+        private void AcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
-            Log.Warning("listener: ***encountered bad accept");
-            try
+            if (e.SocketError != SocketError.Success)
             {
-                args.AcceptSocket.Close();
-                args.AcceptSocket = null;
-                _acceptPool.Push(args);
-            }
-            catch (Exception ex)
-            {
-                Log.Exception("***unable to close bad socket: ", ex);
-            }
-            finally
-            {
-                StartAccept(null);
-            }
-        }
-
-        private void AcceptOperationCompleted(object sender, SocketAsyncEventArgs args)
-        {
-            if (args.SocketError != SocketError.Success)
-            {
-                ProcessBadAccept(args);
+                e.AcceptSocket.Close();
+                e.AcceptSocket = null;
+                StartAccept(e);
                 return;
             }
 
-            ProcessAccept(args);
+            ProcessAccept(e);
         }
     }
 }

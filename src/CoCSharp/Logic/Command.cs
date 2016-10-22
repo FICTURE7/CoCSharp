@@ -29,6 +29,16 @@ namespace CoCSharp.Logic
         public abstract int ID { get; }
 
         /// <summary>
+        /// Gets or sets the tick at which the command was executed.
+        /// </summary>
+        public int Tick { get; set; }
+
+        /// <summary>
+        /// Gets or sets the depth of the <see cref="Command"/>.
+        /// </summary>
+        protected internal int Depth { get; set; }
+
+        /// <summary>
         /// Reads the <see cref="Command"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
@@ -45,10 +55,10 @@ namespace CoCSharp.Logic
         public abstract void WriteCommand(MessageWriter writer);
 
         /// <summary>
-        /// Performs the <see cref="Command"/> on the specified <see cref="Avatar"/>.
+        /// Performs the execution of the <see cref="Command"/> on the specified <see cref="Level"/>.
         /// </summary>
-        /// <param name="avatar"><see cref="Avatar"/> on which to perform the <see cref="Command"/>.</param>
-        public virtual void Execute(Avatar avatar)
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="Command"/>.</param>
+        public virtual void Execute(Level level)
         {
             // Space
         }
@@ -56,22 +66,19 @@ namespace CoCSharp.Logic
         internal void ThrowIfReaderNull(MessageReader reader)
         {
             if (reader == null)
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
         }
 
         internal void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
-                throw new ArgumentNullException("writer");
+                throw new ArgumentNullException(nameof(writer));
         }
 
-        internal void ThrowIfAvatarNull(Avatar avatar)
+        internal void ThrowIfLevelNull(Level level)
         {
-            if (avatar == null)
-                throw new ArgumentNullException("avatar");
+            if (level == null)
+                throw new ArgumentNullException(nameof(level));
         }
-
-        // Depth of this command. This is mostly for checking embedded command recursion.
-        internal int Depth { get; set; }
     }
 }

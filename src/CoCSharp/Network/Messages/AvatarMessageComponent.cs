@@ -64,8 +64,8 @@ namespace CoCSharp.Network.Messages
             //Unknown14 = -1;
             Unknown15 = -1;
 
-            Experience = avatar.Experience;
-            Level = avatar.Level;
+            Experience = avatar.ExpPoints;
+            Level = avatar.ExpLevel;
             Gems = avatar.Gems;
             FreeGems = avatar.FreeGems;
 
@@ -93,8 +93,8 @@ namespace CoCSharp.Network.Messages
             HeroHealths = avatar.HeroHealths;
             HeroStates = avatar.HeroStates;
             TutorialProgess = avatar.TutorialProgess;
-            Achievements = avatar.Acheivements;
-            AchievementProgress = avatar.AcheivementProgress;
+            Achievements = avatar.Achievements;
+            AchievementProgress = avatar.AchievementProgress;
             NpcStars = avatar.NpcStars;
             NpcGold = avatar.NpcGold;
             NpcElixir = avatar.NpcElixir;

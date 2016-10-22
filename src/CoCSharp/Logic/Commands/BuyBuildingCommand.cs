@@ -38,11 +38,6 @@ namespace CoCSharp.Logic.Commands
         public int BuildingDataID;
 
         /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
-
-        /// <summary>
         /// Reads the <see cref="BuyBuildingCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
@@ -57,7 +52,7 @@ namespace CoCSharp.Logic.Commands
             Y = reader.ReadInt32();
             BuildingDataID = reader.ReadInt32();
 
-            Unknown1 = reader.ReadInt32();
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
@@ -75,24 +70,33 @@ namespace CoCSharp.Logic.Commands
             writer.Write(Y);
             writer.Write(BuildingDataID);
 
-            writer.Write(Unknown1);
+            writer.Write(Tick);
         }
 
         /// <summary>
-        /// Performs the <see cref="BuyBuildingCommand"/> on the specified <see cref="Avatar"/>.
+        /// Performs the execution of the <see cref="BuyBuildingCommand"/> on the specified <see cref="Avatar"/>.
         /// </summary>
-        /// <param name="avatar"><see cref="Avatar"/> on which to perform the <see cref="BuyBuildingCommand"/>.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="avatar"/> is null.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="avatar.Home"/> is null.</exception>
-        public override void Execute(Avatar avatar)
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="BuyBuildingCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Home"/> is null.</exception>
+        public override void Execute(Level level)
         {
-            ThrowIfAvatarNull(avatar);
+            ThrowIfLevelNull(level);
 
-            if (avatar.Home == null)
+            if (level.Village == null)
                 throw new ArgumentNullException("avatar.Home");
 
             var data = new CsvDataRowRef<BuildingData>(BuildingDataID);
-            var building = new Building(avatar.Home, data, X, Y, -1);
+            var villageObject = (VillageObject)null;
+
+            if (!VillageObjectPool.TryPop(Building.Kind, out villageObject))
+            {
+                villageObject = new Building(level.Village, data, X, Y, -1);
+            }
+            else
+            {
+                var building = (Building)villageObject;
+            }
         }
     }
 }

@@ -35,51 +35,24 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiteDB, Version=2.0.2.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
-      <HintPath>..\packages\LiteDB.2.0.2\lib\net35\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=2.0.1.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.2.0.1\lib\net35\LiteDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AvatarClient.cs" />
-    <Compile Include="AvatarClient.Saving.cs">
-      <DependentUpon>AvatarClient.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ClientFlags.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.BuyBuilding.cs">
-      <DependentUpon>CommandHandlers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Handlers\Commands\CommandHandlers.UpgradeBuildable.cs">
-      <DependentUpon>CommandHandlers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Server.cs" />
-    <Compile Include="Core\AllianceManager.cs" />
-    <Compile Include="Core\AvatarManager.cs" />
-    <Compile Include="Core\NpcManager.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="Core\LevelSave.cs" />
+    <Compile Include="Core\LiteDbManager.cs" />
     <Compile Include="Core\SaveQueue{T}.cs" />
-    <Compile Include="Server.Listening.cs">
-      <DependentUpon>Server.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Server.cs" />
+    <Compile Include="Server.Listening.cs" />
     <Compile Include="ServerConfiguration.cs" />
-    <Compile Include="DirectoryPaths.cs" />
-    <Compile Include="Handlers\AllianceMessageHandlers.cs" />
-    <Compile Include="Handlers\Commands\CommandHandlers.cs" />
-    <Compile Include="Handlers\InGameMessageHandlers.cs" />
-    <Compile Include="Handlers\LoginMessageHandlers.cs" />
-    <Compile Include="LogFormats.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LogFormats.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Log.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SocketAsyncEventArgsPool.cs" />
@@ -87,169 +60,169 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Content\decos.csv">
+    <None Include="contents\decos.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc1.json">
+    <None Include="contents\level\npc1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc10.json">
+    <None Include="contents\level\npc10.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc11.json">
+    <None Include="contents\level\npc11.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc12.json">
+    <None Include="contents\level\npc12.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc13.json">
+    <None Include="contents\level\npc13.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc14.json">
+    <None Include="contents\level\npc14.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc15.json">
+    <None Include="contents\level\npc15.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc16.json">
+    <None Include="contents\level\npc16.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc17.json">
+    <None Include="contents\level\npc17.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc18.json">
+    <None Include="contents\level\npc18.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc19.json">
+    <None Include="contents\level\npc19.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc2.json">
+    <None Include="contents\level\npc2.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc20.json">
+    <None Include="contents\level\npc20.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc21.json">
+    <None Include="contents\level\npc21.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc22.json">
+    <None Include="contents\level\npc22.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc23.json">
+    <None Include="contents\level\npc23.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc24.json">
+    <None Include="contents\level\npc24.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc25.json">
+    <None Include="contents\level\npc25.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc26.json">
+    <None Include="contents\level\npc26.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc27.json">
+    <None Include="contents\level\npc27.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc28.json">
+    <None Include="contents\level\npc28.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc29.json">
+    <None Include="contents\level\npc29.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc3.json">
+    <None Include="contents\level\npc3.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc30.json">
+    <None Include="contents\level\npc30.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc31.json">
+    <None Include="contents\level\npc31.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc32.json">
+    <None Include="contents\level\npc32.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc33.json">
+    <None Include="contents\level\npc33.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc34.json">
+    <None Include="contents\level\npc34.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc35.json">
+    <None Include="contents\level\npc35.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc36.json">
+    <None Include="contents\level\npc36.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc37.json">
+    <None Include="contents\level\npc37.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc38.json">
+    <None Include="contents\level\npc38.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc39.json">
+    <None Include="contents\level\npc39.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc4.json">
+    <None Include="contents\level\npc4.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc40.json">
+    <None Include="contents\level\npc40.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc41.json">
+    <None Include="contents\level\npc41.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc42.json">
+    <None Include="contents\level\npc42.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc43.json">
+    <None Include="contents\level\npc43.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc44.json">
+    <None Include="contents\level\npc44.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc45.json">
+    <None Include="contents\level\npc45.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc46.json">
+    <None Include="contents\level\npc46.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc47.json">
+    <None Include="contents\level\npc47.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc48.json">
+    <None Include="contents\level\npc48.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc5.json">
+    <None Include="contents\level\npc5.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc6.json">
+    <None Include="contents\level\npc6.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc7.json">
+    <None Include="contents\level\npc7.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc8.json">
+    <None Include="contents\level\npc8.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\level\npc9.json">
+    <None Include="contents\level\npc9.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\obstacles.csv">
+    <None Include="contents\obstacles.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\resources.csv">
+    <None Include="contents\resources.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\traps.csv">
+    <None Include="contents\traps.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\buildings.csv">
+    <None Include="contents\buildings.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\starting_village.json">
+    <None Include="contents\starting_village.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -262,12 +235,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LogFormats.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LogFormats.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\CoCSharp.Server.API\CoCSharp.Server.API.csproj">
+      <Project>{5B995462-1628-4FC1-B2F0-BE7E0F8305A6}</Project>
+      <Name>CoCSharp.Server.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">
       <Project>{7481e33e-b214-421b-8f9b-a812958395dd}</Project>
       <Name>CoCSharp</Name>

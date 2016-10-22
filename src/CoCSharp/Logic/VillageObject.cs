@@ -45,6 +45,13 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
+        // X coordinate of object.
+        private int _x;
+        // Y coordinate of object.
+        private int _y;
+        // Village in which the VillageObject is in.
+        private Village _village;
+
         // Array containing the LogicComponent attached to this VillageObject.
         private readonly LogicComponent[] _components;
         // Amount of time the VillageObject was pushed back to the pool.
@@ -62,18 +69,10 @@ namespace CoCSharp.Logic
         /// </summary>
         public bool IsPropertyChangedEnabled { get; set; }
 
-        // Village in which the VillageObject is in.
-        private Village _village;
         /// <summary>
         /// Gets the <see cref="Logic.Village"/> in which the current <see cref="VillageObject"/> is in.
         /// </summary>
-        public Village Village
-        {
-            get
-            {
-                return _village;
-            }
-        }
+        public Village Village => _village;
 
         internal int _columnIndex;
         // ID of the VillageObject (IDs above or equal to 500000000). E.g: 500000001
@@ -95,8 +94,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        // X coordinate of object.
-        private int _x;
         /// <summary>
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.
         /// </summary>
@@ -120,8 +117,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        // Y coordinate of object.
-        private int _y;
         /// <summary>
         /// Gets or sets the y coordinate of the <see cref="VillageObject"/>.
         /// </summary>
@@ -148,15 +143,9 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets the <see cref="Data.AssetManager"/> of <see cref="Village"/>.
         /// </summary>
-        protected AssetManager Assets
-        {
-            get
-            {
-                return Village.AssetManager;
-            }
-        }
+        protected AssetManager Assets => _village.AssetManager;
 
-        // Kind ID of the VillageObject.
+         // Kind ID of the VillageObject.
         internal abstract int KindID { get; }
         #endregion
 
