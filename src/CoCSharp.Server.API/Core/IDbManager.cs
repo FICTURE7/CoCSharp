@@ -1,4 +1,4 @@
-﻿using CoCSharp.Logic;
+using CoCSharp.Logic;
 using System;
 
 namespace CoCSharp.Server.API.Core

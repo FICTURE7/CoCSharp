@@ -1,4 +1,4 @@
-﻿using CoCSharp.Logic;
+using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Server.API;
 using System;

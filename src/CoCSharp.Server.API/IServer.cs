@@ -26,7 +26,6 @@ namespace CoCSharp.Server.API
         /// Gets the <see cref="Logging.Logger"/> associated with the <see cref="IServer"/>.
         /// </summary>
         Logger Logger { get; }
-
         /// <summary>
         /// Gets the <see cref="IDbManager"/> that will manage avatars.
         /// </summary>
@@ -37,7 +36,6 @@ namespace CoCSharp.Server.API
         /// to the <see cref="IServer"/>.
         /// </summary>
         ICollection<IClient> Clients { get; }
-
         /// <summary>
         /// Starts the <see cref="IServer"/> and start listening for incoming connections.
         /// </summary>
@@ -47,7 +45,6 @@ namespace CoCSharp.Server.API
         /// Stops the <see cref="IServer"/> and disposes all resources used by it.
         /// </summary>
         void Close();
-
         /// <summary>
         /// Processes the specified <see cref="Message"/>.
         /// </summary>

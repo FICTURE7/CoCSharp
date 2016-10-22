@@ -1,6 +1,3 @@
-using CoCSharp.Data;
-using CoCSharp.Logic;
-using CoCSharp.Server.Core;
 using System;
 using System.Diagnostics;
 using System.Threading;

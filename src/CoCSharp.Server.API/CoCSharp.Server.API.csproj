@@ -39,13 +39,13 @@
   <ItemGroup>
     <Compile Include="Core\IDbManager.cs" />
     <Compile Include="Core\ILevelSave.cs" />
-    <Compile Include="Core\IMessageProcessor.cs" />
+    <Compile Include="Core\IMessageHandler.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="IServer.cs" />
-    <Compile Include="Log\ConsoleLogger.cs" />
-    <Compile Include="Log\FileLogger.cs" />
-    <Compile Include="Log\Logger.cs" />
-    <Compile Include="Log\LogType.cs" />
+    <Compile Include="IServerConfiguration.cs" />
+    <Compile Include="Logging\ConsoleLogger.cs" />
+    <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

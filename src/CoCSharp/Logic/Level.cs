@@ -11,12 +11,13 @@
         /// </summary>
         public Level()
         {
-            //_village = new Village();
+            _village = new Village();
             _avatar = new Avatar();
         }
         #endregion
 
         #region Fields & Properties
+        private Village _village;
         private Avatar _avatar;
 
         /// <summary>
@@ -24,18 +25,6 @@
         /// by an NPC.
         /// </summary>
         public bool IsNpc { get; set; }
-
-        public long ID
-        {
-            get
-            {
-                return _avatar.ID;
-            }
-            set
-            {
-                _avatar.ID = value;
-            }
-        }
 
         /// <summary>
         /// Gets or sets the <see cref="Logic.Village"/> associated with the <see cref="Level"/>.
