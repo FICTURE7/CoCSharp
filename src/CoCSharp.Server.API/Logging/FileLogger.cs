@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace CoCSharp.Server.API.Logging
 {
@@ -7,22 +8,32 @@ namespace CoCSharp.Server.API.Logging
     /// </summary>
     public class FileLogger : Logger
     {
+        static FileLogger()
+        {
+            if (!Directory.Exists("logs"))
+                Directory.CreateDirectory("logs");
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FileLogger"/> class.
         /// </summary>
         public FileLogger()
         {
-            _fileName = "filelogger.txt";
+            var now = DateTime.Now.ToString("dd-MM-yy_hh-mm-ss");
+            _fileName = Path.Combine("logs", now + ".log");
         }
 
         private readonly string _fileName;
 
         /// <summary/>
-        protected override void WriteLog(string message, params object[] args)
+        protected override LogLevel Level => LogLevel.All;
+
+        /// <summary/>
+        protected override void Write(string message, LogLevel level)
         {
             using (var file = new StreamWriter(_fileName, true))
             {
-                file.WriteLine(message, args);
+                file.WriteLine(message);
             }
         }
     }

@@ -12,6 +12,11 @@
         /// Gets the next <see cref="Logger"/> in the responsibility chain.
         /// </summary>
         public Logger NextLogger => _nextLogger;
+
+        /// <summary>
+        /// Gets the <see cref="LogLevel"/> of the <see cref="Logger"/>.
+        /// </summary>
+        protected abstract LogLevel Level { get; }
         #endregion
 
         #region Method
@@ -31,21 +36,22 @@
         /// parameters to the <see cref="NextLogger"/> if not null.
         /// </summary>
         /// <param name="message">Message to log.</param>
-        /// <param name="args">Arguments to use.</param>
-        public void Log(string message, params object[] args)
+        /// <param name="level">Level of the log.</param>
+        public void Log(string message, LogLevel level)
         {
-            WriteLog(message, args);
+            if (Level.HasFlag(level))
+                Write(message, level);
 
             if (_nextLogger != null)
-                _nextLogger.Log(message, args);
+                _nextLogger.Log(message, level);
         }
 
         /// <summary>
-        /// Method that is going to get called when <see cref="Log(string, object[])"/> is called.
+        /// Method that is going to get called when <see cref="Log(string, LogLevel)"/> is called.
         /// </summary>
         /// <param name="message">Message to log.</param>
-        /// <param name="args">Arguments to use.</param>
-        protected abstract void WriteLog(string message, params object[] args);
+        /// <param name="level">Level of the log.</param>
+        protected abstract void Write(string message, LogLevel level);
         #endregion
     }
 }

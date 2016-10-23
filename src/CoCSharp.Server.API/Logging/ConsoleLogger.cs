@@ -16,9 +16,12 @@ namespace CoCSharp.Server.API.Logging
         }
 
         /// <summary/>
-        protected override void WriteLog(string message, params object[] args)
+        protected override LogLevel Level => LogLevel.All;
+
+        /// <summary/>
+        protected override void Write(string message, LogLevel level)
         {
-            Console.WriteLine(message, args);
+            Console.WriteLine("[" + level + "] -> " + message);
         }
     }
 }
