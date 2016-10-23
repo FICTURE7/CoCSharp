@@ -136,7 +136,7 @@ namespace CoCSharp.Logic
 
                 // If level is -1 (NotConstructedLevel), VillageObject.Data will be null.
                 // and NextUpgrade will point to a CsvData of level 0 from CollectionCache.
-                UpdateData(CollectionCache.ID, value);
+                UpdateData(RowCache.ID, value);
                 UpdateIsUpgradable();
             }
         }
@@ -303,13 +303,13 @@ namespace CoCSharp.Logic
 
             // If we haven't cached the SubCollection in which Data
             // is found, we do it.
-            if (CollectionCache == null)
+            if (RowCache == null)
             {
                 var table = Assets.Get<CsvDataTableCollection>();
                 var dataRef = new CsvDataRowRef<TCsvData>(dataId);
-                CollectionCache = dataRef.Get(table);
-                if (CollectionCache == null)
-                    throw new InvalidOperationException("Could not find CsvData collection with ID '" + dataId + "'.");
+                RowCache = dataRef.Get(table);
+                if (RowCache == null)
+                    throw new InvalidOperationException("Could not find CsvDataRow with ID '" + dataId + "'.");
             }
 
             // Data is null when lvl is -1
@@ -320,7 +320,7 @@ namespace CoCSharp.Logic
             }
             else
             {
-                _data = CollectionCache[level];
+                _data = RowCache[level];
                 if (_data == null)
                     throw new InvalidOperationException("Could not find CsvData with ID '" + dataId + "' and with level '" + level + "'.");
             }
@@ -331,9 +331,9 @@ namespace CoCSharp.Logic
         internal void UpdateIsUpgradable()
         {
             // Can be null sometimes due to concurrency.
-            Debug.Assert(CollectionCache != null, "CollectionCache was null.");
+            Debug.Assert(RowCache != null, "CollectionCache was null.");
 
-            NextUpgrade = CollectionCache[_level + 1];
+            NextUpgrade = RowCache[_level + 1];
             if (NextUpgrade == null)
             {
                 // There are no upgrades left.

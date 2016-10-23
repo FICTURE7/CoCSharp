@@ -146,7 +146,7 @@ namespace CoCSharp.Logic
         {
             // Determines if the current VillageObject is a TownHall building based on Data.TID
             // and set the townhall of the Village to this VillageObject. 
-            if (CollectionCache.Name == "Town Hall")
+            if (RowCache.Name == "Town Hall")
             {
                 // A Village cannot contain more than 1 townhall.
                 if (Village.TownHall != this && Village.TownHall != null)
@@ -165,7 +165,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(CollectionCache.ID);
+            writer.WriteValue(RowCache.ID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);

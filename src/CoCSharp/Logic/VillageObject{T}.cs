@@ -51,7 +51,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets the cache to the sub-collection in which Data is found.
         /// </summary>
-        public CsvDataRow<TCsvData> CollectionCache { get; protected set; }
+        public CsvDataRow<TCsvData> RowCache { get; protected set; }
 
         private readonly CsvDataRowRef<TCsvData> _dataRef;
         public CsvDataRowRef<TCsvData> DataRef
@@ -84,7 +84,7 @@ namespace CoCSharp.Logic
             base.ResetVillageObject();
 
             _data = default(TCsvData);
-            CollectionCache = default(CsvDataRow<TCsvData>);
+            RowCache = default(CsvDataRow<TCsvData>);
         }
         #endregion
     }

@@ -152,7 +152,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(CollectionCache.ID);
+            writer.WriteValue(RowCache.ID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);

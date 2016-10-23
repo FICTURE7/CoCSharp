@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoCSharp.Server.API.Events.Server;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -11,6 +12,9 @@ namespace CoCSharp.Server
 
         private void StartListener()
         {
+            if (_disposed)
+                return;
+
             const int PORT = 9339;
             const int BACKLOG = 100;
 
@@ -34,6 +38,9 @@ namespace CoCSharp.Server
 
         private void StartAccept(SocketAsyncEventArgs args)
         {
+            if (_disposed)
+                return;
+
             try
             {
                 // If the args is null, we take one from the pool.
@@ -57,12 +64,16 @@ namespace CoCSharp.Server
 
         private void ProcessAccept(SocketAsyncEventArgs args)
         {
+            if (_disposed)
+                return;
+
             try
             {
                 var remoteSocket = args.AcceptSocket;
                 var client = new Client(this, remoteSocket);
                 _clients.Add(client);
 
+                OnConnection(new ServerConnectionEventArgs(this, client));
                 // Clean AcceptSocket to accept even more.
                 args.AcceptSocket = null;
             }
@@ -78,6 +89,9 @@ namespace CoCSharp.Server
 
         private void AcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
+            if (_disposed)
+                return;
+
             if (e.SocketError != SocketError.Success)
             {
                 e.AcceptSocket.Close();

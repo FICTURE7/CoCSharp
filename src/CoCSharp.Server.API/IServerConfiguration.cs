@@ -21,6 +21,11 @@
         int StartingElixir { get; }
 
         /// <summary>
+        /// Gets the starting village JSON.
+        /// </summary>
+        string StartingVillage { get; }
+
+        /// <summary>
         /// Loads the <see cref="IServerConfiguration"/> at the specified path.
         /// </summary>
         /// <param name="path">Path pointing to the <see cref="IServerConfiguration"/>.</param>

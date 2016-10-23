@@ -27,16 +27,15 @@ namespace CoCSharp.Server
         public event EventHandler<DisconnectedEventArgs> Left;
 
         private bool _disposed;
-        private Level _level;
         private readonly IServer _server;
         private readonly Socket _socket;
         private readonly NetworkManagerAsync _networkManager;
 
         public Socket Connection => _socket;
-
-        public Level Level => _level;
-
         public IServer Server => _server;
+
+        public Level Level { get; set; }
+        public byte[] SessionKey { get; set; }
         #endregion
 
         #region Methods
@@ -64,9 +63,8 @@ namespace CoCSharp.Server
 
         private void OnMessage(object sender, MessageReceivedEventArgs e)
         {
-            Console.WriteLine(e.Message);
-
-            Server.ProcessMessage(e.Message);
+            Server.Log.Info($"Received {e.Message.GetType().Name}");
+            Server.Handler.Handle(this, e.Message);
         }
         #endregion
     }

@@ -26,6 +26,20 @@ namespace CoCSharp.Server.API.Core
         /// <param name="level"><see cref="Level"/> to save.</param>
         void SaveLevel(ILevelSave level);
 
+        /// <summary>
+        /// Returns a new <see cref="ILevelSave"/>.
+        /// </summary>
+        /// <returns>A new <see cref="ILevelSave"/>.</returns>
+        ILevelSave NewLevel();
+
+        /// <summary>
+        /// Returns a new <see cref="ILevelSave"/> with the specified token and ID.
+        /// </summary>
+        /// <param name="id">ID of the new <see cref="ILevelSave"/>.</param>
+        /// <param name="token">Token of the new <see cref="ILevelSave"/>.</param>
+        /// <returns>A new <see cref="ILevelSave"/> with the specified token and ID.</returns>
+        ILevelSave NewLevel(long id, string token);
+
         // TODO: Interacting with alliances as well.
     }
 }

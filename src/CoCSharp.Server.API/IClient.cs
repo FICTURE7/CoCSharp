@@ -10,15 +10,11 @@ namespace CoCSharp.Server.API
     /// </summary>
     public interface IClient : IDisposable
     {
+        #region Fields & Properties
         /// <summary>
         /// Event raised when <see cref="IClient"/> leaves the server.
         /// </summary>
         event EventHandler<DisconnectedEventArgs> Left;
-
-        ///// <summary>
-        ///// Event raised when <see cref="IClient"/> joins the server.
-        ///// </summary>
-        //event EventHandler<EventArgs> Joined;
 
         /// <summary>
         /// Gets the <see cref="IServer"/> which owns this <see cref="IClient"/>.
@@ -31,10 +27,17 @@ namespace CoCSharp.Server.API
         Socket Connection { get; }
 
         /// <summary>
-        /// Gets the <see cref="Logic.Level"/> associated with the <see cref="IClient"/>.
+        /// Gets or sets the <see cref="Logic.Level"/> associated with the <see cref="IClient"/>.
         /// </summary>
-        Level Level { get; }
+        Level Level { get; set; }
 
+        /// <summary>
+        /// Gets or sets the <see cref="IClient"/>' session key.
+        /// </summary>
+        byte[] SessionKey { get; set; }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Sends the specified <see cref="Message"/> to the <see cref="IClient"/> using the <see cref="Connection"/> <see cref="Socket"/>.
         /// </summary>
@@ -45,5 +48,6 @@ namespace CoCSharp.Server.API
         /// Disconnects <see cref="Connection"/>.
         /// </summary>
         void Disconnect();
+        #endregion
     }
 }

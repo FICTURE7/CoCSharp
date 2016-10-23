@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using CoCSharp.Server.API.Core;
 using System;
@@ -50,12 +51,12 @@ namespace CoCSharp.Server.Core
         #endregion
 
         #region Methods
-        public void Overwrite(Level level)
+        public void Overwrite(Level level, AssetManager assets)
         {
             if (level == null)
                 throw new ArgumentNullException(nameof(level));
 
-            level.Village = Village.FromJson(VillageJson);
+            level.Village = Village.FromJson(VillageJson, assets);
             level.Avatar.ID = ID;
             level.Avatar.Token = Token;
             level.Avatar.Name = Name;
@@ -86,10 +87,10 @@ namespace CoCSharp.Server.Core
             Replace(level.Avatar.NpcElixir, NpcElixir);
         }
 
-        public Level ToLevel()
+        public Level ToLevel(AssetManager assets)
         {
             var level = new Level();
-            Overwrite(level);
+            Overwrite(level, assets);
             return level;
         }
 
@@ -132,6 +133,9 @@ namespace CoCSharp.Server.Core
 
         private void Replace<T>(ICollection<T> dst, IEnumerable<T> src)
         {
+            if (src == null)
+                return;
+
             dst.Clear();
             foreach (var val in src)
                 dst.Add(val);

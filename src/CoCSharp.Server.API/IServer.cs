@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Network;
 using CoCSharp.Server.API.Core;
+using CoCSharp.Server.API.Events.Server;
 using CoCSharp.Server.API.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,20 +13,27 @@ namespace CoCSharp.Server.API
     /// </summary>
     public interface IServer : IDisposable
     {
+        #region Fields & Properties
         /// <summary>
         /// Event raised when the server has started.
         /// </summary>
         event EventHandler<EventArgs> Started;
 
         /// <summary>
-        /// Gets the <see cref="Data.AssetManager"/> associated with the <see cref="IServer"/>.
+        /// Event raised when the server accepts a new connection.
+        /// </summary>
+        event EventHandler<ServerConnectionEventArgs> Accepted;
+
+        /// <summary>
+        /// Gets the <see cref="AssetManager"/> associated with the <see cref="IServer"/>.
         /// </summary>
         AssetManager Assets { get; }
 
         /// <summary>
-        /// Gets the <see cref="Logging.Logger"/> associated with the <see cref="IServer"/>.
+        /// Gets the <see cref="Logging.Log"/> associated with the <see cref="IServer"/>.
         /// </summary>
-        Logger Logger { get; }
+        Log Log { get; }
+
         /// <summary>
         /// Gets the <see cref="IDbManager"/> that will manage avatars.
         /// </summary>
@@ -36,6 +44,19 @@ namespace CoCSharp.Server.API
         /// to the <see cref="IServer"/>.
         /// </summary>
         ICollection<IClient> Clients { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IServerConfiguration"/> the <see cref="IServer"/> uses.
+        /// </summary>
+        IServerConfiguration Configuration { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IMessageHandler"/> that handles incoming <see cref="Message"/>.
+        /// </summary>
+        IMessageHandler Handler { get; }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Starts the <see cref="IServer"/> and start listening for incoming connections.
         /// </summary>
@@ -45,10 +66,6 @@ namespace CoCSharp.Server.API
         /// Stops the <see cref="IServer"/> and disposes all resources used by it.
         /// </summary>
         void Close();
-        /// <summary>
-        /// Processes the specified <see cref="Message"/>.
-        /// </summary>
-        /// <param name="message"><see cref="Message"/> to process.</param>
-        void ProcessMessage(Message message);
+        #endregion
     }
 }

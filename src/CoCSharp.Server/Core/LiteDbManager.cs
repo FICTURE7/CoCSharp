@@ -58,6 +58,37 @@ namespace CoCSharp.Server.Core
             }
         }
 
+        public ILevelSave NewLevel()
+        {
+            var token = TokenUtils.GenerateToken();
+            return InternalNewLevel(0, token);
+        }
+
+        public ILevelSave NewLevel(long id, string token)
+        {
+            if (id < 1)
+                throw new ArgumentOutOfRangeException();
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
+            return InternalNewLevel(id, token);
+        }
+
+        private ILevelSave InternalNewLevel(long id, string token)
+        {
+            var save = new LevelSave
+            {
+                ID = id,
+                Token = token,
+                Gems = Server.Configuration.StartingGems,
+                VillageJson = Server.Configuration.StartingVillage
+            };
+
+            // Save LevelSave to set the ID using the AutoId stuff.
+            SaveLevel(save);
+            return save;
+        }
+
         public void Dispose()
         {
             if (_disposed)

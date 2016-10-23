@@ -49,6 +49,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="Core\LevelSave.cs" />
     <Compile Include="Core\LiteDbManager.cs" />
+    <Compile Include="Core\MessageHandler.cs" />
     <Compile Include="Core\SaveQueue{T}.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Server.Listening.cs" />

@@ -1,15 +1,11 @@
-﻿using System.IO;
+﻿using CoCSharp.Server.API;
+using System.IO;
 using System.Xml;
 
 namespace CoCSharp.Server
 {
-    public class ServerConfiguration
+    public class ServerConfiguration : IServerConfiguration
     {
-        internal ServerConfiguration()
-        {
-            // Space
-        }
-
         public ServerConfiguration(string path)
         {
             if (File.Exists(path))
@@ -18,33 +14,22 @@ namespace CoCSharp.Server
             }
             else
             {
-                StartingGems = _internalDefault.StartingGems;
-                StartingGold = _internalDefault.StartingGold;
-                StartingElixir = _internalDefault.StartingElixir;
+                StartingGems = _default.StartingGems;
+                StartingGold = _default.StartingGold;
+                StartingElixir = _default.StartingElixir;
 
                 Create(path);
             }
         }
 
-        private static ServerConfiguration _internalDefault = new ServerConfiguration()
+        private readonly string _villageJson = File.ReadAllText("contents/starting_village.json");
+        private static readonly ServerConfiguration _default =
+        new ServerConfiguration("config.xml")
         {
             StartingGems = 69696969,
             StartingGold = 69696969,
             StartingElixir = 69696969
         };
-
-        public static ServerConfiguration Default
-        {
-            get
-            {
-                return new ServerConfiguration("config.xml")
-                {
-                    StartingGems = _internalDefault.StartingGems,
-                    StartingGold = _internalDefault.StartingGold,
-                    StartingElixir = _internalDefault.StartingElixir
-                };
-            }
-        }
 
         public int StartingGems { get; set; }
 
@@ -52,7 +37,9 @@ namespace CoCSharp.Server
 
         public int StartingElixir { get; set; }
 
-        private void Load(string path)
+        public string StartingVillage => _villageJson;
+
+        public void Load(string path)
         {
             var settings = new XmlReaderSettings()
             {
@@ -106,7 +93,7 @@ namespace CoCSharp.Server
             // If some configs are missing we
             // rewrite a new .xml config file with the missing configs
             // as the default value.
-            var defaultConfig = _internalDefault;
+            var defaultConfig = _default;
             if (!startingGemsSet || !startingGoldSet || !startingElixirSet)
             {
                 if (!startingGemsSet)
@@ -126,7 +113,7 @@ namespace CoCSharp.Server
             }
         }
 
-        private void Create(string path)
+        public void Create(string path)
         {
             var settings = new XmlWriterSettings()
             {

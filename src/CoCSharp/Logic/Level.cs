@@ -11,14 +11,12 @@
         /// </summary>
         public Level()
         {
-            _village = new Village();
             _avatar = new Avatar();
         }
         #endregion
 
         #region Fields & Properties
-        private Village _village;
-        private Avatar _avatar;
+        private readonly Avatar _avatar;
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="Level"/> is owned

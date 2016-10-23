@@ -1,4 +1,5 @@
-﻿using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
 using System.Collections.Generic;
 
@@ -156,7 +157,7 @@ namespace CoCSharp.Server.API.Core
         /// Returns a <see cref="Level"/> representing this <see cref="ILevelSave"/> instance.
         /// </summary>
         /// <returns>A <see cref="Level"/> representing this <see cref="ILevelSave"/> instance.</returns>
-        Level ToLevel();
+        Level ToLevel(AssetManager assets);
 
         /// <summary>
         /// Returns an <see cref="ILevelSave"/> representing the specified <see cref="Level"/>.
@@ -169,7 +170,7 @@ namespace CoCSharp.Server.API.Core
         /// Overwrites the values in the specified <see cref="Level"/> with the values in this <see cref="ILevelSave"/> instance.
         /// </summary>
         /// <param name="level"><see cref="Level"/> to overwrite.</param>
-        void Overwrite(Level level);
+        void Overwrite(Level level, AssetManager assets);
         #endregion
     }
 }
