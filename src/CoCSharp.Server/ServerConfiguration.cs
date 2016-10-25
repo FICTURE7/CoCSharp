@@ -6,6 +6,11 @@ namespace CoCSharp.Server
 {
     public class ServerConfiguration : IServerConfiguration
     {
+        private ServerConfiguration()
+        {
+            // Space
+        }
+
         public ServerConfiguration(string path)
         {
             if (File.Exists(path))
@@ -24,7 +29,7 @@ namespace CoCSharp.Server
 
         private readonly string _villageJson = File.ReadAllText("contents/starting_village.json");
         private static readonly ServerConfiguration _default =
-        new ServerConfiguration("config.xml")
+        new ServerConfiguration()
         {
             StartingGems = 69696969,
             StartingGold = 69696969,
