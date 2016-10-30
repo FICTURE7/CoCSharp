@@ -42,18 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CoCProxy.cs" />
-    <Compile Include="CoCProxyClient.cs" />
-    <Compile Include="FancyConsole.cs" />
-    <Compile Include="FancyConsole.Write.cs" />
-    <Compile Include="FancyConsole.WriteLine.cs" />
-    <Compile Include="MessageLogger.cs" />
+    <Compile Include="MessageProcessorNaClProxy.cs" />
+    <Compile Include="Proxy.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="Utils.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

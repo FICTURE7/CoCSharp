@@ -6,16 +6,16 @@ namespace CoCSharp.Network
 {
     /// <summary>
     /// Provides settings for the <see cref="NetworkManagerAsync"/> class. It is recommended to use
-    /// it for better management of <see cref="SocketAsyncEventArgs"/> objects. This class cannot
-    /// be inherited.
+    /// it for better management of <see cref="SocketAsyncEventArgs"/> objects.
     /// </summary>
-    public sealed class NetworkManagerAsyncSettings : IDisposable
+    public class NetworkManagerAsyncSettings : IDisposable
     {
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class
         /// with default settings.
         /// </summary>
-        public NetworkManagerAsyncSettings() 
+        public NetworkManagerAsyncSettings()
             : this(25, 25, 65535)
         {
             // Space
@@ -49,8 +49,8 @@ namespace CoCSharp.Network
             if (bufferSize < 1)
                 throw new ArgumentOutOfRangeException("bufferSize", "Argument bufferSize cannot be less than 1.");
 
-            BufferSize = bufferSize;
-            Statistics = new NetworkManagerAsyncStatistics();
+            _bufferSize = bufferSize;
+            _statistics = new NetworkManagerAsyncStatistics();
 
             var concurrentOpsCount = Environment.ProcessorCount * 2;
             _concurrentOps = new Semaphore(concurrentOpsCount, concurrentOpsCount);
@@ -74,46 +74,49 @@ namespace CoCSharp.Network
                 _sendPool.Push(args);
             }
         }
+        #endregion
 
-        /// <summary>
-        /// Gets a new instance of the default state of the <see cref="NetworkManagerAsyncSettings"/> class.
-        /// </summary>
-        public static NetworkManagerAsyncSettings DefaultSettings
-        {
-            get { return new NetworkManagerAsyncSettings(); }
-        }
-
-        /// <summary>
-        /// Gets the number of receive operation <see cref="SocketAsyncEventArgs"/> objects
-        /// being used.
-        /// </summary>
-        public int ReceiveCount { get { return _receivePool.Capacity; } }
-
-        /// <summary>
-        /// Gets the number of send operation <see cref="SocketAsyncEventArgs"/> objects
-        /// being used.
-        /// </summary>
-        public int SendCount { get { return _receivePool.Capacity; } }
-
-        /// <summary>
-        /// Gets the buffer size of each <see cref="SocketAsyncEventArgs"/> object.
-        /// </summary>
-        public int BufferSize { get; private set; }
-
-        /// <summary>
-        /// Gets the <see cref="NetworkManagerAsyncStatistics"/> associated with this
-        /// <see cref="NetworkManagerAsyncSettings"/> and represents the overall stats of <see cref="NetworkManagerAsync"/> instances
-        /// associated with the current <see cref="NetworkManagerAsyncSettings"/>.
-        /// </summary>
-        public NetworkManagerAsyncStatistics Statistics { get; private set; }
-
+        #region Fields & Properties
         private bool _disposed;
+        private readonly int _bufferSize;
+        private readonly NetworkManagerAsyncStatistics _statistics;
         private readonly MessageBufferManager _bufferManager;
 
         internal readonly Semaphore _concurrentOps;
         internal readonly SocketAsyncEventArgsPool _receivePool;
         internal readonly SocketAsyncEventArgsPool _sendPool;
 
+        /// <summary>
+        /// Gets a new instance of the default state of the <see cref="NetworkManagerAsyncSettings"/> class.
+        /// </summary>
+        public static NetworkManagerAsyncSettings DefaultSettings => new NetworkManagerAsyncSettings();
+
+        /// <summary>
+        /// Gets the number of receive operation <see cref="SocketAsyncEventArgs"/> objects
+        /// being used.
+        /// </summary>
+        public int ReceiveCount => _receivePool.Capacity;
+
+        /// <summary>
+        /// Gets the number of send operation <see cref="SocketAsyncEventArgs"/> objects
+        /// being used.
+        /// </summary>
+        public int SendCount => _receivePool.Capacity;
+
+        /// <summary>
+        /// Gets the buffer size of each <see cref="SocketAsyncEventArgs"/> object.
+        /// </summary>
+        public int BufferSize => _bufferSize;
+
+        /// <summary>
+        /// Gets the <see cref="NetworkManagerAsyncStatistics"/> associated with this
+        /// <see cref="NetworkManagerAsyncSettings"/> and represents the overall stats of <see cref="NetworkManagerAsync"/> instances
+        /// associated with the current <see cref="NetworkManagerAsyncSettings"/>.
+        /// </summary>
+        public NetworkManagerAsyncStatistics Statistics => _statistics;
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="NetworkManagerAsyncSettings"/> class.
         /// </summary>
@@ -122,7 +125,11 @@ namespace CoCSharp.Network
             Dispose(true);
         }
 
-        private void Dispose(bool disposing)
+        /// <summary>
+        /// Releases unmanaged resources and optionally disposes managed resources.
+        /// </summary>
+        /// <param name="disposing">If set to <c>true</c>; it will dispose managed resources as well.</param>
+        protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
             {
@@ -135,5 +142,6 @@ namespace CoCSharp.Network
                 _disposed = true;
             }
         }
+        #endregion
     }
 }

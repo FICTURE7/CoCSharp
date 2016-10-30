@@ -6,12 +6,12 @@ namespace CoCSharp.Network
     /// Defines the direction of a <see cref="Message"/>.
     /// </summary>
     [Flags]
-    public enum MessageDirection
+    public enum MessageDirection : byte
     {
         /// <summary>
         /// <see cref="Message"/> is going to the server.
         /// </summary>
-        Server = 0,
+        Server = 1,
 
         /// <summary>
         /// <see cref="Message"/> is going to the client.

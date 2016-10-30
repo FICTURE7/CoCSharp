@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 
-namespace CoCSharp.Server
+namespace CoCSharp.Proxy
 {
-    public class CoCProxy
+    public class Proxy
     {
-        public CoCProxy()
+        public Proxy()
         {
-            Connections = new List<CoCProxyClient>();
+            Connections = new List<Client>();
             Settings = new NetworkManagerAsyncSettings();
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
         }
 
         public NetworkManagerAsyncSettings Settings { get; private set; }
-        public List<CoCProxyClient> Connections { get; private set; }
+        public List<Client> Connections { get; private set; }
 
         private Socket _listener;
 
@@ -40,7 +40,7 @@ namespace CoCSharp.Server
             server.Connect("gamea.clashofclans.com", 9339);
             Console.WriteLine("Created new connection to gamea.clashofclans.com");
 
-            var connection = new CoCProxyClient(client, server, Settings);
+            var connection = new Client(client, server, Settings);
             Connections.Add(connection);
         }
     }

@@ -1,6 +1,5 @@
 using CoCSharp.Server.API;
 using CoCSharp.Server.API.Events.Server;
-using System;
 using System.Diagnostics;
 using System.Threading;
 

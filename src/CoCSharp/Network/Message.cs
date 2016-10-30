@@ -60,6 +60,16 @@ namespace CoCSharp.Network
         public abstract void WriteMessage(MessageWriter writer);
 
         /// <summary>
+        /// Gets the <see cref="MessageDirection"/> of the specified message ID.
+        /// </summary>
+        /// <param name="messageId">Message ID to get its direction.</param>
+        /// <returns><see cref="MessageDirection"/> of the specified message ID.</returns>
+        public static MessageDirection GetMessageDirection(int messageId)
+        {
+            return messageId >= 20000 ? MessageDirection.Client : MessageDirection.Server;
+        }
+
+        /// <summary>
         /// Gets the <see cref="MessageDirection"/> of the specified <see cref="Message"/> based on its
         /// message ID.
         /// </summary>
@@ -67,7 +77,7 @@ namespace CoCSharp.Network
         /// <returns><see cref="MessageDirection"/> of the specified <see cref="Message"/>.</returns>
         public static MessageDirection GetMessageDirection(Message message)
         {
-            return message.ID >= 20000 ? MessageDirection.Client : MessageDirection.Server;
+            return GetMessageDirection(message.ID);
         }
 
         /// <summary>
@@ -83,14 +93,14 @@ namespace CoCSharp.Network
         }
 
         /// <summary>Throws ArgumentNullException if reader is null.</summary>
-        protected void ThrowIfReaderNull(MessageReader reader)
+        internal void ThrowIfReaderNull(MessageReader reader)
         {
             if (reader == null)
                 throw new ArgumentNullException("reader");
         }
 
         /// <summary>Throws ArgumentNullException if writer is null.</summary>
-        protected void ThrowIfWriterNull(MessageWriter writer)
+        internal void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
                 throw new ArgumentNullException("writer");

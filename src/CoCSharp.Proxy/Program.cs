@@ -1,22 +1,18 @@
-﻿using CoCSharp.Network;
-using CoCSharp.Network.Messages;
-using Ionic.Zip;
+﻿using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 
-namespace CoCSharp.Server
+namespace CoCSharp.Proxy
 {
     public class Program
     {
-        public static CoCProxy Proxy { get; set; }
+        public static Proxy Proxy { get; set; }
 
         public static void Main(string[] args)
         {
-            Console.Title = "CoC# - Proxy";
-
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -58,7 +54,7 @@ namespace CoCSharp.Server
                 Directory.CreateDirectory("villages");
             }
 
-            Proxy = new CoCProxy();
+            Proxy = new Proxy();
             Proxy.Start(new IPEndPoint(IPAddress.Any, 9339));
 
             stopwatch.Stop();

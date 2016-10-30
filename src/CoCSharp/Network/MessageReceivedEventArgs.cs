@@ -23,8 +23,9 @@ namespace CoCSharp.Network
 
         /// <summary>
         /// Gets or sets the <see cref="System.Exception"/> that occurred during
-        /// the reading of the <see cref="Network.Message"/>. Returns null if no
-        /// error occurred during reading.
+        /// the reading of the <see cref="Network.Message"/>.
+        /// 
+        /// Returns null if no error occurred during reading.
         /// </summary>
         public Exception Exception { get; set; }
 
@@ -37,12 +38,12 @@ namespace CoCSharp.Network
         /// Gets or sets the <see cref="Network.Message"/> bytes body that was decrypted
         /// from the network.
         /// </summary>
-        public byte[] PayloadDecrypted { get; set; } //TODO: Improve structure.
+        public byte[] Plaintext { get; set; } 
 
         /// <summary>
         /// Gets or sets the <see cref="Network.Message"/> raw bytes that was received from
         /// the network. This includes the header and the body encrypted.
         /// </summary>
-        public byte[] PacketBytes { get; set; }
+        public byte[] Raw { get; set; }
     }
 }

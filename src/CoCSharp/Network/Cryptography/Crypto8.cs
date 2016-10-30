@@ -108,9 +108,9 @@ namespace CoCSharp.Network.Cryptography
         public Crypto8(MessageDirection direction, CoCKeyPair keyPair)
         {
             if (direction != MessageDirection.Client && direction != MessageDirection.Server)
-                throw new ArgumentException("Cannot initialize Crypto8 with direction '" + direction + "'.", "direction");
+                throw new ArgumentException("Cannot initialize Crypto8 with direction '" + direction + "'.", nameof(direction));
             if (keyPair == null)
-                throw new ArgumentNullException("keyPair");
+                throw new ArgumentNullException(nameof(KeyPair));
 
             _direction = direction;
             _keyPair = keyPair;
@@ -119,21 +119,12 @@ namespace CoCSharp.Network.Cryptography
         /// <summary>
         /// Gets the version of the <see cref="CoCCrypto"/>.
         /// </summary>
-        public override int Version
-        {
-            get
-            {
-                return 8;
-            }
-        }
+        public override int Version => 8;
 
         /// <summary>
         /// Gets the current <see cref="CoCKeyPair"/> used by the <see cref="Crypto8"/> to encrypt or decrypt data.
         /// </summary>
-        public CoCKeyPair KeyPair
-        {
-            get { return _keyPair; }
-        }
+        public CoCKeyPair KeyPair => _keyPair;
 
         /// <summary>
         /// Gets the shared public key.
@@ -141,18 +132,12 @@ namespace CoCSharp.Network.Cryptography
         /// <remarks>
         /// It can either be 'k', 'pk' or 'serverkey' depending on the state.
         /// </remarks>
-        public byte[] SharedKey
-        {
-            get { return _sharedKey; }
-        }
+        public byte[] SharedKey => _sharedKey;
 
         /// <summary>
         /// Gets the direction of the data.
         /// </summary>
-        public MessageDirection Direction
-        {
-            get { return _direction; }
-        }
+        public MessageDirection Direction => _direction;
 
         private readonly CoCKeyPair _keyPair;
         private readonly MessageDirection _direction;
@@ -185,12 +170,14 @@ namespace CoCSharp.Network.Cryptography
         /// <param name="data">Bytes to encrypt.</param>
         public override void Encrypt(ref byte[] data)
         {
+            if (data == null)
+                return;
+
             switch (_cryptoState)
             {
                 case CryptoState.InitialKey:
                 case CryptoState.BlakeNonce:
                     data = PublicKeyBox.Create(data, _blake2bNonce, _keyPair.PrivateKey, _sharedKey);
-
                     break;
 
                 case CryptoState.SecoundKey:
@@ -212,6 +199,9 @@ namespace CoCSharp.Network.Cryptography
         /// <param name="data">Bytes to decrypt.</param>
         public override void Decrypt(ref byte[] data)
         {
+            if (data == null)
+                return;
+
             switch (_cryptoState)
             {
                 case CryptoState.InitialKey:
@@ -244,9 +234,9 @@ namespace CoCSharp.Network.Cryptography
         public void UpdateSharedKey(byte[] publicKey)
         {
             if (publicKey == null)
-                throw new ArgumentNullException("publicKey");
+                throw new ArgumentNullException(nameof(publicKey));
             if (publicKey.Length != CoCKeyPair.KeyLength)
-                throw new ArgumentOutOfRangeException("publicKey", "publicKey must be 32 bytes in length.");
+                throw new ArgumentOutOfRangeException(nameof(publicKey), "publicKey must be 32 bytes in length.");
 
             if (_cryptoState == CryptoState.SecoundKey)
                 throw new InvalidOperationException("Cannot update 'k' because it has already been set.");
@@ -291,9 +281,9 @@ namespace CoCSharp.Network.Cryptography
             if (_cryptoState == CryptoState.SecoundKey)
                 throw new InvalidOperationException("Cannot update nonce after updated with shared key 'k'.");
             if (nonce == null)
-                throw new ArgumentNullException("nonce");
+                throw new ArgumentNullException(nameof(nonce));
             if (nonce.Length != CoCKeyPair.NonceLength)
-                throw new ArgumentOutOfRangeException("nonce", "nonce must be 24 bytes in length.");
+                throw new ArgumentOutOfRangeException(nameof(nonce), "nonce must be 24 bytes in length.");
 
             switch (nonceType)
             {

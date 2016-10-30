@@ -14,6 +14,7 @@ namespace CoCSharp.Network
     /// </summary>
     public class NetworkManagerAsync : IDisposable
     {
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/>.
         /// </summary>
@@ -63,16 +64,20 @@ namespace CoCSharp.Network
         public NetworkManagerAsync(Socket socket, NetworkManagerAsyncSettings settings, Crypto8 crypto)
         {
             if (socket == null)
-                throw new ArgumentNullException("connection");
+                throw new ArgumentNullException(nameof(socket));
             if (settings == null)
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
             if (crypto == null)
-                throw new ArgumentNullException("crypto");
+                throw new ArgumentNullException(nameof(crypto));
 
-            Socket = socket;
-            Settings = settings;
+#if DEBUG
+            _ident = crypto.Direction + "-" + Guid.NewGuid();
+#endif
+            _socket = socket;
+            _settings = settings;
+            _stats = new NetworkManagerAsyncStatistics();
+            //_processor = new MessageProcessorNaCl();
             Crypto = crypto;
-            Statistics = new NetworkManagerAsyncStatistics();
 
             _settingsStats = Settings.Statistics;
             _receivePool = Settings._receivePool;
@@ -82,40 +87,115 @@ namespace CoCSharp.Network
             if (args == null)
             {
                 args = new SocketAsyncEventArgs();
-                args.SetBuffer(new byte[65535], 0, 65535);
+                args.SetBuffer(new byte[settings.BufferSize], 0, settings.BufferSize);
                 MessageReceiveToken.Create(args);
             }
+
             StartReceive(args);
         }
 
+        public NetworkManagerAsync(Socket socket, NetworkManagerAsyncSettings settings, MessageProcessor processor)
+        {
+            if (socket == null)
+                throw new ArgumentNullException(nameof(socket));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+            if (processor == null)
+                throw new ArgumentNullException(nameof(processor));
+
+            _processor = processor;
+            _socket = socket;
+            _settings = settings;
+            _stats = new NetworkManagerAsyncStatistics();
+
+            _settingsStats = Settings.Statistics;
+            _receivePool = Settings._receivePool;
+            _sendPool = Settings._sendPool;
+
+            var args = _receivePool.Pop();
+            if (args == null)
+            {
+                args = new SocketAsyncEventArgs();
+                args.SetBuffer(new byte[settings.BufferSize], 0, settings.BufferSize);
+                MessageReceiveToken.Create(args);
+            }
+
+            StartReceive(args);
+        }
+        #endregion
+
+        #region Fields & Properties
+        /// <summary>
+        /// The event raised when a <see cref="Message"/> is received.
+        /// </summary>
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        /// <summary>
+        /// The event raised when <see cref="Socket"/> socket got disconnected.
+        /// </summary>
+        public event EventHandler<DisconnectedEventArgs> Disconnected;
+
+        // To figure out if have been disposed or not.
         private int _disposed;
+        // Socket which the NetworkManagerAsync wraps.
+        private readonly Socket _socket;
+        // Processor that will process incoming encrypted byte arrays,
+        // and process outgoing message objects.
+        private readonly MessageProcessor _processor;
+
+        // Pool of SocketAsyncEventArgs that is going to be used to
+        // receive incoming data.
         private readonly SocketAsyncEventArgsPool _receivePool;
+        // Pool of SocketAsyncEventArgs that is going to be used to
+        // send data.
         private readonly SocketAsyncEventArgsPool _sendPool;
+
+        // Stats for the current NetworkManagerAsync.
+        private readonly NetworkManagerAsyncStatistics _stats;
+
+        // Settings that NetworkManagerAsync will use, _receivePool and _sendPool
+        // comes from _settings._receivePool and _settings._sendPool.
+        private readonly NetworkManagerAsyncSettings _settings;
+        // Stats for the NetworkManagerAsyncSettings which the instance
+        // was initialize with.
         private readonly NetworkManagerAsyncStatistics _settingsStats;
+
+#if DEBUG
+        // ID of the NetworkManagerAysnc to debug stuff.
+        private readonly string _ident;
+#endif
 
         /// <summary>
         /// Gets the <see cref="System.Net.Sockets.Socket"/> that is used to send and receive
         /// data.
         /// </summary>
-        public Socket Socket { get; private set; }
+        public Socket Socket => _socket;
 
         /// <summary>
         /// Gets the <see cref="NetworkManagerAsyncSettings"/> being used the
         /// current <see cref="NetworkManagerAsync"/>.
         /// </summary>
-        public NetworkManagerAsyncSettings Settings { get; private set; }
+        public NetworkManagerAsyncSettings Settings => _settings;
 
         /// <summary>
         /// Gets the <see cref="NetworkManagerAsyncStatistics"/> associated with
         /// the current <see cref="NetworkManagerAsync"/>.
         /// </summary>
-        public NetworkManagerAsyncStatistics Statistics { get; private set; }
+        public NetworkManagerAsyncStatistics Statistics => _settingsStats;
+
+        /// <summary>
+        /// Gets the <see cref="MessageProcessor"/> that is going to process incoming
+        /// and outgoing <see cref="Message"/> objects.
+        /// </summary>
+        public MessageProcessor Processor => _processor;
 
         /// <summary>
         /// Gets the <see cref="Crypto8"/> being used with the current <see cref="NetworkManagerAsync"/>.
         /// </summary>
+        [Obsolete]
         public Crypto8 Crypto { get; private set; }
+        #endregion
 
+        #region Methods
         /// <summary>
         /// Sends the specified message using the <see cref="Socket"/> socket.
         /// </summary>
@@ -129,7 +209,9 @@ namespace CoCSharp.Network
             if (Thread.VolatileRead(ref _disposed) == 1)
                 throw new ObjectDisposedException(null, "Cannot SendMessage because the NetworkManagerAsync object was disposed.");
             if (message == null)
-                throw new ArgumentNullException("message");
+                throw new ArgumentNullException(nameof(message));
+
+            var bytes = _processor.ProcessOutgoing(message);
 
             using (var deMessageWriter = new MessageWriter(new MemoryStream()))
             {
@@ -141,21 +223,21 @@ namespace CoCSharp.Network
 
                 // Ignore 10100 and 20100 for encryption
                 // any messages for encryption before encryption has been set up.
-                if (Crypto._cryptoState != Crypto8.CryptoState.None)
-                    Crypto.Encrypt(ref body);
+                //if (Crypto._cryptoState != Crypto8.CryptoState.None)
+                //    Crypto.Encrypt(ref body);
 
-                if (message is LoginSuccessMessage)
-                {
-                    var lsMessage = message as LoginSuccessMessage;
-                    Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Encrypt);
-                    Crypto.UpdateSharedKey(lsMessage.PublicKey);
-                }
-                if (message is LoginFailedMessage && Crypto._cryptoState != Crypto8.CryptoState.None)
-                {
-                    var lfMessage = message as LoginFailedMessage;
-                    Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Encrypt);
-                    Crypto.UpdateSharedKey(lfMessage.PublicKey);
-                }
+                //if (message is LoginSuccessMessage)
+                //{
+                //    var lsMessage = message as LoginSuccessMessage;
+                //    //Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Encrypt);
+                //    //Crypto.UpdateSharedKey(lsMessage.PublicKey);
+                //}
+                //if (message is LoginFailedMessage && Crypto._cryptoState != Crypto8.CryptoState.None)
+                //{
+                //    var lfMessage = message as LoginFailedMessage;
+                //    Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Encrypt);
+                //    Crypto.UpdateSharedKey(lfMessage.PublicKey);
+                //}
 
                 using (var enMessageWriter = new MessageWriter(new MemoryStream()))
                 {
@@ -249,6 +331,7 @@ namespace CoCSharp.Network
                 Interlocked.Increment(ref Statistics._totalMessagesSent);
                 Interlocked.Increment(ref _settingsStats._totalMessagesSent);
                 token.Reset();
+
                 // Just in case.
                 args.SetBuffer(args.Offset, Settings.BufferSize);
                 _sendPool.Push(args);
@@ -257,8 +340,11 @@ namespace CoCSharp.Network
 
         private void StartReceive(SocketAsyncEventArgs args)
         {
+            // If we've been disposed, we can exit gently out of
+            // of the function.
             if (Thread.VolatileRead(ref _disposed) == 1)
             {
+                // Push the SocketAsyncEventArgs back to the pool.
                 _receivePool.Push(args);
                 return;
             }
@@ -278,12 +364,15 @@ namespace CoCSharp.Network
 
             while (bytesToProcess != 0)
             {
+                // Appends the incoming bytes to a buffer.
+
                 // If we don't have the complete header yet.
                 // Copy header from buffer.
                 if (Message.HeaderSize != token.HeaderOffset)
                 {
                     // If we don't have the complete header in a single receive operation.
-                    // Copy what we have from the buffer.
+                    // Copy what we have from the buffer and reuse the same SocketAsyncEventArgs
+                    // object to receive the rest.
                     if (bytesToProcess < token.HeaderRemaining)
                     {
                         //Console.WriteLine("Reusing args: {0}", token.TokenID);
@@ -337,121 +426,34 @@ namespace CoCSharp.Network
                     }
                 }
 
-                var message = MessageFactory.Create(token.ID);
-                var messageEnBody = (byte[])null;
-                var messageDeBody = (byte[])null;
-
-                // After encryption (was added after the server/client encrypted the data).
-                if (message is LoginRequestMessage) // we're the server
-                {
-                    // Copies clientKey(pk) from raw message -> token.Body[:32].
-                    var publicKey = new byte[CoCKeyPair.KeyLength];
-                    Buffer.BlockCopy(token.Body, 0, publicKey, 0, CoCKeyPair.KeyLength);
-
-                    // Copies remaining bytes from raw message -> token.Body[32:]
-                    messageEnBody = new byte[token.Length - CoCKeyPair.KeyLength];
-                    Buffer.BlockCopy(token.Body, CoCKeyPair.KeyLength, messageEnBody, 0, messageEnBody.Length);
-
-                    var lrMessage = message as LoginRequestMessage;
-                    lrMessage.PublicKey = publicKey;
-
-                    // Updates with clientKey(pk). _cryptoState = InitialKey
-                    Crypto.UpdateSharedKey(publicKey);
-                }
-                else
-                {
-                    messageEnBody = token.Body;
-                }
-
-                // Cloning the byte array because we don't want a reference.
-                messageDeBody = (byte[])messageEnBody.Clone();
-
                 // Full message data, that is message header including message body.
                 var messageData = new byte[token.Length + Message.HeaderSize];
+                // Copies 7 bytes long header.
                 Buffer.BlockCopy(token.Header, 0, messageData, 0, Message.HeaderSize);
+                // Copies message body starting at offset 7.
                 Buffer.BlockCopy(token.Body, 0, messageData, Message.HeaderSize, token.Length);
 
-                // Ignore 10100 & 20100 for decryption and
-                // any messages for decryption before encryption has been set up.
-                if (Crypto._cryptoState != Crypto8.CryptoState.None)
+                // Begins processing message bytes.
+                var exception = (Exception)null;
+                var message = (Message)null;
+                var plaintext = (byte[])null;
+                try
                 {
-                    try
-                    {
-                        Crypto.Decrypt(ref messageDeBody);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Failed to decrypt the message.
-                        OnMessageReceived(new MessageReceivedEventArgs()
-                        {
-                            Message = message,
-                            PacketBytes = messageData,
-                            PayloadDecrypted = messageDeBody,
-                            Exception = ex
-                        });
-                        token.Reset();
-                        continue;
-                    }
+                    var header = new MessageHeader(token.ID, token.Length, token.Version);
+                    message = _processor.ProcessIncoming(header, token.Body, ref plaintext);
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
                 }
 
-                if (message is UnknownMessage)
+                OnMessageReceived(new MessageReceivedEventArgs()
                 {
-                    var unknownMessage = (UnknownMessage)message;
-                    unknownMessage.Length = token.Length;
-                    unknownMessage.Version = token.Version;
-                    unknownMessage.DecryptedBytes = messageDeBody;
-                    unknownMessage.EncryptedBytes = messageEnBody;
-
-                    OnMessageReceived(new MessageReceivedEventArgs()
-                    {
-                        Message = message,
-                        PacketBytes = messageData,
-                        PayloadDecrypted = messageDeBody,
-                        FullyRead = true
-                    });
-                    token.Reset();
-                    continue;
-                }
-
-                using (var reader = new MessageReader(new MemoryStream(messageDeBody)))
-                {
-                    var exception = (Exception)null;
-
-                    try { message.ReadMessage(reader); }
-                    catch (Exception ex) { exception = ex; }
-
-                    // Before encryption (was added before the server/client encrypted the data).
-                    // We're the server.
-                    if (message is LoginRequestMessage)
-                    {
-                        var lrMessage = message as LoginRequestMessage;
-                        Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Decrypt); // update with snonce, decryptnonce = snonce
-                        Crypto.UpdateNonce(lrMessage.Nonce, UpdateNonceType.Blake);
-                    }
-                    // We're the client.
-                    else if (message is LoginSuccessMessage)
-                    {
-                        var lsMessage = message as LoginSuccessMessage;
-                        Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
-                        Crypto.UpdateSharedKey(lsMessage.PublicKey); // Update crypto with k.
-                    }
-                    // We're the client.
-                    else if (message is LoginFailedMessage && Crypto._cryptoState != Crypto8.CryptoState.None)
-                    {
-                        var lfMessage = message as LoginFailedMessage;
-                        Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Decrypt); // update with rnonce, decryptnonce = rnonce
-                        Crypto.UpdateSharedKey(lfMessage.PublicKey); // Update crypto with k.
-                    }
-
-                    OnMessageReceived(new MessageReceivedEventArgs()
-                    {
-                        Message = message,
-                        PacketBytes = messageData,
-                        PayloadDecrypted = messageDeBody,
-                        FullyRead = reader.BaseStream.Position == reader.BaseStream.Length,
-                        Exception = exception
-                    });
-                }
+                    Message = message,
+                    Raw = messageData,
+                    Plaintext = plaintext,
+                    Exception = exception
+                });
                 token.Reset();
             }
 
@@ -465,6 +467,9 @@ namespace CoCSharp.Network
             token.ID = (ushort)((token.Header[0] << 8) | (token.Header[1]));
             token.Length = (token.Header[2] << 16) | (token.Header[3] << 8) | (token.Header[4]);
             token.Version = (ushort)((token.Header[5] << 8) | (token.Header[6]));
+
+            // Allocate a byte array of the same length as the message length.
+            // Where all the remaining bytes are copied to.
             token.Body = new byte[token.Length];
         }
 
@@ -475,6 +480,8 @@ namespace CoCSharp.Network
             args.Completed -= AsyncOperationCompleted;
             if (Settings._concurrentOps.WaitOne(TIMEOUT))
             {
+                // Return the SocketAsyncEventArgs object back to its corresponding pool if
+                // the NetworkManagerAsync was disconnected purposely or disposed.
                 if (args.SocketError == SocketError.OperationAborted || Thread.VolatileRead(ref _disposed) == 1)
                 {
                     switch (args.LastOperation)
@@ -547,22 +554,18 @@ namespace CoCSharp.Network
         /// <param name="disposing">Releases managed resources if set to <c>true</c>.</param>
         protected virtual void Dispose(bool disposing)
         {
+            // Make sure we haven't been disposed already.
             if (Interlocked.CompareExchange(ref _disposed, 1, 0) == 0)
             {
                 if (disposing)
                 {
                     try { Socket.Shutdown(SocketShutdown.Both); }
-                    catch { }
-
+                    catch { /* Painful swallow. */}
                     Socket.Close();
                 }
             }
         }
 
-        /// <summary>
-        /// The event raised when a <see cref="Message"/> is received.
-        /// </summary>
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
         /// <summary>
         /// Use this method to trigger the <see cref="MessageReceived"/> event.
         /// </summary>
@@ -577,17 +580,13 @@ namespace CoCSharp.Network
         }
 
         /// <summary>
-        /// The event raised when <see cref="Socket"/> socket got disconnected.
-        /// </summary>
-        public event EventHandler<DisconnectedEventArgs> Disconnected;
-        /// <summary>
         /// Use this method to trigger the <see cref="Disconnected"/> event.
         /// </summary>
         /// <param name="e">The arguments.</param>
         protected virtual void OnDisconnected(DisconnectedEventArgs e)
         {
-            if (Disconnected != null)
-                Disconnected(this, e);
+            Disconnected?.Invoke(this, e);
         }
+        #endregion
     }
 }

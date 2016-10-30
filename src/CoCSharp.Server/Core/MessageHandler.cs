@@ -73,8 +73,8 @@ namespace CoCSharp.Server.Core
             var lsMessage = new LoginSuccessMessage
             {
                 // NetworkManagerAsync will use this nonce.
-                Nonce = Crypto8.GenerateNonce(),
-                PublicKey = key.PublicKey,
+                //Nonce = Crypto8.GenerateNonce(),
+                //PublicKey = key.PublicKey,
 
                 FacebookID = null,
                 GameCenterID = null,

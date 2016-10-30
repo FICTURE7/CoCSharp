@@ -120,6 +120,9 @@
     <Compile Include="Logic\VillageObjectPool.cs" />
     <Compile Include="Logic\VillageObject{T}.cs" />
     <Compile Include="Network\DisconnectedEventArgs.cs" />
+    <Compile Include="Network\MessageHeader.cs" />
+    <Compile Include="Network\MessageProcessor.cs" />
+    <Compile Include="Network\MessageProcessorNaCl.cs" />
     <Compile Include="Network\Messages\AllianceChangeRoleOkMessage.cs" />
     <Compile Include="Network\Messages\AllianceDataRequestMessage.cs" />
     <Compile Include="Network\Messages\AllianceDataResponseMessage.cs" />
