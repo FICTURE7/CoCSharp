@@ -1,6 +1,4 @@
-﻿using CoCSharp.Network.Cryptography;
-using CoCSharp.Network.Messages;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
@@ -16,84 +14,48 @@ namespace CoCSharp.Network
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/>.
+        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/>
+        /// from which messages will be received and sent; and <see cref="MessageProcessor"/> that is going to process incoming and outgoing messages.
         /// </summary>
-        /// <param name="socket"><see cref="System.Net.Sockets.Socket"/> instance.</param>
+        ///
+        /// <remarks>
+        /// The <see cref="NetworkManagerAsync"/> will use the <see cref="NetworkManagerAsyncSettings.DefaultSettings"/> to acquire a 
+        /// receive and send pool.
+        /// </remarks>
         /// 
-        /// <exception cref="ArgumentNullException"><paramref name="socket"/> is null.</exception>
-        public NetworkManagerAsync(Socket socket)
-            : this(socket, NetworkManagerAsyncSettings.DefaultSettings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/> 
-        /// and <see cref="NetworkManagerAsyncSettings"/>.
-        /// </summary>
+        /// <param name="socket">
+        ///     <see cref="System.Net.Sockets.Socket"/> instance from which messages will be received and sent.
+        /// </param>
         /// 
-        /// <param name="socket"><see cref="System.Net.Sockets.Socket"/> instance.</param>
-        /// <param name="settings">
-        /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
-        /// object management.
+        /// <param name="processor">
+        ///     <see cref="MessageProcessor"/> instance that is going to process incoming and outgoing messages.
         /// </param>
         /// 
         /// <exception cref="ArgumentNullException"><paramref name="socket"/> is null.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
-        public NetworkManagerAsync(Socket socket, NetworkManagerAsyncSettings settings)
-            : this(socket, settings, new Crypto8(MessageDirection.Client, Crypto8.StandardKeyPair))
+        /// <exception cref="ArgumentNullException"><paramref name="processor"/> is null.</exception>
+        public NetworkManagerAsync(Socket socket, MessageProcessor processor)
+            : this(socket, NetworkManagerAsyncSettings.DefaultSettings, processor)
         {
             // Space
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkManagerAsync"/> class with the specified <see cref="System.Net.Sockets.Socket"/>
-        /// and <see cref="NetworkManagerAsyncSettings"/> with the specified <see cref="Crypto8"/> that will be used to encrypt and decrypt messages.
+        /// from which messages will be received and sent; <see cref="NetworkManagerAsyncSettings"/> and 
+        /// <see cref="MessageProcessor"/> that is going to process incoming and outgoing messages.
         /// </summary>
         /// 
-        /// <param name="socket"><see cref="System.Net.Sockets.Socket"/> instance.</param>
-        /// <param name="settings">
-        /// <see cref="NetworkManagerAsyncSettings"/> instance for better <see cref="SocketAsyncEventArgs"/>
-        /// object management.
+        /// <param name="socket">
+        ///     <see cref="System.Net.Sockets.Socket"/> instance from which messages will be received and sent.
         /// </param>
-        /// <param name="crypto"><see cref="Crypto8"/> instance that will be used to encrypt and decrypt messages.</param>
         /// 
-        /// <exception cref="ArgumentNullException"><paramref name="socket"/> is null.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="settings"/> is null.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="crypto"/> is null.</exception>
-        public NetworkManagerAsync(Socket socket, NetworkManagerAsyncSettings settings, Crypto8 crypto)
-        {
-            if (socket == null)
-                throw new ArgumentNullException(nameof(socket));
-            if (settings == null)
-                throw new ArgumentNullException(nameof(settings));
-            if (crypto == null)
-                throw new ArgumentNullException(nameof(crypto));
-
-#if DEBUG
-            _ident = crypto.Direction + "-" + Guid.NewGuid();
-#endif
-            _socket = socket;
-            _settings = settings;
-            _stats = new NetworkManagerAsyncStatistics();
-            //_processor = new MessageProcessorNaCl();
-            Crypto = crypto;
-
-            _settingsStats = Settings.Statistics;
-            _receivePool = Settings._receivePool;
-            _sendPool = Settings._sendPool;
-
-            var args = _receivePool.Pop();
-            if (args == null)
-            {
-                args = new SocketAsyncEventArgs();
-                args.SetBuffer(new byte[settings.BufferSize], 0, settings.BufferSize);
-                MessageReceiveToken.Create(args);
-            }
-
-            StartReceive(args);
-        }
-
+        /// <param name="settings">
+        ///     <see cref="NetworkManagerAsyncSettings"/> instance that is going to be used.
+        /// </param>
+        /// 
+        /// <param name="processor">
+        ///     <see cref="MessageProcessor"/> instance that is going to process incoming and outgoing messages.
+        /// </param>
         public NetworkManagerAsync(Socket socket, NetworkManagerAsyncSettings settings, MessageProcessor processor)
         {
             if (socket == null)
@@ -187,12 +149,6 @@ namespace CoCSharp.Network
         /// and outgoing <see cref="Message"/> objects.
         /// </summary>
         public MessageProcessor Processor => _processor;
-
-        /// <summary>
-        /// Gets the <see cref="Crypto8"/> being used with the current <see cref="NetworkManagerAsync"/>.
-        /// </summary>
-        [Obsolete]
-        public Crypto8 Crypto { get; private set; }
         #endregion
 
         #region Methods
@@ -211,64 +167,41 @@ namespace CoCSharp.Network
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
-            var bytes = _processor.ProcessOutgoing(message);
-
-            using (var deMessageWriter = new MessageWriter(new MemoryStream()))
+            var writerStream = new MemoryStream();
+            using (var writer = new MessageWriter(writerStream))
             {
-                message.WriteMessage(deMessageWriter);
-                var body = ((MemoryStream)deMessageWriter.BaseStream).ToArray();
+                var chiper = _processor.ProcessOutgoing(message);
+                if (chiper == null)
+                    throw new InvalidOperationException("MessageProcessor failed to process outgoing message.");
 
-                if (body.Length > Message.MaxSize)
-                    throw new InvalidMessageException("Length of message is greater than Message.MaxSize.");
+                var len = BitConverter.GetBytes(chiper.Length);
+                if (BitConverter.IsLittleEndian)
+                    Array.Reverse(len);
 
-                // Ignore 10100 and 20100 for encryption
-                // any messages for encryption before encryption has been set up.
-                //if (Crypto._cryptoState != Crypto8.CryptoState.None)
-                //    Crypto.Encrypt(ref body);
+                writer.Write(message.ID);
+                writer.Write(len, 1, 3); // message length
+                writer.Write(message.Version);
+                writer.Write(chiper); // encrypted body
 
-                //if (message is LoginSuccessMessage)
-                //{
-                //    var lsMessage = message as LoginSuccessMessage;
-                //    //Crypto.UpdateNonce(lsMessage.Nonce, UpdateNonceType.Encrypt);
-                //    //Crypto.UpdateSharedKey(lsMessage.PublicKey);
-                //}
-                //if (message is LoginFailedMessage && Crypto._cryptoState != Crypto8.CryptoState.None)
-                //{
-                //    var lfMessage = message as LoginFailedMessage;
-                //    Crypto.UpdateNonce(lfMessage.Nonce, UpdateNonceType.Encrypt);
-                //    Crypto.UpdateSharedKey(lfMessage.PublicKey);
-                //}
+                var messageData = writerStream.ToArray();
+                if (messageData.Length > Message.MaxSize)
+                    throw new InvalidMessageException("Message size too large.", message);
 
-                using (var enMessageWriter = new MessageWriter(new MemoryStream()))
+                var args = _sendPool.Pop();
+                if (args == null)
                 {
-                    var len = BitConverter.GetBytes(body.Length);
-                    if (BitConverter.IsLittleEndian)
-                        Array.Reverse(len);
-
-                    enMessageWriter.Write(message.ID);
-                    enMessageWriter.Write(len, 1, 3); // message length
-                    enMessageWriter.Write(message.Version);
-                    enMessageWriter.Write(body); // encrypted body
-
-                    var messageData = ((MemoryStream)enMessageWriter.BaseStream).ToArray();
-                    if (messageData.Length > Message.MaxSize)
-                        throw new InvalidMessageException("Message size too large.", message);
-                    var args = _sendPool.Pop();
-                    if (args == null)
-                    {
-                        args = new SocketAsyncEventArgs();
-                        args.SetBuffer(new byte[65535], 0, 65535);
-                        MessageSendToken.Create(args);
-                    }
-
-                    var token = args.UserToken as MessageSendToken;
-                    token.ID = message.ID;
-                    token.Length = body.Length;
-                    token.Version = message.Version;
-                    token.Body = messageData;
-
-                    StartSend(args);
+                    args = new SocketAsyncEventArgs();
+                    args.SetBuffer(new byte[65535], 0, 65535);
+                    MessageSendToken.Create(args);
                 }
+
+                var token = args.UserToken as MessageSendToken;
+                token.ID = message.ID;
+                token.Length = chiper.Length;
+                token.Version = message.Version;
+                token.Body = messageData;
+
+                StartSend(args);
             }
         }
 

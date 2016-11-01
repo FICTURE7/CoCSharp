@@ -20,9 +20,11 @@ namespace CoCSharp.Server.API.Logging
         public FileLogger()
         {
             var now = DateTime.Now.ToString("dd-MM-yy_hh-mm-ss");
+            _sync = new object();
             _fileName = Path.Combine("logs", now + ".log");
         }
 
+        private readonly object _sync;
         private readonly string _fileName;
 
         /// <summary/>
@@ -31,9 +33,10 @@ namespace CoCSharp.Server.API.Logging
         /// <summary/>
         protected override void Write(string message, LogLevel level)
         {
-            using (var file = new StreamWriter(_fileName, true))
+            lock (_sync)
             {
-                file.WriteLine(message);
+                using (var file = new StreamWriter(_fileName, true))
+                    file.WriteLine(message);
             }
         }
     }

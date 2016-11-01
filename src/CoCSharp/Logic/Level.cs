@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Logic
+﻿using CoCSharp.Network.Messages;
+
+namespace CoCSharp.Logic
 {
     /// <summary>
     /// Represents a level.
@@ -33,8 +35,27 @@
         /// Gets the <see cref="Logic.Avatar"/> associated with the <see cref="Level"/>.
         /// </summary>
         public Avatar Avatar => _avatar;
+
+        public OwnHomeDataMessage OwnHomeData
+        {
+            get
+            {
+                var villageData = new VillageMessageComponent(this);
+                var avatarData = new AvatarMessageComponent(this);
+                var ohdMessage = new OwnHomeDataMessage()
+                {
+                    OwnVillageData = villageData,
+                    OwnAvatarData = avatarData,
+                    Unkonwn4 = 1462629754000,
+                    Unknown5 = 1462629754000,
+                    Unknown6 = 1462631554000,
+                };
+                return ohdMessage;
+            }                
+        }
         #endregion
 
+        #region Methods
         /// <summary>
         /// Ticks all <see cref="VillageObject"/> in the <see cref="Level"/>.
         /// </summary>
@@ -42,5 +63,6 @@
         {
             Village.Update();
         }
+        #endregion
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace CoCSharp.Csv
@@ -89,7 +88,7 @@ namespace CoCSharp.Csv
             if (columnIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(columnIndex), "Column index must be non-negative.");
 
-            if (columnIndex >= Table.Columns.Count)
+            if (columnIndex >= Table.Columns.Count || columnIndex >= _data.Length)
                 return null;
 
             return _data[columnIndex];

@@ -28,6 +28,7 @@ namespace CoCSharp.Server.Core
         public int League { get; set; }
         public int Experience { get; set; }
         public int Gems { get; set; }
+        public int FreeGems { get; set; }
         public int AttacksWon { get; set; }
         public int AttacksLost { get; set; }
         public int DefensesWon { get; set; }
@@ -65,6 +66,7 @@ namespace CoCSharp.Server.Core
             level.Avatar.Trophies = Trophies;
             level.Avatar.ExpPoints = Experience;
             level.Avatar.Gems = Gems;
+            level.Avatar.FreeGems = FreeGems;
             level.Avatar.AttacksWon = AttacksWon;
             level.Avatar.AttacksLost = AttacksLost;
             level.Avatar.DefensesWon = DefensesWon;
@@ -108,6 +110,7 @@ namespace CoCSharp.Server.Core
             Trophies = level.Avatar.Trophies;
             Experience = level.Avatar.ExpPoints;
             Gems = level.Avatar.Gems;
+            FreeGems = level.Avatar.FreeGems;
             AttacksWon = level.Avatar.AttacksWon;
             AttacksLost = level.Avatar.AttacksLost;
             DefensesWon = level.Avatar.DefensesWon;

@@ -1,7 +1,6 @@
 using CoCSharp.Csv;
 using CoCSharp.Data;
 using CoCSharp.Data.Models;
-using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Server.API;
 using CoCSharp.Server.API.Core;

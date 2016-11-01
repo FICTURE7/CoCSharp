@@ -1,4 +1,6 @@
-﻿using CoCSharp.Logic;
+﻿using CoCSharp.Data;
+using CoCSharp.Data.Slots;
+using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
 using CoCSharp.Network.Messages;
@@ -7,6 +9,7 @@ using CoCSharp.Server.API.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 namespace CoCSharp.Server.Core
 {
@@ -24,6 +27,8 @@ namespace CoCSharp.Server.Core
             _handlers = new Dictionary<int, Handler>();
             _handlers.Add(new HandshakeRequestMessage().ID, HandleHandshakeRequest);
             _handlers.Add(new LoginRequestMessage().ID, HandleLoginRequest);
+
+            _handlers.Add(new KeepAliveRequestMessage().ID, HandleKeepAlive);
         }
         #endregion
 
@@ -61,20 +66,65 @@ namespace CoCSharp.Server.Core
         private void HandleLoginRequest(IClient client, Message message)
         {
             var lrMessage = (LoginRequestMessage)message;
-            var levelSave = Server.Db.LoadLevel(lrMessage.ID);
+            var levelSave = (ILevelSave)null;
             var level = (Level)null;
-            if (levelSave == null)
-                levelSave = Server.Db.NewLevel();
+            if (lrMessage.UserID == 0)
+            {
+                // If somehow a client had a client ID of 0 but had a non null user token.
+                if (lrMessage.UserToken != null)
+                {
+                    var lfMessage = new LoginFailedMessage
+                    {
+                        Message = "Problem resolving account. Clear application data and try again."
+                    };
+                    client.SendMessage(lfMessage);
+                    return;
+                }
+                else
+                {
+                    levelSave = Server.Db.NewLevel();
+                    level = levelSave.ToLevel(Server.Assets);
+                }
+            }
+            else
+            {
+                // If somehow a client did not have an ID but had a user token.
+                if (lrMessage.UserToken == null)
+                {
+                    var lfMessage = new LoginFailedMessage
+                    {
+                        Message = "Problem resolving account. Clear application data and try again."
+                    };
+                    client.SendMessage(lfMessage);
+                    return;
+                }
+                else
+                {
+                    levelSave = Server.Db.LoadLevel(lrMessage.UserID);
+                    if (levelSave == null)
+                        levelSave = Server.Db.NewLevel(lrMessage.UserID, lrMessage.UserToken);
 
-            level = levelSave.ToLevel(Server.Assets);
+                    if (levelSave.Token != lrMessage.UserToken)
+                    {
+                        var lfMessage = new LoginFailedMessage
+                        {
+                            Message = "Problem resolving account. Clear application data and try again."
+                        };
+                        client.SendMessage(lfMessage);
+                        return;
+                    }
+
+                    level = levelSave.ToLevel(Server.Assets);
+                }
+            }
+
             client.Level = level;
 
-            var key = Crypto8.GenerateKeyPair();
             var lsMessage = new LoginSuccessMessage
             {
-                // NetworkManagerAsync will use this nonce.
-                //Nonce = Crypto8.GenerateNonce(),
-                //PublicKey = key.PublicKey,
+                UserToken = levelSave.Token,
+                UserID = levelSave.ID,
+                UserID1 = levelSave.ID,
 
                 FacebookID = null,
                 GameCenterID = null,
@@ -95,7 +145,20 @@ namespace CoCSharp.Server.Core
                 CountryCode = "OI" //TODO: Return Country code of IP.
             };
 
-            //TODO: Send OwnHomeDataMessage and all that good stuff.
+            var ohdMessage = level.OwnHomeData;
+
+            var keppo = new OwnHomeDataMessage();
+            var keppo2 = new MessageReader(new MemoryStream(File.ReadAllBytes("24101")));
+            keppo.ReadMessage(keppo2);
+
+            client.SendMessage(lsMessage);
+            client.SendMessage(ohdMessage);
+        }
+
+        private static readonly KeepAliveResponseMessage s_response = new KeepAliveResponseMessage();
+        private void HandleKeepAlive(IClient client, Message message)
+        {
+            client.SendMessage(s_response);
         }
         #endregion
     }

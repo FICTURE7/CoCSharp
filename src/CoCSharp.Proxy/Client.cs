@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
 using System;
+using System.IO;
 using System.Net.Sockets;
 
 namespace CoCSharp.Proxy
@@ -56,6 +57,7 @@ namespace CoCSharp.Proxy
                 Buffer.BlockCopy(body, 0, sendingBytes, MessageHeader.Size, body.Length);
             }
 
+            File.WriteAllBytes(e.Message.ID.ToString(), e.Plaintext);
             // Forward data to the server.
             ServerConnection.Socket.Send(sendingBytes);
         }
@@ -92,6 +94,7 @@ namespace CoCSharp.Proxy
                 Buffer.BlockCopy(body, 0, sendingBytes, MessageHeader.Size, body.Length);
             }
 
+            File.WriteAllBytes(e.Message.ID.ToString(), e.Plaintext);
             // Forward data to the client.
             ClientConnection.Socket.Send(sendingBytes);
         }

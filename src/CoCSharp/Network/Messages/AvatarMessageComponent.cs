@@ -23,15 +23,16 @@ namespace CoCSharp.Network.Messages
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AvatarMessageComponent"/> class from
-        /// the specified <see cref="Avatar"/>.
+        /// the specified <see cref="Level"/>.
         /// </summary>
-        /// <param name="avatar"><see cref="Avatar"/> from which the data will be set.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="avatar"/> is null.</exception>
-        public AvatarMessageComponent(Avatar avatar)
+        /// <param name="level"><see cref="Level"/> from which the data will be set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        public AvatarMessageComponent(Level level)
         {
-            if (avatar == null)
+            if (level == null)
                 throw new ArgumentNullException("avatar");
 
+            var avatar = level.Avatar;
             UserID = avatar.ID;
             HomeID = avatar.ID;
 
@@ -49,6 +50,10 @@ namespace CoCSharp.Network.Messages
                     Level = avatar.Alliance.Level
                 };
             }
+            else
+            {
+                AllianceCastleLevel = -1;
+            }
 
             //LegenderyTrophy = 99;
             //BestSeasonEnabled = 1;
@@ -57,7 +62,8 @@ namespace CoCSharp.Network.Messages
             //BestSeasonTrophies = 99;
             //BestSeasonPosition = 1;
             LeagueLevel = avatar.League;
-            TownHallLevel = avatar.Home.TownHall.Level;
+            //TownHallLevel = avatar.Home.TownHall.Level;
+            TownHallLevel = 1;
             Name = avatar.Name;
 
             //Unknown13 = -1;
@@ -82,9 +88,10 @@ namespace CoCSharp.Network.Messages
             IsNamed = avatar.IsNamed;
 
             Unknown26 = 1;
-            Unknown27 = 1;
+            //Unknown27 = 1;
 
             ResourcesAmount = avatar.ResourcesAmount;
+            ResourcesCapacity = avatar.ResourcesCapacity;
             Units = avatar.Units;
             Spells = avatar.Spells;
             UnitUpgrades = avatar.UnitUpgrades;
@@ -102,6 +109,9 @@ namespace CoCSharp.Network.Messages
             UnknownSlot1 = new SlotCollection<UnknownSlot>();
             UnknownSlot2 = new SlotCollection<UnknownSlot>();
             UnknownSlot3 = new SlotCollection<UnknownSlot>();
+            UnknownSlot4 = new SlotCollection<UnknownSlot>();
+            UnknownSlot5 = new SlotCollection<UnitSlot>();
+
         }
         #endregion
 

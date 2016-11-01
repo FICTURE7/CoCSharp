@@ -57,6 +57,11 @@ namespace CoCSharp.Server.API.Core
         int Gems { get; set; }
 
         /// <summary>
+        /// Gets or sets the amount of free gems.
+        /// </summary>
+        int FreeGems { get; set; }
+
+        /// <summary>
         /// Gets or sets the amount of attacks won.
         /// </summary>
         int AttacksWon { get; set; }

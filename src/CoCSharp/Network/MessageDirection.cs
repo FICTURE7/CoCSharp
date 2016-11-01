@@ -9,13 +9,13 @@ namespace CoCSharp.Network
     public enum MessageDirection : byte
     {
         /// <summary>
-        /// <see cref="Message"/> is going to the server.
-        /// </summary>
-        Server = 1,
-
-        /// <summary>
         /// <see cref="Message"/> is going to the client.
         /// </summary>
-        Client = 2
+        Client = 2,
+
+        /// <summary>
+        /// <see cref="Message"/> is going to the server.
+        /// </summary>
+        Server = 3
     }
 }

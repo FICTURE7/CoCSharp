@@ -80,13 +80,30 @@ namespace CoCSharp.Server.Core
             {
                 ID = id,
                 Token = token,
+
+                Name = GetRandomName(),
+
                 Gems = Server.Configuration.StartingGems,
+                FreeGems = Server.Configuration.StartingGems,
                 VillageJson = Server.Configuration.StartingVillage
             };
 
             // Save LevelSave to set the ID using the AutoId stuff.
             SaveLevel(save);
             return save;
+        }
+
+        private static readonly Random s_random = new Random();
+        private static readonly string[] s_names =
+        {
+            "Patrik",
+            "Jean",
+            "Kenny"
+        };
+        private static readonly int s_nameCount = s_names.Length;
+        private static string GetRandomName()
+        {
+            return s_names[s_random.Next(s_nameCount)];
         }
 
         public void Dispose()

@@ -1,5 +1,6 @@
 using CoCSharp.Logic;
 using CoCSharp.Network;
+using CoCSharp.Network.Cryptography;
 using CoCSharp.Server.API;
 using System;
 using System.Net.Sockets;
@@ -18,7 +19,7 @@ namespace CoCSharp.Server
 
             _server = server;
             _socket = socket;
-            _networkManager = new NetworkManagerAsync(_socket, server.Settings);
+            _networkManager = new NetworkManagerAsync(_socket, server.Settings, new MessageProcessorNaCl(Crypto8.StandardKeyPair));
             _networkManager.MessageReceived += OnMessage;
         }
         #endregion

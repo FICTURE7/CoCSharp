@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Slots;
-using CoCSharp.Network.Messages;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -42,6 +41,8 @@ namespace CoCSharp.Logic
         {
             // If _level is less than 1 then the client crashes.
             _level = 1;
+            // If _name is null then the client crashes.
+            _name = "unnamed";
             _commands = new ConcurrentQueue<Command>();
 
             ResourcesCapacity = new SlotCollection<ResourceCapacitySlot>();
@@ -94,6 +95,10 @@ namespace CoCSharp.Logic
             }
             set
             {
+                // Client crashes if name is null.
+                if (_name == null)
+                    throw new ArgumentNullException(nameof(value));
+
                 if (_name == value)
                     return;
 
@@ -204,6 +209,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the <see cref="Village"/> associated with this <see cref="Avatar"/>.
         /// </summary>
+        [Obsolete]
         public Village Home
         {
             get
@@ -524,35 +530,6 @@ namespace CoCSharp.Logic
         /// Gets or sets the NPC elixir.
         /// </summary>
         public SlotCollection<NpcElixirSlot> NpcElixir { get; set; }
-
-        /// <summary>
-        /// Gets a new <see cref="Network.Messages.OwnHomeDataMessage"/> for the
-        /// <see cref="Avatar"/>.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="Home"/> is null.</exception>
-        public OwnHomeDataMessage OwnHomeDataMessage
-        {
-            get
-            {
-                if (Home == null)
-                    throw new InvalidOperationException("Home cannot be null.");
-
-                //UpdateSlots();
-
-                var villageData = new VillageMessageComponent(this);
-                var avatarData = new AvatarMessageComponent(this);
-                var ohdMessage = new OwnHomeDataMessage()
-                {
-                    OwnVillageData = null,
-                    OwnAvatarData = null,
-                    Unkonwn4 = 1462629754000,
-                    Unknown5 = 1462629754000,
-                    Unknown6 = 1462631554000,
-                };
-
-                return ohdMessage;
-            }
-        }
         #endregion
 
         #region Methods

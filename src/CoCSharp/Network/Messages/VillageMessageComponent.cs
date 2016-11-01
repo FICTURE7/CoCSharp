@@ -21,17 +21,17 @@ namespace CoCSharp.Network.Messages
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VillageMessageComponent"/> class from
-        /// the specified <see cref="Avatar"/>.
+        /// the specified <see cref="Level"/>.
         /// </summary>
-        /// <param name="avatar"><see cref="Avatar"/> from which the data will be set.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="avatar"/> is null.</exception>
-        public VillageMessageComponent(Avatar avatar)
+        /// <param name="level"><see cref="Avatar"/> from which the data will be set.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        public VillageMessageComponent(Level level)
         {
-            if (avatar == null)
+            if (level == null)
                 throw new ArgumentNullException("avatar");
 
-            HomeID = avatar.ID;
-            ShieldDuration = avatar.ShieldDuration;
+            HomeID = level.Avatar.ID;
+            ShieldDuration = level.Avatar.ShieldDuration;
 
             //GuardDuration = 1800;
             //Unknown3 = 69119;
@@ -39,7 +39,7 @@ namespace CoCSharp.Network.Messages
             
 
             //Unknown5 = 60;
-            Home = avatar.Home;
+            VillageJson = level.Village.ToJson();
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Village of the avatar.
         /// </summary>
-        public Village Home;
+        public string VillageJson;
 
         /// <summary>
         /// Reads the <see cref="VillageMessageComponent"/> from the specified <see cref="MessageReader"/>.
@@ -105,7 +105,7 @@ namespace CoCSharp.Network.Messages
                         var decompressedLength = br.ReadInt32();
                         var compressedHome = br.ReadBytes(homeData.Length - 4); // -4 to remove the decompressedLength bytes read.
                         var homeJson = ZlibStream.UncompressString(compressedHome);
-                        //Home = Village.FromJson(homeJson);
+                        VillageJson = homeJson;
                     }
                 }
             }
@@ -130,7 +130,7 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown3); // 69119 = 8.x.x seems to change, might be a TimeSpan.
 
-            if (Home != null)
+            if (VillageJson != null)
             {
                 writer.Write(true);
 
@@ -138,7 +138,7 @@ namespace CoCSharp.Network.Messages
                 var mem = new MemoryStream();
                 using (var bw = new BinaryWriter(mem))
                 {
-                    var homeJson = Home.ToJson();
+                    var homeJson = VillageJson;
                     var compressedHomeJson = ZlibStream.CompressString(homeJson);
 
                     bw.Write(homeJson.Length);

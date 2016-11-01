@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace CoCSharp.Network
 {
@@ -10,7 +11,7 @@ namespace CoCSharp.Network
     /// </summary>
     public class MessageProcessorNaCl : MessageProcessor
     {
-        public enum NaClState
+        public enum States : byte
         {
             Handshaking,
 
@@ -21,9 +22,11 @@ namespace CoCSharp.Network
             Completed
         };
 
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/>.
+        /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/> with the specified <see cref="CoCKeyPair"/>
         /// </summary>
+        /// <param name="keyPair"><see cref="CoCKeyPair"/> to use.</param>
         public MessageProcessorNaCl(CoCKeyPair keyPair)
         {
             if (keyPair == null)
@@ -32,11 +35,46 @@ namespace CoCSharp.Network
             _keyPair = keyPair;
         }
 
-        private int _state;
-        private NaClState _nstate;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/> with the specified <see cref="CoCKeyPair"/>
+        /// and server public key.
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// Use this constructor initialize to as a client.
+        /// </remarks>
+        /// 
+        /// <param name="keyPair"><see cref="CoCKeyPair"/> to use.</param>
+        /// <param name="serverKey">Public key of the server.</param>
+        public MessageProcessorNaCl(CoCKeyPair keyPair, byte[] serverKey)
+        {
+            if (keyPair == null)
+                throw new ArgumentNullException(nameof(keyPair));
+
+            _keyPair = keyPair;
+            _serverKey = serverKey;
+        }
+
+        #region Fields & Properties
+        // Represents how the incoming messages will be processed.
+        private int _incomingState;
+        // Represents how the outgoing messages will be processed.
+        private int _outgoingState;
+
+        private States _nstate;
         private MessageDirection _direction;
-        private CoCKeyPair _keyPair;
+
+        // Crypto8 object that is going to decrypt incoming
+        // and encrypt outgoing messages.
         private Crypto8 _crypto;
+        // Key pair to use to initialize _crypto with, this key pair
+        // can be the server private and public key, or the generated
+        // client private and public key.
+        private readonly CoCKeyPair _keyPair;
+        // Public-key of the server. This key will be used to update _crypto.UpdateSharedKey(_serverKey)
+        // when the processor is processing as a client.
+        // This is not used when _direction is going to the client.
+        private readonly byte[] _serverKey;
 
         private byte[] _key;
         private byte[] _sessionKey;
@@ -44,24 +82,18 @@ namespace CoCSharp.Network
         private byte[] _localNonce;
 
         /// <summary>
-        /// Gets the <see cref="NaClState"/> state of the <see cref="MessageProcessorNaCl"/>.
+        /// Gets the <see cref="State"/> state of the <see cref="MessageProcessorNaCl"/>.
         /// </summary>
-        public NaClState State => _nstate;
+        public States State => _nstate;
 
         /// <summary>
         /// Gets the <see cref="CoCCrypto"/> that is going to decrypt incoming and encrypt outgoing
         /// messages.
         /// </summary>
         public override CoCCrypto Crypto => _crypto;
+        #endregion
 
-        public byte[] SharedKey => _key;
-
-        public byte[] SessionKey => _sessionKey;
-
-        public byte[] RemoteNonce => _remoteNonce;
-
-        public byte[] LocalNonce => _localNonce;
-
+        #region Methods
         /// <summary>
         /// Processes the specified chippered array of bytes and returns
         /// the resulting <see cref="Message"/>.
@@ -79,107 +111,7 @@ namespace CoCSharp.Network
             // Message instance that we will return to the caller.
             var message = MessageFactory.Create(header.ID);
 
-            // Unencrypted byte array.
-            plaintext = null;
-
-            if (_state == 0) // Handshaking.
-            {
-                // Handshakes are sent unencrypted.
-                // First message by both ends is always sent unencrypted.
-                plaintext = (byte[])chiper.Clone();
-
-                // Use the first message direction to configure the processor.
-                _direction = messageDirection;
-                _crypto = new Crypto8(GetOppositeDirection(_direction), _keyPair);
-
-                Debug.WriteLine($"Initialized Crypto8 {GetOppositeDirection(_direction)} with private-key: {ToHexString(_keyPair.PrivateKey)}, public-key {_keyPair.PublicKey}");
-            }
-
-            // If somehow the incoming message process comes from the same direction.
-            // The MessageProcessor can only process message going in One Direction. ;]
-            if (messageDirection != _direction)
-                throw new Exception();
-
-            // _state == 1 means we are the server.
-            // Usually processing 10101 - LoginRequestMessage.
-            if (_state == 1)
-            {
-                // -> Pre-Encryption.
-                // Copies the public key appended to the beginning of the message
-                // sent of message 20100.
-                var publicKey = new byte[CoCKeyPair.KeyLength];
-                Buffer.BlockCopy(chiper, 0, publicKey, 0, CoCKeyPair.KeyLength);
-
-                Debug.WriteLine($"Public-Key from {header.ID}: {ToHexString(publicKey)}");
-
-                // Copies the remaining bytes into the plaintext buffer which
-                // will be decrypted by _crypto.
-                var plaintextLen = header.Length - CoCKeyPair.KeyLength;
-                plaintext = new byte[plaintextLen];
-                Buffer.BlockCopy(chiper, CoCKeyPair.KeyLength, plaintext, 0, plaintextLen);
-
-                // Crypto8 will take publicKey & _keyPair.PublicKey and generate a blake2b nonce
-                _crypto.UpdateSharedKey(publicKey);
-                // Then use _keyPair.PrivateKey, publicKey and nonce to decrypt.
-                _crypto.Decrypt(ref plaintext);
-
-                // -> Post-Encryption.
-                _sessionKey = new byte[CoCKeyPair.NonceLength];
-                _remoteNonce = new byte[CoCKeyPair.NonceLength];
-
-                // Copy the SessionKey and the ClientNonce.
-                Buffer.BlockCopy(plaintext, 0, _sessionKey, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(plaintext, CoCKeyPair.NonceLength, _remoteNonce, 0, CoCKeyPair.NonceLength);
-
-                Debug.WriteLine($"Session-key from {header.ID}: {ToHexString(_sessionKey)}");
-                Debug.WriteLine($"Client-nonce from {header.ID}: {ToHexString(_remoteNonce)}");
-
-                var actualMessage = new byte[plaintext.Length - (CoCKeyPair.NonceLength * 2)];
-                Buffer.BlockCopy(plaintext, CoCKeyPair.NonceLength * 2, actualMessage, 0, actualMessage.Length);
-
-                plaintext = actualMessage;
-                _nstate = NaClState.Authentifying;
-            }
-            // _state == 2 means we are the client.
-            // Usually processing 20104 - LoginSuccessMessage.
-            else if (_state == 2)
-            {
-                // _local cannot be null.
-                if (_localNonce == null)
-                    throw new Exception();
-
-                plaintext = (byte[])chiper.Clone();
-
-                _crypto.UpdateNonce(_localNonce, UpdateNonceType.Encrypt);
-                _crypto.UpdateNonce(_localNonce, UpdateNonceType.Blake);
-                _crypto.Decrypt(ref plaintext);
-
-                // -> Post-Encryption
-                _remoteNonce = new byte[CoCKeyPair.NonceLength];
-                _key = new byte[CoCKeyPair.KeyLength];
-
-                Buffer.BlockCopy(plaintext, 0, _remoteNonce, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(plaintext, CoCKeyPair.NonceLength, _key, 0, CoCKeyPair.KeyLength);
-
-                Debug.WriteLine($"Shared-key from {header.ID}: {ToHexString(_key)}");
-                Debug.WriteLine($"Server-nonce from {header.ID}: {ToHexString(_remoteNonce)}");
-
-                var actualMessge = new byte[plaintext.Length - CoCKeyPair.NonceLength - CoCKeyPair.KeyLength];
-                Buffer.BlockCopy(plaintext, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, actualMessge, 0, actualMessge.Length);
-
-                _crypto.UpdateNonce(_remoteNonce, UpdateNonceType.Decrypt);
-                _crypto.UpdateSharedKey(_key);
-
-                plaintext = actualMessge;
-                _nstate = NaClState.Authentified;
-            }
-            else if (_state > (int)_direction)
-            {
-                _nstate = NaClState.Completed;
-                plaintext = (byte[])chiper.Clone();
-
-                _crypto.Decrypt(ref plaintext);
-            }
+            plaintext = ProcessIncomingData(messageDirection, header, chiper);
 
             Debug.Assert(plaintext != null);
 
@@ -191,10 +123,14 @@ namespace CoCSharp.Network
                 {
                     message.ReadMessage(reader);
                 }
-                catch (Exception ex) { exception = ex; }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                    throw;
+                }
             }
 
-            _state += (int)_direction;
+            Interlocked.Add(ref _incomingState, (int)_direction);
             return message;
         }
 
@@ -209,18 +145,207 @@ namespace CoCSharp.Network
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
-            return null;
+            var messageDirection = Message.GetMessageDirection(message);
+            var bodyStream = new MemoryStream();
+            using (var bodyWriter = new MessageWriter(bodyStream))
+            {
+                message.WriteMessage(bodyWriter);
+                var body = bodyStream.ToArray();
+                var chiper = ProcessOutgoingData(messageDirection, body);
+
+                Interlocked.Add(ref _outgoingState, (int)_direction);
+                return chiper;
+            }
         }
 
-        public void UpdateRemoteNonce(byte[] nonce)
+        #region Incoming
+        private byte[] ProcessIncomingData(MessageDirection direction, MessageHeader header, byte[] chiper)
         {
-            _remoteNonce = nonce;
-        }
+            var plaintext = (byte[])null;
 
-        public void UpdateLocalNonce(byte[] nonce)
-        {
-            _localNonce = nonce;
+            // Handshaking.
+            if (_incomingState == 0)
+            {
+                // Handshakes are sent unencrypted.
+                // First message by both ends is always sent unencrypted.
+                plaintext = (byte[])chiper.Clone();
+
+                // Use the first message direction to configure the processor.
+                // If message is coming in, then the going out is opposite direction.
+                _direction = GetOppositeDirection(direction);
+                if (_crypto == null)
+                    _crypto = new Crypto8(_direction, _keyPair);
+
+                Debug.WriteLine($"Initialized Crypto8 {_direction} with private-key: {ToHexString(_keyPair.PrivateKey)}, public-key {_keyPair.PublicKey}");
+            }
+
+            // If somehow the incoming message to process comes from the same direction.
+            // The MessageProcessor can only process message going in One Direction. ;]
+            if (GetOppositeDirection(direction) != _direction)
+                throw new Exception(); // -> Protocol Exception?
+
+            // _incomingState == 1 means we are the server.
+            // Usually processing 10101 - LoginRequestMessage.
+            if (_incomingState == 2)
+            {
+                // -> Post-Encryption.
+                // Copies the public key appended to the beginning of the message
+                // sent of message 20100.
+                var publicKey = new byte[CoCKeyPair.KeyLength];
+                Buffer.BlockCopy(chiper, 0, publicKey, 0, CoCKeyPair.KeyLength);
+
+                Debug.WriteLine($"Public-Key from {header.ID}: {ToHexString(publicKey)}");
+
+                // Copies the remaining bytes into the postChier buffer which
+                // will be decrypted by _crypto.
+                var tmpPlaintextLen = header.Length - CoCKeyPair.KeyLength;
+                var tmpPlaintext = new byte[tmpPlaintextLen];
+                Buffer.BlockCopy(chiper, CoCKeyPair.KeyLength, tmpPlaintext, 0, tmpPlaintextLen);
+
+                // Crypto8 will take the client's publicKey & _keyPair.PublicKey and generate a blake2b nonce
+                _crypto.UpdateSharedKey(publicKey);
+                // Then use _keyPair.PrivateKey, publicKey and nonce to decrypt.
+                _crypto.Decrypt(ref tmpPlaintext);
+
+                // -> Pre-Encryption.
+                var sessionKey = new byte[CoCKeyPair.NonceLength];
+                var remoteNonce = new byte[CoCKeyPair.NonceLength];
+
+                // Copy the SessionKey and the ClientNonce.
+                Buffer.BlockCopy(tmpPlaintext, 0, sessionKey, 0, CoCKeyPair.NonceLength);
+                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength, remoteNonce, 0, CoCKeyPair.NonceLength);
+
+                Debug.WriteLine($"Session-key from {header.ID}: {ToHexString(sessionKey)}");
+                Debug.WriteLine($"Client-nonce from {header.ID}: {ToHexString(remoteNonce)}");
+
+                // Copies the plaintext without the session key and the remote/client nonce.
+                var plaintextLen = tmpPlaintext.Length - (CoCKeyPair.NonceLength * 2);
+                plaintext = new byte[plaintextLen];
+                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength * 2, plaintext, 0, plaintextLen);
+
+                _crypto.UpdateNonce(remoteNonce, UpdateNonceType.Decrypt);
+                _crypto.UpdateNonce(remoteNonce, UpdateNonceType.Blake);
+                _sessionKey = sessionKey;
+                _remoteNonce = remoteNonce;
+
+                _nstate = States.Authentifying;
+            }
+            // _incomingState == 2 means we are the client.
+            // Usually processing 20104 - LoginSuccessMessage.
+            else if (_incomingState == 3)
+            {
+                // -> Might want to generate random nonce here for the
+                // client nonce.
+                Debug.Assert(_localNonce != null);
+
+                var tmpPlaintext = (byte[])chiper.Clone();
+
+                // _crypto will use this nonce after the second key is passed to it
+                // using _crypto.UpdateSharedKey.
+                var localNonce = _localNonce;
+                _crypto.UpdateNonce(localNonce, UpdateNonceType.Encrypt);
+                _crypto.UpdateNonce(localNonce, UpdateNonceType.Blake);
+                _crypto.Decrypt(ref tmpPlaintext);
+
+                // -> Post-Encryption
+                var remoteNonce = new byte[CoCKeyPair.NonceLength];
+                var key = new byte[CoCKeyPair.KeyLength];
+
+                // Copies the ServerNonce and the new second secret key.
+                Buffer.BlockCopy(tmpPlaintext, 0, remoteNonce, 0, CoCKeyPair.NonceLength);
+                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength, key, 0, CoCKeyPair.KeyLength);
+
+                Debug.WriteLine($"Shared-key from {header.ID}: {ToHexString(key)}");
+                Debug.WriteLine($"Server-nonce from {header.ID}: {ToHexString(remoteNonce)}");
+
+                // Copies the plaintext without the server nonce and the new second secret key.
+                var plaintextLen = tmpPlaintext.Length - CoCKeyPair.NonceLength - CoCKeyPair.KeyLength;
+                plaintext = new byte[plaintextLen];
+                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, plaintext, 0, plaintextLen);
+
+                _crypto.UpdateNonce(remoteNonce, UpdateNonceType.Decrypt);
+                _crypto.UpdateSharedKey(key);
+
+                _remoteNonce = remoteNonce;
+                _key = key;
+
+                _nstate = States.Authentified;
+            }
+            // Messages after the previous states are processed the same way.
+            else if (_incomingState > (int)_direction)
+            {
+                _nstate = States.Completed;
+
+                plaintext = (byte[])chiper.Clone();
+                _crypto.Decrypt(ref plaintext);
+            }
+
+            return plaintext;
         }
+        #endregion
+
+        #region Outgoing
+        private byte[] ProcessOutgoingData(MessageDirection direction, byte[] plaintext)
+        {
+            var chiper = (byte[])null;
+
+            // Handshaking
+            if (_outgoingState == 0)
+            {
+                chiper = (byte[])plaintext.Clone();
+
+                _direction = direction;
+                if (_crypto == null)
+                    _crypto = new Crypto8(direction, _keyPair);
+            }
+
+            if (direction != _direction)
+                throw new Exception();
+
+            // _outgoingState == 1 means we're the server.
+            // Usually processing 20104 - LoginSuccessMessage.
+            if (_outgoingState == 2)
+            {
+                Debug.Assert(_remoteNonce != null);
+                Debug.Assert(_localNonce == null);
+                var key = Crypto8.GenerateKeyPair();
+                var localNonce = Crypto8.GenerateNonce();
+                var remoteNonce = _remoteNonce;
+
+                var tmpChiper = new byte[plaintext.Length + CoCKeyPair.NonceLength + CoCKeyPair.KeyLength];
+                Buffer.BlockCopy(localNonce, 0, tmpChiper, 0, CoCKeyPair.NonceLength);
+                Buffer.BlockCopy(key.PublicKey, 0, tmpChiper, CoCKeyPair.NonceLength, CoCKeyPair.KeyLength);
+                Buffer.BlockCopy(plaintext, 0, tmpChiper, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, plaintext.Length);
+
+                _crypto.Encrypt(ref tmpChiper);
+
+                Debug.WriteLine($"Server-nonce: {ToHexString(localNonce)}");
+                Debug.WriteLine($"Shared-key: {ToHexString(key.PublicKey)}");
+
+                _crypto.UpdateNonce(localNonce, UpdateNonceType.Encrypt);
+                _crypto.UpdateSharedKey(key.PublicKey);
+
+                _localNonce = localNonce;
+                chiper = tmpChiper;
+                //_key = key;
+            }
+            // _outgoingState == 2 means we're the client.
+            // Usually processing 10101 - LoginRequestMessage.
+            else if (_outgoingState == 3)
+            {
+                // TODO: Handle.
+            }
+            else if (_outgoingState > (int)_direction)
+            {
+                var tmpChiper = (byte[])plaintext.Clone();
+
+                _crypto.Encrypt(ref tmpChiper);
+                chiper = tmpChiper;
+            }
+
+            return chiper;
+        }
+        #endregion
 
         private static MessageDirection GetOppositeDirection(MessageDirection dir)
         {
@@ -240,5 +365,6 @@ namespace CoCSharp.Network
                 str += bytes[i].ToString("x2");
             return str;
         }
+        #endregion
     }
 }
