@@ -198,6 +198,7 @@ namespace CoCSharp.Network.Messages
             writer.Write(MacAddress);
             writer.Write(DeviceModel);
             writer.Write(LocaleKey);
+            writer.Write(Language);
             writer.Write(AdvertisingGUID);
             writer.Write(OSVersion);
 

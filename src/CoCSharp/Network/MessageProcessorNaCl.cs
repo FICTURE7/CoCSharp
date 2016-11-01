@@ -87,6 +87,11 @@ namespace CoCSharp.Network
         public States State => _nstate;
 
         /// <summary>
+        /// Gets or sets the session key.
+        /// </summary>
+        public byte[] SessionKey => _sessionKey;
+
+        /// <summary>
         /// Gets the <see cref="CoCCrypto"/> that is going to decrypt incoming and encrypt outgoing
         /// messages.
         /// </summary>
@@ -333,7 +338,29 @@ namespace CoCSharp.Network
             // Usually processing 10101 - LoginRequestMessage.
             else if (_outgoingState == 3)
             {
-                // TODO: Handle.
+                //var sessionKey = Crypto8.GenerateNonce();
+                var sessionKey = _sessionKey;
+                if (sessionKey == null)
+                    throw new InvalidOperationException("SessionKey was not set.");
+                //if (sessionKey == null)
+                //    sessionKey = Crypto8.GenerateNonce();
+
+                var localNonce = Crypto8.GenerateNonce();
+
+                var tmpChiper = new byte[plaintext.Length + CoCKeyPair.NonceLength * 2];
+                Buffer.BlockCopy(sessionKey, 0, tmpChiper, 0, CoCKeyPair.NonceLength);
+                Buffer.BlockCopy(localNonce, 0, tmpChiper, CoCKeyPair.NonceLength, CoCKeyPair.NonceLength);
+                Buffer.BlockCopy(plaintext, 0, tmpChiper, CoCKeyPair.NonceLength * 2, plaintext.Length);
+
+                _crypto.UpdateSharedKey(_serverKey);
+                _crypto.Encrypt(ref tmpChiper);
+
+                chiper = new byte[tmpChiper.Length + CoCKeyPair.KeyLength];
+                Buffer.BlockCopy(_crypto.KeyPair.PublicKey, 0, chiper, 0, CoCKeyPair.KeyLength);
+                Buffer.BlockCopy(tmpChiper, 0, chiper, CoCKeyPair.KeyLength, tmpChiper.Length);
+
+                _localNonce = localNonce;
+                _sessionKey = sessionKey;
             }
             else if (_outgoingState > (int)_direction)
             {
@@ -346,6 +373,11 @@ namespace CoCSharp.Network
             return chiper;
         }
         #endregion
+
+        public void UpdateSessionKey(byte[] key)
+        {
+            _sessionKey = key;
+        }
 
         private static MessageDirection GetOppositeDirection(MessageDirection dir)
         {
