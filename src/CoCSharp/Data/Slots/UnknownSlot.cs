@@ -1,11 +1,13 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data.Slots
 {
     /// <summary>
     /// Represents an unknown slot.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}, Value = {Value}")]
     public class UnknownSlot : Slot
     {
         /// <summary>

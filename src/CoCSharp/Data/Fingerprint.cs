@@ -187,7 +187,7 @@ namespace CoCSharp.Data
 
                 jsonWriter.WriteStartObject();
 
-                jsonWriter.WritePropertyName("paths");
+                jsonWriter.WritePropertyName("files");
                 jsonWriter.WriteStartArray();
 
                 for (int i = 0; i < _files.Count; i++)

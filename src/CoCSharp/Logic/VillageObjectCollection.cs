@@ -24,7 +24,7 @@ namespace CoCSharp.Logic
         // Table of VillageObjects.
         private List<VillageObject>[] _table;
 
-        bool ICollection<VillageObject>.IsReadOnly { get { return false; } }
+        bool ICollection<VillageObject>.IsReadOnly => false;
 
         /// <summary>
         /// Gets or sets a <see cref="VillageObject"/> with the specified game ID.
@@ -93,7 +93,7 @@ namespace CoCSharp.Logic
         public void Add(VillageObject villageObj)
         {
             if (villageObj == null)
-                throw new ArgumentNullException("villageObj");
+                throw new ArgumentNullException(nameof(villageObj));
 
             lock (_sync)
             {
