@@ -1,41 +1,91 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace CoCSharp.Server.API.Logging
 {
     /// <summary>
     /// Represents a log.
     /// </summary>
-    public class Log
+    public class Log : IDisposable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Log"/> class.
         /// </summary>
         public Log()
         {
-            // Space
+            _logger = new EmptyLogger();
         }
 
         /// <summary>
-        /// Gets or sets the chain of <see cref="Logging.Logger"/>.
+        /// Initializes a new instance of the <see cref="Log"/> class with the specified <see cref="Logger"/>
+        /// as the main <see cref="Logger"/>.
         /// </summary>
-        public Logger Logger { get; set; }
+        /// <param name="mainLogger">Main <see cref="Logger"/> to use.</param>
+        public Log(Logger mainLogger)
+        {
+            if (mainLogger == null)
+                throw new ArgumentNullException(nameof(mainLogger));
 
+            _logger = mainLogger;
+        }
+
+        private bool _disposed;
+        private readonly Logger _logger;
+
+        /// <summary>
+        /// Gets the beginning of the chain of <see cref="Logger"/>.
+        /// </summary>
+        public Logger MainLogger => _logger;
+
+        /// <summary>
+        /// Logs the specified message as an info message.
+        /// </summary>
+        /// <param name="message">Message to log.</param>
         public void Info(string message)
         {
-            if (Logger != null)
-                Logger.Log(message, LogLevel.Info);
+            _logger.Log(message, LogLevel.Info);
         }
 
+        /// <summary>
+        /// Logs the specified message as a warning message.
+        /// </summary>
+        /// <param name="message">Message to log.</param>
         public void Warn(string message)
         {
-            if (Logger != null)
-                Logger.Log(message, LogLevel.Warn);
+            _logger.Log(message, LogLevel.Warn);
         }
 
+        /// <summary>
+        /// Logs the specified message as an error message.
+        /// </summary>
+        /// <param name="message">Message to log.</param>
         public void Error(string message)
         {
-            if (Logger != null)
-                Logger.Log(message, LogLevel.Error);
+            _logger.Log(message, LogLevel.Error);
         }
-   }
+
+        /// <summary>
+        /// Releases all resources used by the current instance of the <see cref="Log"/> class.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases unmanaged resources and optionally managed resources used by the current 
+        /// instance of the <see cref="Log"/> class.
+        /// </summary>
+        /// <param name="disposing">Releases managed resources if set to <c>true</c>.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                _logger.Dispose();
+            }
+            _disposed = true;
+        }
+    }
 }

@@ -22,7 +22,7 @@ namespace CoCSharp.Server.API
         /// <summary>
         /// Event raised when the server accepts a new connection.
         /// </summary>
-        event EventHandler<ServerConnectionEventArgs> Accepted;
+        event EventHandler<ServerConnectionEventArgs> ClientConnected;
 
         /// <summary>
         /// Gets the <see cref="AssetManager"/> associated with the <see cref="IServer"/>.

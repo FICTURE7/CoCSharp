@@ -3,7 +3,7 @@
 namespace CoCSharp.Server.API.Events.Server
 {
     /// <summary>
-    /// Event data for <see cref="IServer.Accepted"/>.
+    /// Event data for <see cref="IServer.ClientConnected"/>.
     /// </summary>
     public class ServerConnectionEventArgs : ServerEventArgs
     {

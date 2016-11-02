@@ -26,15 +26,21 @@
         string StartingVillage { get; }
 
         /// <summary>
-        /// Loads the <see cref="IServerConfiguration"/> at the specified path.
+        /// Loads the <see cref="IServerConfiguration"/> at the specified path and returns
+        /// <c>true</c> if loaded completely; otherwise, <c>false</c>.
         /// </summary>
         /// <param name="path">Path pointing to the <see cref="IServerConfiguration"/>.</param>
-        void Load(string path);
+        /// <returns><c>true</c> if loaded completely; otherwise, <c>false</c>.</returns>
+        /// 
+        /// <remarks>
+        /// The returning value will determine whether or not to overwrite the save with the current values.
+        /// </remarks>
+        bool Load(string path);
 
         /// <summary>
-        /// Creates a new file representing <see cref="IServerConfiguration"/> values.
+        /// Saves a new file representing <see cref="IServerConfiguration"/> values.
         /// </summary>
-        /// <param name="path">Path at which to create the <see cref="IServerConfiguration"/>.</param>
-        void Create(string path);
+        /// <param name="path">Path at which to save the <see cref="IServerConfiguration"/>.</param>
+        void Save(string path);
     }
 }

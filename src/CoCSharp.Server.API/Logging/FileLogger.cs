@@ -8,24 +8,25 @@ namespace CoCSharp.Server.API.Logging
     /// </summary>
     public class FileLogger : Logger
     {
-        static FileLogger()
-        {
-            if (!Directory.Exists("logs"))
-                Directory.CreateDirectory("logs");
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="FileLogger"/> class.
         /// </summary>
-        public FileLogger()
+        public FileLogger(string path)
         {
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
             var now = DateTime.Now.ToString("dd-MM-yy_hh-mm-ss");
-            _sync = new object();
+
             _fileName = Path.Combine("logs", now + ".log");
+            _file = new FileStream(_fileName, FileMode.Append);
+            _writer = new StreamWriter(_file);
         }
 
-        private readonly object _sync;
+        private bool _disposed;
         private readonly string _fileName;
+        private readonly FileStream _file;
+        private readonly StreamWriter _writer;
 
         /// <summary/>
         protected override LogLevel Level => LogLevel.All;
@@ -33,11 +34,26 @@ namespace CoCSharp.Server.API.Logging
         /// <summary/>
         protected override void Write(string message, LogLevel level)
         {
-            lock (_sync)
+            _writer.WriteLine("[" + level + "] -> " + message);
+            _writer.Flush();
+        }
+
+        /// <summary/>
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
             {
-                using (var file = new StreamWriter(_fileName, true))
-                    file.WriteLine(message);
+                //_file.Dispose();
+
+                // StreamWriter will dispose the BaseStream.
+                _writer.Dispose();
             }
+
+            _disposed = true;
+            base.Dispose(disposing);
         }
     }
 }
