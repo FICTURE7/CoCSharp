@@ -6,45 +6,25 @@ namespace CoCSharp.Server
 {
     public class ServerConfiguration : IServerConfiguration
     {
-        private ServerConfiguration()
+        public ServerConfiguration()
         {
-            // Space
+            StartingGems = _defaultGems;
+            StartingGold = _defaultGold;
+            StartingElixir = _defaultElixir;
+            StartingVillage = _defaultVillage;
         }
 
-        public ServerConfiguration(string path)
-        {
-            if (File.Exists(path))
-            {
-                Load(path);
-            }
-            else
-            {
-                StartingGems = _default.StartingGems;
-                StartingGold = _default.StartingGold;
-                StartingElixir = _default.StartingElixir;
-
-                Create(path);
-            }
-        }
-
-        private readonly string _villageJson = File.ReadAllText("contents/starting_village.json");
-        private static readonly ServerConfiguration _default =
-        new ServerConfiguration()
-        {
-            StartingGems = 69696969,
-            StartingGold = 69696969,
-            StartingElixir = 69696969
-        };
+        private static readonly string _defaultVillage = File.ReadAllText("contents/starting_village.json");
+        private static readonly int _defaultGems = 69696969;
+        private static readonly int _defaultGold = 69696969;
+        private static readonly int _defaultElixir = 69696969;
 
         public int StartingGems { get; set; }
-
         public int StartingGold { get; set; }
-
         public int StartingElixir { get; set; }
+        public string StartingVillage { get; set; }
 
-        public string StartingVillage => _villageJson;
-
-        public void Load(string path)
+        public bool Load(string path)
         {
             var settings = new XmlReaderSettings()
             {
@@ -56,69 +36,64 @@ namespace CoCSharp.Server
             var startingGoldSet = false;
             var startingElixirSet = false;
 
+            if (!File.Exists(path))
+                return false;
+
             using (var file = new FileStream(path, FileMode.Open))
             using (var reader = XmlReader.Create(file, settings))
             {
-                while (reader.Read())
+                try
                 {
-                    switch (reader.NodeType)
+                    while (reader.Read())
                     {
-                        case XmlNodeType.Element:
-                            switch (reader.Name)
-                            {
-                                case "starting_gems":
-                                    if (reader.Read())
-                                    {
-                                        StartingGems = reader.ReadContentAsInt();
-                                        startingGemsSet = true;
-                                    }
-                                    break;
+                        switch (reader.NodeType)
+                        {
+                            case XmlNodeType.Element:
+                                switch (reader.Name)
+                                {
+                                    case "starting_gems":
+                                        if (reader.Read())
+                                        {
+                                            StartingGems = reader.ReadContentAsInt();
+                                            startingGemsSet = true;
+                                        }
+                                        break;
 
-                                case "starting_gold":
-                                    if (reader.Read())
-                                    {
-                                        StartingGold = reader.ReadContentAsInt();
-                                        startingGoldSet = true;
-                                    }
-                                    break;
+                                    case "starting_gold":
+                                        if (reader.Read())
+                                        {
+                                            StartingGold = reader.ReadContentAsInt();
+                                            startingGoldSet = true;
+                                        }
+                                        break;
 
-                                case "starting_elixir":
-                                    if (reader.Read())
-                                    {
-                                        StartingElixir = reader.ReadContentAsInt();
-                                        startingElixirSet = true;
-                                    }
-                                    break;
-                            }
-                            break;
+                                    case "starting_elixir":
+                                        if (reader.Read())
+                                        {
+                                            StartingElixir = reader.ReadContentAsInt();
+                                            startingElixirSet = true;
+                                        }
+                                        break;
+                                }
+                                break;
+                        }
                     }
+                }
+                catch (XmlException)
+                {
+                    return false;
                 }
             }
 
             // If some configs are missing we
             // rewrite a new .xml config file with the missing configs
             // as the default value.
-            var defaultConfig = _default;
             if (!startingGemsSet || !startingGoldSet || !startingElixirSet)
-            {
-                if (!startingGemsSet)
-                {
-                    StartingGems = defaultConfig.StartingGems;
-                }
-                if (!startingGoldSet)
-                {
-                    StartingGold = defaultConfig.StartingElixir;
-                }
-                if (!startingElixirSet)
-                {
-                    StartingElixir = defaultConfig.StartingElixir;
-                }
-
-                Create(path);
-            }
+                return false;
+            return true;
         }
 
-        public void Create(string path)
+        public void Save(string path)
         {
             var settings = new XmlWriterSettings()
             {

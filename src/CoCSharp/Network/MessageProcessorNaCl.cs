@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Network.Cryptography;
+using CoCSharp.Network.Messages;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -22,11 +23,12 @@ namespace CoCSharp.Network
             Completed
         };
 
-
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/> with the specified <see cref="CoCKeyPair"/>
         /// </summary>
         /// <param name="keyPair"><see cref="CoCKeyPair"/> to use.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="keyPair"/> is null.</exception>
         public MessageProcessorNaCl(CoCKeyPair keyPair)
         {
             if (keyPair == null)
@@ -41,25 +43,30 @@ namespace CoCSharp.Network
         /// </summary>
         /// 
         /// <remarks>
-        /// Use this constructor initialize to as a client.
+        /// Use this constructor initialize as a client.
         /// </remarks>
         /// 
         /// <param name="keyPair"><see cref="CoCKeyPair"/> to use.</param>
         /// <param name="serverKey">Public key of the server.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="keyPair"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="serverKey"/> is null.</exception>
         public MessageProcessorNaCl(CoCKeyPair keyPair, byte[] serverKey)
         {
             if (keyPair == null)
                 throw new ArgumentNullException(nameof(keyPair));
+            if (serverKey == null)
+                throw new ArgumentNullException(nameof(serverKey));
 
             _keyPair = keyPair;
             _serverKey = serverKey;
         }
+        #endregion
 
         #region Fields & Properties
         // Represents how the incoming messages will be processed.
         private int _incomingState;
         // Represents how the outgoing messages will be processed.
-        private int _outgoingState;
+        private int _incommingState;
 
         private States _nstate;
         private MessageDirection _direction;
@@ -78,7 +85,9 @@ namespace CoCSharp.Network
 
         private byte[] _key;
         private byte[] _sessionKey;
+        // Other end's nonce.
         private byte[] _remoteNonce;
+        // Our generated nonce.
         private byte[] _localNonce;
 
         /// <summary>
@@ -105,6 +114,7 @@ namespace CoCSharp.Network
         /// </summary>
         /// <param name="header">Header of the message.</param>
         /// <param name="chiper">Chippered array of bytes representing a message to process.</param>
+        /// <param name="plaintext">Plaintext representation of <paramref name="chiper"/>.</param>
         /// <returns>Resulting <see cref="Message"/>.</returns>
         public override Message ProcessIncoming(MessageHeader header, byte[] chiper, ref byte[] plaintext)
         {
@@ -116,17 +126,29 @@ namespace CoCSharp.Network
             // Message instance that we will return to the caller.
             var message = MessageFactory.Create(header.ID);
 
+            // Decrypt incoming data taking the message direction.
+            // Header is only used to print debugging info.
             plaintext = ProcessIncomingData(messageDirection, header, chiper);
 
             Debug.Assert(plaintext != null);
-
             using (var reader = new MessageReader(new MemoryStream(plaintext)))
             {
                 var exception = (Exception)null;
-
                 try
                 {
                     message.ReadMessage(reader);
+
+                    // Set the session key if the message is HandshakeSucessMessage.
+                    // This session key will then be used later on.
+                    const int HANDSHAKE_SUCCESS_ID = 20100;
+                    if (header.ID == HANDSHAKE_SUCCESS_ID)
+                    {
+                        var hsMessage = (HandshakeSuccessMessage)message;
+                        var sessionKey = hsMessage.SessionKey;
+
+                        Debug.WriteLine($"Updated session-key: {ToHexString(sessionKey)}");
+                        _sessionKey = sessionKey;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -158,7 +180,7 @@ namespace CoCSharp.Network
                 var body = bodyStream.ToArray();
                 var chiper = ProcessOutgoingData(messageDirection, body);
 
-                Interlocked.Add(ref _outgoingState, (int)_direction);
+                Interlocked.Add(ref _incommingState, (int)_direction);
                 return chiper;
             }
         }
@@ -178,6 +200,10 @@ namespace CoCSharp.Network
                 // Use the first message direction to configure the processor.
                 // If message is coming in, then the going out is opposite direction.
                 _direction = GetOppositeDirection(direction);
+                // If we're the client then we must have a serverkey.
+                if (_direction == MessageDirection.Server && _serverKey == null)
+                    throw new InvalidOperationException("Public key of server was not specified.");
+
                 if (_crypto == null)
                     _crypto = new Crypto8(_direction, _keyPair);
 
@@ -187,7 +213,7 @@ namespace CoCSharp.Network
             // If somehow the incoming message to process comes from the same direction.
             // The MessageProcessor can only process message going in One Direction. ;]
             if (GetOppositeDirection(direction) != _direction)
-                throw new Exception(); // -> Protocol Exception?
+                throw new InvalidOperationException("Tried to process an incoming data from a message coming from the same direction."); // -> Protocol Exception?
 
             // _incomingState == 1 means we are the server.
             // Usually processing 10101 - LoginRequestMessage.
@@ -295,7 +321,7 @@ namespace CoCSharp.Network
             var chiper = (byte[])null;
 
             // Handshaking
-            if (_outgoingState == 0)
+            if (_incommingState == 0)
             {
                 chiper = (byte[])plaintext.Clone();
 
@@ -305,14 +331,15 @@ namespace CoCSharp.Network
             }
 
             if (direction != _direction)
-                throw new Exception();
+                throw new InvalidOperationException("Tried to process an outgoing message coming from a different direction."); // -> Protocol Exception?
 
             // _outgoingState == 1 means we're the server.
             // Usually processing 20104 - LoginSuccessMessage.
-            if (_outgoingState == 2)
+            if (_incommingState == 2)
             {
                 Debug.Assert(_remoteNonce != null);
                 Debug.Assert(_localNonce == null);
+
                 var key = Crypto8.GenerateKeyPair();
                 var localNonce = Crypto8.GenerateNonce();
                 var remoteNonce = _remoteNonce;
@@ -336,33 +363,40 @@ namespace CoCSharp.Network
             }
             // _outgoingState == 2 means we're the client.
             // Usually processing 10101 - LoginRequestMessage.
-            else if (_outgoingState == 3)
+            else if (_incommingState == 3)
             {
-                //var sessionKey = Crypto8.GenerateNonce();
+                var serverKey = _serverKey;
                 var sessionKey = _sessionKey;
-                if (sessionKey == null)
-                    throw new InvalidOperationException("SessionKey was not set.");
-                //if (sessionKey == null)
-                //    sessionKey = Crypto8.GenerateNonce();
+                Debug.Assert(serverKey != null, "Server key was null.");
+                Debug.Assert(sessionKey != null, "Session key was null.");
 
+                // Generate a ClientNonce.
                 var localNonce = Crypto8.GenerateNonce();
 
+                Debug.WriteLine($"Generated ClientNonce: {ToHexString(localNonce)}");
+
+                // Craft the new packet which is
+                // tmpChiper = sessionKey + localNonce + plaintext.
                 var tmpChiper = new byte[plaintext.Length + CoCKeyPair.NonceLength * 2];
                 Buffer.BlockCopy(sessionKey, 0, tmpChiper, 0, CoCKeyPair.NonceLength);
                 Buffer.BlockCopy(localNonce, 0, tmpChiper, CoCKeyPair.NonceLength, CoCKeyPair.NonceLength);
                 Buffer.BlockCopy(plaintext, 0, tmpChiper, CoCKeyPair.NonceLength * 2, plaintext.Length);
 
-                _crypto.UpdateSharedKey(_serverKey);
+                // Use our specified from the constructor _keyPair.PublicKey and specified _serverKey from the constructor
+                // to generate the blake2b nonce and encrypt using _keyPair.PrivateKey and the generated blake2b nonce.
+                _crypto.UpdateSharedKey(serverKey);
                 _crypto.Encrypt(ref tmpChiper);
 
+                // Craft another new packet which is
+                // chiper = _keyPair.PublicKey + tmpChiper.
                 chiper = new byte[tmpChiper.Length + CoCKeyPair.KeyLength];
                 Buffer.BlockCopy(_crypto.KeyPair.PublicKey, 0, chiper, 0, CoCKeyPair.KeyLength);
                 Buffer.BlockCopy(tmpChiper, 0, chiper, CoCKeyPair.KeyLength, tmpChiper.Length);
 
                 _localNonce = localNonce;
-                _sessionKey = sessionKey;
             }
-            else if (_outgoingState > (int)_direction)
+            // Messages after the previous states are processed the same way.
+            else if (_incommingState > (int)_direction)
             {
                 var tmpChiper = (byte[])plaintext.Clone();
 
@@ -374,11 +408,7 @@ namespace CoCSharp.Network
         }
         #endregion
 
-        public void UpdateSessionKey(byte[] key)
-        {
-            _sessionKey = key;
-        }
-
+        // Returns the opposite direction of specified direction.
         private static MessageDirection GetOppositeDirection(MessageDirection dir)
         {
             if (dir == MessageDirection.Client)
@@ -390,6 +420,7 @@ namespace CoCSharp.Network
             throw new Exception();
         }
 
+        // Returns the hex-form of the specified byte array.
         private static string ToHexString(byte[] bytes)
         {
             var str = string.Empty;

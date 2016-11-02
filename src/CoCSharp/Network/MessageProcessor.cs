@@ -18,7 +18,8 @@ namespace CoCSharp.Network
         /// the resulting <see cref="Message"/>.
         /// </summary>
         /// <param name="header">Header of the message.</param>
-        /// <param name="chiper">Chippered array of bytes representing a message to process.</param>
+        /// <param name="chiper">Ciphered array of bytes representing a message to process.</param>
+        /// <param name="plaintext">Plaintext representation of <paramref name="chiper"/>.</param>
         /// <returns>Resulting <see cref="Message"/>.</returns>
         public abstract Message ProcessIncoming(MessageHeader header, byte[] chiper, ref byte[] plaintext);
 

@@ -9,30 +9,55 @@ using CoCSharp.Server.API.Logging;
 using CoCSharp.Server.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 
 namespace CoCSharp.Server
 {
     public partial class Server : IServer
     {
-        #region Constants
-        public const string ContentPath = "contents";
-        #endregion
-
         #region Constructors
         public Server()
         {
-            _clients = new List<IClient>();
-            _config = new ServerConfiguration("config.xml");
+            const string CONTENT_PATH = "contents";
+            const string CONFIG_PATH = "server_config.xml";
 
-            _assets = new AssetManager(ContentPath);
+            // Initialize our loggers.
+            _log = new Log();
+            _log.MainLogger
+                .Next(new ConsoleLogger())
+                .Next(new FileLogger("logs"));
+
+            _log.Info($"Loading config at '{CONFIG_PATH}'...");
+            // Initialize our configs.
+            _config = new ServerConfiguration();
+            // If the config does not exists we create it.
+            if (!File.Exists(CONFIG_PATH))
+            {
+                _log.Warn($"Config at '{CONFIG_PATH}' was not found; creating one.");
+                _config.Save(CONFIG_PATH);
+            }
+            // If we couldn't load all of the configs or part of the config is missing
+            // we overwrite it.
+            else if (!_config.Load(CONFIG_PATH))
+            {
+                // Keep a backup of the old config.
+                var oldName = CONFIG_PATH;
+                var newName = Path.GetFileNameWithoutExtension(CONFIG_PATH) + "_old_" + DateTime.Now.ToString("dd-HH-mm-ss-ff") + Path.GetExtension(CONFIG_PATH);
+                File.Move(oldName, newName);
+
+                _log.Warn($"Was unable to load config at '{CONFIG_PATH}' completely; overwriting old one.");
+                _config.Save(CONFIG_PATH);
+            }
+
+            // Initialize our client list.
+            // TODO: Make thread safe.
+            _clients = new List<IClient>();
+
+            _assets = new AssetManager(CONTENT_PATH);
 
             _db = new LiteDbManager(this);
             _handler = new MessageHandler(this);
-
-            _log = new Log();
-            _log.Logger = new ConsoleLogger();
-            _log.Logger.Next(new FileLogger());
 
             _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(8, AcceptCompleted);
@@ -42,7 +67,7 @@ namespace CoCSharp.Server
 
         #region Fields & Properties
         public event EventHandler<EventArgs> Started;
-        public event EventHandler<ServerConnectionEventArgs> Accepted;
+        public event EventHandler<ServerConnectionEventArgs> ClientConnected;
 
         private bool _disposed;
         private readonly Log _log;
@@ -66,10 +91,13 @@ namespace CoCSharp.Server
         #region Methods
         public void Start()
         {
-            _assets.Load<CsvDataTable<BuildingData>>("buildings.csv");
-            _assets.Load<CsvDataTable<ObstacleData>>("obstacles.csv");
-            _assets.Load<CsvDataTable<TrapData>>("traps.csv");
-            _assets.Load<CsvDataTable<DecorationData>>("decos.csv");
+            if (_disposed)
+                throw new ObjectDisposedException(null, "Can't Start disposed Server object.");
+
+            _assets.Load<CsvDataTable<BuildingData>>("logic/buildings.csv");
+            _assets.Load<CsvDataTable<ObstacleData>>("logic/obstacles.csv");
+            _assets.Load<CsvDataTable<TrapData>>("logic/traps.csv");
+            _assets.Load<CsvDataTable<DecorationData>>("logic/decos.csv");
 
             StartListener();
 
@@ -86,13 +114,17 @@ namespace CoCSharp.Server
             if (_disposed)
                 return;
 
+            StopListener();
+
             // TODO: Might want to lock this operation.
             for (int i = 0; i < _clients.Count; i++)
                 _clients[i].Disconnect();
 
-            _listener.Close();
-            _acceptPool.Dispose();
             _db.Dispose();
+            _acceptPool.Dispose();
+            _listener.Close();
+            _log.Dispose();
+
             _disposed = true;
         }
 
@@ -103,7 +135,7 @@ namespace CoCSharp.Server
 
         protected virtual void OnConnection(ServerConnectionEventArgs args)
         {
-            Accepted?.Invoke(this, args);
+            ClientConnected?.Invoke(this, args);
         }
         #endregion
     }

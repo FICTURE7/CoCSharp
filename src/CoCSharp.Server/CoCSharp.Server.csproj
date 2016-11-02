@@ -60,7 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="contents\decos.csv">
+    <None Include="contents\logic\decos.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="contents\level\npc1.json">
@@ -207,19 +207,19 @@
     <None Include="contents\level\npc9.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="contents\obstacles.csv">
+    <None Include="contents\logic\obstacles.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="contents\resources.csv">
+    <None Include="contents\logic\resources.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="contents\traps.csv">
+    <None Include="contents\logic\traps.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="contents\buildings.csv">
+    <None Include="contents\logic\buildings.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="contents\starting_village.json">

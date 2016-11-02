@@ -64,7 +64,9 @@ namespace CoCSharp.Server
 
         private void OnMessage(object sender, MessageReceivedEventArgs e)
         {
-            Server.Log.Info($"Received {e.Message.GetType().Name}");
+            if (e.Message == null)
+                return;
+
             Server.Handler.Handle(this, e.Message);
         }
         #endregion

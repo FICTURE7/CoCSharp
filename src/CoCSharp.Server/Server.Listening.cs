@@ -7,14 +7,12 @@ namespace CoCSharp.Server
 {
     public partial class Server
     {
+        private volatile bool _stopAccept;
         private readonly Socket _listener;
         private readonly SocketAsyncEventArgsPool _acceptPool;
 
         private void StartListener()
         {
-            if (_disposed)
-                return;
-
             const int PORT = 9339;
             const int BACKLOG = 100;
 
@@ -30,15 +28,18 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-
-                Environment.Exit(1);
+                Log.Error("Unable to start listener socket: " + ex);
             }
+        }
+
+        private void StopListener()
+        {
+            _stopAccept = true;
         }
 
         private void StartAccept(SocketAsyncEventArgs args)
         {
-            if (_disposed)
+            if (_stopAccept)
                 return;
 
             try
@@ -58,49 +59,61 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Unable to start accept! " + ex);
+                Log.Error("Unable to start accept! " + ex);
             }
         }
 
         private void ProcessAccept(SocketAsyncEventArgs args)
         {
-            if (_disposed)
-                return;
-
+            var remoteSocket = (Socket)null;
             try
             {
-                var remoteSocket = args.AcceptSocket;
-                var client = new Client(this, remoteSocket);
-                _clients.Add(client);
+                remoteSocket = args.AcceptSocket;
+                if (_stopAccept)
+                {
+                    KillSocket(remoteSocket);
+                }
+                else
+                {
+                    var client = new Client(this, remoteSocket);
+                    _clients.Add(client);
 
-                OnConnection(new ServerConnectionEventArgs(this, client));
-                // Clean AcceptSocket to accept even more.
-                args.AcceptSocket = null;
+                    OnConnection(new ServerConnectionEventArgs(this, client));
+                    // Clean AcceptSocket to accept even more.
+                    args.AcceptSocket = null;
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Unable to process accept! " + ex);
-            }
-            finally
-            {
-                StartAccept(args);
+                Log.Error("Unable to process accept! " + ex);
+                KillSocket(remoteSocket);
             }
         }
 
         private void AcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
-            if (_disposed)
-                return;
-
+            var remoteSocket = e.AcceptSocket;
             if (e.SocketError != SocketError.Success)
             {
-                e.AcceptSocket.Close();
-                e.AcceptSocket = null;
-                StartAccept(e);
-                return;
+                KillSocket(remoteSocket);
             }
 
             ProcessAccept(e);
+            e.AcceptSocket = null;
+            if (!_stopAccept)
+                StartAccept(e);
+        }
+
+        private static void KillSocket(Socket socket)
+        {
+            if (socket == null)
+                return;
+
+            try { socket.Shutdown(SocketShutdown.Both); }
+            catch { /* Swallow. */ }
+
+            try { socket.Close(); }
+            catch { /* Swallow. */ }
         }
     }
 }
