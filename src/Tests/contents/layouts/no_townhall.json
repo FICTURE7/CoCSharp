@@ -1,0 +1,9 @@
+﻿{
+    "buildings":
+    [
+        {
+            "data": 1000000, // <- not TownHall should throw.
+            "lvl": 1
+        } 
+    ]
+}

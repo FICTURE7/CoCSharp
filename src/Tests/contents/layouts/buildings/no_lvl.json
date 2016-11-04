@@ -1,0 +1,11 @@
+﻿{
+    "buildings":
+    [
+        {
+            "data": 1000000,
+            //"lvl": 1,  -> No lvl should throw.
+            "x": 1, 
+            "y": 2
+        }
+    ]
+}
