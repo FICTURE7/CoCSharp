@@ -59,7 +59,7 @@ namespace CoCSharp.Server
             _db = new LiteDbManager(this);
             _handler = new MessageHandler(this);
 
-            _listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(8, AcceptCompleted);
             _settings = new NetworkManagerAsyncSettings(64, 64);
         }
@@ -99,7 +99,14 @@ namespace CoCSharp.Server
             _assets.Load<CsvDataTable<TrapData>>("logic/traps.csv");
             _assets.Load<CsvDataTable<DecorationData>>("logic/decos.csv");
 
-            StartListener();
+            if (!StartListener())
+            {
+                Log.Error("Listening socket failed to bind or listen.");
+                Log.Error("Closing server...");
+                Close();
+
+                Environment.Exit(1);
+            }
 
             OnStarted(EventArgs.Empty);
         }

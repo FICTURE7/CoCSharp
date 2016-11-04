@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Server.API.Events.Server;
 using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
 namespace CoCSharp.Server
@@ -11,7 +12,7 @@ namespace CoCSharp.Server
         private readonly Socket _listener;
         private readonly SocketAsyncEventArgsPool _acceptPool;
 
-        private void StartListener()
+        private bool StartListener()
         {
             const int PORT = 9339;
             const int BACKLOG = 100;
@@ -21,15 +22,20 @@ namespace CoCSharp.Server
             var endpoint = new IPEndPoint(IPAddress.Any, PORT);
             try
             {
+                Log.Info($"Binding listening socket to {endpoint}...");
                 _listener.Bind(endpoint);
                 _listener.Listen(BACKLOG);
 
                 StartAccept(null);
             }
-            catch (Exception ex)
+            catch (SocketException ex)
             {
-                Log.Error("Unable to start listener socket: " + ex);
+                Log.Error("**Unable to start listener socket: " + ex);
+                Log.Error("**Socket Error: " + ex.SocketErrorCode);
+                return false;
             }
+
+            return true;
         }
 
         private void StopListener()

@@ -88,17 +88,6 @@ namespace CoCSharp.Logic
         /// <summary/>
         protected internal override void Tick(int tick)
         {
-            // Determines if the current VillageObject is a TownHall building based on Data.TID
-            // and set the townhall of the Village to this VillageObject. 
-            //if (RowCache.Name == "Town Hall")
-            //{
-            //    // A Village cannot contain more than 1 townhall.
-            //    if (Village.TownHall != this && Village.TownHall != null)
-            //        throw new InvalidOperationException("Cannot add a Town Hall building to Village if it already contains one.");
-
-            //    Village._townhall = this;
-            //}
-
             // Ticks the Buildable{T} parent to update construction stuff.
             base.Tick(tick);
         }
