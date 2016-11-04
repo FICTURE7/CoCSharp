@@ -1,7 +1,8 @@
-﻿using System;
+﻿using CoCSharp.Data.Slots;
 using CoCSharp.Server.API;
 using CoCSharp.Server.API.Core;
 using LiteDB;
+using System;
 
 namespace CoCSharp.Server.Core
 {
@@ -88,6 +89,12 @@ namespace CoCSharp.Server.Core
                 VillageJson = Server.Configuration.StartingVillage
             };
 
+            var tutorialProgress = new TutorialProgressSlot[10];
+            for (int i = 0; i < 10; i++)
+                tutorialProgress[i] = new TutorialProgressSlot(21000000 + i);
+
+            save.TutorialProgress = tutorialProgress;
+             
             // Save LevelSave to set the ID using the AutoId stuff.
             SaveLevel(save);
             return save;

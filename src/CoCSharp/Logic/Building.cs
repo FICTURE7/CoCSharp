@@ -15,75 +15,30 @@ namespace CoCSharp.Logic
         internal const int Kind = 0;
         internal const int BaseGameID = 500000000;
 
-        private static readonly PropertyChangedEventArgs s_isLockedChanged = new PropertyChangedEventArgs("IsLocked");
+        private static readonly PropertyChangedEventArgs s_isLockedChanged = new PropertyChangedEventArgs(nameof(IsLocked));
         #endregion
 
         #region Constructors
-        // Constructor that FromJsonReader method is going to use.
-        internal Building(Village village) : base(village)
-        {
-            // Space
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and a value indicating the level of
-        /// the <see cref="Building"/>.
-        /// </summary>
-        /// 
-        /// <param name="village"><see cref="Village"/> containing the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, CsvDataRowRef<BuildingData> data, int level) : base(village, data, level)
+        // Constructor used to load the VillageObject from a JsonTextReader.
+        internal Building() : base()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Building"/> and <see cref="BuildingData"/> which is associated with it and user token object and a value indicating the level of
-        /// the <see cref="Building"/>.
+        /// Initializes a new instance of the <see cref="Building"/> class with the specified
+        /// <see cref="Village"/> instance and <see cref="BuildingData"/>.
         /// </summary>
         /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, CsvDataRowRef<BuildingData> data, object userToken, int level) : base(village, data, userToken, level)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
-        /// and <see cref="BuildingData"/> which is associated with it, X coordinate and Y coordinate and a value indicating the level of
-        /// the <see cref="Building"/>.
-        /// </summary>
+        /// <param name="village">
+        /// <see cref="Village"/> instance which owns this <see cref="Building"/>.
+        /// </param>
         /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, CsvDataRowRef<BuildingData> data, int x, int y, int level) : base(village, data, x, y, level)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Building"/> class with the specified <see cref="Village"/> containing the <see cref="Building"/>
-        /// and <see cref="BuildingData"/> which is associated with it, X coordinate, Y coordinate and user token object and a value indicating the level of
-        /// the <see cref="Building"/>.
-        /// </summary>
+        /// <param name="data"><see cref="BuildingData"/> representing the data of the <see cref="Building"/>.</param>
         /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Building"/>.</param>
-        /// <param name="data"><see cref="BuildingData"/> which is associated with this <see cref="Building"/>.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <param name="userToken">User token associated with this <see cref="Building"/>.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Building"/>.</param>
-        public Building(Village village, CsvDataRowRef<BuildingData> data, int x, int y, object userToken, int level) : base(village, data, x, y, userToken, level)
+        /// <exception cref="ArgumentNullException"><paramref name="village"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
+        public Building(Village village, BuildingData data) : base(village, data)
         {
             // Space
         }
@@ -92,6 +47,7 @@ namespace CoCSharp.Logic
         #region Fields & Properties
         // Building is locked. Mainly for Alliance Castle.
         private bool _isLocked;
+
         /// <summary>
         /// Gets or sets whether the <see cref="Building"/> is locked.
         /// </summary>
@@ -111,56 +67,45 @@ namespace CoCSharp.Logic
             }
         }
 
-        internal override int KindID
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        internal override int KindID => 0;
         #endregion
 
         #region Methods
-        #region Construction
         /// <summary/>
-        protected override TimeSpan GetBuildTime(BuildingData data)
-        {
-            return data.BuildTime;
-        }
+        protected override TimeSpan GetBuildTime(BuildingData data) => data.BuildTime;
 
         /// <summary/>
-        protected override int GetTownHallLevel(BuildingData data)
-        {
-            return data.TownHallLevel;
-        }
-        #endregion
+        protected override int GetTownHallLevel(BuildingData data) => data.TownHallLevel;
 
-        internal override void ResetVillageObject()
+        /// <summary/>
+        protected internal override void ResetVillageObject()
         {
             base.ResetVillageObject();
 
             _isLocked = default(bool);
         }
 
-        internal override void Tick(int tick)
+        /// <summary/>
+        protected internal override void Tick(int tick)
         {
             // Determines if the current VillageObject is a TownHall building based on Data.TID
             // and set the townhall of the Village to this VillageObject. 
-            if (RowCache.Name == "Town Hall")
-            {
-                // A Village cannot contain more than 1 townhall.
-                if (Village.TownHall != this && Village.TownHall != null)
-                    throw new InvalidOperationException("Cannot add a Town Hall building to Village if it already contains one.");
+            //if (RowCache.Name == "Town Hall")
+            //{
+            //    // A Village cannot contain more than 1 townhall.
+            //    if (Village.TownHall != this && Village.TownHall != null)
+            //        throw new InvalidOperationException("Cannot add a Town Hall building to Village if it already contains one.");
 
-                Village._townhall = this;
-            }
+            //    Village._townhall = this;
+            //}
 
             // Ticks the Buildable{T} parent to update construction stuff.
             base.Tick(tick);
         }
 
         #region Json Reading/Writing
-        internal override void ToJsonWriter(JsonWriter writer)
+        /// <summary/>
+        protected internal override void ToJsonWriter(JsonWriter writer)
         {
             writer.WriteStartObject();
 
@@ -200,7 +145,8 @@ namespace CoCSharp.Logic
             writer.WriteEndObject();
         }
 
-        internal override void FromJsonReader(JsonReader reader)
+        /// <summary/>
+        protected internal override void FromJsonReader(JsonReader reader)
         {
             var instance = CsvData.GetInstance<BuildingData>();
             // const_t_end value.
@@ -262,51 +208,30 @@ namespace CoCSharp.Logic
             }
 
             if (!dataIdSet)
-                throw new InvalidOperationException("Building JSON does not contain a 'data' field.");
+                throw new InvalidOperationException($"Building JSON at {reader.Path} does not contain a 'data' field.");
             if (!lvlSet)
-                throw new InvalidOperationException("Building JSON does not contain a 'lvl' field.");
+                throw new InvalidOperationException($"Building JSON at {reader.Path} does not contain a 'lvl' field.");
 
             if (instance.InvalidDataID(dataId))
-                throw new InvalidOperationException("Building JSON contained an invalid BuildingData ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
+                throw new InvalidOperationException($"Building JSON at {reader.Path} contained an invalid BuildingData ID. {instance.GetArgsOutOfRangeMessage("Data ID")}");
 
-            // Don't use the setter of the Level property to prevent
-            // UpdateIsUpgradable from being called which can cause an InvalidOperationException when
-            // the TownHall building is no loaded yet.
-            _level = lvl;
             UpdateData(dataId, lvl);
 
-            // Try to use const_t_end if we were not able to get const_t's value.
-            if (constTime == -1)
-            {
-                // We don't have const_t_end either so we can exit early.
-                if (constTimeEnd == -1)
-                {
-                    if (_level == NotConstructedLevel)
-                        _level = 0;
-
-                    return;
-                }
-
-                _timer.Start(constTimeEnd);
-            }
-            else
-            {
-                _timer.Start(TimeUtils.UnixUtcNow + constTime);
-            }
+            if (RowCache.Name == "Town Hall")
+                Village._townhall = this;
         }
         #endregion
 
         // Tries to return an instance of the Building class from the VillageObjectPool.
+        // Used by ReadBuildingArray.
         internal static Building GetInstance(Village village)
         {
             var obj = (VillageObject)null;
-            if (VillageObjectPool.TryPop(Kind, out obj))
-            {
-                obj.SetVillageInternal(village);
-                return (Building)obj;
-            }
+            if (!VillageObjectPool.TryPop(Kind, out obj))
+                obj = new Building();
 
-            return new Building(village);
+            obj.SetVillageInternal(village);
+            return (Building)obj;
         }
         #endregion
     }

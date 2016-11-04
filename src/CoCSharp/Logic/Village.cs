@@ -28,47 +28,35 @@ namespace CoCSharp.Logic
         /// Initializes a new instance of the <see cref="Village"/> class and uses <see cref="AssetManager.Default"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><see cref="AssetManager.Default"/> is null.</exception>
-        public Village() : this(AssetManager.Default, true)
+        public Village() : this(AssetManager.Default)
         {
             // Space
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Village"/> class with the specified
-        /// <see cref="Data.AssetManager"/>.
+        /// <see cref="AssetManager"/>.
         /// </summary>
-        /// <param name="manager"><see cref="Data.AssetManager"/> to use.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="manager"/> is null.</exception>
-        public Village(AssetManager manager) : this(manager, true)
+        /// <param name="assets"><see cref="Data.AssetManager"/> to use.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="assets"/> is null.</exception>
+        public Village(AssetManager assets)
         {
-            // Space
-        }
+            if (assets == null)
+                throw new ArgumentNullException(nameof(assets));
 
-        private Village(AssetManager manager, bool register)
-        {
-            if (manager == null)
-                throw new ArgumentNullException("manager");
-
-            _assetManager = manager;
+            _assets = assets;
             _villageObjects = new VillageObjectCollection();
-            _logger = new VillageLogger();
-
-            //if (register)
-            //    InternalVillageTicker.Register(this);
         }
         #endregion
 
         #region Fields & Properties 
         private bool _disposed;
-        // Unix timestamp at which the village was registered to the ticker.
-        internal int _registeredTime;
-        internal int _tick;
+
+        // Building which is the town hall.
         internal Building _townhall;
-        private readonly AssetManager _assetManager;
+
+        private readonly AssetManager _assets;
         private readonly VillageObjectCollection _villageObjects;
-        // VillageLogger which will log logic stuff happening.
-        private readonly VillageLogger _logger;
-        internal VillageLogger Logger => _logger;
 
         /// <summary>
         /// The event raised when a logic action has taken place.
@@ -76,10 +64,10 @@ namespace CoCSharp.Logic
         public event EventHandler<LogicEventArgs> Logic;
 
         /// <summary>
-        /// Gets the <see cref="AssetManager"/> from which data will be
+        /// Gets the <see cref="Assets"/> from which data will be
         /// used.
         /// </summary>
-        public AssetManager AssetManager => _assetManager;
+        public AssetManager Assets => _assets;
 
         /// <summary>
         /// Gets or sets the experience version? (Not completely sure if thats its full name).
@@ -91,21 +79,6 @@ namespace CoCSharp.Logic
         /// if it does not find it.
         /// </remarks>
         public int ExperienceVersion { get; set; }
-
-        /// <summary>
-        /// Gets the current tick the <see cref="Village"/> is in.
-        /// </summary>
-        public int Tick
-        {
-            get
-            {
-                return Thread.VolatileRead(ref _tick);
-            }
-            set
-            {
-                Thread.VolatileWrite(ref _tick, value);
-            }
-        }
 
         /// <summary>
         /// Gets the <see cref="VillageObjectCollection"/> which contains all the <see cref="VillageObject"/> in
@@ -153,7 +126,7 @@ namespace CoCSharp.Logic
             if (_disposed)
                 return;
 
-            _villageObjects.TickAll(_tick);
+            _villageObjects.TickAll(1);
         }
 
         /// <summary>
@@ -180,6 +153,8 @@ namespace CoCSharp.Logic
 
             if (disposing)
             {
+                //TODO: Limit the pool size because we don't want to have a memory leak.
+
                 foreach (var building in Buildings)
                     building.PushToPool();
                 foreach (var obstacle in Obstacles)
@@ -188,14 +163,16 @@ namespace CoCSharp.Logic
                     trap.PushToPool();
                 foreach (var deco in Decorations)
                     deco.PushToPool();
-
-                _logger.Dump();
             }
 
             _disposed = true;
         }
 
-        internal void OnLogic(LogicEventArgs args)
+        /// <summary>
+        /// Raises the <see cref="Logic"/> event with the specified <see cref="LogicEventArgs"/>.
+        /// </summary>
+        /// <param name="args"></param>
+        protected internal virtual void OnLogic(LogicEventArgs args)
         {
             Logic?.Invoke(this, args);
         }

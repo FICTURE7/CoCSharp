@@ -44,7 +44,7 @@ namespace CoCSharp.Logic
             var success = GetPool(kindId).TryTake(out obj);
             if (success)
             {
-                obj._recycled++;
+                obj._restCount++;
                 obj.ResetVillageObject();
             }
 

@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Csv;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace CoCSharp.Logic
@@ -9,60 +8,41 @@ namespace CoCSharp.Logic
     /// Represents an object in a <see cref="Village"/> which has a <see cref="CsvData"/> associated with it.
     /// </summary>
     /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> associated with it.</typeparam>
-    [DebuggerDisplay("ID = {ID}, DataRef = {DataRef}")]
+    [DebuggerDisplay("ID = {ID}, DataRef = {DataRef.ID}")]
     public abstract class VillageObject<TCsvData> : VillageObject where TCsvData : CsvData, new()
     {
-        #region Constants
-        // We're doing nothing with this.
-
-        private static readonly PropertyChangedEventArgs s_dataChanged = new PropertyChangedEventArgs("Data");
-        #endregion
-
         #region Constructors
-        // Constructors that FromJsonReader method is going to use.
-        internal VillageObject(Village village) : base(village)
+        // Constructor used to load the VillageObject from a JsonTextReader.
+        internal VillageObject() : base()
         {
             // Space
         }
 
-
-        internal VillageObject(Village village, CsvDataRowRef<TCsvData> dataRef) : base(village)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VillageObject{TCsvData}"/> class with the specified
+        /// <see cref="Village"/> instance and <typeparamref name="TCsvData"/>.
+        /// </summary>
+        /// 
+        /// <param name="village">
+        /// <see cref="Village"/> instance which owns this <see cref="VillageObject{TCsvData}"/>.
+        /// </param>
+        /// 
+        /// <param name="data"><typeparamref name="TCsvData"/> representing the data of the <see cref="VillageObject{TCsvData}"/>.</param>
+        /// 
+        /// <exception cref="ArgumentNullException"><paramref name="village"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
+        protected VillageObject(Village village, TCsvData data) : base(village)
         {
-            if (dataRef == null)
-                throw new ArgumentNullException("dataRef");
+            if (data == null)
+                throw new ArgumentNullException(nameof(village));
 
-            var table = Assets.Get<CsvDataTableCollection>();
-            _dataRef = dataRef;
-            _data = dataRef.Get(table)[0];
-        }
-
-        internal VillageObject(Village village, CsvDataRowRef<TCsvData> dataRef, int x, int y) : base(village, x, y)
-        {
-            if (dataRef == null)
-                throw new ArgumentNullException("dataRef");
-
-            var table = Assets.Get<CsvDataTableCollection>();
-            _dataRef = dataRef;
-            _data = dataRef.Get(table)[0];
+            _data = data;
         }
         #endregion
 
         #region Fields & Properties
-        /// <summary>
-        /// Gets the cache to the sub-collection in which Data is found.
-        /// </summary>
-        public CsvDataRow<TCsvData> RowCache { get; protected set; }
-
-        private readonly CsvDataRowRef<TCsvData> _dataRef;
-        public CsvDataRowRef<TCsvData> DataRef
-        {
-            get
-            {
-                return _dataRef;
-            }
-        }
-
         internal TCsvData _data;
+
         /// <summary>
         /// Gets the <typeparamref name="TCsvData"/> associated with this <see cref="VillageObject"/>.
         /// </summary>
@@ -71,20 +51,14 @@ namespace CoCSharp.Logic
         /// In <see cref="Buildable{TCsvData}"/> this value can be null when 
         /// <see cref="Buildable{TCsvData}.Level"/> is -1 or <see cref="Buildable{TCsvData}.NotConstructedLevel"/>.
         /// </remarks>
-        public TCsvData Data
-        {
-            get
-            {
-                return _data;
-            }
-        }
+        public TCsvData Data => _data;
 
-        internal override void ResetVillageObject()
+        /// <summary/>
+        protected internal override void ResetVillageObject()
         {
             base.ResetVillageObject();
 
             _data = default(TCsvData);
-            RowCache = default(CsvDataRow<TCsvData>);
         }
         #endregion
     }

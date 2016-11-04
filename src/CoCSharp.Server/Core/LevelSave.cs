@@ -44,6 +44,7 @@ namespace CoCSharp.Server.Core
         public IEnumerable<HeroHealthSlot> HeroHealths { get; set; }
         public IEnumerable<HeroStateSlot> HeroStates { get; set; }
         public IEnumerable<AllianceUnitSlot> AllianceUnits { get; set; }
+        public IEnumerable<TutorialProgressSlot> TutorialProgress { get; set; }
         public IEnumerable<AchievementSlot> Achievements { get; set; }
         public IEnumerable<AchievementProgessSlot> AchievementProgress { get; set; }
         public IEnumerable<NpcStarSlot> NpcStars { get; set; }
@@ -82,6 +83,7 @@ namespace CoCSharp.Server.Core
             Replace(level.Avatar.HeroHealths, HeroHealths);
             Replace(level.Avatar.HeroStates, HeroStates);
             Replace(level.Avatar.AllianceUnits, AllianceUnits);
+            Replace(level.Avatar.TutorialProgess, TutorialProgress);
             Replace(level.Avatar.Achievements, Achievements);
             Replace(level.Avatar.AchievementProgress, AchievementProgress);
             Replace(level.Avatar.NpcStars, NpcStars);
@@ -126,6 +128,7 @@ namespace CoCSharp.Server.Core
             HeroHealths = level.Avatar.HeroHealths;
             HeroStates = level.Avatar.HeroStates;
             AllianceUnits = level.Avatar.AllianceUnits;
+            TutorialProgress = level.Avatar.TutorialProgess;
             Achievements = level.Avatar.Achievements;
             AchievementProgress = level.Avatar.AchievementProgress;
             NpcStars = level.Avatar.NpcStars;
@@ -134,7 +137,7 @@ namespace CoCSharp.Server.Core
             return this;
         }
 
-        private void Replace<T>(ICollection<T> dst, IEnumerable<T> src)
+        private static void Replace<T>(ICollection<T> dst, IEnumerable<T> src)
         {
             if (src == null)
                 return;

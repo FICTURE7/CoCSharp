@@ -14,33 +14,43 @@ namespace CoCSharp.Logic
     public abstract class VillageObject : INotifyPropertyChanged
     {
         #region Constants
-        // Represents the Base ID of every game ID & data ID.
-        //internal const int Base = 1000000;
+        private const int ComponentArraySize = 8;
 
         internal static int s_rested = 0;
         internal static int s_created = 0;
 
-        private static readonly PropertyChangedEventArgs s_xChanged = new PropertyChangedEventArgs("X");
-        private static readonly PropertyChangedEventArgs s_yChanged = new PropertyChangedEventArgs("Y");
+        private static readonly PropertyChangedEventArgs s_xChanged = new PropertyChangedEventArgs(nameof(X));
+        private static readonly PropertyChangedEventArgs s_yChanged = new PropertyChangedEventArgs(nameof(Y));
         #endregion
 
         #region Constructors
-        internal VillageObject(Village village)
+        // Constructor used to load the VillageObject from a JsonTextReader.
+        internal VillageObject()
         {
-            if (village == null)
-                throw new ArgumentNullException("village");
+            _components = new LogicComponent[ComponentArraySize];
 
-            _components = new LogicComponent[8];
-            SetVillageInternal(village);
             Interlocked.Increment(ref s_created);
-
-            Village.Logger.Info(village.Tick, "created new VillageObject {0}", ID);
         }
 
-        internal VillageObject(Village village, int x, int y) : this(village)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VillageObject"/> class with the specified
+        /// <see cref="Logic.Village"/> instance.
+        /// </summary>
+        /// 
+        /// <param name="village">
+        /// <see cref="Logic.Village"/> instance which owns this <see cref="VillageObject"/>.
+        /// </param>
+        /// 
+        /// <exception cref="ArgumentNullException"><paramref name="village"/> is null.</exception>
+        protected VillageObject(Village village)
         {
-            X = x;
-            Y = y;
+            if (village == null)
+                throw new ArgumentNullException(nameof(village));
+
+            _components = new LogicComponent[ComponentArraySize];
+            SetVillageInternal(village);
+
+            Interlocked.Increment(ref s_created);
         }
         #endregion
 
@@ -55,9 +65,11 @@ namespace CoCSharp.Logic
         // Array containing the LogicComponent attached to this VillageObject.
         private readonly LogicComponent[] _components;
         // Amount of time the VillageObject was pushed back to the pool.
-        private int _count;
-        // Amount of time the VillageObject was reused.
-        internal int _recycled;
+        private int _pushCount;
+        // Amount of time the VillageObject was rest.
+        internal int _restCount;
+        // Column index of the VillageObject in its VillageObjectCollection.
+        internal int _columnIndex;
 
         /// <summary>
         /// The event raised when a property value has changed.
@@ -74,7 +86,6 @@ namespace CoCSharp.Logic
         /// </summary>
         public Village Village => _village;
 
-        internal int _columnIndex;
         // ID of the VillageObject (IDs above or equal to 500000000). E.g: 500000001
         // This value should be relative to the Village the VillageObject is in.
 
@@ -86,13 +97,7 @@ namespace CoCSharp.Logic
         /// The value of <see cref="ID"/> is dependent on its <see cref="VillageObject"/> kind
         /// and on <see cref="Village.VillageObjects"/> collection.
         /// </remarks>
-        public int ID
-        {
-            get
-            {
-                return Thread.VolatileRead(ref _columnIndex) + ((500 + KindID) * InternalConstants.IDBase);
-            }
-        }
+        public int ID => Thread.VolatileRead(ref _columnIndex) + ((500 + KindID) * InternalConstants.IDBase);
 
         /// <summary>
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.
@@ -107,7 +112,7 @@ namespace CoCSharp.Logic
             set
             {
                 if (value < 0 || value > Village.Width)
-                    throw new ArgumentOutOfRangeException("value", "value must be between 0 and Village.Width.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "value must be between 0 and Village.Width.");
 
                 if (_x == value)
                     return;
@@ -130,7 +135,7 @@ namespace CoCSharp.Logic
             set
             {
                 if (value < 0 || value > Village.Height)
-                    throw new ArgumentOutOfRangeException("value", "value must be between 0 and Village.Height.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "value must be between 0 and Village.Height.");
 
                 if (_y == value)
                     return;
@@ -141,15 +146,16 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Gets the <see cref="Data.AssetManager"/> of <see cref="Village"/>.
+        /// Gets the <see cref="AssetManager"/> of <see cref="Village"/>.
         /// </summary>
-        protected AssetManager Assets => _village.AssetManager;
+        protected AssetManager Assets => _village.Assets;
 
-         // Kind ID of the VillageObject.
+        // Kind ID of the VillageObject.
         internal abstract int KindID { get; }
         #endregion
 
         #region Methods
+        //TODO: Rework component system.
         #region Component System
         // Adds the specified component to the VillageObject.
         internal void AddComponent(LogicComponent component)
@@ -201,33 +207,53 @@ namespace CoCSharp.Logic
         }
         #endregion
 
-        ///<summary>Raises the PropertyChanged event.</summary>
-        protected void OnPropertyChanged(PropertyChangedEventArgs args)
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event with the specified <see cref="PropertyChangedEventArgs"/>.
+        /// </summary>
+        /// <param name="args"><see cref="PropertyChangedEventArgs"/> to fire the <see cref="PropertyChanged"/> event.</param>
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
         {
             if (PropertyChanged != null && IsPropertyChangedEnabled)
                 PropertyChanged(this, args);
         }
 
-        // Resets the VillageObject so that it can be reused.
-        internal virtual void ResetVillageObject()
+        /// <summary>
+        /// Resets the <see cref="VillageObject"/>'s fields.
+        /// </summary>
+        protected internal virtual void ResetVillageObject()
         {
             Interlocked.Increment(ref s_rested);
+
+            for (int i = 0; i < ComponentArraySize; i++)
+                _components[i] = null;
+
             _village = default(Village);
             _columnIndex = default(int);
             _x = default(int);
             _y = default(int);
         }
 
-        internal virtual void Tick(int tick)
+        /// <summary>
+        /// Ticks the <see cref="VillageObject"/> with the specified game tick at with which 
+        /// the <see cref="VillageObject"/> will do all calculations.
+        /// </summary>
+        /// <param name="tick">Game tick with which the <see cref="VillageObject"/> will do all calculations.</param>
+        protected internal virtual void Tick(int tick)
         {
             // Space
         }
 
-        // Writes the current VillageObject to the JsonWriter.
-        internal abstract void ToJsonWriter(JsonWriter writer);
+        /// <summary>
+        /// Writes the <see cref="VillageObject"/> to the specified <see cref="JsonWriter"/>.
+        /// </summary>
+        /// <param name="writer"><see cref="JsonWriter"/> to write to.</param>
+        protected internal abstract void ToJsonWriter(JsonWriter writer);
 
-        // Reads the current VillageObject to the JsonReader.
-        internal abstract void FromJsonReader(JsonReader reader);
+        /// <summary>
+        /// Reads the <see cref="VillageObject"/> from the specified <see cref="JsonReader"/>.
+        /// </summary>
+        /// <param name="reader"><see cref="JsonReader"/> to read from.</param>
+        protected internal abstract void FromJsonReader(JsonReader reader);
 
         // Pushes the VillageObject to the VillageObjectPool where it will
         // be reused when Village.FromJson is called.
@@ -235,12 +261,15 @@ namespace CoCSharp.Logic
         {
             // Set village to null, so it can get picked up by the GC.
             _village = null;
+
             VillageObjectPool.Push(this);
-            _count++;
+            _pushCount++;
         }
 
         internal void SetVillageInternal(Village village)
         {
+            Debug.Assert(village != null, "Tried to set a VillageObject's village to null.");
+
             _village = village;
             _village.VillageObjects.Add(this);
         }

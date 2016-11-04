@@ -84,19 +84,10 @@ namespace CoCSharp.Logic.Commands
             ThrowIfLevelNull(level);
 
             if (level.Village == null)
-                throw new ArgumentNullException("avatar.Home");
+                throw new ArgumentNullException(nameof(level.Village));
 
             var data = new CsvDataRowRef<BuildingData>(BuildingDataID);
             var villageObject = (VillageObject)null;
-
-            if (!VillageObjectPool.TryPop(Building.Kind, out villageObject))
-            {
-                villageObject = new Building(level.Village, data, X, Y, -1);
-            }
-            else
-            {
-                var building = (Building)villageObject;
-            }
         }
     }
 }

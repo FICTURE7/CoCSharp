@@ -23,9 +23,9 @@ namespace CoCSharp.Network.Messages
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AvatarMessageComponent"/> class from
-        /// the specified <see cref="Level"/>.
+        /// the specified <see cref="ExpLevel"/>.
         /// </summary>
-        /// <param name="level"><see cref="Level"/> from which the data will be set.</param>
+        /// <param name="level"><see cref="ExpLevel"/> from which the data will be set.</param>
         /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
         public AvatarMessageComponent(Level level)
         {
@@ -63,15 +63,15 @@ namespace CoCSharp.Network.Messages
             //BestSeasonPosition = 1;
             LeagueLevel = avatar.League;
             //TownHallLevel = avatar.Home.TownHall.Level;
-            TownHallLevel = 1;
+            //TownHallLevel = 1;
             Name = avatar.Name;
 
             //Unknown13 = -1;
             //Unknown14 = -1;
             Unknown15 = -1;
 
-            Experience = avatar.ExpPoints;
-            Level = avatar.ExpLevel;
+            ExpPoints = avatar.ExpPoints;
+            ExpLevel = avatar.ExpLevel;
             Gems = avatar.Gems;
             FreeGems = avatar.FreeGems;
 
@@ -217,11 +217,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Level of avatar.
         /// </summary>
-        public int Level;
+        public int ExpLevel;
         /// <summary>
         /// Experience of avatar.
         /// </summary>
-        public int Experience;
+        public int ExpPoints;
         /// <summary>
         /// Gems available.
         /// </summary>
@@ -475,8 +475,8 @@ namespace CoCSharp.Network.Messages
 
             Unknown15 = reader.ReadInt32(); // -1, Facebook ID
 
-            Level = reader.ReadInt32();
-            Experience = reader.ReadInt32();
+            ExpLevel = reader.ReadInt32();
+            ExpPoints = reader.ReadInt32();
             Gems = reader.ReadInt32(); // Scrambled when not own avatar data.
             FreeGems = reader.ReadInt32(); // Scrambled when not own avatar data.
 
@@ -593,8 +593,8 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown15); // -1
 
-            writer.Write(Level);
-            writer.Write(Experience);
+            writer.Write(ExpLevel);
+            writer.Write(ExpPoints);
             writer.Write(Gems);
             writer.Write(FreeGems);
 

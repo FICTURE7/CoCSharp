@@ -58,6 +58,7 @@ namespace CoCSharp.Server
             if (_disposed)
                 return;
 
+            Level.Dispose();
             _networkManager.Dispose();
             _disposed = true;
         }
@@ -67,7 +68,14 @@ namespace CoCSharp.Server
             if (e.Message == null)
                 return;
 
-            Server.Handler.Handle(this, e.Message);
+            try
+            {
+                Server.Handler.Handle(this, e.Message);
+            }
+            catch (Exception ex)
+            {
+                Server.Log.Error($"Failed to handle {e.Message}: {ex}");
+            }
         }
         #endregion
     }

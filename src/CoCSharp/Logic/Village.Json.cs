@@ -25,8 +25,6 @@ namespace CoCSharp.Logic
         /// <returns>A JSON string and indented if specified that represents the current <see cref="Village"/>.</returns>
         public string ToJson(bool indent)
         {
-            var jsonStr = string.Empty;
-
             var textWriter = new StringWriter();
             using (var jsonWriter = new JsonTextWriter(textWriter))
             {
@@ -55,11 +53,8 @@ namespace CoCSharp.Logic
 
                 jsonWriter.WriteEndObject();
 
-                jsonStr = textWriter.ToString();
+                return textWriter.ToString();
             }
-
-            Logger.Info(Tick, "serializing to json:\n{0}", jsonStr);
-            return jsonStr;
         }
 
         /// <summary>
@@ -117,10 +112,7 @@ namespace CoCSharp.Logic
             if (manager == null)
                 throw new ArgumentNullException(nameof(manager));
 
-            // Set register to false -> 
-            // Don't register the Village to the VillageTicker until we have loaded every
-            // VillageObjects.
-            var village = new Village(manager, false);
+            var village = new Village(manager);
 
             var textReader = new StringReader(value);
             using (var jsonReader = new JsonTextReader(textReader))
@@ -156,12 +148,12 @@ namespace CoCSharp.Logic
                 }
             }
 
+            if (village._townhall == null)
+                throw new InvalidOperationException("Village does not contain a Town Hall.");
+
             // Tick once to update/set VillageObject values.
             village.Update();
-            village.Tick++;
 
-            // Now that we have loaded the VillageObjects we can start ticking.
-            //InternalVillageTicker.Register(village);
             return village;
         }
 

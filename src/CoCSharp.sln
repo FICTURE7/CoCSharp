@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoCSharp.Server", "CoCSharp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostBuild", "PostBuild\PostBuild.csproj", "{A6CA6697-2A7D-4012-84F7-A0E9E7ABB289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "CoCSharp.Test\Tests.csproj", "{A10E17E7-2B42-4A02-900B-B91E3950F80C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{A10E17E7-2B42-4A02-900B-B91E3950F80C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmark\Benchmarks.csproj", "{EACF0AE5-D485-41C4-A164-BB5268D45CC3}"
 EndProject

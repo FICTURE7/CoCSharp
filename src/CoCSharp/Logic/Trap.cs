@@ -3,7 +3,6 @@ using CoCSharp.Data.Models;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 
 namespace CoCSharp.Logic
 {
@@ -20,71 +19,26 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Constructors
-        // Constructor that FromJsonReader method is going to use.
-        internal Trap(Village village) : base(village)
-        {
-            // Space
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it and a value indicating the level of
-        /// the <see cref="Trap"/>.
-        /// </summary>
-        /// 
-        /// <param name="village"><see cref="Village"/> containing the <see cref="Trap"/>.</param>
-        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
-        public Trap(Village village, CsvDataRowRef<TrapData> data, int level) : base(village, data, level)
+        // Constructor used to load the VillageObject from a JsonTextReader.
+        internal Trap() : base()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Trap"/> and <see cref="TrapData"/> which is associated with it and user token object and a value indicating the level of
-        /// the <see cref="Trap"/>.
+        /// Initializes a new instance of the <see cref="Obstacle"/> class with the specified
+        /// <see cref="Village"/> instance and <see cref="ObstacleData"/>.
         /// </summary>
         /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
-        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
-        /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
-        public Trap(Village village, CsvDataRowRef<TrapData> data, object userToken, int level) : base(village, data, userToken, level)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing the <see cref="Trap"/>
-        /// and <see cref="TrapData"/> which is associated with it, X coordinate and Y coordinate and a value indicating the level of
-        /// the <see cref="Trap"/>.
-        /// </summary>
+        /// <param name="village">
+        /// <see cref="Village"/> instance which owns this <see cref="Obstacle"/>.
+        /// </param>
         /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
-        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
-        public Trap(Village village, CsvDataRowRef<TrapData> data, int x, int y, int level) : base(village, data, x, y, level)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Trap"/> class with the specified <see cref="Village"/> containing the <see cref="Trap"/>
-        /// and <see cref="TrapData"/> which is associated with it, X coordinate, Y coordinate and user token object and a value indicating the level of
-        /// the <see cref="Trap"/>.
-        /// </summary>
+        /// <param name="data"><see cref="ObstacleData"/> representing the data of the <see cref="Obstacle"/>.</param>
         /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Trap"/>.</param>
-        /// <param name="data"><see cref="TrapData"/> which is associated with this <see cref="Trap"/>.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <param name="userToken">User token associated with this <see cref="Trap"/>.</param>
-        /// <param name="level">A value indicating the level of the <see cref="Trap"/>.</param>
-        public Trap(Village village, CsvDataRowRef<TrapData> data, int x, int y, object userToken, int level) : base(village, data, x, y, userToken, level)
+        /// <exception cref="ArgumentNullException"><paramref name="village"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
+        public Trap(Village village, TrapData data) : base(village, data)
         {
             // Space
         }
@@ -92,6 +46,7 @@ namespace CoCSharp.Logic
 
         #region Fields & Properties
         private bool _isBroken;
+
         /// <summary>
         /// Gets or sets a value indicating whether the trap needs to be repaired.
         /// </summary>
@@ -111,43 +66,33 @@ namespace CoCSharp.Logic
             }
         }
 
-        internal override int KindID
-        {
-            get
-            {
-                return 4;
-            }
-        }
+        internal override int KindID => 4;
         #endregion
 
         #region Methods
         /// <summary/>
-        protected override TimeSpan GetBuildTime(TrapData data)
-        {
-            return data.BuildTime;
-        }
+        protected override TimeSpan GetBuildTime(TrapData data) => data.BuildTime;
 
         /// <summary/>
-        protected override int GetTownHallLevel(TrapData data)
-        {
-            return data.TownHallLevel;
-        }
+        protected override int GetTownHallLevel(TrapData data) => data.TownHallLevel;
 
-        internal override void ResetVillageObject()
+        /// <summary/>
+        protected internal override void ResetVillageObject()
         {
             base.ResetVillageObject();
 
             _isBroken = default(bool);
         }
 
-        internal override void Tick(int tick)
+        /// <summary/>
+        protected internal override void Tick(int tick)
         {
-            // Ticks the Buildable{T} parent to update construction stuff.
             base.Tick(tick);
         }
 
         #region Json Reading/Writing
-        internal override void ToJsonWriter(JsonWriter writer)
+        /// <summary/>
+        protected internal override void ToJsonWriter(JsonWriter writer)
         {
             writer.WriteStartObject();
 
@@ -187,7 +132,8 @@ namespace CoCSharp.Logic
             writer.WriteEndObject();
         }
 
-        internal override void FromJsonReader(JsonReader reader)
+        /// <summary/>
+        protected internal override void FromJsonReader(JsonReader reader)
         {
             var instance = CsvData.GetInstance<TrapData>();
             // const_t_end value.
@@ -259,37 +205,6 @@ namespace CoCSharp.Logic
 
             if (instance.InvalidDataID(dataId))
                 throw new InvalidOperationException("Trap JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
-
-            UpdateData(dataId, lvl);
-            // UpdateCanUpgade();
-            // Village.ReadTrapArray() method will call the UpdateCanUpgrade() method.
-
-            // Try to use const_t if we were not able to get const_t_end's value.
-            //if (constTimeEnd == -1)
-            //{
-            //    // We don't have const_t either so we can exit early.
-            //    if (constTime == -1)
-            //        return;
-
-            //    ConstructionEndTime = DateTime.UtcNow.AddSeconds(constTime);
-            //}
-            //else
-            //{
-            //    if (constTimeEnd > TimeUtils.UnixUtcNow + 100)
-            //    {
-            //        ConstructionTEndUnixTimestamp = constTimeEnd;
-            //    }
-            //    else
-            //    {
-            //        // Date at which building construction was going to end has passed.
-            //        UpdateCanUpgrade();
-            //        //DoConstructionFinished();
-            //        return;
-            //    }
-            //}
-
-            // Schedule the build event and all that stuff.
-            //ScheduleBuild();
         }
         #endregion
 
@@ -297,13 +212,11 @@ namespace CoCSharp.Logic
         internal static Trap GetInstance(Village village)
         {
             var obj = (VillageObject)null;
-            if (VillageObjectPool.TryPop(BaseGameID, out obj))
-            {
-                obj.SetVillageInternal(village);
-                return (Trap)obj;
-            }
+            if (!VillageObjectPool.TryPop(BaseGameID, out obj))
+                obj = new Trap();
 
-            return new Trap(village);
+            obj.SetVillageInternal(village);
+            return (Trap)obj;
         }
         #endregion
     }

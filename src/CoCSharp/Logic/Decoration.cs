@@ -16,58 +16,45 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Constructors
-        // Constructor that FromJsonReader method is going to use.
-        internal Decoration(Village village) : base(village)
+        // Constructor used to load the VillageObject from a JsonTextReader.
+        internal Decoration() : base()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Decoration"/> class with the specified <see cref="Village"/> containing
-        /// the <see cref="Decoration"/> and <see cref="DecorationData"/> which is associated with it.
+        /// Initializes a new instance of the <see cref="Decoration"/> class with the specified
+        /// <see cref="Village"/> instance and <see cref="DecorationData"/>.
         /// </summary>
         /// 
-        /// <param name="village"><see cref="Village"/> containing the <see cref="Decoration"/>.</param>
-        /// <param name="data"><see cref="DecorationData"/> which is associated with this <see cref="Decoration"/>.</param>
-        public Decoration(Village village, CsvDataRowRef<DecorationData> data) : base(village, data)
-        {
-            // Space
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Decoration"/> class with the specified <see cref="Village"/> containing the <see cref="Decoration"/>
-        /// and <see cref="DecorationData"/> which is associated with it, X coordinate and Y coordinate.
-        /// </summary>
+        /// <param name="village">
+        /// <see cref="Village"/> instance which owns this <see cref="Decoration"/>.
+        /// </param>
         /// 
-        /// <param name="village"><see cref="Village"/> which contains the <see cref="Decoration"/>.</param>
-        /// <param name="data"><see cref="DecorationData"/> which is associated with this <see cref="Decoration"/>.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        public Decoration(Village village, CsvDataRowRef<DecorationData> data, int x, int y) : base(village, data, x, y)
+        /// <param name="data"><see cref="DecorationData"/> representing the data of the <see cref="Decoration"/>.</param>
+        /// 
+        /// <exception cref="ArgumentNullException"><paramref name="village"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
+        public Decoration(Village village, DecorationData data) : base(village, data)
         {
             // Space
         }
         #endregion
 
         #region Fields & Properties
-        internal override int KindID
-        {
-            get
-            {
-                return 6;
-            }
-        }
+        internal override int KindID => 6;
         #endregion
 
         #region Methods
-        // Decoration objects does not have a ticking logic.
-        internal override void Tick(int tick)
+        /// <summary/>
+        protected internal override void Tick(int tick)
         {
-            // Space
+            // Decoration does not have much ticking logic.
         }
 
         #region Json Reading/Writing
-        internal override void ToJsonWriter(JsonWriter writer)
+        /// <summary/>
+        protected internal override void ToJsonWriter(JsonWriter writer)
         {
             writer.WriteStartObject();
 
@@ -86,7 +73,8 @@ namespace CoCSharp.Logic
             writer.WriteEndObject();
         }
 
-        internal override void FromJsonReader(JsonReader reader)
+        /// <summary/>
+        protected internal override void FromJsonReader(JsonReader reader)
         {
             var instance = CsvData.GetInstance<DecorationData>();
 
@@ -141,13 +129,11 @@ namespace CoCSharp.Logic
         internal static Decoration GetInstance(Village village)
         {
             var obj = (VillageObject)null;
-            if (VillageObjectPool.TryPop(Kind, out obj))
-            {
-                obj.SetVillageInternal(village);
-                return (Decoration)obj;
-            }
+            if (!VillageObjectPool.TryPop(Kind, out obj))
+                obj = new Decoration();
 
-            return new Decoration(village);
+            obj.SetVillageInternal(village);
+            return (Decoration)obj;
         }
         #endregion
     }

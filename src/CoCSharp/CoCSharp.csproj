@@ -115,7 +115,6 @@
     <Compile Include="Logic\LogicOperation.cs" />
     <Compile Include="Logic\LogicUtils.cs" />
     <Compile Include="Logic\TickTimer.cs" />
-    <Compile Include="Logic\VillageLogger.cs" />
     <Compile Include="Logic\VillageObjectCollection.cs" />
     <Compile Include="Logic\VillageObjectPool.cs" />
     <Compile Include="Logic\VillageObject{T}.cs" />

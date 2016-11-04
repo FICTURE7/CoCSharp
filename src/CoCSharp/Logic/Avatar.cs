@@ -1,10 +1,7 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Slots;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 
 namespace CoCSharp.Logic
 {
@@ -14,23 +11,22 @@ namespace CoCSharp.Logic
     public class Avatar : INotifyPropertyChanged
     {
         #region Constants
-        private static readonly PropertyChangedEventArgs s_namedChanged = new PropertyChangedEventArgs("Name");
-        private static readonly PropertyChangedEventArgs s_isNamedChanged = new PropertyChangedEventArgs("IsNamed");
-        private static readonly PropertyChangedEventArgs s_tokenChanged = new PropertyChangedEventArgs("Token");
-        private static readonly PropertyChangedEventArgs s_idChanged = new PropertyChangedEventArgs("ID");
-        private static readonly PropertyChangedEventArgs s_shieldEndTimeChanged = new PropertyChangedEventArgs("ShieldEndTime");
-        private static readonly PropertyChangedEventArgs s_homeChanged = new PropertyChangedEventArgs("Home");
-        private static readonly PropertyChangedEventArgs s_allianceChanged = new PropertyChangedEventArgs("Alliance");
-        private static readonly PropertyChangedEventArgs s_leagueChanged = new PropertyChangedEventArgs("League");
-        private static readonly PropertyChangedEventArgs s_levelChanged = new PropertyChangedEventArgs("Level");
-        private static readonly PropertyChangedEventArgs s_experienceChanged = new PropertyChangedEventArgs("Experience");
-        private static readonly PropertyChangedEventArgs s_gemsChanged = new PropertyChangedEventArgs("Gems");
-        private static readonly PropertyChangedEventArgs s_freeGemsChanged = new PropertyChangedEventArgs("FreeGems");
-        private static readonly PropertyChangedEventArgs s_trophiesChanged = new PropertyChangedEventArgs("Trophies");
-        private static readonly PropertyChangedEventArgs s_attkWonChanged = new PropertyChangedEventArgs("AttacksWon");
-        private static readonly PropertyChangedEventArgs s_attkLostChanged = new PropertyChangedEventArgs("AttacksLost");
-        private static readonly PropertyChangedEventArgs s_defWonChanged = new PropertyChangedEventArgs("DefensesWon");
-        private static readonly PropertyChangedEventArgs s_defLostChanged = new PropertyChangedEventArgs("DefensesLost");
+        private static readonly PropertyChangedEventArgs s_namedChanged = new PropertyChangedEventArgs(nameof(Name));
+        private static readonly PropertyChangedEventArgs s_isNamedChanged = new PropertyChangedEventArgs(nameof(IsNamed));
+        private static readonly PropertyChangedEventArgs s_tokenChanged = new PropertyChangedEventArgs(nameof(Token));
+        private static readonly PropertyChangedEventArgs s_idChanged = new PropertyChangedEventArgs(nameof(ID));
+        private static readonly PropertyChangedEventArgs s_shieldEndTimeChanged = new PropertyChangedEventArgs(nameof(ShieldEndTime));
+        private static readonly PropertyChangedEventArgs s_allianceChanged = new PropertyChangedEventArgs(nameof(Alliance));
+        private static readonly PropertyChangedEventArgs s_leagueChanged = new PropertyChangedEventArgs(nameof(League));
+        private static readonly PropertyChangedEventArgs s_expLevelChanged = new PropertyChangedEventArgs(nameof(ExpLevel));
+        private static readonly PropertyChangedEventArgs s_expPointsChanged = new PropertyChangedEventArgs(nameof(ExpPoints));
+        private static readonly PropertyChangedEventArgs s_gemsChanged = new PropertyChangedEventArgs(nameof(Gems));
+        private static readonly PropertyChangedEventArgs s_freeGemsChanged = new PropertyChangedEventArgs(nameof(FreeGems));
+        private static readonly PropertyChangedEventArgs s_trophiesChanged = new PropertyChangedEventArgs(nameof(Trophies));
+        private static readonly PropertyChangedEventArgs s_attkWonChanged = new PropertyChangedEventArgs(nameof(AttacksWon));
+        private static readonly PropertyChangedEventArgs s_attkLostChanged = new PropertyChangedEventArgs(nameof(AttacksLost));
+        private static readonly PropertyChangedEventArgs s_defWonChanged = new PropertyChangedEventArgs(nameof(DefensesWon));
+        private static readonly PropertyChangedEventArgs s_defLostChanged = new PropertyChangedEventArgs(nameof(DefensesLost));
         #endregion
 
         #region Constructors
@@ -40,10 +36,9 @@ namespace CoCSharp.Logic
         public Avatar()
         {
             // If _level is less than 1 then the client crashes.
-            _level = 1;
+            _expLevel = 1;
             // If _name is null then the client crashes.
             _name = "unnamed";
-            _commands = new ConcurrentQueue<Command>();
 
             ResourcesCapacity = new SlotCollection<ResourceCapacitySlot>();
             ResourcesAmount = new SlotCollection<ResourceAmountSlot>();
@@ -65,13 +60,30 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
-        // Queue of commands to execute.
-        private readonly ConcurrentQueue<Command> _commands;
+        private string _name;
+        private bool _isNamed;
 
-        /// <summary>
-        /// Gets the <see cref="ConcurrentQueue{T}"/> of <see cref="Command"/> waiting to be flushed and executed.
-        /// </summary>
-        public ConcurrentQueue<Command> CommandQueue => _commands;
+        private string _token;
+        // Also known as UserID.
+        private long _id;
+
+        private DateTime _shieldEndTime;
+
+        private Clan _alliance;
+
+        private int _expLevel;
+        private int _expPoints;
+
+        private int _league;
+
+        private int _gems;
+        private int _freeGems;
+
+        private int _trophies;
+        private int _attkWon;
+        private int _attkLost;
+        private int _defWon;
+        private int _defLost;
 
         /// <summary>
         /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
@@ -83,7 +95,6 @@ namespace CoCSharp.Logic
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _name;
         /// <summary>
         /// Gets or sets the username of the <see cref="Avatar"/>.
         /// </summary>
@@ -107,7 +118,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private bool _isNamed;
         /// <summary>
         /// Gets or sets whether the <see cref="Avatar"/> has been named.
         /// </summary>
@@ -127,7 +137,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private string _token;
         /// <summary>
         /// Gets or sets the user token of the <see cref="Avatar"/>.
         /// </summary>
@@ -147,8 +156,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        // Also known as UserID.
-        private long _id;
         /// <summary>
         /// Gets or sets the user ID of the <see cref="Avatar"/>.
         /// </summary>
@@ -184,7 +191,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private DateTime _shieldEndTime;
         /// <summary>
         /// Gets or sets the shield UTC end time of the <see cref="Avatar"/>.
         /// </summary>
@@ -205,28 +211,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private Village _home;
-        /// <summary>
-        /// Gets or sets the <see cref="Village"/> associated with this <see cref="Avatar"/>.
-        /// </summary>
-        [Obsolete]
-        public Village Home
-        {
-            get
-            {
-                return _home;
-            }
-            set
-            {
-                if (_home == value)
-                    return;
-
-                _home = value;
-                OnPropertyChanged(s_homeChanged);
-            }
-        }
-
-        private Clan _alliance;
         /// <summary>
         /// Gets or sets the <see cref="Clan"/> associated with this <see cref="Avatar"/>.
         /// </summary>
@@ -246,7 +230,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _league;
         /// <summary>
         /// Gets or sets the league of the <see cref="Avatar"/>.
         /// </summary>
@@ -266,7 +249,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _level;
         /// <summary>
         /// Gets or sets the level of the <see cref="Avatar"/>.
         /// </summary>
@@ -275,23 +257,22 @@ namespace CoCSharp.Logic
         {
             get
             {
-                return _level;
+                return _expLevel;
             }
             set
             {
-                if (_level == value)
+                if (_expLevel == value)
                     return;
 
                 // Clash of Clans client crashes when level is less than 1.
                 if (value < 1)
                     throw new ArgumentOutOfRangeException("value", "value cannot be less than 1.");
 
-                _level = value;
-                OnPropertyChanged(s_levelChanged);
+                _expLevel = value;
+                OnPropertyChanged(s_expLevelChanged);
             }
         }
 
-        private int _experience;
         /// <summary>
         /// Gets or sets the experience of the <see cref="Avatar"/>.
         /// </summary>
@@ -299,19 +280,18 @@ namespace CoCSharp.Logic
         {
             get
             {
-                return _experience;
+                return _expPoints;
             }
             set
             {
-                if (_experience == value)
+                if (_expPoints == value)
                     return;
 
-                _experience = value;
-                OnPropertyChanged(s_experienceChanged);
+                _expPoints = value;
+                OnPropertyChanged(s_expPointsChanged);
             }
         }
 
-        private int _gems;
         /// <summary>
         /// Gets or sets the amount of gems of the <see cref="Avatar"/>.
         /// </summary>
@@ -331,7 +311,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _freeGems;
         /// <summary>
         /// Gets or sets the amount of free gems of the <see cref="Avatar"/>.
         /// </summary>
@@ -351,7 +330,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _trophies;
         /// <summary>
         /// Gets or sets the amount of trophies of the <see cref="Avatar"/>.
         /// </summary>
@@ -371,7 +349,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _attkWon;
         /// <summary>
         /// Gets or sets the number of attacks won by the <see cref="Avatar"/>.
         /// </summary>
@@ -391,7 +368,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _attkLost;
         /// <summary>
         /// Gets or sets the number of attacks lost by the <see cref="Avatar"/>.
         /// </summary>
@@ -411,7 +387,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _defWon;
         /// <summary>
         /// Gets or sets the number of defenses won by the <see cref="Avatar"/>.
         /// </summary>
@@ -431,7 +406,6 @@ namespace CoCSharp.Logic
             }
         }
 
-        private int _defLost;
         /// <summary>
         /// Gets or sets the number of defenses lost by the <see cref="Avatar"/>.
         /// </summary>
@@ -533,101 +507,6 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Updates all <see cref="SlotCollection{TSot}"/> of the <see cref="Avatar"/> with <see cref="Home"/>'s <see cref="Village.AssetManager"/>
-        /// instance.
-        /// </summary>
-        /// 
-        /// <exception cref="InvalidOperationException"><see cref="Home"/> is null.</exception>
-        public void UpdateSlots()
-        {
-            if (Home == null)
-                throw new InvalidOperationException("Home cannot be null.");
-
-            Debug.Assert(Home.AssetManager != null);
-            // Update the resource capacity of the avatar according to
-            // its Home Village object.
-            var manager = Home.AssetManager;
-            ResourcesCapacity.Clear();
-
-            // Total capacity.
-            var gold = 0;
-            var elixir = 0;
-            var darkElixir = 0;
-            var warGold = 0;
-            var warElixir = 0;
-            var warDarkElixir = 0;
-
-            foreach (var building in Home.Buildings)
-            {
-                // Ignore the building if its locked (from village.json). E.g: Clan Castle level 0.
-                if (building.IsLocked)
-                    continue;
-
-                var data = building.Data;
-                if (data == null)
-                    continue;
-
-                // Ignore the building if its locked (from building.csv). E.g: Clan Castle level 0.
-                if (data.Locked)
-                    continue;
-
-                gold += data.MaxStoredGold;
-                warGold += data.MaxStoredWarGold;
-                elixir += data.MaxStoredElixir;
-                warElixir += data.MaxStoredWarElixir;
-                darkElixir += data.MaxStoredDarkElixir;
-                warDarkElixir += data.MaxStoredWarDarkElixir;
-            }
-
-            //    ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_GOLD", 0)._OldID, gold));
-            //    if (warGold > 0)
-            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_GOLD", 0)._OldID, warGold));
-
-            //    ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_ELIXIR", 0)._OldID, elixir));
-            //    if (warElixir > 0)
-            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_ELIXIR", 0)._OldID, warElixir));
-
-            //    // Dark Elixir is unlocked at townhall 7(6).
-            //    if (darkElixir > 0 || Home.TownHall.Level >= 6)
-            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_DARK_ELIXIR", 0)._OldID, darkElixir));
-            //    if (warDarkElixir > 0)
-            //        ResourcesCapacity.Add(new ResourceCapacitySlot(manager.SearchCsv<ResourceData>("TID_WAR_DARK_ELIXIR", 0)._OldID, warDarkElixir));
-        }
-
-        /// <summary>
-        /// Executes queued command in <see cref="CommandQueue"/>.
-        /// </summary>
-        public void ExecuteCommands()
-        {
-            while (!_commands.IsEmpty)
-            {
-                var cmd = (Command)null;
-                if (!_commands.TryDequeue(out cmd))
-                    continue;
-
-                //cmd.Execute();
-            }
-        }
-
-        /// <summary>
-        /// Executes queued commands in <see cref="CommandQueue"/> then the specified
-        /// <see cref="ICollection{T}"/> of <see cref="Command"/>.
-        /// </summary>
-        /// <param name="commands"><see cref="ICollection{T}"/> of <see cref="Command"/> to execute.</param>
-        public void ExecuteCommands(ICollection<Command> commands)
-        {
-            ExecuteCommands();
-
-            foreach (var command in commands)
-            {
-                if (command == null)
-                    break;
-
-                //command.Execute(this);
-            }
-        }
-
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event with the specified <see cref="PropertyChangedEventArgs"/>.
         /// </summary>

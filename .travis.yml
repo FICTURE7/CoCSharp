@@ -6,8 +6,8 @@ mono:
 
 install:
     - nuget restore ./src/CoCSharp.sln
-    - nuget install NUnit.Runners -Version 3.0.1 -OutputDirectory nunitrunner
+    - nuget install NUnit.Runners -Version 3.5.0 -OutputDirectory nunitrunner
 
 script:
     - xbuild ./src/CoCSharp.sln
-    - mono ./nunitrunner/NUnit.Console.3.0.1/tools/nunit3-console.exe ./src/CoCSharp.Test/bin/Debug/CoCSharp.Test.dll
+    - mono ./nunitrunner/NUnit.Console.3.5.0/tools/nunit3-console.exe ./src/CoCSharp.Test/bin/Debug/CoCSharp.Test.dll

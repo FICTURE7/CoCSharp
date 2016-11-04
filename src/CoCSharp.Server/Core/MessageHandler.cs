@@ -1,6 +1,6 @@
-﻿using CoCSharp.Data;
-using CoCSharp.Data.Slots;
+﻿using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
+using CoCSharp.Logic.Commands;
 using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
 using CoCSharp.Network.Messages;
@@ -9,7 +9,6 @@ using CoCSharp.Server.API.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 
 namespace CoCSharp.Server.Core
 {
@@ -29,6 +28,9 @@ namespace CoCSharp.Server.Core
             _handlers.Add(new LoginRequestMessage().ID, HandleLoginRequest);
 
             _handlers.Add(new KeepAliveRequestMessage().ID, HandleKeepAlive);
+            _handlers.Add(new ChangeAvatarNameRequestMessage().ID, HandleChangeAvatarRequestName);
+
+            _handlers.Add(new CommandMessage().ID, HandleCommand);
         }
         #endregion
 
@@ -130,7 +132,7 @@ namespace CoCSharp.Server.Core
                 GameCenterID = null,
 
                 MajorVersion = 8,
-                MinorVersion = 212,
+                MinorVersion = 551,
                 RevisionVersion = 0,
 
                 ServerEnvironment = "prod",
@@ -147,10 +149,6 @@ namespace CoCSharp.Server.Core
 
             var ohdMessage = level.OwnHomeData;
 
-            var keppo = new OwnHomeDataMessage();
-            var keppo2 = new MessageReader(new MemoryStream(File.ReadAllBytes("24101")));
-            keppo.ReadMessage(keppo2);
-
             client.SendMessage(lsMessage);
             client.SendMessage(ohdMessage);
         }
@@ -159,6 +157,57 @@ namespace CoCSharp.Server.Core
         private void HandleKeepAlive(IClient client, Message message)
         {
             client.SendMessage(s_response);
+        }
+
+        private void HandleCommand(IClient client, Message message)
+        {
+            var cmdMessage = (CommandMessage)message;
+
+            var level = client.Level;
+            level.Tick();
+
+            if (cmdMessage.Commands.Length > 0)
+            {
+                for (int i = 0; i < cmdMessage.Commands.Length; i++)
+                {
+                    var command = cmdMessage.Commands[i];
+                    // Stream of commands is broken,
+                    // we can exit early.
+                    if (command == null)
+                        break;
+
+                    command.Execute(level);
+                }
+            }
+        }
+
+        private void HandleChangeAvatarRequestName(IClient client, Message message)
+        {
+            var careqMessage = (ChangeAvatarNameRequestMessage)message;
+            var level = client.Level;
+            var avatar = level.Avatar;
+            avatar.Name = careqMessage.NewName;
+            avatar.IsNamed = true;
+
+            var tutorialProgress = avatar.TutorialProgess;
+            var count = tutorialProgress.Count;
+            for (int i = count; i < count + 3; i++)
+                tutorialProgress.Add(new TutorialProgressSlot(21000000 + i));
+
+            var ascMessage = new AvailableServerCommandMessage();
+            var ancCommand = new AvatarNameChangedCommand();
+            ancCommand.NewName = careqMessage.NewName;
+            ancCommand.Unknown1 = 1;
+            ancCommand.Unknown2 = -1; // -> Tick?
+
+            ascMessage.Command = ancCommand;
+
+            client.SendMessage(ascMessage);
+
+            var save = new LevelSave();
+            save.FromLevel(client.Level);
+
+            Server.Db.SaveLevel(save);
         }
         #endregion
     }
