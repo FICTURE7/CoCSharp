@@ -216,8 +216,7 @@ namespace CoCSharp.Data
         /// <param name="args">The arguments.</param>
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
-            if (CollectionChanged != null)
-                CollectionChanged(this, args);
+            CollectionChanged?.Invoke(this, args);
         }
 
         /// <summary>

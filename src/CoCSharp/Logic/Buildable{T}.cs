@@ -26,7 +26,7 @@ namespace CoCSharp.Logic
         // Constructor used to load the VillageObject from a JsonTextReader.
         internal Buildable() : base()
         {
-            // Space
+            _timer = new TickTimer();
         }
 
         /// <summary>
@@ -45,6 +45,7 @@ namespace CoCSharp.Logic
         protected Buildable(Village village, TCsvData data) : base(village, data)
         {
             _upgradeLevel = -1;
+            _timer = new TickTimer();
         }
         #endregion
 
@@ -54,8 +55,13 @@ namespace CoCSharp.Logic
         private int _upgradeLevel;
 
         // Timer to time constructions.
-        private TickTimer _timer = new TickTimer();
+        private TickTimer _timer;
         private CsvDataRow<TCsvData> _rowCache;
+
+        /// <summary>
+        /// Gets the <see cref="TickTimer"/> associated with this <see cref="Buildable{TCsvData}"/> instance.
+        /// </summary>
+        protected TickTimer Timer => _timer;
 
         /// <summary>
         /// Gets the cache to the <see cref="CsvDataRow{TCsvData}"/> in which <see cref="Data"/> is found.
@@ -65,7 +71,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets a value indicating whether the <see cref="Buildable{TCsvData}"/> object is in construction.
         /// </summary>
-        public bool IsConstructing => _timer.IsStarted;
+        public bool IsConstructing => _timer.IsActive;
 
         /// <summary>
         /// Gets a value indicating whether the <see cref="Buildable{TCsvData}"/> object can be upgraded.
@@ -84,7 +90,7 @@ namespace CoCSharp.Logic
             set
             {
                 if (value < NotConstructedLevel)
-                    throw new ArgumentOutOfRangeException(nameof(value), "value cannot be less than NotConstructedLevel, that is, level -1.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "value cannot be less than NotConstructedLevel.");
 
                 _upgradeLevel = value;
 
@@ -165,12 +171,19 @@ namespace CoCSharp.Logic
         {
             if (IsConstructing)
                 throw new InvalidOperationException("Buildable object is already in construction.");
-            if (!IsUpgradable)
-                throw new InvalidOperationException("Buildable object is maxed or Town Hall level too low.");
 
-            Debug.Assert(NextUpgrade != null, "NextUpgrade was null, when trying to BeginConstruciton.");
+            if (NextUpgrade == null)
+                Debug.WriteLine("BeginConstruction: NextUpgrade was null, calling UpdateIsUpgradable to set NextUpgrade.");
+
+            UpdateIsUpgradable();
+            if (!IsUpgradable)
+                throw new InvalidOperationException("Buildable object is maxed or Town Hall level too low to perform construction.");
 
             var buildTime = GetBuildTime(NextUpgrade);
+            if (buildTime == InstantConstructionTime)
+                FinishConstruction(tick);
+            else
+                _timer.Start(Village.LastTick, tick, (int)buildTime.TotalSeconds);
         }
 
         /// <summary>
@@ -178,7 +191,20 @@ namespace CoCSharp.Logic
         /// </summary>
         public void CancelConstruction(int tick)
         {
+            if (!IsConstructing)
+                throw new InvalidOperationException("Buildable object is not in construction.");
 
+            _timer.Stop();
+
+            var level = Village.Level;
+            var data = NextUpgrade;
+            var buildCost = GetBuildCost(data);
+            var buildResource = GetBuildResource(data);
+
+            // 50% of build cost.
+            var refund = (int)Math.Round(0.5 * buildCost);
+
+            level.Avatar.ConsumeResource(buildResource, -refund);
         }
 
         /// <summary>
@@ -187,7 +213,10 @@ namespace CoCSharp.Logic
         /// </summary>
         public void SpeedUpConstruction(int tick)
         {
+            if (!IsConstructing)
+                throw new InvalidOperationException("Buildable object not in construction.");
 
+            FinishConstruction(tick);
         }
 
         // Called when construction has finished.
@@ -195,13 +224,22 @@ namespace CoCSharp.Logic
         {
             _timer.Stop();
 
-            //var tick = Village.Tick;
-            var endTime = DateTime.UtcNow;
+            Debug.WriteLine($"FinishConstruction: Construction for {ID} finished on tick {tick} expected {_timer.EndTick}...");
+
+            var duration = GetBuildTime(NextUpgrade);
+            var player = Village.Level;
+
+            var expPointsGained = LogicUtils.CalculateExpPoints(duration);
+            var expPoints = player.Avatar.ExpPoints + expPointsGained;
+            var expCurLevel = player.Avatar.ExpLevel;
+            var expLevel = LogicUtils.CalculateExpLevel(Assets, ref expCurLevel, ref expPoints);
+            player.Avatar.ExpPoints = expPoints;
+            player.Avatar.ExpLevel = expLevel;
 
             _upgradeLevel++;
             _data = NextUpgrade;
 
-            // Calling UpdateCanUpgrade will set the CanUpgrade & NextUpgrade property as well.
+            // Calling UpdateCanUpgrade will set the IsUpgradable & NextUpgrade property as well.
             UpdateIsUpgradable();
         }
 
@@ -209,13 +247,29 @@ namespace CoCSharp.Logic
         /// Returns the BuildTime of the specified data.
         /// </summary>
         /// <param name="data"><typeparamref name="TCsvData"/> from which to obtain the BuildTime.</param>
+        /// <returns>BuildTime of the specified data.</returns>
         protected abstract TimeSpan GetBuildTime(TCsvData data);
+
+        /// <summary>
+        /// Return the BuildCost of the specified data.
+        /// </summary>
+        /// <param name="data"><typeparamref name="TCsvData"/> from which to obtain the BuildCost.</param>
+        /// <returns>BuildCost of the specified data.</returns>
+        protected abstract int GetBuildCost(TCsvData data);
+
+        /// <summary>
+        /// Return the BuildResource of the specified data.
+        /// </summary>
+        /// <param name="data"><typeparamref name="TCsvData"/> from which to obtain the BuildResource.</param>
+        /// <returns>BuildResource of the specified data.</returns>
+        protected abstract string GetBuildResource(TCsvData data);
 
         /// <summary>
         /// Returns the Town Hall level at which the Buildable can upgrade from the specified data.
         /// </summary>
         /// <param name="data"><typeparamref name="TCsvData"/> from which to obtain the TownHallLevel.</param>
-        protected abstract int GetTownHallLevel(TCsvData data);
+        /// <returns>TownHallLevel of the specified data.</returns>
+        protected abstract int GetTownHallLevel(TCsvData data);        
 
         /// <summary>
         /// Updates the <see cref="VillageObject{TCsvData}.Data"/> associated with this <see cref="Buildable{TCsvData}"/> using
@@ -252,6 +306,8 @@ namespace CoCSharp.Logic
                 if (_data == null)
                     throw new InvalidOperationException("Could not find CsvData with ID '" + dataId + "' and with level '" + level + "'.");
             }
+
+            _upgradeLevel = level;
         }
 
         /// <summary>
@@ -260,11 +316,11 @@ namespace CoCSharp.Logic
         /// </summary>
         protected virtual void UpdateIsUpgradable()
         {
-            // Can be null sometimes due to concurrency.
-            Debug.Assert(RowCache != null, "RowCache was null.");
-
             if (RowCache == null)
+            {
+                Debug.WriteLine("UpdateIsUpgradable: RowCache was null, calling UpdateData to set RowCache.");
                 UpdateData(Data.ID, _upgradeLevel);
+            }
 
             _nextUprade = RowCache[_upgradeLevel + 1];
             if (NextUpgrade == null)
@@ -277,6 +333,9 @@ namespace CoCSharp.Logic
                 // Check if the level of the TownHall in the Village suits the Buildable
                 // TownHallLevel required.
                 Debug.Assert(NextUpgrade != null, "NextUpgrade was null.");
+
+                if (RowCache.Name == "Town Hall")
+                    Village._townhall = this as Building;
 
                 var thLevel = GetTownHallLevel(NextUpgrade);
                 if (thLevel == 0)

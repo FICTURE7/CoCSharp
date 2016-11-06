@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace CoCSharp.Logic
 {
@@ -24,10 +23,23 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Constructors
+        public Village(Level level)
+        {
+            if (level == null)
+                throw new ArgumentNullException(nameof(level));
+
+            Level = level;
+            _assets = level.Assets;
+
+            _villageObjects = new VillageObjectCollection();
+            LastTick = DateTime.UtcNow;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Village"/> class and uses <see cref="AssetManager.Default"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"><see cref="AssetManager.Default"/> is null.</exception>
+        [Obsolete]
         public Village() : this(AssetManager.Default)
         {
             // Space
@@ -39,6 +51,7 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <param name="assets"><see cref="Data.AssetManager"/> to use.</param>
         /// <exception cref="ArgumentNullException"><paramref name="assets"/> is null.</exception>
+        [Obsolete]
         public Village(AssetManager assets)
         {
             if (assets == null)
@@ -46,12 +59,14 @@ namespace CoCSharp.Logic
 
             _assets = assets;
             _villageObjects = new VillageObjectCollection();
+            LastTick = DateTime.UtcNow;
         }
         #endregion
 
         #region Fields & Properties 
         private bool _disposed;
 
+        internal int _obstacleClearCount;
         // Building which is the town hall.
         internal Building _townhall;
 
@@ -70,6 +85,11 @@ namespace CoCSharp.Logic
         public AssetManager Assets => _assets;
 
         /// <summary>
+        /// Gets or sets the <see cref="Logic.Level"/> associated with this <see cref="Village"/>.
+        /// </summary>
+        public Level Level { get; set; }
+
+        /// <summary>
         /// Gets or sets the experience version? (Not completely sure if thats its full name).
         /// </summary>
         /// 
@@ -79,6 +99,12 @@ namespace CoCSharp.Logic
         /// if it does not find it.
         /// </remarks>
         public int ExperienceVersion { get; set; }
+
+        //TODO: Depend on Level instead to get LasTick time directly.
+        /// <summary>
+        /// Gets or sets the <see cref="DateTime"/> of when village was last ticked.
+        /// </summary>
+        public DateTime LastTick { get; set; }
 
         /// <summary>
         /// Gets the <see cref="VillageObjectCollection"/> which contains all the <see cref="VillageObject"/> in
@@ -120,13 +146,13 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Updates all <see cref="VillageObject"/> in the <see cref="Village"/>.
         /// </summary>
-        public void Update()
+        public void Update(int tick)
         {
             // Exit out of the Update function gently.
             if (_disposed)
                 return;
 
-            _villageObjects.TickAll(1);
+            _villageObjects.TickAll(tick);
         }
 
         /// <summary>

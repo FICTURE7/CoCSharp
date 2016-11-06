@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace CoCSharp.Server.Core
 {
-    //TODO: Consider adding this to the API.
     public class LevelSave : ILevelSave
     {
         #region Constructors
@@ -15,18 +14,28 @@ namespace CoCSharp.Server.Core
         {
             // Space
         }
+
+        public LevelSave(Level level)
+        {
+            if (level == null)
+                throw new ArgumentNullException(nameof(level));
+
+            FromLevel(level);
+        }
         #endregion
 
         #region Fields & Properties
         public string VillageJson { get; set; }
 
+        public DateTime LastSave { get; set; }
         public long ID { get; set; }
         public string Token { get; set; }
         public string Name { get; set; }
         public bool IsNamed { get; set; }
         public int Trophies { get; set; }
         public int League { get; set; }
-        public int Experience { get; set; }
+        public int ExpPoints { get; set; }
+        public int ExpLevel { get; set; }
         public int Gems { get; set; }
         public int FreeGems { get; set; }
         public int AttacksWon { get; set; }
@@ -53,19 +62,22 @@ namespace CoCSharp.Server.Core
         #endregion
 
         #region Methods
-        public void Overwrite(Level level, AssetManager assets)
+        public void Overwrite(Level level)
         {
             if (level == null)
                 throw new ArgumentNullException(nameof(level));
 
-            level.Village = Village.FromJson(VillageJson, assets);
+            level.Village = Village.FromJson(VillageJson, level);
+            level.LastSave = LastSave;
+
             level.Avatar.ID = ID;
             level.Avatar.Token = Token;
             level.Avatar.Name = Name;
             level.Avatar.IsNamed = IsNamed;
             level.Avatar.League = League;
             level.Avatar.Trophies = Trophies;
-            level.Avatar.ExpPoints = Experience;
+            level.Avatar.ExpPoints = ExpPoints;
+            level.Avatar.ExpLevel = ExpLevel;
             level.Avatar.Gems = Gems;
             level.Avatar.FreeGems = FreeGems;
             level.Avatar.AttacksWon = AttacksWon;
@@ -93,24 +105,27 @@ namespace CoCSharp.Server.Core
 
         public Level ToLevel(AssetManager assets)
         {
-            var level = new Level();
-            Overwrite(level, assets);
+            var level = new Level(assets);
+            Overwrite(level);
             return level;
         }
 
-        public ILevelSave FromLevel(Level level)
+        public void FromLevel(Level level)
         {
             if (level == null)
                 throw new ArgumentNullException(nameof(level));
 
             VillageJson = level.Village.ToJson();
+            LastSave = level.LastSave;
+
             ID = level.Avatar.ID;
             Token = level.Avatar.Token;
             Name = level.Avatar.Name;
             IsNamed = level.Avatar.IsNamed;
             League = level.Avatar.League;
             Trophies = level.Avatar.Trophies;
-            Experience = level.Avatar.ExpPoints;
+            ExpPoints = level.Avatar.ExpPoints;
+            ExpLevel = level.Avatar.ExpLevel;
             Gems = level.Avatar.Gems;
             FreeGems = level.Avatar.FreeGems;
             AttacksWon = level.Avatar.AttacksWon;
@@ -134,7 +149,6 @@ namespace CoCSharp.Server.Core
             NpcStars = level.Avatar.NpcStars;
             NpcGold = level.Avatar.NpcGold;
             NpcElixir = level.Avatar.NpcElixir;
-            return this;
         }
 
         private static void Replace<T>(ICollection<T> dst, IEnumerable<T> src)

@@ -1,6 +1,6 @@
-﻿using CoCSharp.Network.Messages;
+﻿using CoCSharp.Data;
+using CoCSharp.Network.Messages;
 using System;
-using System.Collections.Generic;
 
 namespace CoCSharp.Logic
 {
@@ -13,22 +13,33 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Initializes a new instance of the <see cref="Level"/> class.
         /// </summary>
-        public Level()
+        public Level(AssetManager assets)
         {
+            if (assets == null)
+                throw new ArgumentNullException(nameof(assets));
+
             _lastTick = DateTime.UtcNow;
 
-            _commands = new Queue<Command>();
-            Avatar = new Avatar();
+            _assets = assets;
+            //_commands = new Queue<Command>();
+            Avatar = new Avatar(this);
         }
         #endregion
 
         #region Fields & Properties
         private bool _disposed;
 
+        private int _lastTickValue;
         // Time of when the last time the Level was ticked.
         private DateTime _lastTick;
         // Queue of commands to be processed.
-        private readonly Queue<Command> _commands;
+        //private readonly Queue<Command> _commands;
+        private readonly AssetManager _assets;
+
+        /// <summary>
+        /// Gets the <see cref="AssetManager"/> from which all data will be fetched.
+        /// </summary>
+        public AssetManager Assets => _assets;
 
         /// <summary>
         /// Gets or sets a value indicating whether the <see cref="Level"/> is owned
@@ -47,9 +58,19 @@ namespace CoCSharp.Logic
         public Avatar Avatar { get; set; }
 
         /// <summary>
+        /// Gets the <see cref="LastTickValue"/> of the <see cref="Level"/>.
+        /// </summary>
+        public int LastTickValue => _lastTickValue;
+
+        /// <summary>
         /// Gets the time of when the <see cref="Level"/> was last ticked.
         /// </summary>
         public DateTime LastTick => _lastTick;
+
+        /// <summary>
+        /// Gets or sets the <see cref="DateTime"/> of when the <see cref="Level"/> was last saved.
+        /// </summary>
+        public DateTime LastSave { get; set; }
 
         /// <summary>
         /// Gets a new instance of <see cref="OwnHomeDataMessage"/> representing this instance.
@@ -63,7 +84,7 @@ namespace CoCSharp.Logic
                 var avatarData = new AvatarMessageComponent(this);
                 var ohdMessage = new OwnHomeDataMessage
                 {
-                    LastVisit = now - _lastTick,
+                    LastVisit = now - LastSave,
                     Timestamp = now,
 
                     OwnVillageData = villageData,
@@ -85,7 +106,60 @@ namespace CoCSharp.Logic
         {
             get
             {
-                throw new NotImplementedException();
+                var now = DateTime.UtcNow;
+                var villageData = new VillageMessageComponent(this);
+                var avatarData = new AvatarMessageComponent(this);
+                var ehdMessage = new EnemyHomeDataMessage
+                {
+                    LastVisit = now - LastSave,
+                    Timestamp = now,
+
+                    EnemyVillageData = villageData,
+                    EnemyAvatarData = avatarData,
+
+                    Unknown2 = 3
+                };
+
+                return ehdMessage;
+            }
+        }
+
+        /// <summary>
+        /// Gets a new instance of the <see cref="VisitHomeDataMessage"/> representing this instance.
+        /// </summary>
+        public VisitHomeDataMessage VisitHomeData
+        {
+            get
+            {
+                var now = DateTime.UtcNow;
+                var villageData = new VillageMessageComponent(this);
+                var avatarData = new AvatarMessageComponent(this);
+                var vhdMessage = new VisitHomeDataMessage
+                {
+                    LastVisit = now - LastSave,
+
+                    VisitVillageData = villageData,
+                    VisitAvatarData = avatarData,
+
+                    Unknown2 = 1
+                };
+                return vhdMessage;
+            }
+        }
+
+        /// <summary>
+        /// Gets a new instance of the <see cref="AvatarProfileResponseMessage"/> representing this instance.
+        /// </summary>
+        public AvatarProfileResponseMessage AvatarProfileResponse
+        {
+            get
+            {
+                var aprMessage = new AvatarProfileResponseMessage
+                {
+                    AvatarData = new AvatarMessageComponent(this),
+                    VillageJson = Village.ToJson(),
+                };
+                return aprMessage;
             }
         }
         #endregion
@@ -94,31 +168,13 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Ticks all <see cref="VillageObject"/> in the <see cref="Level"/>.
         /// </summary>
-        public void Tick()
+        public void Tick(int tick)
         {
-            Village.Update();
-
             _lastTick = DateTime.UtcNow;
-        }
+            _lastTickValue = tick;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="indent"></param>
-        /// <returns></returns>
-        public string ToJson(bool indent)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        public static Level FromJson(string json)
-        {
-            return null;
+            Village.LastTick = _lastTick;
+            Village.Update(tick);
         }
 
         /// <summary>

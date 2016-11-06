@@ -59,7 +59,7 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            //writer.WriteValue(Data._OldID);
+            writer.WriteValue(Data.ID);
 
             writer.WritePropertyName("id");
             writer.WriteValue(ID);
@@ -112,13 +112,18 @@ namespace CoCSharp.Logic
             }
 
             if (!dataIdSet)
-                throw new InvalidOperationException("Decoration JSON does not contain a 'data' field.");
+                throw new InvalidOperationException($"Decoration JSON at {reader.Path} does not contain a 'data' field.");
 
             if (instance.InvalidDataID(dataId))
-                throw new InvalidOperationException("Decoration JSON contained an invalid DecorationData ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
+                throw new InvalidOperationException($"Decoration JSON at {reader.Path} contained an invalid DecorationData ID. {instance.GetArgsOutOfRangeMessage("Data ID")}");
 
-            //var data = AssetManager.SearchCsvNoCheck<DecorationData>(dataId, 0);
-            var data = default(DecorationData);
+            var tableCollections = Assets.Get<CsvDataTableCollection>();
+            var dataRef = new CsvDataRowRef<DecorationData>(dataId);
+            var row = dataRef.Get(tableCollections);
+            if (row == null)
+                throw new InvalidOperationException("Could not find CsvDataRow with ID '" + dataId + "'.");
+
+            var data = row[0];
             if (data == null)
                 throw new InvalidOperationException("Could not find DecorationData with ID '" + dataId + "'.");
 

@@ -1,4 +1,6 @@
-﻿using CoCSharp.Data.Slots;
+﻿using CoCSharp.Csv;
+using CoCSharp.Data.Models;
+using CoCSharp.Data.Slots;
 using CoCSharp.Server.API;
 using CoCSharp.Server.API.Core;
 using LiteDB;
@@ -23,6 +25,17 @@ namespace CoCSharp.Server.Core
             );
 
             _server = server;
+
+            var resourceTable = _server.Assets.Get<CsvDataTable<ResourceData>>();
+            _goldId = resourceTable.Rows["Gold"].ID;
+            _elixirId = resourceTable.Rows["Elixir"].ID;
+            _gemsId = resourceTable.Rows["Diamonds"].ID;
+
+            _startingGold = _server.Configuration.StartingGold;
+            _startingElixir = _server.Configuration.StartingElixir;
+            _startingGems = _server.Configuration.StartingGems;
+            _startingVillage = _server.Configuration.StartingVillage;
+
             _db = new LiteDatabase("coc_litedb.db", mapper);
             _levels = _db.GetCollection<LevelSave>("levels");
         }
@@ -30,6 +43,16 @@ namespace CoCSharp.Server.Core
 
         #region Fields & Properties
         private bool _disposed;
+
+        private readonly int _goldId;
+        private readonly int _elixirId;
+        private readonly int _gemsId;
+
+        private readonly int _startingGold;
+        private readonly int _startingElixir;
+        private readonly int _startingGems;
+        private readonly string _startingVillage;
+
         private readonly IServer _server;
         private readonly LiteDatabase _db;
         private readonly LiteCollection<LevelSave> _levels;
@@ -57,6 +80,8 @@ namespace CoCSharp.Server.Core
                 if (!_levels.Update(nlevel))
                     _levels.Insert(nlevel);
             }
+
+            nlevel.LastSave = DateTime.UtcNow;
         }
 
         public ILevelSave NewLevel()
@@ -82,19 +107,34 @@ namespace CoCSharp.Server.Core
                 ID = id,
                 Token = token,
 
+                // Prevent client from crashing.
+                // Because a name == null, will cause the client to crash.
                 Name = GetRandomName(),
 
-                Gems = Server.Configuration.StartingGems,
-                FreeGems = Server.Configuration.StartingGems,
-                VillageJson = Server.Configuration.StartingVillage
+                Gems = _startingGems,
+                FreeGems = _startingGems,
+
+                // Prevent client from crashing.
+                // Because a level less than 1 will cause the client to crash.
+                ExpLevel = 1,
+
+                VillageJson = _startingVillage,
             };
 
             var tutorialProgress = new TutorialProgressSlot[10];
             for (int i = 0; i < 10; i++)
                 tutorialProgress[i] = new TutorialProgressSlot(21000000 + i);
 
+            var resourceAmount = new ResourceAmountSlot[]
+            {
+                new ResourceAmountSlot(_goldId, _startingGold),
+                new ResourceAmountSlot(_elixirId, _startingElixir),
+                new ResourceAmountSlot(_gemsId, _startingGems)
+            };
+
             save.TutorialProgress = tutorialProgress;
-             
+            save.ResourcesAmount = resourceAmount;
+
             // Save LevelSave to set the ID using the AutoId stuff.
             SaveLevel(save);
             return save;

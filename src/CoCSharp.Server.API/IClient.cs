@@ -1,6 +1,8 @@
 ﻿using CoCSharp.Logic;
 using CoCSharp.Network;
+using CoCSharp.Server.API.Core;
 using System;
+using System.Net;
 using System.Net.Sockets;
 
 namespace CoCSharp.Server.API
@@ -27,9 +29,24 @@ namespace CoCSharp.Server.API
         Socket Connection { get; }
 
         /// <summary>
+        /// Gets the local <see cref="EndPoint"/> of the <see cref="IClient"/>.
+        /// </summary>
+        EndPoint LocalEndPoint { get; }
+
+        /// <summary>
+        /// Gets the remote <see cref="EndPoint"/> of the <see cref="IClient"/>.
+        /// </summary>
+        EndPoint RemoteEndPoint { get; }
+
+        /// <summary>
         /// Gets or sets the <see cref="Logic.Level"/> associated with the <see cref="IClient"/>.
         /// </summary>
         Level Level { get; set; }
+
+        /// <summary>
+        /// Gets the <see cref="ILevelSave"/> representing this <see cref="IClient.Level"/>.
+        /// </summary>
+        ILevelSave Save { get; }
 
         /// <summary>
         /// Gets or sets the <see cref="IClient"/>' session key.

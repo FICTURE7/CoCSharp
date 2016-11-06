@@ -50,7 +50,6 @@ namespace CoCSharp.Logic
 
                 jsonWriter.WritePropertyName("decos");
                 WriteDecorationArray(jsonWriter);
-
                 jsonWriter.WriteEndObject();
 
                 return textWriter.ToString();
@@ -78,7 +77,8 @@ namespace CoCSharp.Logic
             if (AssetManager.Default == null)
                 throw new InvalidOperationException("Default instance of AssetManager cannot be null.");
 
-            return FromJson(value, AssetManager.Default);
+            //return FromJson(value, AssetManager.Default);
+            throw new Exception();
         }
 
         /// <summary>
@@ -89,30 +89,25 @@ namespace CoCSharp.Logic
         /// <param name="value">
         /// JSON string which represents the <see cref="Village"/>.
         /// </param>
-        /// <param name="manager">
+        /// <param name="level">
         /// <see cref="Data.AssetManager"/> from which data of <see cref="VillageObject"/> in the <see cref="Village"/> will be populated.
         /// </param>
         /// <returns>A <see cref="Village"/> that is deserialized from the specified JSON string.</returns>
         /// 
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null or whitespace.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="manager"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
         /// <exception cref="InvalidOperationException">
-        /// <paramref name="manager"/> has not loaded <see cref="CsvData"/> type of either of the following;
+        /// <paramref name="level"/> has not loaded <see cref="CsvData"/> type of either of the following;
         /// <see cref="BuildingData"/>, <see cref="ObstacleData"/>, <see cref="TrapData"/> or <see cref="DecorationData"/>.
         /// </exception>
-        /// 
-        /// <remarks>
-        /// After the <see cref="Village"/> object has been deserialized from the specified JSON string,
-        /// the <see cref="Village"/> will be ticked once.
-        /// </remarks>
-        public static Village FromJson(string value, AssetManager manager)
+        public static Village FromJson(string value, Level level)
         {
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value));
-            if (manager == null)
-                throw new ArgumentNullException(nameof(manager));
+            if (level == null)
+                throw new ArgumentNullException(nameof(level));
 
-            var village = new Village(manager);
+            var village = new Village(level);
 
             var textReader = new StringReader(value);
             using (var jsonReader = new JsonTextReader(textReader))
@@ -152,7 +147,7 @@ namespace CoCSharp.Logic
                 throw new InvalidOperationException("Village does not contain a Town Hall.");
 
             // Tick once to update/set VillageObject values.
-            village.Update();
+            village.Update(0);
 
             return village;
         }

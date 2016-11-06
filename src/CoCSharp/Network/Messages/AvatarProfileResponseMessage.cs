@@ -31,7 +31,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Village of requested avatar profile.
         /// </summary>
-        public Village Village;
+        public string VillageJson;
         /// <summary>
         /// Amount of troops donated.
         /// </summary>
@@ -74,7 +74,8 @@ namespace CoCSharp.Network.Messages
                     var decompressedLength = br.ReadInt32();
                     var compressedVillage = br.ReadBytes(villageBytes.Length - 4);
                     var villageJson = ZlibStream.UncompressString(compressedVillage);
-                    Village = Village.FromJson(villageJson);
+                    //VillageJson = VillageJson.FromJson(villageJson);
+                    VillageJson = villageJson;
                 }
             }
 
@@ -102,7 +103,7 @@ namespace CoCSharp.Network.Messages
             var mem = new MemoryStream();
             using (var bw = new BinaryWriter(mem))
             {
-                var villageJson = Village.ToJson();
+                var villageJson = VillageJson;
                 var compressedVillage = ZlibStream.CompressString(villageJson);
 
                 bw.Write(villageJson.Length);

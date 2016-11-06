@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -31,10 +32,6 @@ namespace CoCSharp.Logic.Commands
         /// Unknown byte 1.
         /// </summary>
         public byte Unknown1; // UseAlternativeResource?
-        /// <summary>
-        /// Unknown integer 2.
-        /// </summary>
-        public int Unknown2;
 
         /// <summary>
         /// Reads the <see cref="UpgradeBuildableCommand"/> from the specified <see cref="MessageReader"/>.
@@ -50,7 +47,8 @@ namespace CoCSharp.Logic.Commands
             BuildableGameID = reader.ReadInt32();
 
             Unknown1 = reader.ReadByte();
-            Unknown2 = reader.ReadInt32();
+
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
@@ -67,7 +65,47 @@ namespace CoCSharp.Logic.Commands
             writer.Write(BuildableGameID);
 
             writer.Write(Unknown1);
-            writer.Write(Unknown2);
+
+            writer.Write(Tick);
+        }
+
+        /// <summary>
+        /// Performs the execution of the <see cref="UpgradeBuildableCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="UpgradeBuildableCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var village = level.Village;
+            var vilobj = village.VillageObjects[BuildableGameID];
+            if (vilobj == null)
+            {
+                Debug.WriteLine($"Could not find village object with ID: {BuildableGameID}");
+                return;
+            }
+
+            if (vilobj is Building)
+            {
+                var building = (Building)vilobj;
+                var data = building.NextUpgrade;
+                level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
+                building.BeginConstruction(Tick);
+            }
+            else if (vilobj is Trap)
+            {
+                var trap = (Trap)vilobj;
+                var data = trap.NextUpgrade;
+                level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
+                trap.BeginConstruction(Tick);
+            }
+            else
+            {
+                Debug.WriteLine($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be upgraded.");
+            }
         }
     }
 }

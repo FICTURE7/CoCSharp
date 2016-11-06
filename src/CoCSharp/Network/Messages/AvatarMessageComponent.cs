@@ -23,9 +23,9 @@ namespace CoCSharp.Network.Messages
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AvatarMessageComponent"/> class from
-        /// the specified <see cref="ExpLevel"/>.
+        /// the specified <see cref="Level"/>.
         /// </summary>
-        /// <param name="level"><see cref="ExpLevel"/> from which the data will be set.</param>
+        /// <param name="level"><see cref="Level"/> from which the data will be set.</param>
         /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
         public AvatarMessageComponent(Level level)
         {

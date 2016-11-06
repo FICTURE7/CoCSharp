@@ -80,5 +80,11 @@ namespace CoCSharp.Logic
             if (level == null)
                 throw new ArgumentNullException(nameof(level));
         }
+
+        internal void ThrowIfLevelVillageNull(Level level)
+        {
+            if (level.Village == null)
+                throw new ArgumentNullException(nameof(level.Village));
+        }
     }
 }

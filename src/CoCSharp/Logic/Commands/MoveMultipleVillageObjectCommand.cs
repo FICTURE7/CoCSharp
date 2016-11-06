@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -90,6 +91,33 @@ namespace CoCSharp.Logic.Commands
             }
 
             writer.Write(Unknown1);
+        }
+
+        /// <summary>
+        /// Performs the execution of the <see cref="MoveMultipleVillageObjectCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="MoveMultipleVillageObjectCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var village = level.Village;
+            for (int i = 0; i < MovesData.Length; i++)
+            {
+                var moveData = MovesData[i];
+                var vilobj = village.VillageObjects[moveData.VillageObjectGameID];
+                if (vilobj == null)
+                {
+                    Debug.WriteLine($"Could not find village object with ID: {moveData.VillageObjectGameID}");
+                    continue;
+                }
+
+                vilobj.X = moveData.X;
+                vilobj.Y = moveData.Y;
+            }
         }
     }
 }

@@ -36,9 +36,13 @@ namespace CoCSharp.Network.Messages
         public AvatarMessageComponent VisitAvatarData;
 
         /// <summary>
-        /// Unknown byte 1.
+        /// Unknown integer 1.
         /// </summary>
-        public byte Unknown1; // 1
+        public int Unknown1; // 0
+        /// <summary>
+        /// Unknown byte 2.
+        /// </summary>
+        public byte Unknown2; // 1
 
         /// <summary>
         /// Own avatar data.
@@ -63,7 +67,8 @@ namespace CoCSharp.Network.Messages
             VisitAvatarData = new AvatarMessageComponent();
             VisitAvatarData.ReadMessageComponent(reader);
 
-            Unknown1 = reader.ReadByte();
+            Unknown1 = reader.ReadInt32();
+            Unknown2 = reader.ReadByte();
 
             OwnAvatarData = new AvatarMessageComponent();
             OwnAvatarData.ReadMessageComponent(reader);
@@ -95,6 +100,7 @@ namespace CoCSharp.Network.Messages
             VisitAvatarData.WriteMessageComponent(writer);
 
             writer.Write(Unknown1);
+            writer.Write(Unknown2);
 
             OwnAvatarData.WriteMessageComponent(writer);
         }

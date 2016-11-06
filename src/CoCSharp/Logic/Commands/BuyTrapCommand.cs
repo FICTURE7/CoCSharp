@@ -1,4 +1,6 @@
-﻿using CoCSharp.Network;
+﻿using CoCSharp.Csv;
+using CoCSharp.Data.Models;
+using CoCSharp.Network;
 using System;
 
 namespace CoCSharp.Logic.Commands
@@ -36,11 +38,6 @@ namespace CoCSharp.Logic.Commands
         public int TrapDataID;
 
         /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
-
-        /// <summary>
         /// Reads the <see cref="BuyTrapCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
@@ -55,7 +52,7 @@ namespace CoCSharp.Logic.Commands
             Y = reader.ReadInt32();
             TrapDataID = reader.ReadInt32();
 
-            Unknown1 = reader.ReadInt32();
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
@@ -73,7 +70,33 @@ namespace CoCSharp.Logic.Commands
             writer.Write(Y);
             writer.Write(TrapDataID);
 
-            writer.Write(Unknown1);
+            writer.Write(Tick);
+        }
+
+        /// <summary>
+        /// Performs the execution of the <see cref="BuyTrapCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="BuyTrapCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var dataRef = new CsvDataRowRef<TrapData>(TrapDataID);
+            var assets = level.Assets;
+            var tableCollection = assets.Get<CsvDataTableCollection>();
+            var row = dataRef.Get(tableCollection);
+
+            // Use the first level.
+            var data = row[0];
+            level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
+
+            var trap = new Trap(level.Village, data);
+            trap.X = X;
+            trap.Y = Y;
+            trap.BeginConstruction(Tick);
         }
     }
 }

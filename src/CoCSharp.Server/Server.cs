@@ -51,12 +51,10 @@ namespace CoCSharp.Server
             }
 
             // Initialize our client list.
-            // TODO: Make thread safe.
-            _clients = new List<IClient>();
+            _clients = new ClientCollection();
 
             _assets = new AssetManager(CONTENT_PATH);
 
-            _db = new LiteDbManager(this);
             _handler = new MessageHandler(this);
 
             _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -70,10 +68,11 @@ namespace CoCSharp.Server
         public event EventHandler<ServerConnectionEventArgs> ClientConnected;
 
         private bool _disposed;
+        private LiteDbManager _db;
+
         private readonly Log _log;
-        private readonly LiteDbManager _db;
         private readonly AssetManager _assets;
-        private readonly List<IClient> _clients;
+        private readonly ClientCollection _clients;
         private readonly MessageHandler _handler;
         private readonly ServerConfiguration _config;
         private readonly NetworkManagerAsyncSettings _settings;
@@ -98,6 +97,11 @@ namespace CoCSharp.Server
             _assets.Load<CsvDataTable<ObstacleData>>("logic/obstacles.csv");
             _assets.Load<CsvDataTable<TrapData>>("logic/traps.csv");
             _assets.Load<CsvDataTable<DecorationData>>("logic/decos.csv");
+            _assets.Load<CsvDataTable<ResourceData>>("logic/resources.csv");
+            _assets.Load<CsvDataTable<GlobalData>>("logic/globals.csv");
+            _assets.Load<CsvDataTable<ExperienceLevelData>>("logic/experience_levels.csv");
+
+            _db = new LiteDbManager(this);
 
             if (!StartListener())
             {
@@ -123,9 +127,9 @@ namespace CoCSharp.Server
 
             StopListener();
 
-            // TODO: Might want to lock this operation.
-            for (int i = 0; i < _clients.Count; i++)
-                _clients[i].Disconnect();
+            // Disconnects all clients.
+            foreach (var c in _clients)
+                c.Disconnect();
 
             _db.Dispose();
             _acceptPool.Dispose();

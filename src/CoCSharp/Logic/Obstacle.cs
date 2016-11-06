@@ -28,7 +28,7 @@ namespace CoCSharp.Logic
         // Constructor used to load the VillageObject from a JsonTextReader.
         internal Obstacle() : base()
         {
-            // Space
+            _timer = new TickTimer();
         }
 
         /// <summary>
@@ -46,17 +46,13 @@ namespace CoCSharp.Logic
         /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
         public Obstacle(Village village, ObstacleData data) : base(village, data)
         {
-            // Space
+            _timer = new TickTimer();
         }
         #endregion
 
         #region Fields & Properties
+        private TickTimer _timer;
         private int _lootMultiplier;
-
-        /// <summary>
-        /// The event raised when the clearing of the <see cref="Obstacle"/> is finished.
-        /// </summary>
-        public event EventHandler<ClearingFinishedEventArgs> ClearingFinished;
 
         /// <summary>
         /// Gets whether the <see cref="Obstacle"/> is being cleared.
@@ -93,7 +89,7 @@ namespace CoCSharp.Logic
                 if (!IsClearing)
                     throw new InvalidOperationException("Obstacle object is not clearing.");
 
-                return TimeSpan.FromSeconds(ClearTSeconds);
+                return TimeSpan.FromSeconds(_timer.Duration);
             }
         }
 
@@ -101,7 +97,6 @@ namespace CoCSharp.Logic
         /// Gets or sets the UTC time at which the clearing of the <see cref="Obstacle"/> will end.
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>false</c>.</exception>
-        /// <exception cref="ArgumentException"><paramref name="value"/>'s kind is not <see cref="DateTimeKind.Utc"/>.</exception>
         public DateTime ClearEndTime
         {
             get
@@ -109,50 +104,17 @@ namespace CoCSharp.Logic
                 if (!IsClearing)
                     throw new InvalidOperationException("Obstacle object is not clearing.");
 
-                return TimeUtils.FromUnixTimestamp(ClearTEndUnixTimestamp);
-            }
-            set
-            {
-                if (value.Kind != DateTimeKind.Utc)
-                    throw new ArgumentException("DateTime.Kind of value must be a DateTimeKind.Utc.", "value");
-
-                // Convert the specified DateTime into UNIX timestamps.
-                ClearTEndUnixTimestamp = (int)TimeUtils.ToUnixTimestamp(value);
+                return TimeUtils.FromUnixTimestamp(_timer.EndTime);
             }
         }
 
         // Seconds remaining to clear to the obstacle.
-        private int ClearTSeconds
-        {
-            get
-            {
-                // Json.Net will get this value then write it to a Json string or whatever.
-                var clearDuration = ClearTEndUnixTimestamp - TimeUtils.UnixUtcNow;
-
-                // Make sure we don't get any negative durations.
-                if (clearDuration < 0)
-                {
-                    ClearTEndUnixTimestamp = 0;
-                    return 0;
-                }
-
-                // NOTE: Should add 100 with the value?
-                return clearDuration;
-            }
-            set
-            {
-                ClearTEndUnixTimestamp = (TimeUtils.UnixUtcNow + value);
-            }
-        }
-
-        // End time of the clearing of the obstacle in UNIX timestamps.
-        private int ClearTEndUnixTimestamp { get; set; }
+        private int ClearTSeconds => _timer.Duration;
 
         internal override int KindID => 3;
         #endregion
 
         #region Methods
-        #region Clearing
         /// <summary>
         /// Begins the clearing of the <see cref="Obstacle"/> if <see cref="IsClearing"/> is <c>false</c>
         /// and <see cref="VillageObject{ObstacleData}.Data"/> is not null; otherwise 
@@ -160,20 +122,15 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>true</c>.</exception>
         /// <exception cref="InvalidOperationException"><see cref="VillageObject{ObstacleData}.Data"/> is <c>null</c>.</exception>
-        public void BeginClearing()
+        public void BeginClearing(int tick)
         {
             if (IsClearing)
                 throw new InvalidOperationException("Obstacle object is already clearing.");
 
-            Debug.Assert(Data != null);
-            if (Data.ClearTime == InstantClearTime)
-            {
-                //DoClearingFinished();
-                return;
-            }
-
-            ClearEndTime = DateTime.UtcNow.Add(Data.ClearTime);
-            //ScheduleClearing();
+            Debug.Assert(_data != null, "Obstacle Data was null.");
+            var clearTime = _data.ClearTime;
+            var seconds = (int)clearTime.TotalSeconds;
+            _timer.Start(Village.LastTick, tick, seconds);
         }
 
         /// <summary>
@@ -181,38 +138,47 @@ namespace CoCSharp.Logic
         /// it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>false</c>.</exception>
-        public void CancelClearing()
+        public void CancelClearing(int tick)
         {
             if (!IsClearing)
                 throw new InvalidOperationException("Obstacle object is not being cleared.");
 
-            var endTime = DateTime.UtcNow;
-
-            //CancelScheduleClearing();
-
-            ClearTEndUnixTimestamp = 0;
-            OnClearingFinished(new ClearingFinishedEventArgs()
-            {
-                ClearedObstacle = this,
-                EndTime = endTime,
-                WasCancelled = true
-            });
+            _timer.Stop();
         }
 
-        /// <summary>
-        /// Use this method to trigger the <see cref="ClearingFinished"/> event.
-        /// </summary>
-        /// <param name="e">The arguments data.</param>
-        protected virtual void OnClearingFinished(ClearingFinishedEventArgs e)
+        private static readonly int[] s_gemDrops =
         {
-            ClearingFinished?.Invoke(this, e);
+            3, 0, 1, 2, 0, 1, 1, 0, 0, 3, 1, 0, 2, 2, 0, 0, 3, 0, 1, 0
+        };
+        private void FinishClear(int tick)
+        {
+            _timer.Stop();
+
+            Debug.WriteLine($"FinishClear: Construction for {ID} finished on tick {tick} expected {_timer.EndTick}...");
+
+            var duration = _data.ClearTime;
+            var player = Village.Level;
+
+            var gems = s_gemDrops[Village._obstacleClearCount++];
+            if (Village._obstacleClearCount >= s_gemDrops.Length)
+                Village._obstacleClearCount = 0;
+
+            var expPointsGained = LogicUtils.CalculateExpPoints(duration);
+            var expPoints = player.Avatar.ExpPoints + expPointsGained;
+            var expCurLevel = player.Avatar.ExpLevel;
+            var expLevel = LogicUtils.CalculateExpLevel(Assets, ref expCurLevel, ref expPoints);
+            player.Avatar.ExpPoints = expPoints;
+            player.Avatar.ExpLevel = expLevel;
+            player.Avatar.Gems += gems;            
+
+            Village.VillageObjects.Remove(ID);            
         }
-        #endregion
 
         /// <summary/>
         protected internal override void Tick(int tick)
         {
-            // Space
+            if (_timer.IsCompleted(tick))
+                FinishClear(tick);
         }
 
         /// <summary/>
@@ -221,7 +187,7 @@ namespace CoCSharp.Logic
             base.ResetVillageObject();
 
             _lootMultiplier = default(int);
-            ClearTEndUnixTimestamp = default(int);
+            //ClearTEndUnixTimestamp = default(int);
         }
 
         #region Json Reading/Writing
@@ -263,6 +229,7 @@ namespace CoCSharp.Logic
             var instance = CsvData.GetInstance<ObstacleData>();
             // clear_t value.
             var clearTime = -1;
+            var clearTimeSet = false;
 
             var dataId = -1;
             var dataIdSet = false;
@@ -288,6 +255,7 @@ namespace CoCSharp.Logic
 
                         case "clear_t":
                             clearTime = reader.ReadAsInt32().Value;
+                            clearTimeSet = true;
                             break;
 
                         case "x":
@@ -306,25 +274,21 @@ namespace CoCSharp.Logic
             }
 
             if (!dataIdSet)
-                throw new InvalidOperationException("Obstacle JSON does not contain 'data' field.");
+                throw new InvalidOperationException($"Obstacle JSON at {reader.Path} does not contain a 'data' field.");
 
             if (instance.InvalidDataID(dataId))
-                throw new InvalidOperationException("Obstacle JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
+                throw new InvalidOperationException($"Obstacle JSON at {reader.Path} contained an invalid ObstacleData ID. {instance.GetArgsOutOfRangeMessage("Data ID")}");
 
-            // No need to cache the sub-collection the ObstacleData is in, because we can't upgrade Obstacles.
-            //var data = Assets.Get<CsvDataTable<ObstacleData>>().R
+            var tableCollection = Assets.Get<CsvDataTableCollection>();
             var dataRef = new CsvDataRowRef<ObstacleData>(dataId);
-            var data = dataRef.Get(Assets.Get<CsvDataTableCollection>())[0];
-            //var data = default(ObstacleData);
+            var data = dataRef.Get(tableCollection)[0];
             if (data == null)
                 throw new InvalidOperationException("Could not find ObstacleData with ID '" + dataId + "'.");
 
             _data = data;
 
-            if (clearTime == -1)
-                return;
-
-            ClearTSeconds = clearTime;
+            if (clearTimeSet)
+                _timer.Start(Village.LastTick, 0, clearTime);
         }
         #endregion
 

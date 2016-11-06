@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -28,11 +29,6 @@ namespace CoCSharp.Logic.Commands
         public int ObstacleGameID;
         
         /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
-
-        /// <summary>
         /// Reads the <see cref="ClearObstacleCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
@@ -45,7 +41,7 @@ namespace CoCSharp.Logic.Commands
 
             ObstacleGameID = reader.ReadInt32();
 
-            Unknown1 = reader.ReadInt32();
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
@@ -61,7 +57,33 @@ namespace CoCSharp.Logic.Commands
 
             writer.Write(ObstacleGameID);
 
-            writer.Write(Unknown1);
+            writer.Write(Tick);
+        }
+
+        /// <summary>
+        /// Performs the execution of the <see cref="ClearObstacleCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="ClearObstacleCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var village = level.Village;
+            var vilobj = village.VillageObjects[ObstacleGameID];
+            if (vilobj == null)
+            {
+                Debug.WriteLine($"Could not find village object with ID: {ObstacleGameID}");
+                return;
+            }
+
+            var obstacle = (Obstacle)vilobj;
+            var data = obstacle.Data;
+            level.Avatar.ConsumeResource(data.ClearResource, data.ClearCost);
+
+            obstacle.BeginClearing(Tick);
         }
     }
 }

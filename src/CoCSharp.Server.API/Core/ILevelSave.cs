@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Slots;
 using CoCSharp.Logic;
+using System;
 using System.Collections.Generic;
 
 namespace CoCSharp.Server.API.Core
@@ -15,6 +16,11 @@ namespace CoCSharp.Server.API.Core
         /// Gets or sets the <see cref="Village"/> json.
         /// </summary>
         string VillageJson { get; set; }
+
+        /// <summary>
+        /// Gets or sets the last time the <see cref="ILevelSave"/> was saved.
+        /// </summary>
+        DateTime LastSave { get; set; }
 
         /// <summary>
         /// Gets or sets the ID of the <see cref="ILevelSave"/>.
@@ -47,9 +53,14 @@ namespace CoCSharp.Server.API.Core
         int League { get; set; }
 
         /// <summary>
-        /// Gets or sets a the experience point.
+        /// Gets or sets the experience point.
         /// </summary>
-        int Experience { get; set; }
+        int ExpPoints { get; set; }
+
+        /// <summary>
+        /// Gets or sets the experience level.
+        /// </summary>
+        int ExpLevel { get; set; }
 
         /// <summary>
         /// Gets or sets the amount of gems owned.
@@ -168,14 +179,13 @@ namespace CoCSharp.Server.API.Core
         /// Returns an <see cref="ILevelSave"/> representing the specified <see cref="Level"/>.
         /// </summary>
         /// <param name="level"><see cref="Level"/> that the <see cref="ILevelSave"/> is going to represent.</param>
-        /// <returns>An <see cref="ILevelSave"/> representing the specified <see cref="Level"/>.</returns>
-        ILevelSave FromLevel(Level level);
+        void FromLevel(Level level);
 
         /// <summary>
         /// Overwrites the values in the specified <see cref="Level"/> with the values in this <see cref="ILevelSave"/> instance.
         /// </summary>
         /// <param name="level"><see cref="Level"/> to overwrite.</param>
-        void Overwrite(Level level, AssetManager assets);
+        void Overwrite(Level level);
         #endregion
     }
 }

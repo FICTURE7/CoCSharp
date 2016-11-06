@@ -15,9 +15,9 @@ namespace CoCSharp.Server
         }
 
         private static readonly string _defaultVillage = File.ReadAllText("contents/starting_village.json");
-        private static readonly int _defaultGems = 69696969;
-        private static readonly int _defaultGold = 69696969;
-        private static readonly int _defaultElixir = 69696969;
+        private static readonly int _defaultGems = (int)1e6;
+        private static readonly int _defaultGold = (int)1e6;
+        private static readonly int _defaultElixir = (int)1e6;
 
         public int StartingGems { get; set; }
         public int StartingGold { get; set; }

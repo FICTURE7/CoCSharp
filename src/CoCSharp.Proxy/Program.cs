@@ -1,4 +1,6 @@
-﻿using Ionic.Zip;
+﻿using CoCSharp.Network;
+using CoCSharp.Network.Messages;
+using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +13,15 @@ namespace CoCSharp.Proxy
     {
         public static Proxy Proxy { get; set; }
 
-        public static void Main(string[] args)
+        public static void Main()
+        {
+            var stream = new MemoryStream(File.ReadAllBytes("lepacket2"));
+            var reader = new MessageReader(stream);
+            var eneHome = new VisitHomeDataMessage();
+            eneHome.ReadMessage(reader);
+        }
+
+        public static void m(string[] args)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();

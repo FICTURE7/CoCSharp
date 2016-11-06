@@ -78,16 +78,25 @@ namespace CoCSharp.Logic.Commands
         /// </summary>
         /// <param name="level"><see cref="Level"/> on which to perform the <see cref="BuyBuildingCommand"/>.</param>
         /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
-        /// <exception cref="ArgumentNullException"><paramref name="level.Home"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
         public override void Execute(Level level)
         {
             ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+            
+            var dataRef = new CsvDataRowRef<BuildingData>(BuildingDataID);
+            var assets = level.Assets;
+            var tableCollection = assets.Get<CsvDataTableCollection>();
+            var row = dataRef.Get(tableCollection);
 
-            if (level.Village == null)
-                throw new ArgumentNullException(nameof(level.Village));
+            // Use the first level.
+            var data = row[0];            
+            level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
 
-            var data = new CsvDataRowRef<BuildingData>(BuildingDataID);
-            var villageObject = (VillageObject)null;
+            var building = new Building(level.Village, data);
+            building.X = X;
+            building.Y = Y;
+            building.BeginConstruction(Tick);
         }
     }
 }

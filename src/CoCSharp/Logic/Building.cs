@@ -75,7 +75,13 @@ namespace CoCSharp.Logic
         protected override TimeSpan GetBuildTime(BuildingData data) => data.BuildTime;
 
         /// <summary/>
-        protected override int GetTownHallLevel(BuildingData data) => data.TownHallLevel;
+        protected override int GetBuildCost(BuildingData data) => data.BuildCost;
+
+        /// <summary/>
+        protected override string GetBuildResource(BuildingData data) => data.BuildResource;
+
+        /// <summary/>
+        protected override int GetTownHallLevel(BuildingData data) => data.TownHallLevel;       
 
         /// <summary/>
         protected internal override void ResetVillageObject()
@@ -140,8 +146,10 @@ namespace CoCSharp.Logic
             var instance = CsvData.GetInstance<BuildingData>();
             // const_t_end value.
             var constTimeEnd = -1;
+            var constTimeEndSet = false;
             // const_t value.
             var constTime = -1;
+            var constTimeSet = false;
 
             var dataId = -1;
             var dataIdSet = false;
@@ -179,10 +187,12 @@ namespace CoCSharp.Logic
 
                         case "const_t_end":
                             constTimeEnd = reader.ReadAsInt32().Value;
+                            constTimeEndSet = true;
                             break;
 
                         case "const_t":
                             constTime = reader.ReadAsInt32().Value;
+                            constTimeSet = true;
                             break;
 
                         case "x":
@@ -205,9 +215,17 @@ namespace CoCSharp.Logic
                 throw new InvalidOperationException($"Building JSON at {reader.Path} contained an invalid BuildingData ID. {instance.GetArgsOutOfRangeMessage("Data ID")}");
 
             UpdateData(dataId, lvl);
+            UpdateIsUpgradable();
 
             if (RowCache.Name == "Town Hall")
                 Village._townhall = this;
+
+            if (constTimeEndSet)
+            {
+                var startTime = (int)TimeUtils.ToUnixTimestamp(Village.LastTick);
+                var duration = constTimeEnd - startTime;
+                Timer.Start(Village.LastTick, 0, duration);
+            }
         }
         #endregion
 

@@ -32,11 +32,6 @@ namespace CoCSharp.Logic.Commands
         public int Unknown2;
 
         /// <summary>
-        /// Current tick.
-        /// </summary>
-        public int Tick;
-
-        /// <summary>
         /// Reads the <see cref="MatchmakingCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">

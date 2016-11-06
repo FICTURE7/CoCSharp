@@ -2,7 +2,10 @@ using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
 using CoCSharp.Server.API;
+using CoCSharp.Server.API.Core;
+using CoCSharp.Server.Core;
 using System;
+using System.Net;
 using System.Net.Sockets;
 
 namespace CoCSharp.Server
@@ -19,8 +22,11 @@ namespace CoCSharp.Server
 
             _server = server;
             _socket = socket;
+            _localEndPoint = socket.LocalEndPoint;
+            _remoteEndPoint = socket.RemoteEndPoint;
             _networkManager = new NetworkManagerAsync(_socket, server.Settings, new MessageProcessorNaCl(Crypto8.StandardKeyPair));
             _networkManager.MessageReceived += OnMessage;
+            _networkManager.Disconnected += OnDisconnected;
         }
         #endregion
 
@@ -30,10 +36,15 @@ namespace CoCSharp.Server
         private bool _disposed;
         private readonly IServer _server;
         private readonly Socket _socket;
+        private readonly EndPoint _localEndPoint;
+        private readonly EndPoint _remoteEndPoint;
         private readonly NetworkManagerAsync _networkManager;
 
         public Socket Connection => _socket;
+        public EndPoint LocalEndPoint => _remoteEndPoint;
+        public EndPoint RemoteEndPoint => _remoteEndPoint;
         public IServer Server => _server;
+        public ILevelSave Save => new LevelSave(Level);
 
         public Level Level { get; set; }
         public byte[] SessionKey { get; set; }
@@ -58,7 +69,28 @@ namespace CoCSharp.Server
             if (_disposed)
                 return;
 
-            Level.Dispose();
+            var now = DateTime.UtcNow;
+            // Save the client when it disconnects.
+            if (Level != null)
+            {
+                // Calculates at the tick at which the client disconnected
+                // and do Tick on that calculated tick.
+                const double TickDuration = (1d / 60d) * 1000d;
+                var diffTime = now - Level.LastTick;
+                var expectedTick = (int)(diffTime.TotalMilliseconds / TickDuration) + Level.LastTickValue;
+
+                Level.Tick(expectedTick);
+
+                // Now that all the VillageObject has been ticked an updated
+                // we can push the Level back to the database.
+                var save = Save;
+                Server.Db.SaveLevel(save);
+
+                // Push back VillageObjects to pool.
+                Level.Dispose();
+            }
+
+            // Disconnect socket.
             _networkManager.Dispose();
             _disposed = true;
         }
@@ -75,6 +107,23 @@ namespace CoCSharp.Server
             catch (Exception ex)
             {
                 Server.Log.Error($"Failed to handle {e.Message}: {ex}");
+            }
+        }
+
+        private void OnDisconnected(object sender, DisconnectedEventArgs e)
+        {
+            try
+            {
+                var remoteEndPoint = RemoteEndPoint;
+
+                Dispose();
+                Server.Clients.Remove(this);
+
+                Server.Log.Info($"Client at {remoteEndPoint} disconnected.");
+            }
+            catch (Exception ex)
+            {
+                Server.Log.Error("Failed to disconnect client: " + ex);
             }
         }
         #endregion

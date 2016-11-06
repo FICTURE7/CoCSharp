@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -30,11 +31,6 @@ namespace CoCSharp.Logic.Commands
         public int BuildableGameID;
 
         /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
-
-        /// <summary>
         /// Reads the <see cref="SpeedUpConstructionCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
@@ -47,7 +43,7 @@ namespace CoCSharp.Logic.Commands
 
             BuildableGameID = reader.ReadInt32();
 
-            Unknown1 = reader.ReadInt32();
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
@@ -63,7 +59,47 @@ namespace CoCSharp.Logic.Commands
 
             writer.Write(BuildableGameID);
 
-            writer.Write(Unknown1);
+            writer.Write(Tick);
+        }
+
+        /// <summary>
+        /// Performs the execution of the <see cref="SpeedUpConstructionCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="SpeedUpConstructionCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var village = level.Village;
+            var vilobj = village.VillageObjects[BuildableGameID];
+            if (vilobj == null)
+            {
+                Debug.WriteLine($"Could not find village object with ID: {BuildableGameID}");
+                return;
+            }
+
+            if (vilobj is Building)
+            {
+                var building = (Building)vilobj;
+                var speedUpCost = LogicUtils.CalculateSpeedUpCost(level.Assets, building.ConstructionDuration);
+                level.Avatar.Gems -= speedUpCost;
+                building.SpeedUpConstruction(Tick);
+            }
+            else if (vilobj is Trap)
+            {
+                var trap = (Trap)vilobj;
+                var speedUpCost = LogicUtils.CalculateSpeedUpCost(level.Assets, trap.ConstructionDuration);
+                level.Avatar.Gems -= speedUpCost;
+                trap.SpeedUpConstruction(Tick);
+            }
+            else
+            {
+                Debug.WriteLine($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be upgraded.");
+            }
+
         }
     }
 }

@@ -4,7 +4,7 @@ namespace CoCSharp
 {
     internal class TimeUtils
     {
-        public const double TickDuration = 16;
+        public const double TickDuration = (1d / 60d) * 1000d;
 
         private static readonly DateTime UnixTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 

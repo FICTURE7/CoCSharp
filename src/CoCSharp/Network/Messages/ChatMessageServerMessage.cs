@@ -33,7 +33,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Level of the sender.
         /// </summary>
-        public int Level;
+        public int ExpLevel;
         /// <summary>
         /// League of the sender.
         /// </summary>
@@ -45,11 +45,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Current user ID of the sender.
         /// </summary>
-        public long CurrentUserID;
+        public long HomeID;
         /// <summary>
         /// Clan of the sender.
         /// </summary>
-        public Clan Clan;
+        public Clan Alliance;
 
         /// <summary>
         /// Reads the <see cref="ChatMessageServerMessage"/> from the specified <see cref="MessageReader"/>.
@@ -64,17 +64,17 @@ namespace CoCSharp.Network.Messages
 
             Message = reader.ReadString();
             Name = reader.ReadString();
-            Level = reader.ReadInt32();
+            ExpLevel = reader.ReadInt32();
             League = reader.ReadInt32();
             UserID = reader.ReadInt64();
-            CurrentUserID = reader.ReadInt64();
+            HomeID = reader.ReadInt64();
 
-            Clan = new Clan();
+            Alliance = new Clan();
             if (reader.ReadBoolean())
             {
-                Clan.ID = reader.ReadInt64();
-                Clan.Name = reader.ReadString();
-                Clan.Badge = reader.ReadInt32();
+                Alliance.ID = reader.ReadInt64();
+                Alliance.Name = reader.ReadString();
+                Alliance.Badge = reader.ReadInt32();
             }
         }
 
@@ -91,16 +91,16 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Message);
             writer.Write(Name);
-            writer.Write(Level);
+            writer.Write(ExpLevel);
             writer.Write(League);
             writer.Write(UserID);
-            writer.Write(CurrentUserID);
-            if (Clan != null)
+            writer.Write(HomeID);
+            if (Alliance != null)
             {
                 writer.Write(true);
-                writer.Write(Clan.ID);
-                writer.Write(Clan.Name);
-                writer.Write(Clan.Badge);
+                writer.Write(Alliance.ID);
+                writer.Write(Alliance.Name);
+                writer.Write(Alliance.Badge);
             }
             else
                 writer.Write(false);

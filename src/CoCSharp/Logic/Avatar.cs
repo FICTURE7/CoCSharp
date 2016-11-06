@@ -1,4 +1,6 @@
-﻿using CoCSharp.Data;
+﻿using CoCSharp.Csv;
+using CoCSharp.Data;
+using CoCSharp.Data.Models;
 using CoCSharp.Data.Slots;
 using System;
 using System.ComponentModel;
@@ -31,10 +33,15 @@ namespace CoCSharp.Logic
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Avatar"/> class.
+        /// Initializes a new instance of the <see cref="Avatar"/> class with the specified <see cref="Level"/>.
         /// </summary>
-        public Avatar()
+        /// <param name="level"><see cref="Level"/> which owns this <see cref="Avatar"/>.</param>
+        public Avatar(Level level)
         {
+            if (level == null)
+                throw new ArgumentNullException(nameof(level));
+
+            _level = level;
             // If _level is less than 1 then the client crashes.
             _expLevel = 1;
             // If _name is null then the client crashes.
@@ -60,6 +67,8 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
+        private Level _level;
+
         private string _name;
         private bool _isNamed;
 
@@ -94,6 +103,11 @@ namespace CoCSharp.Logic
         /// The event raised when a property value has changed.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Gets the <see cref="Logic.Level"/> which owns this <see cref="Avatar"/>.
+        /// </summary>
+        public Level Level => _level;
 
         /// <summary>
         /// Gets or sets the username of the <see cref="Avatar"/>.
@@ -507,6 +521,26 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
+        public void ConsumeResource(string resourceName, int amount)
+        {
+            var assets = _level.Assets;
+            var resourceTable = assets.Get<CsvDataTable<ResourceData>>();
+            var resourceId = resourceTable.Rows[resourceName].ID;
+
+            var slot = ResourcesAmount.GetSlot(resourceId);
+            if (slot == null)
+                throw new LogicException($"Could not find resource slot with ID {resourceId}.");
+
+            slot.Amount -= amount;
+
+            // Not the neatest of ways, but it works.
+            if (resourceName == "Diamonds")
+            {
+                Gems -= amount;
+                FreeGems -= amount;
+            }
+        }
+
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event with the specified <see cref="PropertyChangedEventArgs"/>.
         /// </summary>

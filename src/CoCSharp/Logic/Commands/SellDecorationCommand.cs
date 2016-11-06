@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -28,11 +29,6 @@ namespace CoCSharp.Logic.Commands
         public int DecorationGameID;
 
         /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
-
-        /// <summary>
         /// Reads the <see cref="SellDecorationCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
@@ -45,7 +41,7 @@ namespace CoCSharp.Logic.Commands
 
             DecorationGameID = reader.ReadInt32();
 
-            Unknown1 = reader.ReadInt32();
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
@@ -61,7 +57,32 @@ namespace CoCSharp.Logic.Commands
 
             writer.Write(DecorationGameID);
 
-            writer.Write(Unknown1);
+            writer.Write(Tick);
+        }
+
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var village = level.Village;
+            var vilobj = village.VillageObjects[DecorationGameID];
+            if (vilobj == null)
+            {
+                Debug.WriteLine($"Could not find village object with ID: {DecorationGameID}");
+                return;
+            }
+
+            var deco = (Decoration)vilobj;
+            var data = deco.Data;
+            var buildCost = data.BuildCost;
+            var buildResource = data.BuildResource;
+
+            // 10% of build cost.
+            var refund = (int)Math.Round(0.1d * data.BuildCost);
+
+            level.Avatar.ConsumeResource(buildResource, -refund);
+            village.VillageObjects.Remove(DecorationGameID);
         }
     }
 }

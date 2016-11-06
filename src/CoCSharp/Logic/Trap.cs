@@ -74,6 +74,13 @@ namespace CoCSharp.Logic
         protected override TimeSpan GetBuildTime(TrapData data) => data.BuildTime;
 
         /// <summary/>
+        protected override int GetBuildCost(TrapData data) => data.BuildCost;
+
+        /// <summary/>
+        protected override string GetBuildResource(TrapData data) => data.BuildResource;
+
+
+        /// <summary/>
         protected override int GetTownHallLevel(TrapData data) => data.TownHallLevel;
 
         /// <summary/>
@@ -138,8 +145,10 @@ namespace CoCSharp.Logic
             var instance = CsvData.GetInstance<TrapData>();
             // const_t_end value.
             var constTimeEnd = -1;
+            var constTimeEndSet = false;
             // const_t value.
             var constTime = -1;
+            var constTimeSet = false;
 
             var dataId = -1;
             var dataIdSet = false;
@@ -175,10 +184,12 @@ namespace CoCSharp.Logic
 
                         case "const_t_end":
                             constTimeEnd = reader.ReadAsInt32().Value;
+                            constTimeEndSet = true;
                             break;
 
                         case "const_t":
                             constTime = reader.ReadAsInt32().Value;
+                            constTimeSet = true;
                             break;
 
                         case "x":
@@ -193,18 +204,13 @@ namespace CoCSharp.Logic
             }
 
             if (!dataIdSet)
-                throw new InvalidOperationException("Trap JSON does not contain a 'data' field.");
-
-            // If its not constructed yet, the level is -1,
-            // therefore it must be a lvl 0 building.
-            if (lvl == NotConstructedLevel)
-            {
-                //_isConstructed = false;
-                lvl = 0;
-            }
+                throw new InvalidOperationException($"Trap JSON at {reader.Path} does not contain a 'data' field.");
 
             if (instance.InvalidDataID(dataId))
-                throw new InvalidOperationException("Trap JSON contained an invalid data ID. " + instance.GetArgsOutOfRangeMessage("Data ID"));
+                throw new InvalidOperationException($"Trap JSON at {reader.Path} contained an invalid BuildingData ID. {instance.GetArgsOutOfRangeMessage("Data ID")}");
+
+            UpdateData(dataId, lvl);
+            UpdateIsUpgradable();
         }
         #endregion
 
@@ -212,7 +218,7 @@ namespace CoCSharp.Logic
         internal static Trap GetInstance(Village village)
         {
             var obj = (VillageObject)null;
-            if (!VillageObjectPool.TryPop(BaseGameID, out obj))
+            if (!VillageObjectPool.TryPop(Kind, out obj))
                 obj = new Trap();
 
             obj.SetVillageInternal(village);
