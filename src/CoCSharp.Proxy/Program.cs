@@ -15,10 +15,10 @@ namespace CoCSharp.Proxy
 
         public static void m()
         {
-            var k = File.ReadAllBytes("dump - alliancelist");
+            var k = File.ReadAllBytes("dump.bin");
             using (var k2 = new MessageReader(new MemoryStream(k)))
             {
-                var asdf = new JoinableAllianceListResponseMessage();
+                var asdf = new VisitHomeDataMessage();
                 asdf.ReadMessage(k2);
             }
         }

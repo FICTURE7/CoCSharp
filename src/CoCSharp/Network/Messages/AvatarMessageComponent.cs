@@ -117,7 +117,8 @@ namespace CoCSharp.Network.Messages
             UnknownSlot1 = new SlotCollection<UnknownSlot>();
             UnknownSlot2 = new SlotCollection<UnknownSlot>();
             UnknownSlot3 = new SlotCollection<UnknownSlot>();
-            UnknownSlot4 = new SlotCollection<UnknownSlot>();
+            //UnknownSlot4 = new SlotCollection<UnknownSlot>();
+
             UnknownSlot5 = new SlotCollection<UnitSlot>();
 
         }
@@ -395,6 +396,11 @@ namespace CoCSharp.Network.Messages
         public SlotCollection<NpcElixirSlot> NpcElixir;
 
         /// <summary>
+        /// Unknown integer 1.
+        /// </summary>
+        public int Unknown31;
+
+        /// <summary>
         /// Unknown slot 1.
         /// </summary>
         public SlotCollection<UnknownSlot> UnknownSlot1;
@@ -406,23 +412,19 @@ namespace CoCSharp.Network.Messages
         /// Unknown slot 3.
         /// </summary>
         public SlotCollection<UnknownSlot> UnknownSlot3;
-        /// <summary>
-        /// Unknown slot 4.
-        /// </summary>
-        public SlotCollection<UnknownSlot> UnknownSlot4;
 
         /// <summary>
         /// Unknown integer 31.
         /// </summary>
-        public int Unknown31;
+        public int Unknown32;
         /// <summary>
         /// Unknown integer 32.
         /// </summary>
-        public int Unknown32;
+        public int Unknown33;
         /// <summary>
         /// Unknown integer 33.
         /// </summary>
-        public int Unknown33;
+        public int Unknown34;
 
         /// <summary>
         /// Unknown slot 5;
@@ -537,16 +539,18 @@ namespace CoCSharp.Network.Messages
             NpcGold = reader.ReadSlotCollection<NpcGoldSlot>();
             NpcElixir = reader.ReadSlotCollection<NpcElixirSlot>();
 
+            Unknown31 = reader.ReadInt32();
+
             UnknownSlot1 = reader.ReadSlotCollection<UnknownSlot>();
             UnknownSlot2 = reader.ReadSlotCollection<UnknownSlot>();
             UnknownSlot3 = reader.ReadSlotCollection<UnknownSlot>();
-            UnknownSlot4 = reader.ReadSlotCollection<UnknownSlot>();
+            //UnknownSlot4 = reader.ReadSlotCollection<UnknownSlot>();
 
             // 8.551.4
             // Those might be resource lists as well.
-            Unknown31 = reader.ReadInt32();
             Unknown32 = reader.ReadInt32();
             Unknown33 = reader.ReadInt32();
+            Unknown34 = reader.ReadInt32();
 
             UnknownSlot5 = reader.ReadSlotCollection<UnitSlot>();
         }
@@ -656,14 +660,16 @@ namespace CoCSharp.Network.Messages
             writer.WriteSlotCollection(NpcGold);
             writer.WriteSlotCollection(NpcElixir);
 
+            writer.Write(Unknown31);
+
             writer.WriteSlotCollection(UnknownSlot1);
             writer.WriteSlotCollection(UnknownSlot2);
             writer.WriteSlotCollection(UnknownSlot3);
-            writer.WriteSlotCollection(UnknownSlot4);
+            //writer.WriteSlotCollection(UnknownSlot4);
 
-            writer.Write(Unknown31);
             writer.Write(Unknown32);
             writer.Write(Unknown33);
+            writer.Write(Unknown34);
 
             writer.WriteSlotCollection(UnknownSlot5);
         }

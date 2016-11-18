@@ -9,8 +9,69 @@ namespace CoCSharp.Proxy
 {
     public class Client
     {
+        public class MessageDumper
+        {
+            static MessageDumper()
+            {
+                if (!Directory.Exists("message-dumps"))
+                    Directory.CreateDirectory("message-dumps");
+
+                if (!Directory.Exists("village-dumps"))
+                    Directory.CreateDirectory("village-dumps");
+            }
+
+            public MessageDumper()
+            {
+                // Space
+            }
+
+            public void Dump(Message message, byte[] kappa)
+            {
+                var time = DateTime.Now;
+                var fileName = $"{time.ToString("yy_MM_dd__hh_mm_ss")} - {message.GetType().Name} ({message.ID}).bin";
+                var path = Path.Combine("message-dumps", fileName);
+                File.WriteAllBytes(path, kappa);
+
+                if (message is OwnHomeDataMessage)
+                {
+                    var ohd = message as OwnHomeDataMessage;
+                    if (ohd.OwnVillageData != null && ohd.OwnVillageData.VillageJson != null)
+                    {
+                        var nfilename = $"ownhome-{DateTime.Now.ToString("yy_MM_dd__hh_mm_ss")}.json";
+                        var npath = Path.Combine("village-dumps", nfilename);
+
+                        File.WriteAllText(npath, ohd.OwnVillageData.VillageJson);
+                    }
+                }
+                else if (message is VisitHomeDataMessage)
+                {
+                    var vhd = message as VisitHomeDataMessage;
+                    if (vhd.VisitVillageData != null && vhd.VisitVillageData.VillageJson != null)
+                    {
+                        var nfilename = $"visithome-{DateTime.Now.ToString("yy_MM_dd__hh_mm_ss")}.json";
+                        var npath = Path.Combine("village-dumps", nfilename);
+
+                        File.WriteAllText(npath, vhd.VisitVillageData.VillageJson);
+                    }
+                }
+                else if (message is EnemyHomeDataMessage)
+                {
+                    var ehd = message as EnemyHomeDataMessage;
+                    if (ehd.EnemyVillageData != null && ehd.EnemyVillageData.VillageJson != null)
+                    {
+                        var nfilename = $"enemyhome-{DateTime.Now.ToString("yy_MM_dd__hh_mm_ss")}.json";
+                        var npath = Path.Combine("village-dumps", nfilename);
+
+                        File.WriteAllText(npath, ehd.EnemyVillageData.VillageJson);
+                    }
+                }
+            }
+        }
+
         public Client(Socket client, Socket server, NetworkManagerAsyncSettings settings)
         {
+            Dumper = new MessageDumper();
+
             Processor = new MessageProcessorNaClProxy(Crypto8.StandardKeyPair);
             ClientConnection = new NetworkManagerAsync(client, settings, Processor);
             ClientConnection.MessageReceived += ClientReceived;
@@ -24,6 +85,8 @@ namespace CoCSharp.Proxy
         public NetworkManagerAsync ClientConnection { get; private set; }
         // Connection to the server.
         public NetworkManagerAsync ServerConnection { get; private set; }
+        // El dumper gonna dump message dumps.
+        public MessageDumper Dumper { get; private set; }
 
         private void ClientReceived(object sender, MessageReceivedEventArgs e)
         {
@@ -58,7 +121,8 @@ namespace CoCSharp.Proxy
                 Buffer.BlockCopy(body, 0, sendingBytes, MessageHeader.Size, body.Length);
             }
 
-            File.WriteAllBytes(e.Message.ID.ToString(), e.Plaintext);
+            //File.WriteAllBytes(e.Message.ID.ToString(), e.Plaintext);
+            Dumper.Dump(message, e.Plaintext);
             // Forward data to the server.
             ServerConnection.Socket.Send(sendingBytes);
         }
@@ -97,12 +161,7 @@ namespace CoCSharp.Proxy
 
             File.WriteAllBytes(e.Message.ID.ToString(), e.Plaintext);
 
-            if (message is OwnHomeDataMessage)
-            {
-                var ohd = message as OwnHomeDataMessage;
-                File.WriteAllText("ownhome-" + DateTime.Now.ToString("mm_ss") + ".json", ohd.OwnVillageData.VillageJson);
-            }
-
+            Dumper.Dump(message, e.Plaintext);
             // Forward data to the client.
             ClientConnection.Socket.Send(sendingBytes);
         }
