@@ -6,26 +6,26 @@ namespace CoCSharp.Network.Messages
     /// <summary>
     /// Represents a <see cref="Clan"/>.
     /// </summary>
-    public class CompleteClanMessageComponent : MessageComponent
+    public class ClanCompleteMessageComponent : MessageComponent
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompleteClanMessageComponent"/> class.
+        /// Initializes a new instance of the <see cref="ClanCompleteMessageComponent"/> class.
         /// </summary>
-        public CompleteClanMessageComponent()
+        public ClanCompleteMessageComponent()
         {
             // Space
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompleteClanMessageComponent"/> class from
+        /// Initializes a new instance of the <see cref="ClanCompleteMessageComponent"/> class from
         /// the specified <see cref="Clan"/>.
         /// </summary>
         /// <param name="clan"><see cref="Clan"/> from which the data will be set.</param>
         /// <exception cref="ArgumentNullException"><paramref name="clan"/> is null.</exception>
-        public CompleteClanMessageComponent(Clan clan)
+        public ClanCompleteMessageComponent(Clan clan)
         {
             if (clan == null)
-                throw new ArgumentNullException("clan");
+                throw new ArgumentNullException(nameof(clan));
 
             ID = clan.ID;
             Name = clan.Name;
@@ -115,10 +115,19 @@ namespace CoCSharp.Network.Messages
         public bool WarLogsPublic;
 
         /// <summary>
-        /// Reads the <see cref="CompleteClanMessageComponent"/> from the specified <see cref="MessageReader"/>.
+        /// Unknown integer 1.
+        /// </summary>
+        public int Unknown1;
+        /// <summary>
+        /// Unknown byte 2.
+        /// </summary>
+        public byte Unknown2;
+
+        /// <summary>
+        /// Reads the <see cref="ClanCompleteMessageComponent"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="CompleteClanMessageComponent"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="ClanCompleteMessageComponent"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessageComponent(MessageReader reader)
@@ -141,15 +150,17 @@ namespace CoCSharp.Network.Messages
             PerkPoints = reader.ReadInt32();
             Level = reader.ReadInt32();
             WinStreak = reader.ReadInt32();
-
             WarLogsPublic = reader.ReadBoolean();
+
+            Unknown1 = reader.ReadInt32();
+            Unknown2 = reader.ReadByte();
         }
 
         /// <summary>
-        /// Writes the <see cref="CompleteClanMessageComponent"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="ClanCompleteMessageComponent"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="CompleteClanMessageComponent"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ClanCompleteMessageComponent"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessageComponent(MessageWriter writer)
@@ -172,8 +183,10 @@ namespace CoCSharp.Network.Messages
             writer.Write(PerkPoints);
             writer.Write(Level);
             writer.Write(WinStreak);
-
             writer.Write(WarLogsPublic);
+
+            writer.Write(Unknown1);
+            writer.Write(Unknown2);
         }
     }
 }

@@ -10,14 +10,15 @@ namespace CoCSharp.Logic
     /// <summary>
     /// Represents an object in a <see cref="Logic.Village"/>.
     /// </summary>
-    [DebuggerDisplay("ID = {ID}")]
+    [DebuggerDisplay("{DebuggerDisplayString}")]
     public abstract class VillageObject : INotifyPropertyChanged
     {
         #region Constants
+        // The size of the LogicComponent array.
         private const int ComponentArraySize = 8;
 
-        internal static int s_rested = 0;
-        internal static int s_created = 0;
+        internal static int s_totalReseted = 0;
+        internal static int s_totalCreated = 0;
 
         private static readonly PropertyChangedEventArgs s_xChanged = new PropertyChangedEventArgs(nameof(X));
         private static readonly PropertyChangedEventArgs s_yChanged = new PropertyChangedEventArgs(nameof(Y));
@@ -27,9 +28,10 @@ namespace CoCSharp.Logic
         // Constructor used to load the VillageObject from a JsonTextReader.
         internal VillageObject()
         {
-            _components = new LogicComponent[ComponentArraySize];
+            Interlocked.Increment(ref s_totalCreated);
+            _components = new Component[ComponentArraySize];
 
-            Interlocked.Increment(ref s_created);
+            Debug.WriteLine("Created new instance of VillageObject for JsonReading.");
         }
 
         /// <summary>
@@ -47,10 +49,10 @@ namespace CoCSharp.Logic
             if (village == null)
                 throw new ArgumentNullException(nameof(village));
 
-            _components = new LogicComponent[ComponentArraySize];
-            SetVillageInternal(village);
+            Interlocked.Increment(ref s_totalCreated);
 
-            Interlocked.Increment(ref s_created);
+            _components = new Component[ComponentArraySize];
+            SetVillageInternal(village);
         }
         #endregion
 
@@ -63,13 +65,18 @@ namespace CoCSharp.Logic
         private Village _village;
 
         // Array containing the LogicComponent attached to this VillageObject.
-        private readonly LogicComponent[] _components;
+        private readonly Component[] _components;
         // Amount of time the VillageObject was pushed back to the pool.
         private int _pushCount;
         // Amount of time the VillageObject was rest.
         internal int _restCount;
         // Column index of the VillageObject in its VillageObjectCollection.
         internal int _columnIndex;
+
+        /// <summary>
+        /// Gets the string which <see cref="DebuggerDisplayAttribute"/> will use.
+        /// </summary>
+        protected virtual string DebuggerDisplayString => $"ID = {ID}";
 
         /// <summary>
         /// The event raised when a property value has changed.
@@ -80,6 +87,16 @@ namespace CoCSharp.Logic
         /// Gets or sets a value indicating whether to raise the <see cref="PropertyChanged"/> event.
         /// </summary>
         public bool IsPropertyChangedEnabled { get; set; }
+
+        /// <summary>
+        /// Gets the array of <see cref="Component"/> attached to this <see cref="VillageObject"/>.
+        /// </summary>
+        protected internal Component[] Components => _components;
+
+        /// <summary>
+        /// Gets the <see cref="Logic.Level"/> in which <see cref="Village"/> is in.
+        /// </summary>
+        public Level Level => _village.Level;
 
         /// <summary>
         /// Gets the <see cref="Logic.Village"/> in which the current <see cref="VillageObject"/> is in.
@@ -112,7 +129,7 @@ namespace CoCSharp.Logic
             set
             {
                 if (value < 0 || value > Village.Width)
-                    throw new ArgumentOutOfRangeException(nameof(value), "value must be between 0 and Village.Width.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative and Village.Width.");
 
                 if (_x == value)
                     return;
@@ -135,7 +152,7 @@ namespace CoCSharp.Logic
             set
             {
                 if (value < 0 || value > Village.Height)
-                    throw new ArgumentOutOfRangeException(nameof(value), "value must be between 0 and Village.Height.");
+                    throw new ArgumentOutOfRangeException(nameof(value), "value must be non-negative and Village.Height.");
 
                 if (_y == value)
                     return;
@@ -146,7 +163,7 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
-        /// Gets the <see cref="AssetManager"/> of <see cref="Village"/>.
+        /// Gets the <see cref="AssetManager"/> of <see cref="Level"/>.
         /// </summary>
         protected AssetManager Assets => _village.Assets;
 
@@ -158,9 +175,9 @@ namespace CoCSharp.Logic
         //TODO: Rework component system.
         #region Component System
         // Adds the specified component to the VillageObject.
-        internal void AddComponent(LogicComponent component)
+        internal void AddComponent(Component component)
         {
-            component._vilObject = this;
+            component._parent = this;
             _components[component.ComponentID] = component;
         }
 
@@ -171,14 +188,14 @@ namespace CoCSharp.Logic
             var remove = _components[componentId] != null;
             if (remove)
             {
-                LogicComponentPool.Push(_components[componentId]);
+                ComponentPool.Push(_components[componentId]);
                 _components[componentId] = null;
             }
             return remove;
         }
 
         // Returns the LogicComponent with the specified component ID.
-        internal LogicComponent GetComponent(int componentId)
+        internal Component GetComponent(int componentId)
         {
             return _components[componentId];
         }
@@ -189,12 +206,12 @@ namespace CoCSharp.Logic
         /// was found.
         /// </summary>
         /// 
-        /// <typeparam name="TLogicComponent">Type of <see cref="LogicComponent"/> to retrieve.</typeparam>
+        /// <typeparam name="TLogicComponent">Type of <see cref="Component"/> to retrieve.</typeparam>
         /// <returns>
         /// Instance of the specified <typeparamref name="TLogicComponent"/>; returns null if no instance of the 
         /// specified <typeparamref name="TLogicComponent"/> was found.
         /// </returns>
-        public TLogicComponent GetComponent<TLogicComponent>() where TLogicComponent : LogicComponent
+        public TLogicComponent GetComponent<TLogicComponent>() where TLogicComponent : Component
         {
             var type = typeof(TLogicComponent);
             for (int i = 0; i < _components.Length; i++)
@@ -222,10 +239,12 @@ namespace CoCSharp.Logic
         /// </summary>
         protected internal virtual void ResetVillageObject()
         {
-            Interlocked.Increment(ref s_rested);
+            _restCount++;
+            Interlocked.Increment(ref s_totalReseted);
 
+            // Pushes all its LogicComponent back to the pool.
             for (int i = 0; i < ComponentArraySize; i++)
-                _components[i] = null;
+                ComponentPool.Push(_components[i]);
 
             _village = default(Village);
             _columnIndex = default(int);
@@ -237,10 +256,10 @@ namespace CoCSharp.Logic
         /// Ticks the <see cref="VillageObject"/> with the specified game tick at with which 
         /// the <see cref="VillageObject"/> will do all calculations.
         /// </summary>
-        /// <param name="tick">Game tick with which the <see cref="VillageObject"/> will do all calculations.</param>
-        protected internal virtual void Tick(int tick)
+        /// <param name="ctick">Game tick with which the <see cref="VillageObject"/> will do all calculations.</param>
+        protected internal virtual void Tick(int ctick)
         {
-            // Space
+            // Space.
         }
 
         /// <summary>
@@ -259,9 +278,11 @@ namespace CoCSharp.Logic
         // be reused when Village.FromJson is called.
         internal void PushToPool()
         {
-            // Set village to null, so it can get picked up by the GC.
+            // Don't wait for ResetVillageObject to be called to set the _village to null,
+            // so the _village can get picked up by the GC.
             _village = null;
 
+            // Push the object back to the pool.
             VillageObjectPool.Push(this);
             _pushCount++;
         }
@@ -271,6 +292,8 @@ namespace CoCSharp.Logic
             Debug.Assert(village != null, "Tried to set a VillageObject's village to null.");
 
             _village = village;
+            // Adding it to the VillageObjectCollection to 
+            // update the GameID of the object.
             _village.VillageObjects.Add(this);
         }
         #endregion

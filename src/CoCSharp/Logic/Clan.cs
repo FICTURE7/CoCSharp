@@ -170,7 +170,7 @@ namespace CoCSharp.Logic
             get
             {
                 var data = new AllianceDataResponseMessage();
-                data.Clan = new CompleteClanMessageComponent(this);
+                data.Clan = new ClanCompleteMessageComponent(this);
                 data.Description = Description;
                 data.Members = new ClanMemberMessageComponent[Members.Count];
                 for (int i = 0; i < Members.Count; i++)
@@ -190,7 +190,7 @@ namespace CoCSharp.Logic
             get
             {
                 var data = new AllianceFullEntryMessage();
-                data.Clan = new CompleteClanMessageComponent(this);
+                data.Clan = new ClanCompleteMessageComponent(this);
                 data.Description = Description;
                 return data;
             }

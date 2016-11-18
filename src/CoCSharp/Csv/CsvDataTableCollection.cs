@@ -38,6 +38,9 @@ namespace CoCSharp.Csv
                 if (tableIndex < 0)
                     throw new ArgumentOutOfRangeException(nameof(tableIndex), "Index must be non-negative and less than Count.");
 
+                if (tableIndex >= _tables.Length)
+                    return null;
+
                 return _tables[tableIndex];
             }
         }

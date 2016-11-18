@@ -173,28 +173,7 @@ namespace CoCSharp.Network
             CheckDispose();
 
             base.Write(value);
-        }
-
-        /// <summary>
-        /// Writes a <see cref="SlotCollection{TSlot}"/> to the current stream.
-        /// </summary>
-        /// <typeparam name="TSlot">Type of <see cref="Slot"/> to read.</typeparam>
-        /// <param name="slots">The <see cref="SlotCollection{TSlot}"/> to write.</param>
-        public void Write<TSlot>(SlotCollection<TSlot> slots) where TSlot : Slot, new()
-        {
-            CheckDispose();
-
-            if (slots == null)
-                Write(0);
-            else
-            {
-                var count = slots.Count;
-
-                Write(count);
-                for (int i = 0; i < count; i++)
-                    slots[i].WriteSlot(this);
-            }
-        }
+        } 
 
         /// <summary>
         /// Writes a byte array to the underlying stream and a four-byte signed integer
@@ -256,7 +235,7 @@ namespace CoCSharp.Network
             base.Dispose(true);
         }
 
-        private void CheckDispose()
+        internal void CheckDispose()
         {
             if (_disposed)
                 throw new ObjectDisposedException(null, "Cannot access the MessageWriter object because it was disposed.");

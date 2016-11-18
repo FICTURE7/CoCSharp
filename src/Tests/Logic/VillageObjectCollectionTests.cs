@@ -1,7 +1,4 @@
-﻿using CoCSharp.Csv;
-using CoCSharp.Data;
-using CoCSharp.Data.Models;
-using CoCSharp.Logic;
+﻿using CoCSharp.Logic;
 using NUnit.Framework;
 using System;
 
@@ -16,13 +13,6 @@ namespace CoCSharp.Test.Logic
         [SetUp]
         public void SetUp()
         {
-            //_village = new Village(new AssetManager(TestUtils.ContentDirectory));
-            //var thdata = new CsvDataRowRef<BuildingData>(1000001);
-            //var thbuilding = new Building(_village, thdata, 0);
-
-            //_collection = _village.VillageObjects;
-            //Assert.AreEqual(500000000, thbuilding.ID);
-            //Assert.AreEqual(0, thbuilding._columnIndex);
             _collection = new VillageObjectCollection();
         }
 

@@ -1,15 +1,20 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Data
 {
     /// <summary>
     /// Base <see cref="Slot"/> class.
     /// </summary>
+    [DebuggerDisplay("ID = {ID}")]
     public abstract class Slot
     {
         #region Constructors
-        internal Slot()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Slot"/> class.
+        /// </summary>
+        protected Slot()
         {
             // Space
         }
@@ -17,6 +22,7 @@ namespace CoCSharp.Data
 
         #region Fields & Properties
         private int _id;
+
         /// <summary>
         /// Gets or sets the data ID of the <see cref="Slot"/>.
         /// </summary>
@@ -28,8 +34,9 @@ namespace CoCSharp.Data
             }
             set
             {
+                // Check if the specified Data ID is valid for this slot.
                 if (InvalidDataID(value))
-                    throw new ArgumentOutOfRangeException("value", GetArgsOutOfRangeMessage("value"));
+                    throw new ArgumentOutOfRangeException(nameof(value), GetArgsOutOfRangeMessage(nameof(value)));
 
                 _id = value;
             }
@@ -53,33 +60,26 @@ namespace CoCSharp.Data
         /// </param>
         public abstract void WriteSlot(MessageWriter writer);
 
-        /// <summary>Throws ArgumentNullException if reader is null.</summary>
-        protected void ThrowIfReaderNull(MessageReader reader)
-        {
-            if (reader == null)
-                throw new ArgumentNullException("reader");
-        }
-
-        /// <summary>Throws ArgumentNullException if writer is null.</summary>
-        protected void ThrowIfWriterNull(MessageWriter writer)
-        {
-            if (writer == null)
-                throw new ArgumentNullException("writer");
-        }
-
         internal virtual bool InvalidDataID(int dataId)
         {
             return false;
         }
 
-        internal virtual int GetIndex(int dataId)
-        {
-            return dataId % InternalConstants.IDBase;
-        }
-
         internal virtual string GetArgsOutOfRangeMessage(string paramName)
         {
             return null;
+        }
+
+        internal void ThrowIfReaderNull(MessageReader reader)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+        }
+
+        internal void ThrowIfWriterNull(MessageWriter writer)
+        {
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
         }
         #endregion
     }

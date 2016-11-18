@@ -52,15 +52,20 @@
     <Compile Include="Core\LiteDbManager.cs" />
     <Compile Include="Core\MessageHandler.cs" />
     <Compile Include="Core\SaveQueue{T}.cs" />
+    <Compile Include="RuntimeInfo.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Server.Listening.cs" />
     <Compile Include="ServerConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SocketAsyncEventArgsPool.cs" />
+    <Compile Include="WebApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="contents\logic\characters.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="contents\logic\experience_levels.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

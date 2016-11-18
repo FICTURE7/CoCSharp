@@ -111,12 +111,13 @@ namespace CoCSharp.Logic.Commands
                 var vilobj = village.VillageObjects[moveData.VillageObjectGameID];
                 if (vilobj == null)
                 {
-                    Debug.WriteLine($"Could not find village object with ID: {moveData.VillageObjectGameID}");
-                    continue;
+                    level.Logs.Log($"Could not find village object with game ID {moveData.VillageObjectGameID}.");
                 }
-
-                vilobj.X = moveData.X;
-                vilobj.Y = moveData.Y;
+                else
+                {
+                    vilobj.X = moveData.X;
+                    vilobj.Y = moveData.Y;
+                }
             }
         }
     }

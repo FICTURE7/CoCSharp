@@ -40,12 +40,12 @@ namespace CoCSharp
 
         public static int ToTick(int duration)
         {
-            return (int)(duration * 1000 / TickDuration);
+            return (int)(duration * 1000d / TickDuration);
         }
 
-        public static int FromTick(int tick)
+        public static double FromTick(int tick)
         {
-            return (int)((tick * TickDuration) / 1000);
+            return ((tick * TickDuration) / 1000d);
         }
     }
 }

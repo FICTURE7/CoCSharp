@@ -43,14 +43,11 @@ namespace CoCSharp.Logic
             obj = default(VillageObject);
             var success = GetPool(kindId).TryTake(out obj);
             if (success)
-            {
-                obj._restCount++;
                 obj.ResetVillageObject();
-            }
 
             return success;
         }
-        
+
         // Returns the pool which corresponds to the specified game ID.
         private static ConcurrentBag<VillageObject> GetPool(int kindId)
         {

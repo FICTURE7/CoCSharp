@@ -2,6 +2,7 @@
 using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
 using System.Diagnostics;
+using System.IO;
 
 namespace CoCSharp.Proxy
 {
@@ -169,6 +170,15 @@ namespace CoCSharp.Proxy
                 }
 
                 _state++;
+            }
+            try
+            {
+                using (var reader = new MessageReader(new MemoryStream(plaintext)))
+                    message.ReadMessage(reader);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ex: " + ex);
             }
             return message;
         }

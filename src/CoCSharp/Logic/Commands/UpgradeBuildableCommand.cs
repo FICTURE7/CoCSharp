@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Network;
 using System;
-using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -84,27 +83,44 @@ namespace CoCSharp.Logic.Commands
             var vilobj = village.VillageObjects[BuildableGameID];
             if (vilobj == null)
             {
-                Debug.WriteLine($"Could not find village object with ID: {BuildableGameID}");
-                return;
-            }
-
-            if (vilobj is Building)
-            {
-                var building = (Building)vilobj;
-                var data = building.NextUpgrade;
-                level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
-                building.BeginConstruction(Tick);
-            }
-            else if (vilobj is Trap)
-            {
-                var trap = (Trap)vilobj;
-                var data = trap.NextUpgrade;
-                level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
-                trap.BeginConstruction(Tick);
+                level.Logs.Log($"Could not find village object with game ID {BuildableGameID}.");
             }
             else
             {
-                Debug.WriteLine($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be upgraded.");
+                //TODO: Check for alternative resources as well.
+
+                if (vilobj is Building)
+                {
+                    var building = (Building)vilobj;
+                    var data = building.NextUpgrade;
+                    if (building.IsConstructing)
+                    {
+                        level.Logs.Log($"Building at {BuildableGameID} was already in construction.");
+                    }
+                    else
+                    {
+                        level.Avatar.UseResource(data.BuildResource, data.BuildCost);
+                        building.BeginConstruction(Tick);
+                    }
+                }
+                else if (vilobj is Trap)
+                {
+                    var trap = (Trap)vilobj;
+                    var data = trap.NextUpgrade;
+                    if (trap.IsConstructing)
+                    {
+                        level.Logs.Log($"Trap at {BuildableGameID} was already in construction.");
+                    }
+                    else
+                    {
+                        level.Avatar.UseResource(data.BuildResource, data.BuildCost);
+                        trap.BeginConstruction(Tick);
+                    }
+                }
+                else
+                {
+                    level.Logs.Log($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be upgraded.");
+                }
             }
         }
     }

@@ -20,6 +20,10 @@ namespace CoCSharp.Server
             if (socket == null)
                 throw new ArgumentNullException(nameof(socket));
 
+            // Give client a 30 second window to send its first keep alive.
+            LastKeepAliveTime = DateTime.UtcNow;
+            KeepAliveExpireTime = DateTime.UtcNow.AddSeconds(30);
+
             _server = server;
             _socket = socket;
             _localEndPoint = socket.LocalEndPoint;
@@ -45,6 +49,9 @@ namespace CoCSharp.Server
         public EndPoint RemoteEndPoint => _remoteEndPoint;
         public IServer Server => _server;
         public ILevelSave Save => new LevelSave(Level);
+
+        public DateTime LastKeepAliveTime { get; set; }
+        public DateTime KeepAliveExpireTime { get; set; }
 
         public Level Level { get; set; }
         public byte[] SessionKey { get; set; }
@@ -76,12 +83,12 @@ namespace CoCSharp.Server
                 // Calculates at the tick at which the client disconnected
                 // and do Tick on that calculated tick.
                 const double TickDuration = (1d / 60d) * 1000d;
-                var diffTime = now - Level.LastTick;
+                var diffTime = now - Level.LastTickTime;
                 var expectedTick = (int)(diffTime.TotalMilliseconds / TickDuration) + Level.LastTickValue;
 
                 Level.Tick(expectedTick);
 
-                // Now that all the VillageObject has been ticked an updated
+                // Now that all the VillageObject has been ticked and updated
                 // we can push the Level back to the database.
                 var save = Save;
                 Server.Db.SaveLevel(save);
@@ -92,6 +99,10 @@ namespace CoCSharp.Server
 
             // Disconnect socket.
             _networkManager.Dispose();
+
+            // Remove the client reference in the client list.
+            _server.Clients.Remove(this);
+
             _disposed = true;
         }
 
@@ -117,8 +128,6 @@ namespace CoCSharp.Server
                 var remoteEndPoint = RemoteEndPoint;
 
                 Dispose();
-                Server.Clients.Remove(this);
-
                 Server.Log.Info($"Client at {remoteEndPoint} disconnected.");
             }
             catch (Exception ex)

@@ -24,7 +24,8 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Clan data.
         /// </summary>
-        public CompleteClanMessageComponent Clan;
+        public ClanCompleteMessageComponent Clan; 
+
         /// <summary>
         /// Description of the clan.
         /// </summary>
@@ -40,10 +41,29 @@ namespace CoCSharp.Network.Messages
         /// 0 If not in war.
         /// </summary>
         public long WarID;
+
+        /// <summary>
+        /// Unknown integer 2.
+        /// </summary>
+        public int Unknown2;
+        /// <summary>
+        /// Unknown byte 3.
+        /// </summary>
+        public byte Unknown3;
+
         /// <summary>
         /// Members in the clan.
         /// </summary>
         public ClanMemberMessageComponent[] Members;
+
+        /// <summary>
+        /// Unknown integer 4.
+        /// </summary>
+        public int Unknown4;
+        /// <summary>
+        /// Unknown integer 5.
+        /// </summary>
+        public int Unknown5;
 
         /// <summary>
         /// Reads the <see cref="AllianceDataResponseMessage"/> from the specified <see cref="MessageReader"/>.
@@ -56,14 +76,18 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            Clan = new CompleteClanMessageComponent();
+            Clan = new ClanCompleteMessageComponent();
             Clan.ReadMessageComponent(reader);
+
             Description = reader.ReadString();
 
             Unknown1 = reader.ReadInt32();
 
             if (reader.ReadBoolean())
                 WarID = reader.ReadInt64();
+
+            Unknown2 = reader.ReadInt32();
+            Unknown3 = reader.ReadByte();
 
             var count = reader.ReadInt32();
             Members = new ClanMemberMessageComponent[count];
@@ -73,6 +97,9 @@ namespace CoCSharp.Network.Messages
                 member.ReadMessageComponent(reader);
                 Members[i] = member;
             }
+
+            Unknown4 = reader.ReadInt32();
+            Unknown5 = reader.ReadInt32();
         }
 
         /// <summary>
@@ -98,22 +125,30 @@ namespace CoCSharp.Network.Messages
             writer.Write(inWar);
             if (inWar)
                 writer.Write(WarID);
+            
+            writer.Write(Unknown2);
+            writer.Write(Unknown3);
 
             if (Members == null)
             {
                 writer.Write(0);
-                return;
+            }
+            else
+            {
+                var count = Members.Length;
+                writer.Write(count);
+                for (int i = 0; i < count; i++)
+                {
+                    var member = Members[i];
+                    if (member == null)
+                        throw new InvalidOperationException("Encountered null ClanMemberMesasgeComponent.");
+
+                    member.WriteMessageComponent(writer);
+                }
             }
 
-            var count = Members.Length;
-            writer.Write(count);
-            for (int i = 0; i < count; i++)
-            {
-                var member = Members[i];
-                if (member == null)
-                    throw new InvalidOperationException("Encountered null ClanMemberMesasgeComponent.");
-                member.WriteMessageComponent(writer);
-            }
+            writer.Write(Unknown4);
+            writer.Write(Unknown5);
         }
     }
 }

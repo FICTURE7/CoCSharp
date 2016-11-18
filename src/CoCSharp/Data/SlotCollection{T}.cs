@@ -26,17 +26,20 @@ namespace CoCSharp.Data
         /// Initializes a new instance of the <see cref="SlotCollection{TSlot}"/> class with the specified <see cref="IEnumerator{T}"/> class.
         /// </summary>
         /// <param name="enumerable"><see cref="IEnumerator{T}"/> object from which to load the <see cref="SlotCollection{TSlot}"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="enumerable"/> is null.</exception>
         public SlotCollection(IEnumerable<TSlot> enumerable)
         {
             if (enumerable == null)
-                throw new ArgumentNullException("enumerable");
+                throw new ArgumentNullException(nameof(enumerable));
 
             _slots = new List<TSlot>(enumerable);
         }
         #endregion
 
         #region Fields & Properties
-        private List<TSlot> _slots;
+        private readonly List<TSlot> _slots;
+
+        bool ICollection<TSlot>.IsReadOnly => false;
 
         /// <summary>
         /// Gets or sets the <typeparamref name="TSlot"/> at the specified index.
@@ -52,25 +55,26 @@ namespace CoCSharp.Data
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
-                if (index > Count - 1)
-                {
-                    _slots.Add(value);
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value));
-                    return;
-                }
-
-                var oldItem = _slots[index];
-                if (oldItem == null)
+                if (index >= Count)
                 {
                     _slots.Add(value);
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value));
                 }
                 else
                 {
-                    _slots[index] = value;
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, oldItem));
+                    var oldItem = _slots[index];
+                    if (oldItem == null)
+                    {
+                        _slots.Add(value);
+                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value));
+                    }
+                    else
+                    {
+                        _slots[index] = value;
+                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, oldItem));
+                    }
                 }
             }
         }
@@ -81,20 +85,9 @@ namespace CoCSharp.Data
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         /// <summary>
-        ///  Gets or sets a value indicating whether the <see cref="SlotCollection{TSlot}"/> is read only.
-        /// </summary>
-        public bool IsReadOnly { get; set; }
-
-        /// <summary>
         /// Gets the number of <typeparamref name="TSlot"/> in the <see cref="SlotCollection{TSlot}"/>.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _slots.Count;
-            }
-        }
+        public int Count => _slots.Count;
         #endregion
 
         #region Methods
@@ -103,17 +96,11 @@ namespace CoCSharp.Data
         /// </summary>
         /// <param name="slot">The <typeparamref name="TSlot"/> to add to the <see cref="SlotCollection{TSlot}"/>.</param>
         /// 
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="slot"/> is null.</exception>
         public void Add(TSlot slot)
         {
-            if (IsReadOnly)
-                throw new InvalidOperationException("SlotCollection object is readonly.");
             if (slot == null)
-                throw new ArgumentNullException("slot");
-
-            //if (GetSlot(slot.ID) != null)
-            //    throw new InvalidOperationException("Already contain a Slot with the same ID '" + slot.ID + "'.");
+                throw new ArgumentNullException(nameof(slot));
 
             _slots.Add(slot);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, slot));
@@ -125,31 +112,24 @@ namespace CoCSharp.Data
         /// <param name="slot">The <typeparamref name="TSlot"/> to remove from the <see cref="SlotCollection{TSlot}"/>.</param>
         /// <returns>Returns <c>true</c> if <paramref name="slot"/> was successfully removed; otherwise, <c>false</c>.</returns>
         /// 
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="slot"/> is null.</exception>
         public bool Remove(TSlot slot)
         {
-            if (IsReadOnly)
-                throw new InvalidOperationException("SlotCollection object is readonly.");
             if (slot == null)
-                throw new ArgumentNullException("slot");
+                throw new ArgumentNullException(nameof(slot));
 
             var removed = _slots.Remove(slot);
             if (removed)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, slot));
+
             return removed;
         }
 
         /// <summary>
         /// Removes all <typeparamref name="TSlot"/> from the <see cref="SlotCollection{TSlot}"/>.
         /// </summary>
-        /// 
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         public void Clear()
         {
-            if (IsReadOnly)
-                throw new InvalidOperationException("SlotCollection object is readonly.");
-
             _slots.Clear();
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
@@ -157,7 +137,9 @@ namespace CoCSharp.Data
         /// <summary>
         /// Determines whether the <see cref="SlotCollection{TSlot}"/> contains a specific <typeparamref name="TSlot"/>.
         /// </summary>
+        ///
         /// <param name="slot">The <typeparamref name="TSlot"/> to locate in the <see cref="SlotCollection{TCsvData}"/>.</param>
+        /// 
         /// <returns>
         /// <c>true</c> if the <paramref name="slot"/> was found in the <see cref="SlotCollection{TCsvData}"/>; otherwise, <c>false</c>.
         /// </returns>
@@ -166,7 +148,7 @@ namespace CoCSharp.Data
         public bool Contains(TSlot slot)
         {
             if (slot == null)
-                throw new ArgumentNullException("slot");
+                throw new ArgumentNullException(nameof(slot));
 
             return _slots.Contains(slot);
         }
@@ -192,10 +174,12 @@ namespace CoCSharp.Data
         }
 
         /// <summary>
-        /// Returns a <typeparamref name="TSlot"/> in the <see cref="SlotCollection{TSlot}"/> with the
+        /// Returns the first <typeparamref name="TSlot"/> in the <see cref="SlotCollection{TSlot}"/> with the
         /// same <see cref="Slot.ID"/> as the specified data ID.
         /// </summary>
+        /// 
         /// <param name="dataId">Data ID of the <typeparamref name="TSlot"/> to look for.</param>
+        /// 
         /// <returns>
         /// Returns null if not found, otherwise the instance of <typeparamref name="TSlot"/> with
         /// the same <see cref="Slot.ID"/> as <paramref name="dataId"/>.
@@ -223,15 +207,9 @@ namespace CoCSharp.Data
         /// Returns an enumerator that iterates through the <see cref="SlotCollection{TSlot}"/>.
         /// </summary>
         /// <returns>An <see cref="IEnumerable{TSlot}"/> for the <see cref="SlotCollection{TSlot}"/>.</returns>
-        public IEnumerator<TSlot> GetEnumerator()
-        {
-            return _slots.GetEnumerator();
-        }
+        public IEnumerator<TSlot> GetEnumerator() => _slots.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _slots.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => _slots.GetEnumerator();
         #endregion
     }
 }

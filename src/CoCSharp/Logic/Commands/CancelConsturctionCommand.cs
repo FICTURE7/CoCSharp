@@ -78,28 +78,50 @@ namespace CoCSharp.Logic.Commands
             var vilobj = village.VillageObjects[VillageObjectID];
             if (vilobj == null)
             {
-                Debug.WriteLine($"Could not find village object with ID: {VillageObjectID}");
-                return;
-            }
-
-            if (vilobj is Building)
-            {
-                var building = (Building)vilobj;
-                building.CancelConstruction(Tick);
-            }
-            else if (vilobj is Trap)
-            {
-                var trap = (Trap)vilobj;
-                trap.CancelConstruction(Tick);
-            }
-            else if (vilobj is Obstacle)
-            {
-                var obstacle = (Obstacle)vilobj;
-                obstacle.CancelClearing(Tick);
+                level.Logs.Log($"Could not find village object with game ID {VillageObjectID}.");
             }
             else
             {
-                Debug.WriteLine($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be canceled.");
+                if (vilobj is Building)
+                {
+                    var building = (Building)vilobj;
+                    if (!building.IsConstructing)
+                    {
+                        level.Logs.Log($"Tried to cancel the construction of a building which is not in construction with game ID {VillageObjectID}.");
+                    }
+                    else
+                    {
+                        building.CancelConstruction(Tick);
+                    }
+                }
+                else if (vilobj is Trap)
+                {
+                    var trap = (Trap)vilobj;
+                    if (!trap.IsConstructing)
+                    {
+                        level.Logs.Log($"Tried to cancel the construction of a trap which is not in construction with game ID {VillageObjectID}.");
+                    }
+                    else
+                    {
+                        trap.CancelConstruction(Tick);
+                    }
+                }
+                else if (vilobj is Obstacle)
+                {
+                    var obstacle = (Obstacle)vilobj;
+                    if (!obstacle.IsClearing)
+                    {
+                        level.Logs.Log($"Tried to cancel the clearing of a obstacle which is not in construction with game ID {VillageObjectID}.");
+                    }
+                    else
+                    {
+                        obstacle.CancelClearing(Tick);
+                    }
+                }
+                else
+                {
+                    level.Logs.Log($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be canceled.");
+                }
             }
         }
     }

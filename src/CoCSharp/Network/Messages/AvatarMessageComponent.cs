@@ -30,7 +30,7 @@ namespace CoCSharp.Network.Messages
         public AvatarMessageComponent(Level level)
         {
             if (level == null)
-                throw new ArgumentNullException("avatar");
+                throw new ArgumentNullException(nameof(level));
 
             var avatar = level.Avatar;
             UserID = avatar.ID;
@@ -41,7 +41,7 @@ namespace CoCSharp.Network.Messages
                 var member = avatar.Alliance.FindMember(avatar.ID);
                 Debug.Assert(member != null);
 
-                ClanData = new ClanMessageComponent()
+                ClanData = new ClanMessageComponent
                 {
                     ID = avatar.Alliance.ID,
                     Name = avatar.Alliance.Name,
@@ -63,7 +63,15 @@ namespace CoCSharp.Network.Messages
             //BestSeasonPosition = 1;
             LeagueLevel = avatar.League;
             //TownHallLevel = avatar.Home.TownHall.Level;
-            //TownHallLevel = 1;
+            if (level.Village.TownHall == null)
+            {
+                level.Logs.Log("TownHall reference was null; using TownHallLevel 5.");
+                TownHallLevel = 5;
+            }
+            else
+            {
+                TownHallLevel = level.Village.TownHall.UpgradeLevel;
+            }
             Name = avatar.Name;
 
             //Unknown13 = -1;
@@ -135,9 +143,9 @@ namespace CoCSharp.Network.Messages
         public ClanMessageComponent ClanData;
 
         /// <summary>
-        /// Legendery Trophy Count.
+        /// Legendary Trophy Count.
         /// </summary>
-        public int LegenderyTrophy; // 0
+        public int LegendaryTrophy; // 0
         /// <summary>
         /// Best Season Is Player Legendary Stats.
         /// </summary>
@@ -230,6 +238,7 @@ namespace CoCSharp.Network.Messages
         /// Free gems available.
         /// </summary>
         public int FreeGems;
+
         /// <summary>
         /// Unknown integer 16.
         /// </summary>
@@ -450,7 +459,7 @@ namespace CoCSharp.Network.Messages
                     ClanData.Unknown2 = reader.ReadInt64(); // Clan war ID?
             }
 
-            LegenderyTrophy = reader.ReadInt32();
+            LegendaryTrophy = reader.ReadInt32();
             BestSeasonEnabled = reader.ReadInt32();
             BestSeasonMonth = reader.ReadInt32();
             BestSeasonYear = reader.ReadInt32();
@@ -511,27 +520,27 @@ namespace CoCSharp.Network.Messages
             // 8.551.4
             Unknown30 = reader.ReadByte();
 
-            ResourcesCapacity = reader.Read<ResourceCapacitySlot>();
-            ResourcesAmount = reader.Read<ResourceAmountSlot>();
-            Units = reader.Read<UnitSlot>();
-            Spells = reader.Read<SpellSlot>();
-            UnitUpgrades = reader.Read<UnitUpgradeSlot>();
-            SpellUpgrades = reader.Read<SpellUpgradeSlot>();
-            HeroUpgrades = reader.Read<HeroUpgradeSlot>();
-            HeroHealths = reader.Read<HeroHealthSlot>();
-            HeroStates = reader.Read<HeroStateSlot>();
-            AllianceUnits = reader.Read<AllianceUnitSlot>();
-            TutorialProgess = reader.Read<TutorialProgressSlot>();
-            Achievements = reader.Read<AchievementSlot>();
-            AchievementProgress = reader.Read<AchievementProgessSlot>();
-            NpcStars = reader.Read<NpcStarSlot>();
-            NpcGold = reader.Read<NpcGoldSlot>();
-            NpcElixir = reader.Read<NpcElixirSlot>();
+            ResourcesCapacity = reader.ReadSlotCollection<ResourceCapacitySlot>();
+            ResourcesAmount = reader.ReadSlotCollection<ResourceAmountSlot>();
+            Units = reader.ReadSlotCollection<UnitSlot>();
+            Spells = reader.ReadSlotCollection<SpellSlot>();
+            UnitUpgrades = reader.ReadSlotCollection<UnitUpgradeSlot>();
+            SpellUpgrades = reader.ReadSlotCollection<SpellUpgradeSlot>();
+            HeroUpgrades = reader.ReadSlotCollection<HeroUpgradeSlot>();
+            HeroHealths = reader.ReadSlotCollection<HeroHealthSlot>();
+            HeroStates = reader.ReadSlotCollection<HeroStateSlot>();
+            AllianceUnits = reader.ReadSlotCollection<AllianceUnitSlot>();
+            TutorialProgess = reader.ReadSlotCollection<TutorialProgressSlot>();
+            Achievements = reader.ReadSlotCollection<AchievementSlot>();
+            AchievementProgress = reader.ReadSlotCollection<AchievementProgessSlot>();
+            NpcStars = reader.ReadSlotCollection<NpcStarSlot>();
+            NpcGold = reader.ReadSlotCollection<NpcGoldSlot>();
+            NpcElixir = reader.ReadSlotCollection<NpcElixirSlot>();
 
-            UnknownSlot1 = reader.Read<UnknownSlot>();
-            UnknownSlot2 = reader.Read<UnknownSlot>();
-            UnknownSlot3 = reader.Read<UnknownSlot>();
-            UnknownSlot4 = reader.Read<UnknownSlot>();
+            UnknownSlot1 = reader.ReadSlotCollection<UnknownSlot>();
+            UnknownSlot2 = reader.ReadSlotCollection<UnknownSlot>();
+            UnknownSlot3 = reader.ReadSlotCollection<UnknownSlot>();
+            UnknownSlot4 = reader.ReadSlotCollection<UnknownSlot>();
 
             // 8.551.4
             // Those might be resource lists as well.
@@ -539,7 +548,7 @@ namespace CoCSharp.Network.Messages
             Unknown32 = reader.ReadInt32();
             Unknown33 = reader.ReadInt32();
 
-            UnknownSlot5 = reader.Read<UnitSlot>();
+            UnknownSlot5 = reader.ReadSlotCollection<UnitSlot>();
         }
 
         /// <summary>
@@ -570,7 +579,7 @@ namespace CoCSharp.Network.Messages
                     writer.Write(ClanData.Unknown2);
             }
 
-            writer.Write(LegenderyTrophy);
+            writer.Write(LegendaryTrophy);
             writer.Write(BestSeasonEnabled);
             writer.Write(BestSeasonMonth);
             writer.Write(BestSeasonYear);
@@ -630,33 +639,33 @@ namespace CoCSharp.Network.Messages
             // 8.551.4
             writer.Write(Unknown30);
 
-            writer.Write(ResourcesCapacity);
-            writer.Write(ResourcesAmount);
-            writer.Write(Units);
-            writer.Write(Spells);
-            writer.Write(UnitUpgrades);
-            writer.Write(SpellUpgrades);
-            writer.Write(HeroUpgrades);
-            writer.Write(HeroHealths);
-            writer.Write(HeroStates);
-            writer.Write(AllianceUnits);
-            writer.Write(TutorialProgess);
-            writer.Write(Achievements);
-            writer.Write(AchievementProgress);
-            writer.Write(NpcStars);
-            writer.Write(NpcGold);
-            writer.Write(NpcElixir);
+            writer.WriteSlotCollection(ResourcesCapacity);
+            writer.WriteSlotCollection(ResourcesAmount);
+            writer.WriteSlotCollection(Units);
+            writer.WriteSlotCollection(Spells);
+            writer.WriteSlotCollection(UnitUpgrades);
+            writer.WriteSlotCollection(SpellUpgrades);
+            writer.WriteSlotCollection(HeroUpgrades);
+            writer.WriteSlotCollection(HeroHealths);
+            writer.WriteSlotCollection(HeroStates);
+            writer.WriteSlotCollection(AllianceUnits);
+            writer.WriteSlotCollection(TutorialProgess);
+            writer.WriteSlotCollection(Achievements);
+            writer.WriteSlotCollection(AchievementProgress);
+            writer.WriteSlotCollection(NpcStars);
+            writer.WriteSlotCollection(NpcGold);
+            writer.WriteSlotCollection(NpcElixir);
 
-            writer.Write(UnknownSlot1);
-            writer.Write(UnknownSlot2);
-            writer.Write(UnknownSlot3);
-            writer.Write(UnknownSlot4);
+            writer.WriteSlotCollection(UnknownSlot1);
+            writer.WriteSlotCollection(UnknownSlot2);
+            writer.WriteSlotCollection(UnknownSlot3);
+            writer.WriteSlotCollection(UnknownSlot4);
 
             writer.Write(Unknown31);
             writer.Write(Unknown32);
             writer.Write(Unknown33);
 
-            writer.Write(UnknownSlot5);
+            writer.WriteSlotCollection(UnknownSlot5);
         }
         #endregion
     }

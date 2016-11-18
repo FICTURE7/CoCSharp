@@ -30,9 +30,10 @@ namespace CoCSharp.Logic
 
             Level = level;
             _assets = level.Assets;
+            _workers = new WorkerManager();
 
             _villageObjects = new VillageObjectCollection();
-            LastTick = DateTime.UtcNow;
+            LastTickTime = DateTime.UtcNow;
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace CoCSharp.Logic
 
             _assets = assets;
             _villageObjects = new VillageObjectCollection();
-            LastTick = DateTime.UtcNow;
+            LastTickTime = DateTime.UtcNow;
         }
         #endregion
 
@@ -70,6 +71,7 @@ namespace CoCSharp.Logic
         // Building which is the town hall.
         internal Building _townhall;
 
+        private readonly WorkerManager _workers;
         private readonly AssetManager _assets;
         private readonly VillageObjectCollection _villageObjects;
 
@@ -83,6 +85,11 @@ namespace CoCSharp.Logic
         /// used.
         /// </summary>
         public AssetManager Assets => _assets;
+
+        /// <summary>
+        /// Gets the <see cref="Logic.WorkerManager"/> associated with this <see cref="Village"/>.
+        /// </summary>
+        public WorkerManager WorkerManager => _workers;
 
         /// <summary>
         /// Gets or sets the <see cref="Logic.Level"/> associated with this <see cref="Village"/>.
@@ -104,7 +111,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the <see cref="DateTime"/> of when village was last ticked.
         /// </summary>
-        public DateTime LastTick { get; set; }
+        public DateTime LastTickTime { get; set; }
 
         /// <summary>
         /// Gets the <see cref="VillageObjectCollection"/> which contains all the <see cref="VillageObject"/> in
@@ -115,21 +122,21 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets an enumerator that iterates through the <see cref="Building"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Building> Buildings => _villageObjects.GetRow(Building.Kind).Select(k => (Building)k);
+        public IEnumerable<Building> Buildings => _villageObjects.GetRow(Building.Kind).Where(k => k != null).Select(k => (Building)k);
         /// <summary>
         /// Gets an enumerator that iterates through the <see cref="Obstacle"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Obstacle> Obstacles => _villageObjects.GetRow(Obstacle.Kind).Select(k => (Obstacle)k);
+        public IEnumerable<Obstacle> Obstacles => _villageObjects.GetRow(Obstacle.Kind).Where(k => k != null).Select(k => (Obstacle)k);
 
         /// <summary>
         /// Gets an enumerator that iterates through <see cref="Trap"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Trap> Traps => _villageObjects.GetRow(Trap.Kind).Select(k => (Trap)k);
+        public IEnumerable<Trap> Traps => _villageObjects.GetRow(Trap.Kind).Where(k => k != null).Select(k => (Trap)k);
 
         /// <summary>
         /// Gets an enumerator that iterates through the <see cref="Decoration"/> objects in the <see cref="Village"/>.
         /// </summary>
-        public IEnumerable<Decoration> Decorations => _villageObjects.GetRow(Decoration.Kind).Select(k => (Decoration)k);
+        public IEnumerable<Decoration> Decorations => _villageObjects.GetRow(Decoration.Kind).Where(k => k != null).Select(k => (Decoration)k);
 
         /// <summary>
         /// Gets the TownHall <see cref="Building"/> of the <see cref="Village"/>; 

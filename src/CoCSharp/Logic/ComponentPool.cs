@@ -2,15 +2,15 @@
 
 namespace CoCSharp.Logic
 {
-    internal static class LogicComponentPool
+    internal static class ComponentPool
     {
         private const int PoolArraySize = 8;
 
-        static LogicComponentPool()
+        static ComponentPool()
         {
-            _pools = new ConcurrentBag<LogicComponent>[PoolArraySize];
+            _pools = new ConcurrentBag<Component>[PoolArraySize];
             for (int i = 0; i < _pools.Length; i++)
-                _pools[i] = new ConcurrentBag<LogicComponent>();
+                _pools[i] = new ConcurrentBag<Component>();
         }
 
         public static int TotalCount
@@ -24,14 +24,17 @@ namespace CoCSharp.Logic
             }
         }
 
-        private static readonly ConcurrentBag<LogicComponent>[] _pools;
+        private static readonly ConcurrentBag<Component>[] _pools;
 
-        public static void Push(LogicComponent component)
+        public static void Push(Component component)
         {
+            if (component == null)
+                return;
+
             GetPool(component.ComponentID).Add(component);
         }
 
-        public static bool TryPop(int componentId, out LogicComponent component)
+        public static bool TryPop(int componentId, out Component component)
         {
             return GetPool(componentId).TryTake(out component);
         }
@@ -41,7 +44,7 @@ namespace CoCSharp.Logic
             return GetPool(componentId).Count;
         }
 
-        public static ConcurrentBag<LogicComponent> GetPool(int componentId)
+        public static ConcurrentBag<Component> GetPool(int componentId)
         {
             return _pools[componentId];
         }

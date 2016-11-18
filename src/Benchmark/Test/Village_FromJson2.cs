@@ -42,8 +42,8 @@ namespace CoCSharp.Benchmark.Test
 
         public override void OneTimeTearDown()
         {
-            Console.WriteLine("Created: {0}", VillageObject.s_created);
-            Console.WriteLine("Rested: {0}", VillageObject.s_rested);
+            Console.WriteLine("Created: {0}", VillageObject.s_totalCreated);
+            Console.WriteLine("Rested: {0}", VillageObject.s_totalReseted);
             Console.WriteLine("InPool: {0}", VillageObjectPool.TotalCount);
             Console.WriteLine("Alive: {0}", _refs.Count(r => r.IsAlive));
 
@@ -51,8 +51,8 @@ namespace CoCSharp.Benchmark.Test
             Console.WriteLine("\r\nGC.Collect()\r\n");
             GC.Collect();
 
-            Console.WriteLine("Created: {0}", VillageObject.s_created);
-            Console.WriteLine("Rested: {0}", VillageObject.s_rested);
+            Console.WriteLine("Created: {0}", VillageObject.s_totalCreated);
+            Console.WriteLine("Rested: {0}", VillageObject.s_totalReseted);
             Console.WriteLine("InPool: {0}", VillageObjectPool.TotalCount);
             Console.WriteLine("Alive: {0}", _refs.Count(r => r.IsAlive));
         }

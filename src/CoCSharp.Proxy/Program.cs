@@ -13,15 +13,17 @@ namespace CoCSharp.Proxy
     {
         public static Proxy Proxy { get; set; }
 
-        public static void Main()
+        public static void m()
         {
-            var stream = new MemoryStream(File.ReadAllBytes("lepacket2"));
-            var reader = new MessageReader(stream);
-            var eneHome = new VisitHomeDataMessage();
-            eneHome.ReadMessage(reader);
+            var k = File.ReadAllBytes("dump - alliancelist");
+            using (var k2 = new MessageReader(new MemoryStream(k)))
+            {
+                var asdf = new JoinableAllianceListResponseMessage();
+                asdf.ReadMessage(k2);
+            }
         }
 
-        public static void m(string[] args)
+        public static void Main(string[] args)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();

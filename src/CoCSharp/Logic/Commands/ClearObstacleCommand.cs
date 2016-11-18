@@ -27,7 +27,7 @@ namespace CoCSharp.Logic.Commands
         /// Game ID of the <see cref="Obstacle"/> that was cleared.
         /// </summary>
         public int ObstacleGameID;
-        
+
         /// <summary>
         /// Reads the <see cref="ClearObstacleCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
@@ -75,15 +75,22 @@ namespace CoCSharp.Logic.Commands
             var vilobj = village.VillageObjects[ObstacleGameID];
             if (vilobj == null)
             {
-                Debug.WriteLine($"Could not find village object with ID: {ObstacleGameID}");
-                return;
+                level.Logs.Log($"Could not find village object with game ID {ObstacleGameID}.");
             }
-
-            var obstacle = (Obstacle)vilobj;
-            var data = obstacle.Data;
-            level.Avatar.ConsumeResource(data.ClearResource, data.ClearCost);
-
-            obstacle.BeginClearing(Tick);
+            else
+            {
+                var obstacle = (Obstacle)vilobj;
+                var data = obstacle.Data;
+                if (obstacle.IsClearing)
+                {
+                    level.Logs.Log($"Tried to clear an obstacle which is already being cleared with game ID {ObstacleGameID}.");
+                }
+                else
+                {
+                    level.Avatar.UseResource(data.ClearResource, data.ClearCost);
+                    obstacle.BeginClearing(Tick);
+                }
+            }
         }
     }
 }

@@ -83,20 +83,69 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfLevelNull(level);
             ThrowIfLevelVillageNull(level);
-            
+
             var dataRef = new CsvDataRowRef<BuildingData>(BuildingDataID);
             var assets = level.Assets;
-            var tableCollection = assets.Get<CsvDataTableCollection>();
+            var tableCollection = assets.DataTables;
             var row = dataRef.Get(tableCollection);
+            if (row == null)
+            {
+                level.Logs.Log($"Unable to find CsvDataRow<BuildingData> for data ID {BuildingDataID}.");
+            }
+            else
+            {
 
-            // Use the first level.
-            var data = row[0];            
-            level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
+                // Use the first level.
+                var data = row[0];
+                if (data == null)
+                {
+                    level.Logs.Log($"Unable to find BuildingData of level 0 for data ID {BuildingDataID}.");
+                }
+                else
+                {
+                    var globalsTable = assets.DataTables.GetTable<GlobalData>();
+                    var resource = data.BuildResource;
+                    var cost = data.BuildCost;
 
-            var building = new Building(level.Village, data);
-            building.X = X;
-            building.Y = Y;
-            building.BeginConstruction(Tick);
+                    var workerManager = level.Village.WorkerManager;
+                    if (data.Name == "Worker Building" && workerManager.TotalWorkers > 0)
+                    {
+                        var wgloRow = (CsvDataRow<GlobalData>)null;
+                        if (workerManager.TotalWorkers == 1)
+                        {
+                            wgloRow = globalsTable.Rows["WORKER_COST_2ND"];
+                        }
+                        else if (workerManager.TotalWorkers == 2)
+                        {
+                            wgloRow = globalsTable.Rows["WORKER_COST_3RD"];
+                        }
+                        else if (workerManager.TotalWorkers == 3)
+                        {
+                            wgloRow = globalsTable.Rows["WORKER_COST_4TH"];
+                        }
+                        else if (workerManager.TotalWorkers == 4)
+                        {
+                            wgloRow = globalsTable.Rows["WORKER_COST_5TH"];
+                        }
+
+                        if (wgloRow == null)
+                        {
+                            level.Logs.Log("Unable to find correct GlobalData for worker cost.");
+                        }
+                        else
+                        {
+                            cost = wgloRow[0].NumberValue;
+                        }
+                    }
+
+                    level.Avatar.UseResource(resource, cost);
+
+                    var building = new Building(level.Village, data);
+                    building.X = X;
+                    building.Y = Y;
+                    building.BeginConstruction(Tick);
+                }
+            }
         }
     }
 }

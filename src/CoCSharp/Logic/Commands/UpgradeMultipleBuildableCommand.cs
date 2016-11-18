@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -33,11 +34,6 @@ namespace CoCSharp.Logic.Commands
         public int[] BuildingsGameID;
 
         /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
-
-        /// <summary>
         /// Reads the <see cref="UpgradeMultipleBuildableCommand"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
@@ -62,7 +58,7 @@ namespace CoCSharp.Logic.Commands
                 BuildingsGameID[i] = id;
             }
 
-            Unknown1 = reader.ReadInt32(); // 4746
+            Tick = reader.ReadInt32(); // 4746
         }
 
         /// <summary>
@@ -86,7 +82,53 @@ namespace CoCSharp.Logic.Commands
             for (int i = 0; i < BuildingsGameID.Length; i++)
                 writer.Write(BuildingsGameID[i]);
 
-            writer.Write(Unknown1);
+            writer.Write(Tick);
+        }
+
+        /// <summary>
+        /// Performs the execution of the <see cref="UpgradeMultipleBuildableCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="UpgradeMultipleBuildableCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var village = level.Village;
+            for (int i = 0; i < BuildingsGameID.Length; i++)
+            {
+                var gameId = BuildingsGameID[i];
+                var vilobj = village.VillageObjects[gameId];
+                if (vilobj == null)
+                {
+                    level.Logs.Log($"Could not find village object with game ID {gameId}.");
+                }
+                else
+                {
+                    if (vilobj is Building)
+                    {
+                        var building = (Building)vilobj;
+                        var data = building.NextUpgrade;
+                        var resource = UseAlternativeResource ? data.AltBuildResource : data.BuildResource;
+
+                        if (building.IsConstructing)
+                        {
+                            level.Logs.Log($"Building at {gameId} was already in construction.");
+                        }
+                        else
+                        {
+                            level.Avatar.UseResource(resource, data.BuildCost);
+                            building.BeginConstruction(Tick);
+                        }
+                    }
+                    else
+                    {
+                        level.Logs.Log($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be upgraded.");
+                    }
+                }
+            }
         }
     }
 }

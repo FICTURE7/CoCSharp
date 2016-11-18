@@ -23,16 +23,16 @@
         /// User ID of avatar whose profile was requested.
         /// </summary>
         public long UserID;
+
         /// <summary>
-        /// User ID of avatar whose profile was requested again?
-        /// Might be Home ID.
+        /// Home ID of avatar whose profile was requested.
         /// </summary>
-        public long UserID2;
+        public long HomeID;
 
         /// <summary>
         /// Unknown byte 1.
         /// </summary>
-        public byte Unknown1;
+        public byte Unknown1; // Complete profile?
 
         /// <summary>
         /// Reads the <see cref="AvatarProfileRequestMessage"/> from the specified <see cref="MessageReader"/>.
@@ -44,7 +44,7 @@
         {
             UserID = reader.ReadInt64();
             if (reader.ReadBoolean())
-                UserID2 = reader.ReadInt64();
+                HomeID = reader.ReadInt64();
 
             Unknown1 = reader.ReadByte();
         }
@@ -58,8 +58,8 @@
         public override void WriteMessage(MessageWriter writer)
         {
             writer.Write(UserID);
-            if (UserID2 != 0)
-                writer.Write(UserID2);
+            if (HomeID != 0)
+                writer.Write(HomeID);
 
             writer.Write(Unknown1);
         }

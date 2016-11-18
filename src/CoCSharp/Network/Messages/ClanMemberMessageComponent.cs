@@ -105,10 +105,10 @@ namespace CoCSharp.Network.Messages
         public long ID2;
 
         /// <summary>
-        /// Reads the <see cref="CompleteClanMessageComponent"/> from the specified <see cref="MessageReader"/>.
+        /// Reads the <see cref="ClanCompleteMessageComponent"/> from the specified <see cref="MessageReader"/>.
         /// </summary>
         /// <param name="reader">
-        /// <see cref="MessageReader"/> that will be used to read the <see cref="CompleteClanMessageComponent"/>.
+        /// <see cref="MessageReader"/> that will be used to read the <see cref="ClanCompleteMessageComponent"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is null.</exception>
         public override void ReadMessageComponent(MessageReader reader)
@@ -135,10 +135,10 @@ namespace CoCSharp.Network.Messages
         }
 
         /// <summary>
-        /// Writes the <see cref="CompleteClanMessageComponent"/> to the specified <see cref="MessageWriter"/>.
+        /// Writes the <see cref="ClanCompleteMessageComponent"/> to the specified <see cref="MessageWriter"/>.
         /// </summary>
         /// <param name="writer">
-        /// <see cref="MessageWriter"/> that will be used to write the <see cref="CompleteClanMessageComponent"/>.
+        /// <see cref="MessageWriter"/> that will be used to write the <see cref="ClanCompleteMessageComponent"/>.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="writer"/> is null.</exception>
         public override void WriteMessageComponent(MessageWriter writer)

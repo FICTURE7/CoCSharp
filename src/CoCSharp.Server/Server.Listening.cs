@@ -1,13 +1,15 @@
 ﻿using CoCSharp.Server.API.Events.Server;
 using System;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace CoCSharp.Server
 {
     public partial class Server
     {
+        public volatile int TotalConnections;
+
         private volatile bool _stopAccept;
         private readonly Socket _listener;
         private readonly SocketAsyncEventArgsPool _acceptPool;
@@ -84,6 +86,7 @@ namespace CoCSharp.Server
                     var client = new Client(this, remoteSocket);
                     _clients.Add(client);
 
+                    Interlocked.Increment(ref TotalConnections);
                     OnConnection(new ServerConnectionEventArgs(this, client));
                     // Clean AcceptSocket to accept even more.
                     args.AcceptSocket = null;

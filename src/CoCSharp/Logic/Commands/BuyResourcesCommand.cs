@@ -1,4 +1,5 @@
-﻿using CoCSharp.Network;
+﻿using CoCSharp.Data.Slots;
+using CoCSharp.Network;
 using System;
 
 namespace CoCSharp.Logic.Commands
@@ -23,13 +24,13 @@ namespace CoCSharp.Logic.Commands
         public override int ID { get { return 518; } }
 
         /// <summary>
-        /// Data ID of the resource that was bought.
-        /// </summary>
-        public int ResourceDataID;
-        /// <summary>
         /// Amount of resources bought.
         /// </summary>
         public int ResourceAmount;
+        /// <summary>
+        /// Data ID of the resource that was bought.
+        /// </summary>
+        public int ResourceDataID;
         /// <summary>
         /// If it embeds another command.
         /// </summary>
@@ -56,8 +57,11 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfReaderNull(reader);
 
-            ResourceDataID = reader.ReadInt32();
             ResourceAmount = reader.ReadInt32();
+            ResourceDataID = reader.ReadInt32();
+
+            Unknown1 = reader.ReadInt32();
+
             EmbedCommand = reader.ReadBoolean();
             if (EmbedCommand)
             {
@@ -75,7 +79,7 @@ namespace CoCSharp.Logic.Commands
                 Command.ReadCommand(reader);
             }
 
-            Unknown1 = reader.ReadInt32();
+            Tick = reader.ReadInt32();
         }
 
         /// <summary>
@@ -92,8 +96,11 @@ namespace CoCSharp.Logic.Commands
             if (EmbedCommand && Command == null)
                 throw new InvalidOperationException("Embedded command specified return null.");
 
-            writer.Write(ResourceDataID);
             writer.Write(ResourceAmount);
+            writer.Write(ResourceDataID);
+
+            writer.Write(Unknown1);
+
             writer.Write(EmbedCommand);
             if (EmbedCommand)
             {
@@ -101,7 +108,31 @@ namespace CoCSharp.Logic.Commands
                 Command.WriteCommand(writer);
             }
 
-            writer.Write(Unknown1);
+            writer.Write(Tick);
+        }
+
+        public override void Execute(Level level)
+        {
+            var slot = level.Avatar.ResourcesAmount.GetSlot(ResourceDataID);
+
+            //TODO: Calculate diamond cost.
+            if (slot == null)
+            {
+                level.Avatar.ResourcesAmount.Add(new ResourceAmountSlot(ResourceDataID, ResourceAmount));
+            }
+            else
+            {
+                slot.Amount += ResourceAmount;
+            }
+
+            // Execute the embedded command using on the same tick
+            // as this command.
+            if (EmbedCommand && Command != null)
+            {
+                Command.Tick = Tick;
+                Command.Execute(level);
+                Command.Tick = -1;
+            }
         }
     }
 }

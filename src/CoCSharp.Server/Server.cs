@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace CoCSharp.Server
 {
@@ -53,10 +54,13 @@ namespace CoCSharp.Server
             // Initialize our client list.
             _clients = new ClientCollection();
 
+            _api = new WebApi(this);
+
             _assets = new AssetManager(CONTENT_PATH);
 
             _handler = new MessageHandler(this);
 
+            _heartbeat = new Timer(DoHeartbeat, null, 5000, 5000);
             _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(8, AcceptCompleted);
             _settings = new NetworkManagerAsyncSettings(64, 64);
@@ -70,7 +74,9 @@ namespace CoCSharp.Server
         private bool _disposed;
         private LiteDbManager _db;
 
+        private readonly Timer _heartbeat;
         private readonly Log _log;
+        private readonly WebApi _api;
         private readonly AssetManager _assets;
         private readonly ClientCollection _clients;
         private readonly MessageHandler _handler;
@@ -99,6 +105,7 @@ namespace CoCSharp.Server
             _assets.Load<CsvDataTable<DecorationData>>("logic/decos.csv");
             _assets.Load<CsvDataTable<ResourceData>>("logic/resources.csv");
             _assets.Load<CsvDataTable<GlobalData>>("logic/globals.csv");
+            _assets.Load<CsvDataTable<CharacterData>>("logic/characters.csv");
             _assets.Load<CsvDataTable<ExperienceLevelData>>("logic/experience_levels.csv");
 
             _db = new LiteDbManager(this);
@@ -110,6 +117,15 @@ namespace CoCSharp.Server
                 Close();
 
                 Environment.Exit(1);
+            }
+
+            try
+            {
+                _api.Start();
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Unable to start web API, {ex.Message}.");
             }
 
             OnStarted(EventArgs.Empty);
@@ -131,12 +147,24 @@ namespace CoCSharp.Server
             foreach (var c in _clients)
                 c.Disconnect();
 
-            _db.Dispose();
+            _heartbeat.Dispose();
+            _assets.Dispose();
             _acceptPool.Dispose();
             _listener.Close();
             _log.Dispose();
+            _db.Dispose();
 
             _disposed = true;
+        }
+
+        private void DoHeartbeat(object state)
+        {
+            foreach (var c in Clients)
+            {
+                // Remove and disconnect clients whose keep alive has been expired.
+                if (DateTime.UtcNow >= c.KeepAliveExpireTime)
+                    c.Disconnect();
+            }
         }
 
         protected virtual void OnStarted(EventArgs args)

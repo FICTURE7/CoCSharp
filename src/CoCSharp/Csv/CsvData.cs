@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CoCSharp.Csv
 {
     /// <summary>
-    /// Represents Clash of Clans data deserialized from .csv file.
+    /// Represents Clash of Clans data from .csv file.
     /// </summary>
     public abstract class CsvData
     {

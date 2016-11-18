@@ -15,7 +15,6 @@ namespace CoCSharp.Logic
         #region Constants
         private static readonly PropertyChangedEventArgs s_namedChanged = new PropertyChangedEventArgs(nameof(Name));
         private static readonly PropertyChangedEventArgs s_isNamedChanged = new PropertyChangedEventArgs(nameof(IsNamed));
-        private static readonly PropertyChangedEventArgs s_tokenChanged = new PropertyChangedEventArgs(nameof(Token));
         private static readonly PropertyChangedEventArgs s_idChanged = new PropertyChangedEventArgs(nameof(ID));
         private static readonly PropertyChangedEventArgs s_shieldEndTimeChanged = new PropertyChangedEventArgs(nameof(ShieldEndTime));
         private static readonly PropertyChangedEventArgs s_allianceChanged = new PropertyChangedEventArgs(nameof(Alliance));
@@ -36,6 +35,7 @@ namespace CoCSharp.Logic
         /// Initializes a new instance of the <see cref="Avatar"/> class with the specified <see cref="Level"/>.
         /// </summary>
         /// <param name="level"><see cref="Level"/> which owns this <see cref="Avatar"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
         public Avatar(Level level)
         {
             if (level == null)
@@ -148,25 +148,6 @@ namespace CoCSharp.Logic
 
                 _isNamed = value;
                 OnPropertyChanged(s_isNamedChanged);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the user token of the <see cref="Avatar"/>.
-        /// </summary>
-        public string Token
-        {
-            get
-            {
-                return _token;
-            }
-            set
-            {
-                if (_token == value)
-                    return;
-
-                _token = value;
-                OnPropertyChanged(s_tokenChanged);
             }
         }
 
@@ -521,7 +502,7 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Methods
-        public void ConsumeResource(string resourceName, int amount)
+        public void UseResource(string resourceName, int amount)
         {
             var assets = _level.Assets;
             var resourceTable = assets.Get<CsvDataTable<ResourceData>>();
@@ -529,15 +510,21 @@ namespace CoCSharp.Logic
 
             var slot = ResourcesAmount.GetSlot(resourceId);
             if (slot == null)
-                throw new LogicException($"Could not find resource slot with ID {resourceId}.");
-
-            slot.Amount -= amount;
-
-            // Not the neatest of ways, but it works.
-            if (resourceName == "Diamonds")
             {
-                Gems -= amount;
-                FreeGems -= amount;
+                ResourcesAmount.Add(new ResourceAmountSlot(resourceId, -amount));
+            }
+            else
+            {
+                // Do some maths.
+                slot.Amount -= amount;
+
+                const string GEMS_RESOURCE_NAME = "Diamonds";
+                // Not the neatest of ways, but it works.
+                if (resourceName == GEMS_RESOURCE_NAME)
+                {
+                    Gems -= amount;
+                    FreeGems -= amount;
+                }
             }
         }
 

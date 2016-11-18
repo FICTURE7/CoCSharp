@@ -28,7 +28,7 @@ namespace CoCSharp.Network.Messages
         public VillageMessageComponent(Level level)
         {
             if (level == null)
-                throw new ArgumentNullException("avatar");
+                throw new ArgumentNullException(nameof(level));
 
             HomeID = level.Avatar.ID;
             ShieldDuration = level.Avatar.ShieldDuration;
@@ -36,7 +36,7 @@ namespace CoCSharp.Network.Messages
             //GuardDuration = 1800;
             //Unknown3 = 69119;
             //Unknown4 = 1200;
-            
+
 
             //Unknown5 = 60;
             VillageJson = level.Village.ToJson();
@@ -58,7 +58,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Duration of guard.
         /// </summary>
-        public TimeSpan GuardDuration; // 1800 = 8.x.x, GuardDuration?
+        public TimeSpan GuardDuration;
 
         /// <summary>
         /// Unknown integer 3.

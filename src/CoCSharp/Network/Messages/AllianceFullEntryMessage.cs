@@ -19,7 +19,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Clan data.
         /// </summary>
-        public CompleteClanMessageComponent Clan;
+        public ClanCompleteMessageComponent Clan;
         /// <summary>
         /// Description of the clan.
         /// </summary>
@@ -62,7 +62,7 @@ namespace CoCSharp.Network.Messages
             if (reader.ReadBoolean())
                 WarID = reader.ReadInt64();
 
-            Clan = new CompleteClanMessageComponent();
+            Clan = new ClanCompleteMessageComponent();
             Clan.ReadMessageComponent(reader);
         }
 

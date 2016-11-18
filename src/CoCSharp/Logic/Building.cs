@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Csv;
 using CoCSharp.Data.Models;
+using CoCSharp.Logic.Components;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -40,7 +41,7 @@ namespace CoCSharp.Logic
         /// <exception cref="ArgumentNullException"><paramref name="data"/> is null.</exception>
         public Building(Village village, BuildingData data) : base(village, data)
         {
-            // Space
+            SetComponents();
         }
         #endregion
 
@@ -81,7 +82,7 @@ namespace CoCSharp.Logic
         protected override string GetBuildResource(BuildingData data) => data.BuildResource;
 
         /// <summary/>
-        protected override int GetTownHallLevel(BuildingData data) => data.TownHallLevel;       
+        protected override int GetTownHallLevel(BuildingData data) => data.TownHallLevel;
 
         /// <summary/>
         protected internal override void ResetVillageObject()
@@ -111,7 +112,7 @@ namespace CoCSharp.Logic
             writer.WriteValue(ID);
 
             writer.WritePropertyName("lvl");
-            writer.WriteValue(Level);
+            writer.WriteValue(UpgradeLevel);
 
             if (IsLocked != default(bool))
             {
@@ -136,6 +137,10 @@ namespace CoCSharp.Logic
 
             writer.WritePropertyName("y");
             writer.WriteValue(Y);
+
+            // Writes our list of component.
+            foreach (var comp in Components)
+                comp?.ToJsonWriter(writer);
 
             writer.WriteEndObject();
         }
@@ -217,14 +222,26 @@ namespace CoCSharp.Logic
             UpdateData(dataId, lvl);
             UpdateIsUpgradable();
 
+            //SetComponents();
+            //if (UpgradeLevel == -1)
+            //{
+
+            //}
+
             if (RowCache.Name == "Town Hall")
                 Village._townhall = this;
 
             if (constTimeEndSet)
             {
-                var startTime = (int)TimeUtils.ToUnixTimestamp(Village.LastTick);
+                var startTime = (int)TimeUtils.ToUnixTimestamp(Village.LastTickTime);
                 var duration = constTimeEnd - startTime;
-                Timer.Start(Village.LastTick, 0, duration);
+
+                // Clamp value to 0.
+                if (duration < 0)
+                    duration = 0;
+
+                Village.WorkerManager.AllocateWorker(this);
+                Timer.Start(Village.LastTickTime, 0, duration);
             }
         }
         #endregion
@@ -239,6 +256,24 @@ namespace CoCSharp.Logic
 
             obj.SetVillageInternal(village);
             return (Building)obj;
+        }
+
+        private void SetComponents()
+        {
+            //var data = (BuildingData)null;
+            //if (Data != null)
+            //    data = Data;
+            //else if (NextUpgrade != null)
+            //    data = NextUpgrade;
+
+            //if (data == null)
+            //{
+            //    Level.Logs.Log("Unable to SetComponents.");
+            //    return;
+            //}
+
+            //if (data.UnitProduction > 0)
+            //    AddComponent(new UnitProductionComponent());
         }
         #endregion
     }

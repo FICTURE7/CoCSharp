@@ -7,8 +7,12 @@ namespace CoCSharp.Logic
     /// <summary>
     /// Represents an object in a <see cref="Village"/> which has a <see cref="CsvData"/> associated with it.
     /// </summary>
+    /// 
+    /// <remarks>
+    /// This class inherits from the <see cref="VillageObject"/> class.
+    /// </remarks>
+    /// 
     /// <typeparam name="TCsvData">Type of <see cref="CsvData"/> associated with it.</typeparam>
-    [DebuggerDisplay("ID = {ID}, DataRef = {DataRef.ID}")]
     public abstract class VillageObject<TCsvData> : VillageObject where TCsvData : CsvData, new()
     {
         #region Constructors
@@ -41,7 +45,12 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
+        // Data associated with this VillageObject.
+        // Should never be = null unless the object has been reset.
         internal TCsvData _data;
+
+        /// <summary/>
+        protected override string DebuggerDisplayString => $"ID = {ID} Data = {(_data.RowRef == null ? "null" : _data.ID.ToString())}";
 
         /// <summary>
         /// Gets the <typeparamref name="TCsvData"/> associated with this <see cref="VillageObject"/>.
@@ -49,7 +58,7 @@ namespace CoCSharp.Logic
         /// 
         /// <remarks>
         /// In <see cref="Buildable{TCsvData}"/> this value can be null when 
-        /// <see cref="Buildable{TCsvData}.Level"/> is -1 or <see cref="Buildable{TCsvData}.NotConstructedLevel"/>.
+        /// <see cref="Buildable{TCsvData}.UpgradeLevel"/> is -1 or <see cref="Buildable{TCsvData}.NotConstructedLevel"/>.
         /// </remarks>
         public TCsvData Data => _data;
 

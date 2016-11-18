@@ -208,10 +208,14 @@ namespace CoCSharp.Logic
                 {
                     var row = _table[i];
                     for (int j = 0; j < row.Count; j++)
-                        yield return row[j];
+                    {
+                        var obj = row[j];
+                        if (obj != null)
+                            yield return obj;
+                    }
                 }
             }
-        }
+        }        
 
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -240,7 +244,7 @@ namespace CoCSharp.Logic
                 {
                     var row = _table[i];
                     for (int k = 0; k < row.Count; k++)
-                        row[k].Tick(tick);
+                        row[k]?.Tick(tick);
                 }
             }
         }
@@ -292,12 +296,9 @@ namespace CoCSharp.Logic
             if (columnIndex > row.Count - 1)
                 return false;
 
-            // Update the IDs VillageObjects in the row/list after the one we removed.
             row[columnIndex]._columnIndex = -1;
-            row.RemoveAt(columnIndex);
-            for (; columnIndex < row.Count; columnIndex++)
-                row[columnIndex]._columnIndex--;
-
+            row[columnIndex].PushToPool();
+            row[columnIndex] = null;
             return true;
         }
 

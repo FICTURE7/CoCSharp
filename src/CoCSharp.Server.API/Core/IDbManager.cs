@@ -40,6 +40,12 @@ namespace CoCSharp.Server.API.Core
         /// <returns>A new <see cref="ILevelSave"/> with the specified token and ID.</returns>
         ILevelSave NewLevel(long id, string token);
 
+        /// <summary>
+        /// Returns a random <see cref="ILevelSave"/> from the database.
+        /// </summary>
+        /// <returns>A random <see cref="ILevelSave"/> from the database.</returns>
+        ILevelSave RandomLevel();
+
         // TODO: Interacting with alliances as well.
     }
 }

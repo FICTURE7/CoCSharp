@@ -141,33 +141,7 @@ namespace CoCSharp.Network
             CheckLength(length, "string");
             var buffer = ReadBytes(length);
             return Encoding.UTF8.GetString(buffer);
-        }
-
-        /// <summary>
-        /// Reads a <see cref="SlotCollection{TSlot}"/> from the current stream.
-        /// </summary>
-        /// <typeparam name="TSlot">Type of <see cref="Slot"/> to read.</typeparam>
-        /// <returns>A <see cref="SlotCollection{TSlot}"/> read from the current stream.</returns>
-        /// <exception cref="ObjectDisposedException">The <see cref="MessageReader"/> is closed.</exception>
-        /// <exception cref="InvalidMessageException">Slot collection length is invalid.</exception>
-        public SlotCollection<TSlot> Read<TSlot>() where TSlot : Slot, new()
-        {
-            CheckDispose();
-
-            var count = ReadInt32();
-            if (count < 0)
-                throw new InvalidMessageException("Invalid slot array size: " + count);
-
-            var collection = new SlotCollection<TSlot>();
-            for (int i = 0; i < count; i++)
-            {
-                var instance = new TSlot();
-                instance.ReadSlot(this);
-
-                collection.Add(instance);
-            }
-            return collection;
-        }
+        }        
 
         /// <summary>
         /// Reads a length-prefixed byte array from the current stream and advances the stream position
@@ -226,7 +200,7 @@ namespace CoCSharp.Network
                 throw new InvalidMessageException("The length of a " + typeName + " was larger than the remaining bytes '" + length + "'.");
         }
 
-        private void CheckDispose()
+        internal void CheckDispose()
         {
             if (_disposed)
                 throw new ObjectDisposedException(null, "Cannot access the MessageReader object because it was disposed.");

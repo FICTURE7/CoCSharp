@@ -86,17 +86,30 @@ namespace CoCSharp.Logic.Commands
 
             var dataRef = new CsvDataRowRef<TrapData>(TrapDataID);
             var assets = level.Assets;
-            var tableCollection = assets.Get<CsvDataTableCollection>();
+            var tableCollection = assets.DataTables;
             var row = dataRef.Get(tableCollection);
+            if (row == null)
+            {
+                level.Logs.Log($"Unable to find CsvDataRow<TrapData> for data ID {TrapDataID}.");
+            }
+            else
+            {
+                // Use the first level.
+                var data = row[0];
+                if (data == null)
+                {
+                    level.Logs.Log($"Unable to find TrapData of level 0 for data ID {TrapDataID}.");
+                }
+                else
+                {
+                    level.Avatar.UseResource(data.BuildResource, data.BuildCost);
 
-            // Use the first level.
-            var data = row[0];
-            level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
-
-            var trap = new Trap(level.Village, data);
-            trap.X = X;
-            trap.Y = Y;
-            trap.BeginConstruction(Tick);
+                    var trap = new Trap(level.Village, data);
+                    trap.X = X;
+                    trap.Y = Y;
+                    trap.BeginConstruction(Tick);
+                }
+            }
         }
     }
 }

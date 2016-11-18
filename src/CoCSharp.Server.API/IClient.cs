@@ -44,6 +44,16 @@ namespace CoCSharp.Server.API
         Level Level { get; set; }
 
         /// <summary>
+        /// Gets or sets the <see cref="DateTime"/> of when the last keep alive response was received.
+        /// </summary>
+        DateTime LastKeepAliveTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DateTime"/> of when the keep alive expires.
+        /// </summary>
+        DateTime KeepAliveExpireTime { get; set; }
+
+        /// <summary>
         /// Gets the <see cref="ILevelSave"/> representing this <see cref="IClient.Level"/>.
         /// </summary>
         ILevelSave Save { get; }

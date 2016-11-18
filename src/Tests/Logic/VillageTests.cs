@@ -60,12 +60,12 @@ namespace CoCSharp.Test.Logic
             Assert.AreEqual(23, townhall.Y);
             Assert.AreEqual(500000000, townhall.ID);
             //Assert.AreEqual(1000001, townhall.Data._OldID);
-            Assert.AreEqual(1, townhall.Level);
+            Assert.AreEqual(1, townhall.UpgradeLevel);
 
             var building2 = village.Buildings.Where(b => b.ID == 500000002).FirstOrDefault();
 
             Assert.NotNull(building2);
-            Assert.AreEqual(-1, building2.Level);
+            Assert.AreEqual(-1, building2.UpgradeLevel);
             //Assert.AreEqual(0, building2.NextUpgrade.Level);
         }
 

@@ -5,6 +5,7 @@ using CoCSharp.Server.API;
 using CoCSharp.Server.API.Core;
 using LiteDB;
 using System;
+using System.Linq;
 
 namespace CoCSharp.Server.Core
 {
@@ -58,6 +59,7 @@ namespace CoCSharp.Server.Core
         private readonly LiteCollection<LevelSave> _levels;
 
         public IServer Server => _server;
+        public int TotalEntries => _levels.Count();
         #endregion
 
         #region Methods
@@ -67,6 +69,18 @@ namespace CoCSharp.Server.Core
                 throw new ArgumentOutOfRangeException(nameof(id), "ID of level must be greater or equal to 1.");
 
             return _levels.FindById(id);
+        }
+
+        private Random _random = new Random();
+        public ILevelSave RandomLevel()
+        {
+            using (var trans = _db.BeginTrans())
+            {
+                var totalEntries = TotalEntries;
+                var skipCount = _random.Next(totalEntries);
+                var lvl = _levels.FindAll().Skip(skipCount).FirstOrDefault();
+                return lvl;
+            }
         }
 
         public void SaveLevel(ILevelSave level)

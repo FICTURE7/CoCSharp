@@ -57,6 +57,7 @@
     <Compile Include="Data\SlotCollectionTests.cs" />
     <Compile Include="Logic\BuildingTests.cs" />
     <Compile Include="Logic\LevelTests.cs" />
+    <Compile Include="Logic\TickTimerTests.cs" />
     <Compile Include="Logic\VillageTests.cs" />
     <Compile Include="Logic\VillageObjectCollectionTests.cs" />
     <Compile Include="Network\CommandFactoryTests.cs" />

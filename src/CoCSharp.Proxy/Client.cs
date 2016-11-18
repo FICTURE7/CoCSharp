@@ -1,5 +1,6 @@
 ﻿using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
+using CoCSharp.Network.Messages;
 using System;
 using System.IO;
 using System.Net.Sockets;
@@ -95,6 +96,13 @@ namespace CoCSharp.Proxy
             }
 
             File.WriteAllBytes(e.Message.ID.ToString(), e.Plaintext);
+
+            if (message is OwnHomeDataMessage)
+            {
+                var ohd = message as OwnHomeDataMessage;
+                File.WriteAllText("ownhome-" + DateTime.Now.ToString("mm_ss") + ".json", ohd.OwnVillageData.VillageJson);
+            }
+
             // Forward data to the client.
             ClientConnection.Socket.Send(sendingBytes);
         }

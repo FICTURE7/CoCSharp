@@ -30,7 +30,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// NPC village.
         /// </summary>
-        public Village NpcVillage;
+        public string NpcVillageJson;
         /// <summary>
         /// Own avatar data.
         /// </summary>
@@ -58,13 +58,13 @@ namespace CoCSharp.Network.Messages
 
             Unknown1 = reader.ReadInt32();
 
-            var villageJson = reader.ReadString();
-            NpcVillage = Village.FromJson(villageJson);
+            NpcVillageJson = reader.ReadString();
 
             AvatarData = new AvatarMessageComponent();
             AvatarData.ReadMessageComponent(reader);
 
             Unknown2 = reader.ReadInt32();
+
             NpcID = reader.ReadInt32();
         }
 
@@ -85,11 +85,11 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown1);
 
-            var villageJson = NpcVillage.ToJson();
-            writer.Write(villageJson);
+            writer.Write(NpcVillageJson);
             AvatarData.WriteMessageComponent(writer);
 
             writer.Write(Unknown2);
+
             writer.Write(NpcID);
         }
     }

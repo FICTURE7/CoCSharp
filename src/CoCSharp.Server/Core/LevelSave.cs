@@ -68,10 +68,10 @@ namespace CoCSharp.Server.Core
                 throw new ArgumentNullException(nameof(level));
 
             level.Village = Village.FromJson(VillageJson, level);
-            level.LastSave = LastSave;
+            level.LastSaveTime = LastSave;
 
+            level.Token = Token;
             level.Avatar.ID = ID;
-            level.Avatar.Token = Token;
             level.Avatar.Name = Name;
             level.Avatar.IsNamed = IsNamed;
             level.Avatar.League = League;
@@ -116,10 +116,10 @@ namespace CoCSharp.Server.Core
                 throw new ArgumentNullException(nameof(level));
 
             VillageJson = level.Village.ToJson();
-            LastSave = level.LastSave;
+            LastSave = level.LastSaveTime;
 
+            Token = level.Token;
             ID = level.Avatar.ID;
-            Token = level.Avatar.Token;
             Name = level.Avatar.Name;
             IsNamed = level.Avatar.IsNamed;
             League = level.Avatar.League;

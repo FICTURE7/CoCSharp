@@ -60,6 +60,12 @@ namespace CoCSharp.Logic.Commands
             writer.Write(Tick);
         }
 
+        /// <summary>
+        /// Performs the execution of the <see cref="SellDecorationCommand"/> on the specified <see cref="Avatar"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Level"/> on which to perform the <see cref="SellDecorationCommand"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="level.Village"/> is null.</exception>
         public override void Execute(Level level)
         {
             ThrowIfLevelNull(level);
@@ -69,20 +75,21 @@ namespace CoCSharp.Logic.Commands
             var vilobj = village.VillageObjects[DecorationGameID];
             if (vilobj == null)
             {
-                Debug.WriteLine($"Could not find village object with ID: {DecorationGameID}");
-                return;
+                level.Logs.Log($"Could not find village object with game ID {DecorationGameID}.");
             }
+            else
+            {
+                var deco = (Decoration)vilobj;
+                var data = deco.Data;
+                var buildCost = data.BuildCost;
+                var buildResource = data.BuildResource;
 
-            var deco = (Decoration)vilobj;
-            var data = deco.Data;
-            var buildCost = data.BuildCost;
-            var buildResource = data.BuildResource;
+                // 10% of build cost.
+                var refund = (int)Math.Round(0.1d * data.BuildCost);
 
-            // 10% of build cost.
-            var refund = (int)Math.Round(0.1d * data.BuildCost);
-
-            level.Avatar.ConsumeResource(buildResource, -refund);
-            village.VillageObjects.Remove(DecorationGameID);
+                level.Avatar.UseResource(buildResource, -refund);
+                village.VillageObjects.Remove(DecorationGameID);
+            }
         }
     }
 }

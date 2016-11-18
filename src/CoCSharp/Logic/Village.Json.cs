@@ -50,8 +50,8 @@ namespace CoCSharp.Logic
 
                 jsonWriter.WritePropertyName("decos");
                 WriteDecorationArray(jsonWriter);
-                jsonWriter.WriteEndObject();
 
+                jsonWriter.WriteEndObject();
                 return textWriter.ToString();
             }
         }
@@ -146,7 +146,8 @@ namespace CoCSharp.Logic
             if (village._townhall == null)
                 throw new InvalidOperationException("Village does not contain a Town Hall.");
 
-            // Tick once to update/set VillageObject values.
+            // Tick once to update/set VillageObject values and
+            // finish construction that are finished.
             village.Update(0);
 
             return village;
@@ -156,8 +157,8 @@ namespace CoCSharp.Logic
         private void WriteBuildingArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            foreach (var building in Buildings)
-                building.ToJsonWriter(writer);
+            foreach (var building in _villageObjects.GetRow(Building.Kind))
+                building?.ToJsonWriter(writer);
 
             writer.WriteEndArray();
         }
@@ -165,8 +166,8 @@ namespace CoCSharp.Logic
         private void WriteObstacleArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            foreach (var obstacle in Obstacles)
-                obstacle.ToJsonWriter(writer);
+            foreach (var obstacle in _villageObjects.GetRow(Obstacle.Kind))
+                obstacle?.ToJsonWriter(writer);
 
             writer.WriteEndArray();
         }
@@ -174,8 +175,8 @@ namespace CoCSharp.Logic
         private void WriteTrapArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            foreach (var trap in Traps)
-                trap.ToJsonWriter(writer);
+            foreach (var trap in _villageObjects.GetRow(Trap.Kind))
+                trap?.ToJsonWriter(writer);
 
             writer.WriteEndArray();
         }
@@ -183,8 +184,8 @@ namespace CoCSharp.Logic
         private void WriteDecorationArray(JsonWriter writer)
         {
             writer.WriteStartArray();
-            foreach (var deco in Decorations)
-                deco.ToJsonWriter(writer);
+            foreach (var deco in _villageObjects.GetRow(Decoration.Kind))
+                deco?.ToJsonWriter(writer);
 
             writer.WriteEndArray();
         }

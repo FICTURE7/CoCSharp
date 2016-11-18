@@ -1,49 +1,86 @@
 ﻿using System;
 using Newtonsoft.Json;
+using System.Collections;
 
 namespace CoCSharp.Logic.Components
 {
     /// <summary>
     /// 
     /// </summary>
-    public class UnitProductionComponent : LogicComponent
+    public class UnitProductionComponent : Component
     {
         internal const int ID = 0;
 
-        internal UnitProductionComponent()
+        internal UnitProductionComponent() : base()
         {
-            // Space
+            _k = new Queue();
         }
 
-        internal override string ComponentName
+        public bool _isSpell;
+        private readonly Queue _k;
+
+        /// <summary>
+        /// Gets the <see cref="Queue"/> of character to produce.
+        /// </summary>
+        public Queue ProductionQueue => _k;
+
+        /// <summary>
+        /// Gets a value indicating whether the <see cref="UnitProductionComponent"/> is a spell production component.
+        /// </summary>
+        public bool IsSpell => _isSpell;
+
+        /// <summary/>
+        protected internal override string ComponentName => "unit_prod";
+
+        /// <summary/>
+        protected internal override int ComponentID => ID;
+
+        /// <summary/>
+        protected internal override void ResetComponent()
         {
-            get
-            {
-                return "unit_prod";
-            }
+            _k.Clear();
+            _isSpell = default(bool);
         }
 
-        internal override int ComponentID
+        /// <summary/>
+        protected internal override void Tick(int ctick)
         {
-            get
-            {
-                return ID;
-            }
+
         }
 
-        internal override void Execute()
+        /// <summary/>
+        protected internal override void FromJsonReader(JsonReader reader)
         {
-            throw new NotImplementedException();
+
         }
 
-        internal override void FromJsonReader(JsonReader reader)
+        /// <summary/>
+        protected internal override void ToJsonWriter(JsonWriter writer)
         {
-            throw new NotImplementedException();
-        }
+            var type = _isSpell ? 1 : 0;
+            writer.WritePropertyName("unit_type");
+            writer.WriteValue(type);
 
-        internal override void ToJsonWriter(JsonWriter writer)
-        {
-            throw new NotImplementedException();
+            writer.WritePropertyName("m");
+            writer.WriteValue(1);
+
+            //writer.WriteStartArray();
+            ////foreach (var k in _k)
+            ////{
+            ////    if (_isSpell)
+            ////    {
+            ////    }
+            ////    else
+            ////    {
+
+            ////    }
+            ////}
+
+            //writer.WriteStartObject();
+
+            //writer.WriteEndObject();
+
+            //writer.WriteEndArray();
         }
     }
 }

@@ -109,7 +109,7 @@ namespace CoCSharp.Logic
         }
 
         // Seconds remaining to clear to the obstacle.
-        private int ClearTSeconds => _timer.Duration;
+        private int ClearTSeconds => (int)_timer.Duration;
 
         internal override int KindID => 3;
         #endregion
@@ -122,7 +122,7 @@ namespace CoCSharp.Logic
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>true</c>.</exception>
         /// <exception cref="InvalidOperationException"><see cref="VillageObject{ObstacleData}.Data"/> is <c>null</c>.</exception>
-        public void BeginClearing(int tick)
+        public void BeginClearing(int ctick)
         {
             if (IsClearing)
                 throw new InvalidOperationException("Obstacle object is already clearing.");
@@ -130,7 +130,9 @@ namespace CoCSharp.Logic
             Debug.Assert(_data != null, "Obstacle Data was null.");
             var clearTime = _data.ClearTime;
             var seconds = (int)clearTime.TotalSeconds;
-            _timer.Start(Village.LastTick, tick, seconds);
+
+            Village.WorkerManager.AllocateWorker(this);
+            _timer.Start(Village.LastTickTime, ctick, seconds);
         }
 
         /// <summary>
@@ -138,23 +140,27 @@ namespace CoCSharp.Logic
         /// it throws an <see cref="InvalidOperationException"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException"><see cref="IsClearing"/> is <c>false</c>.</exception>
-        public void CancelClearing(int tick)
+        public void CancelClearing(int ctick)
         {
             if (!IsClearing)
                 throw new InvalidOperationException("Obstacle object is not being cleared.");
 
+            Village.WorkerManager.DeallotateWorker(this);
             _timer.Stop();
         }
 
+        // Gem drop sequence when the respawnVars in the home JSON are not set.
         private static readonly int[] s_gemDrops =
         {
-            3, 0, 1, 2, 0, 1, 1, 0, 0, 3, 1, 0, 2, 2, 0, 0, 3, 0, 1, 0
+            3, 0, 1, 2, 0, 1, 1, 0, 0, 3,
+            1, 0, 2, 2, 0, 0, 3, 0, 1, 0
         };
-        private void FinishClear(int tick)
+        internal void FinishClear(int ctick)
         {
-            _timer.Stop();
+            Debug.WriteLine($"FinishClear: Construction for {ID} finished on tick {ctick} expected {_timer.EndTick}...");
 
-            Debug.WriteLine($"FinishClear: Construction for {ID} finished on tick {tick} expected {_timer.EndTick}...");
+            _timer.Stop();
+            Village.WorkerManager.DeallotateWorker(this);
 
             var duration = _data.ClearTime;
             var player = Village.Level;
@@ -169,16 +175,17 @@ namespace CoCSharp.Logic
             var expLevel = LogicUtils.CalculateExpLevel(Assets, ref expCurLevel, ref expPoints);
             player.Avatar.ExpPoints = expPoints;
             player.Avatar.ExpLevel = expLevel;
-            player.Avatar.Gems += gems;            
+            player.Avatar.Gems += gems;
 
-            Village.VillageObjects.Remove(ID);            
+            Village.VillageObjects.Remove(ID);
         }
 
         /// <summary/>
-        protected internal override void Tick(int tick)
+        protected internal override void Tick(int ctick)
         {
-            if (_timer.IsCompleted(tick))
-                FinishClear(tick);
+            _timer.Tick(ctick);
+            if (_timer.IsComplete)
+                FinishClear(ctick);
         }
 
         /// <summary/>
@@ -186,8 +193,10 @@ namespace CoCSharp.Logic
         {
             base.ResetVillageObject();
 
+            //_timer.Stop();
+            _timer.Reset();
+            Village?.WorkerManager.DeallotateWorker(this);
             _lootMultiplier = default(int);
-            //ClearTEndUnixTimestamp = default(int);
         }
 
         #region Json Reading/Writing
@@ -279,7 +288,7 @@ namespace CoCSharp.Logic
             if (instance.InvalidDataID(dataId))
                 throw new InvalidOperationException($"Obstacle JSON at {reader.Path} contained an invalid ObstacleData ID. {instance.GetArgsOutOfRangeMessage("Data ID")}");
 
-            var tableCollection = Assets.Get<CsvDataTableCollection>();
+            var tableCollection = Assets.DataTables;
             var dataRef = new CsvDataRowRef<ObstacleData>(dataId);
             var data = dataRef.Get(tableCollection)[0];
             if (data == null)
@@ -288,7 +297,10 @@ namespace CoCSharp.Logic
             _data = data;
 
             if (clearTimeSet)
-                _timer.Start(Village.LastTick, 0, clearTime);
+            {
+                Village.WorkerManager.AllocateWorker(this);
+                _timer.Start(Village.LastTickTime, 0, clearTime);
+            }
         }
         #endregion
 

@@ -24,7 +24,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Clans available to join.
         /// </summary>
-        public CompleteClanMessageComponent[] Clans;
+        public ClanCompleteMessageComponent[] Clans;
 
         /// <summary>
         /// Reads the <see cref="JoinableAllianceListResponseMessage"/> from the specified <see cref="MessageReader"/>.
@@ -35,10 +35,10 @@ namespace CoCSharp.Network.Messages
         public override void ReadMessage(MessageReader reader)
         {
             var count = reader.ReadInt32();
-            Clans = new CompleteClanMessageComponent[count];
+            Clans = new ClanCompleteMessageComponent[count];
             for (int i = 0; i < Clans.Length; i++)
             {
-                var clan = new CompleteClanMessageComponent();
+                var clan = new ClanCompleteMessageComponent();
                 clan.ReadMessageComponent(reader);
                 Clans[i] = clan;
             }

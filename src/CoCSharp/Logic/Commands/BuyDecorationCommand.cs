@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Csv;
 using CoCSharp.Data.Models;
-using CoCSharp.Logic;
 using CoCSharp.Network;
 using System;
 
@@ -87,16 +86,29 @@ namespace CoCSharp.Logic.Commands
 
             var dataRef = new CsvDataRowRef<DecorationData>(DecorationDataID);
             var assets = level.Assets;
-            var tableCollection = assets.Get<CsvDataTableCollection>();
+            var tableCollection = assets.DataTables;
             var row = dataRef.Get(tableCollection);
+            if (row == null)
+            {
+                level.Logs.Log($"Unable to find CsvDataRow<DecorationData> for data ID {DecorationDataID}.");
+            }
+            else
+            {
+                // Use the first level.
+                var data = row[0];
+                if (data == null)
+                {
+                    level.Logs.Log($"Unable to find DecorationData of level 0 for data ID {DecorationDataID}.");
+                }
+                else
+                {
+                    level.Avatar.UseResource(data.BuildResource, data.BuildCost);
 
-            // Use the first level.
-            var data = row[0];
-            level.Avatar.ConsumeResource(data.BuildResource, data.BuildCost);
-
-            var deco = new Decoration(level.Village, data);
-            deco.X = X;
-            deco.Y = Y;
+                    var deco = new Decoration(level.Village, data);
+                    deco.X = X;
+                    deco.Y = Y;
+                }
+            }
         }
     }
 }

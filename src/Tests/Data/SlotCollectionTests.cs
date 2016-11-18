@@ -30,13 +30,6 @@ namespace CoCSharp.Test.Data
         }
 
         [Test]
-        public void Add_IsReadOnly_Exception()
-        {
-            _collection.IsReadOnly = true;
-            Assert.Throws<InvalidOperationException>(() => _collection.Add(new ResourceAmountSlot()));
-        }
-
-        [Test]
         public void Add_ValidItem_ItemAdded_And_EventRaised()
         {
             _collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => Assert.AreEqual(NotifyCollectionChangedAction.Add, e.Action);
@@ -54,30 +47,12 @@ namespace CoCSharp.Test.Data
         }
 
         [Test]
-        public void Remove_IsReadOnly_Exception()
-        {
-            var slot = AddSlot();
-            _collection.IsReadOnly = true;
-            Assert.Throws<InvalidOperationException>(() => _collection.Remove(slot));
-        }
-
-        [Test]
         public void Remove_ValidItem_ItemRemoved_And_EventRaised()
         {
             var slot = AddSlot();
             _collection.CollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => Assert.AreEqual(NotifyCollectionChangedAction.Remove, e.Action);
             Assert.True(_collection.Remove(slot));
             Assert.AreEqual(0, _collection.Count);
-        }
-
-        [Test]
-        public void Clear_IsReadOnly_Exception()
-        {
-            for (int i = 0; i < 50; i++)
-                _collection.Add(new ResourceAmountSlot(3000000 + i, 10000));
-
-            _collection.IsReadOnly = true;
-            Assert.Throws<InvalidOperationException>(() => _collection.Clear());
         }
 
         [Test]

@@ -110,7 +110,7 @@ namespace CoCSharp.Logic
             writer.WriteValue(ID);
 
             writer.WritePropertyName("lvl");
-            writer.WriteValue(Level);
+            writer.WriteValue(UpgradeLevel);
 
             if (ConstructionTEndUnixTimestamp != default(int))
             {

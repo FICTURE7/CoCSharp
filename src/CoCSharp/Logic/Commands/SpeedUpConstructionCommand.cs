@@ -77,29 +77,45 @@ namespace CoCSharp.Logic.Commands
             var vilobj = village.VillageObjects[BuildableGameID];
             if (vilobj == null)
             {
-                Debug.WriteLine($"Could not find village object with ID: {BuildableGameID}");
-                return;
-            }
-
-            if (vilobj is Building)
-            {
-                var building = (Building)vilobj;
-                var speedUpCost = LogicUtils.CalculateSpeedUpCost(level.Assets, building.ConstructionDuration);
-                level.Avatar.Gems -= speedUpCost;
-                building.SpeedUpConstruction(Tick);
-            }
-            else if (vilobj is Trap)
-            {
-                var trap = (Trap)vilobj;
-                var speedUpCost = LogicUtils.CalculateSpeedUpCost(level.Assets, trap.ConstructionDuration);
-                level.Avatar.Gems -= speedUpCost;
-                trap.SpeedUpConstruction(Tick);
+                level.Logs.Log($"Could not find village object with game ID {BuildableGameID}.");
             }
             else
             {
-                Debug.WriteLine($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be upgraded.");
-            }
+                if (vilobj is Building)
+                {
+                    var building = (Building)vilobj;
+                    if (!building.IsConstructing)
+                    {
+                        level.Logs.Log($"Tried to speed the construction of a building which is not in construction with game ID {BuildableGameID}.");
+                    }
+                    else
+                    {
+                        var speedUpCost = LogicUtils.CalculateSpeedUpCost(level.Assets, building.ConstructionDuration);
+                        level.Avatar.Gems -= speedUpCost;
 
+                        building.SpeedUpConstruction(Tick);
+                    }
+                }
+                else if (vilobj is Trap)
+                {
+                    var trap = (Trap)vilobj;
+                    if (!trap.IsConstructing)
+                    {
+                        level.Logs.Log($"Tried to speed the construction of a trap which is not in construction with game ID {BuildableGameID}.");
+                    }
+                    else
+                    {
+                        var speedUpCost = LogicUtils.CalculateSpeedUpCost(level.Assets, trap.ConstructionDuration);
+                        level.Avatar.Gems -= speedUpCost;
+
+                        trap.SpeedUpConstruction(Tick);
+                    }
+                }
+                else
+                {
+                    level.Logs.Log($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be upgraded.");
+                }
+            }
         }
     }
 }

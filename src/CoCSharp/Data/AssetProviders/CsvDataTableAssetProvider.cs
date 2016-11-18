@@ -10,12 +10,14 @@ namespace CoCSharp.Data.AssetProviders
     {
         public CsvDataTableAssetProvider()
         {
-            _table = new CsvDataTableCollection();
+            Table = new CsvDataTableCollection();
             _type2id = new Dictionary<Type, int>();
         }
 
+        private bool _disposed;
         // Set of CsvDataTable where we store the loaded CsvDataTables.
-        private readonly CsvDataTableCollection _table;
+        public readonly CsvDataTableCollection Table;
+
         // Dictionary mapping types of loaded CsvData to their KindIDs.
         private readonly Dictionary<Type, int> _type2id;
 
@@ -37,23 +39,43 @@ namespace CoCSharp.Data.AssetProviders
 
             // Convert that CsvTable object into a CsvDataTable<TCsvData> object.
             var dataTable = CsvConvert.Deserialize(table, genericArgs);
-            _table.Add(dataTable);
+            Table.Add(dataTable);
 
             _type2id.Add(type, dataTable.KindID);
+        }
+
+        public override bool UnloadAsset(Type type)
+        {
+            return _type2id.Remove(type);
         }
 
         // Returns the CsvDataTable<> of the specified type.
         public override object GetAsset(Type type)
         {
             if (type == typeof(CsvDataTableCollection))
-                return _table;
+                return Table;
 
             // Get the Kind ID from type.
             var id = default(int);
             if (!_type2id.TryGetValue(type, out id))
                 return null;
 
-            return _table[id];
+            return Table[id];
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                // Remove refs to tables.
+                _type2id.Clear();
+            }
+
+            base.Dispose(disposing);
+            _disposed = true;
         }
     }
 }
