@@ -1,6 +1,4 @@
-﻿using CoCSharp.Network;
-using CoCSharp.Network.Messages;
-using Ionic.Zip;
+﻿using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -13,66 +11,42 @@ namespace CoCSharp.Proxy
     {
         public static Proxy Proxy { get; set; }
 
-        public static void m()
-        {
-            var k = File.ReadAllBytes("dump.bin");
-            using (var k2 = new MessageReader(new MemoryStream(k)))
-            {
-                var asdf = new VisitHomeDataMessage();
-                asdf.ReadMessage(k2);
-            }
-        }
-
         public static void Main(string[] args)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            Console.WriteLine("Compressing 'message-dumps' directory...");
+            CompressDir("message-dumps");
 
-            if (!Directory.Exists("messages"))
-                Directory.CreateDirectory("messages");
-            else
-            {
-                var files = Directory.GetFiles("messages");
-                if (files.Length != 0)
-                {
-                    Console.Write("Compressing old message dumps...");
-                    using (var messageZip = new ZipFile("messages-" + DateTime.Now.ToString("hh-mm-ss.fff") + ".zip"))
-                    {
-                        messageZip.AddFiles(files);
-                        messageZip.Save();
-                    }
-                    Directory.Delete("messages", true);
-                    Console.WriteLine("Done!");
-                }
-                Directory.CreateDirectory("messages");
-            }
+            Console.WriteLine("Compressing 'village-dumps' directory...");
+            CompressDir("village-dumps");
 
-            if (!Directory.Exists("villages"))
-                Directory.CreateDirectory("villages");
-            else
-            {
-                var files = Directory.GetFiles("villages");
-                if (files.Length != 0)
-                {
-                    Console.Write("Compressing old message dumps...");
-                    using (var villageZip = new ZipFile("villages-" + DateTime.Now.ToString("hh-mm-ss.fff") + ".zip"))
-                    {
-                        villageZip.AddFiles(files);
-                        villageZip.Save();
-                    }
-                    Directory.Delete("villages", true);
-                    Console.WriteLine("Done!");
-                }
-                Directory.CreateDirectory("villages");
-            }
+            var sw = Stopwatch.StartNew();
 
             Proxy = new Proxy();
             Proxy.Start(new IPEndPoint(IPAddress.Any, 9339));
 
-            stopwatch.Stop();
+            sw.Stop();
 
-            Console.WriteLine("Done({0}ms)! Listening on *:9339", stopwatch.Elapsed.TotalMilliseconds);
+            Console.WriteLine("Done({0}ms)! Listening on *:9339", sw.Elapsed.TotalMilliseconds);
             Thread.Sleep(Timeout.Infinite);
+        }
+
+        private static void CompressDir(string path)
+        {
+            if (!Directory.Exists(path))
+                return;
+
+            if (!Directory.Exists("compressed-dumps"))
+                Directory.CreateDirectory("compressed-dumps");
+
+            var now = DateTime.Now;
+            var fileName = Path.Combine("compressed-dumps", $"{path}_{now.ToString("yy_MM_dd_hh_mm_ss")}.zip");
+            using (var zip = new ZipFile(fileName))
+            {
+                zip.AddDirectory(path);
+                zip.Save();
+            }
+
+            Directory.Delete(path, true);
         }
     }
 }

@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageDumper.cs" />
+    <Compile Include="MessageLogger.cs" />
+    <Compile Include="MessageMapper.cs" />
     <Compile Include="MessageProcessorNaClProxy.cs" />
     <Compile Include="Proxy.cs" />
     <Compile Include="Client.cs" />
