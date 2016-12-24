@@ -15,7 +15,7 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int KindID => 4;
+        internal override int KindId => 4;
 
         // NOTE: This was generated from the decomp_characters.csv using gen_csv_properties.py script.
 

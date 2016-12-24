@@ -20,7 +20,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="ChatMessageServerMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24715; } }
+        public override ushort Id { get { return 24715; } }
 
         /// <summary>
         /// Message that will be sent to the lobby.
@@ -33,7 +33,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Level of the sender.
         /// </summary>
-        public int ExpLevel;
+        public int ExpLevels;
         /// <summary>
         /// League of the sender.
         /// </summary>
@@ -41,11 +41,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// User ID of the sender.
         /// </summary>
-        public long UserID;
+        public long UserId;
         /// <summary>
         /// Current user ID of the sender.
         /// </summary>
-        public long HomeID;
+        public long HomeId;
         /// <summary>
         /// Clan of the sender.
         /// </summary>
@@ -64,15 +64,15 @@ namespace CoCSharp.Network.Messages
 
             Message = reader.ReadString();
             Name = reader.ReadString();
-            ExpLevel = reader.ReadInt32();
+            ExpLevels = reader.ReadInt32();
             League = reader.ReadInt32();
-            UserID = reader.ReadInt64();
-            HomeID = reader.ReadInt64();
+            UserId = reader.ReadInt64();
+            HomeId = reader.ReadInt64();
 
             Alliance = new Clan();
             if (reader.ReadBoolean())
             {
-                Alliance.ID = reader.ReadInt64();
+                Alliance.Id = reader.ReadInt64();
                 Alliance.Name = reader.ReadString();
                 Alliance.Badge = reader.ReadInt32();
             }
@@ -91,14 +91,14 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Message);
             writer.Write(Name);
-            writer.Write(ExpLevel);
+            writer.Write(ExpLevels);
             writer.Write(League);
-            writer.Write(UserID);
-            writer.Write(HomeID);
+            writer.Write(UserId);
+            writer.Write(HomeId);
             if (Alliance != null)
             {
                 writer.Write(true);
-                writer.Write(Alliance.ID);
+                writer.Write(Alliance.Id);
                 writer.Write(Alliance.Name);
                 writer.Write(Alliance.Badge);
             }

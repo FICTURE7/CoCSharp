@@ -18,7 +18,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="AvatarStreamMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24411; } }
+        public override ushort Id { get { return 24411; } }
 
         /// <summary>
         /// List of <see cref="AvatarStreamEntry"/>.
@@ -66,7 +66,10 @@ namespace CoCSharp.Network.Messages
             for (int i = 0; i < count; i++)
             {
                 var entry = Entries[i];
-                writer.Write(entry.ID);
+                if (entry == null)
+                    throw new Exception();
+
+                writer.Write(entry.Id);
                 entry.WriteStreamEntry(writer);
             }
         }

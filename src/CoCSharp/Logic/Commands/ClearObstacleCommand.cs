@@ -21,12 +21,12 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="ClearObstacleCommand"/>.
         /// </summary>
-        public override int ID { get { return 507; } }
+        public override int Id { get { return 507; } }
 
         /// <summary>
         /// Game ID of the <see cref="Obstacle"/> that was cleared.
         /// </summary>
-        public int ObstacleGameID;
+        public int ObstacleGameId;
 
         /// <summary>
         /// Reads the <see cref="ClearObstacleCommand"/> from the specified <see cref="MessageReader"/>.
@@ -39,7 +39,7 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfReaderNull(reader);
 
-            ObstacleGameID = reader.ReadInt32();
+            ObstacleGameId = reader.ReadInt32();
 
             Tick = reader.ReadInt32();
         }
@@ -55,7 +55,7 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ObstacleGameID);
+            writer.Write(ObstacleGameId);
 
             writer.Write(Tick);
         }
@@ -72,10 +72,10 @@ namespace CoCSharp.Logic.Commands
             ThrowIfLevelVillageNull(level);
 
             var village = level.Village;
-            var vilobj = village.VillageObjects[ObstacleGameID];
+            var vilobj = village.VillageObjects[ObstacleGameId];
             if (vilobj == null)
             {
-                level.Logs.Log($"Could not find village object with game ID {ObstacleGameID}.");
+                level.Logs.Log($"Could not find village object with game ID {ObstacleGameId}.");
             }
             else
             {
@@ -83,7 +83,7 @@ namespace CoCSharp.Logic.Commands
                 var data = obstacle.Data;
                 if (obstacle.IsClearing)
                 {
-                    level.Logs.Log($"Tried to clear an obstacle which is already being cleared with game ID {ObstacleGameID}.");
+                    level.Logs.Log($"Tried to clear an obstacle which is already being cleared with game ID {ObstacleGameId}.");
                 }
                 else
                 {

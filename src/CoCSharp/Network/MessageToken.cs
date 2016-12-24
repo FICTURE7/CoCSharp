@@ -12,7 +12,7 @@ namespace CoCSharp.Network
         public int TokenID { get; set; }
         public SocketAsyncEventArgs Args { get; set; }
 
-        public ushort ID { get; set; }
+        public ushort Id { get; set; }
         public int Length { get; set; }
         public ushort Version { get; set; }
 
@@ -23,7 +23,7 @@ namespace CoCSharp.Network
 
         public void Reset()
         {
-            ID = 0;
+            Id = 0;
             Length = 0;
             Version = 0;
 
@@ -50,7 +50,7 @@ namespace CoCSharp.Network
         public int TokenID { get; set; }
         public SocketAsyncEventArgs Args { get; set; }
 
-        public ushort ID { get; set; }
+        public ushort Id { get; set; }
         public int Length { get; set; }
         public ushort Version { get; set; }
 
@@ -65,7 +65,7 @@ namespace CoCSharp.Network
 
         public void Reset()
         {
-            ID = 0;
+            Id = 0;
             Length = 0;
             Version = 0;
 

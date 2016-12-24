@@ -20,7 +20,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="UpgradeBuildableCommand"/>.
         /// </summary>
-        public override int ID { get { return 502; } }
+        public override int Id { get { return 502; } }
 
         /// <summary>
         /// Game ID of the <see cref="Buildable{TCsvData}"/> that was upgraded.
@@ -93,28 +93,44 @@ namespace CoCSharp.Logic.Commands
                 {
                     var building = (Building)vilobj;
                     var data = building.NextUpgrade;
-                    if (building.IsConstructing)
+                    if (data == null)
                     {
-                        level.Logs.Log($"Building at {BuildableGameID} was already in construction.");
+                        var name = building.Data?.Name;
+                        level.Logs.Log($"Unable to find next upgrade for building with level {building.UpgradeLevel + 1} {name}.");
                     }
                     else
                     {
-                        level.Avatar.UseResource(data.BuildResource, data.BuildCost);
-                        building.BeginConstruction(Tick);
+                        if (building.IsConstructing)
+                        {
+                            level.Logs.Log($"Building at {BuildableGameID} was already in construction.");
+                        }
+                        else
+                        {
+                            level.Avatar.UseResource(data.BuildResource, data.BuildCost);
+                            building.BeginConstruction(Tick);
+                        }
                     }
                 }
                 else if (vilobj is Trap)
                 {
                     var trap = (Trap)vilobj;
                     var data = trap.NextUpgrade;
-                    if (trap.IsConstructing)
+                    if (data == null)
                     {
-                        level.Logs.Log($"Trap at {BuildableGameID} was already in construction.");
+                        var name = trap.Data?.Name;
+                        level.Logs.Log($"Unable to find next upgrade for trap with level {trap.UpgradeLevel + 1} {name}.");
                     }
                     else
                     {
-                        level.Avatar.UseResource(data.BuildResource, data.BuildCost);
-                        trap.BeginConstruction(Tick);
+                        if (trap.IsConstructing)
+                        {
+                            level.Logs.Log($"Trap at {BuildableGameID} was already in construction.");
+                        }
+                        else
+                        {
+                            level.Avatar.UseResource(data.BuildResource, data.BuildCost);
+                            trap.BeginConstruction(Tick);
+                        }
                     }
                 }
                 else

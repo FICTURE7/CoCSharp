@@ -8,6 +8,28 @@ using System.IO;
 namespace CoCSharp.Data
 {
     /// <summary>
+    /// Defines multiple modes of locking an <see cref="AssetManager"/>.
+    /// </summary>
+    [Flags]
+    public enum AssetManagerLockMode
+    {
+        /// <summary>
+        /// Locks loading of assets.
+        /// </summary>
+        Loading = 1,
+
+        /// <summary>
+        /// Locks unloading of assets.
+        /// </summary>
+        Unloading = 2,
+
+        /// <summary>
+        /// Locks both loading and unloading of assets.
+        /// </summary>
+        Both = Loading | Unloading
+    }
+
+    /// <summary>
     /// Provides methods to manage Clash of Clans assets.
     /// </summary>
     /// 
@@ -19,7 +41,7 @@ namespace CoCSharp.Data
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetManager"/> class with the specified path
-        /// pointing to the asset directory.
+        /// pointing to the root of the asset directory.
         /// </summary>
         /// <param name="rootDir">Path pointing to the asset directory.</param>
         /// <exception cref="ArgumentNullException"><paramref name="rootDir"/> is null.</exception>
@@ -29,7 +51,7 @@ namespace CoCSharp.Data
             if (string.IsNullOrWhiteSpace(rootDir))
                 throw new ArgumentNullException(nameof(rootDir));
             if (!Directory.Exists(rootDir))
-                throw new DirectoryNotFoundException($"Could not find directory at '{ Path.GetFullPath(rootDir)}'.");
+                throw new DirectoryNotFoundException($"Could not find directory at '{Path.GetFullPath(rootDir)}'.");
 
             _rootDir = rootDir;
             _providers = new Dictionary<Type, AssetProvider>();
@@ -42,13 +64,21 @@ namespace CoCSharp.Data
             RegisterProvider(typeof(CsvDataTableCollection), tableProvider);
 
             _table = tableProvider.Table;
+
+            var fingerprintJsonPath = Path.Combine(_rootDir, "fingerprint.json");
+            var fingerprintJson = File.ReadAllText(fingerprintJsonPath);
+            _fingerprint = Fingerprint.FromJson(fingerprintJson);
         }
         #endregion
 
         #region Fields & Properties
         private bool _disposed;
+        private Fingerprint _fingerprint;
+        // How the AssetManager has been locked.
+        private AssetManagerLockMode _mode;
+        // 'Shortcut' to the CsvDataTableAssetProvider's CsvDataTableCollection so that
+        // we don't need to look it up the dictionary.
         private readonly CsvDataTableCollection _table;
-
         private readonly string _rootDir;
         // Dictionary of AssetLoaders that will load assets of the specified type.
         private readonly Dictionary<Type, AssetProvider> _providers;
@@ -60,9 +90,19 @@ namespace CoCSharp.Data
         public static AssetManager Default { get; set; }
 
         /// <summary>
+        /// Gets the current <see cref="AssetManagerLockMode"/> of the <see cref="AssetManager"/>.
+        /// </summary>
+        public AssetManagerLockMode LockMode => _mode;
+
+        /// <summary>
         /// Gets the path pointing to the asset directory.
         /// </summary>
         public string RootDirectory => _rootDir;
+
+        /// <summary>
+        /// Gets the <see cref="Data.Fingerprint"/> of the assets.
+        /// </summary>
+        public Fingerprint Fingerprint => _fingerprint;
 
         /// <summary>
         /// Gets the <see cref="CsvDataColumnCollection"/> instance.
@@ -82,9 +122,21 @@ namespace CoCSharp.Data
 
         #region Methods
         /// <summary>
+        /// Locks the <see cref="AssetManager"/> with the specified <see cref="AssetManagerLockMode"/>.
+        /// </summary>
+        /// <param name="mode">Mode in which to lock the <see cref="AssetManager"/>.</param>
+        public void Lock(AssetManagerLockMode mode)
+        {
+            CheckDispose();
+
+            _mode |= mode;
+        }
+
+        /// <summary>
         /// Loads the specified asset type at the specified path relative to <see cref="RootDirectory"/> in memory.
         /// </summary>
         /// <typeparam name="TAsset">Type of asset to load.</typeparam>
+        /// 
         /// <param name="path">Path to asset file relative to <see cref="RootDirectory"/>.</param>
         /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetManager"/> is disposed.</exception>
@@ -95,10 +147,11 @@ namespace CoCSharp.Data
         public void Load<TAsset>(string path) where TAsset : new()
         {
             CheckDispose();
-
             if (path == null)
                 throw new ArgumentNullException(nameof(path));
 
+            if (_mode.HasFlag(AssetManagerLockMode.Loading))
+                throw new InvalidOperationException("Loading of assets is locked.");
             if (IsLoaded<TAsset>())
                 throw new InvalidOperationException("Asset of specified type is already loaded.");
 
@@ -119,6 +172,7 @@ namespace CoCSharp.Data
         /// <summary>
         /// Unloads the specified asset type.
         /// </summary>
+        ///
         /// <typeparam name="TAsset">Type of asset to unload.</typeparam>
         /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetManager"/> is disposed.</exception>
@@ -126,6 +180,9 @@ namespace CoCSharp.Data
         public void UnloadAsset<TAsset>() where TAsset : new()
         {
             CheckDispose();
+
+            if (_mode.HasFlag(AssetManagerLockMode.Unloading))
+                throw new InvalidOperationException("Unloading of assets is locked.");
 
             var type = typeof(TAsset);
             var provider = GetProvider(type);
@@ -137,7 +194,8 @@ namespace CoCSharp.Data
         /// Returns a value indicating whether the specified asset type is loaded.
         /// </summary>
         /// <typeparam name="TAsset">Type of asset to check whether its loaded.</typeparam>
-        /// <returns><c>tru</c> if the asset is loaded; otherwise, <c>false</c>.</returns>
+        /// 
+        /// <returns><c>true</c> if the asset is loaded; otherwise, <c>false</c>.</returns>
         /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetManager"/> is disposed.</exception>
         /// <exception cref="InvalidOperationException">Unknown asset type.</exception>
@@ -154,6 +212,7 @@ namespace CoCSharp.Data
         /// Returns the asset of the specified type that was loaded.
         /// </summary>
         /// <typeparam name="TAsset">Type of asset to return.</typeparam>
+        /// 
         /// <returns><typeparamref name="TAsset"/> that was loaded.</returns>
         /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetManager"/> is disposed.</exception>

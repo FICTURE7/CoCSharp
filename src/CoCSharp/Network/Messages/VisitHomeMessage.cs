@@ -19,12 +19,17 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="VisitHomeMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14113; } }
+        public override ushort Id { get { return 14113; } }
 
         /// <summary>
         /// ID of home the avatar has visited.
         /// </summary>
-        public long HomeID;
+        public long HomeId;
+
+        /// <summary>
+        /// Unknown integer 1.
+        /// </summary>
+        public int Unknown1;
 
         /// <summary>
         /// Reads the <see cref="VisitHomeMessage"/> from the specified <see cref="MessageReader"/>.
@@ -37,7 +42,9 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            HomeID = reader.ReadInt64();
+            HomeId = reader.ReadInt64();
+
+            Unknown1 = reader.ReadInt32();
         }
 
         /// <summary>
@@ -51,7 +58,9 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(HomeID);
+            writer.Write(HomeId);
+
+            writer.Write(Unknown1);
         }
     }
 }

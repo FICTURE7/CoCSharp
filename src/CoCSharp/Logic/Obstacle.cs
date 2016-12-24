@@ -57,7 +57,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets whether the <see cref="Obstacle"/> is being cleared.
         /// </summary>
-        public bool IsClearing => ClearTSeconds > 0;
+        public bool IsClearing => _timer.IsActive;
 
         /// <summary>
         /// Gets or sets the loot multiplier of the <see cref="Obstacle"/>.
@@ -111,7 +111,7 @@ namespace CoCSharp.Logic
         // Seconds remaining to clear to the obstacle.
         private int ClearTSeconds => (int)_timer.Duration;
 
-        internal override int KindID => 3;
+        internal override int KindId => 3;
         #endregion
 
         #region Methods
@@ -157,7 +157,7 @@ namespace CoCSharp.Logic
         };
         internal void FinishClear(int ctick)
         {
-            Debug.WriteLine($"FinishClear: Construction for {ID} finished on tick {ctick} expected {_timer.EndTick}...");
+            Debug.WriteLine($"FinishClear: Construction for {Id} finished on tick {ctick} expected {_timer.EndTick}...");
 
             _timer.Stop();
             Village.WorkerManager.DeallotateWorker(this);
@@ -171,13 +171,13 @@ namespace CoCSharp.Logic
 
             var expPointsGained = LogicUtils.CalculateExpPoints(duration);
             var expPoints = player.Avatar.ExpPoints + expPointsGained;
-            var expCurLevel = player.Avatar.ExpLevel;
+            var expCurLevel = player.Avatar.ExpLevels;
             var expLevel = LogicUtils.CalculateExpLevel(Assets, ref expCurLevel, ref expPoints);
             player.Avatar.ExpPoints = expPoints;
-            player.Avatar.ExpLevel = expLevel;
+            player.Avatar.ExpLevels = expLevel;
             player.Avatar.Gems += gems;
 
-            Village.VillageObjects.Remove(ID);
+            Village.VillageObjects.Remove(Id);
         }
 
         /// <summary/>
@@ -206,10 +206,10 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(Data.ID);
+            writer.WriteValue(Data.Id);
 
             writer.WritePropertyName("id");
-            writer.WriteValue(ID);
+            writer.WriteValue(Id);
 
             if (ClearTSeconds != default(int))
             {

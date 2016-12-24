@@ -17,7 +17,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="CreateAllianceMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14301; } }
+        public override ushort Id { get { return 14301; } }
 
         /// <summary>
         /// Name of the alliance.

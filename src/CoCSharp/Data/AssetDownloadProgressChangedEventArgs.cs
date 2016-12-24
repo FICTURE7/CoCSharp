@@ -34,5 +34,10 @@ namespace CoCSharp.Data
         /// Gets or sets the amount of files downloaded.
         /// </summary>
         public int DownloadedCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the file was downloaded.
+        /// </summary>
+        public bool WasDownloaded { get; set; }
     }
 }

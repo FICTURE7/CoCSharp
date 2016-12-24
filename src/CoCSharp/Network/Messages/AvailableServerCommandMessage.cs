@@ -20,7 +20,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="AvailableServerCommandMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24111; } }
+        public override ushort Id { get { return 24111; } }
 
         /// <summary>
         /// <see cref="Command"/> to send to the client.
@@ -61,7 +61,7 @@ namespace CoCSharp.Network.Messages
             if (Command == null)
                 throw new InvalidOperationException("Command cannot be null.");
 
-            writer.Write(Command.ID);
+            writer.Write(Command.Id);
             Command.WriteCommand(writer);
         }
     }

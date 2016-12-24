@@ -19,11 +19,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// User ID of the client.
         /// </summary>
-        public long UserID;
+        public long UserId;
         /// <summary>
-        /// User ID of the client. Should be same as <see cref="UserID"/>.
+        /// User ID of the client. Should be same as <see cref="UserId"/>.
         /// </summary>
-        public long UserID1;
+        public long HomeId;
         /// <summary>
         /// User token of the client.
         /// </summary>
@@ -31,11 +31,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Facebook ID.
         /// </summary>
-        public string FacebookID;
+        public string FacebookId;
         /// <summary>
         /// Game center ID.
         /// </summary>
-        public string GameCenterID;
+        public string GameCenterId;
         /// <summary>
         /// Major version.
         /// </summary>
@@ -69,15 +69,15 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Facebook application ID.
         /// </summary>
-        public string FacebookAppID;
+        public string FacebookAppId;
         /// <summary>
         /// Date last logged in.
         /// </summary>
-        public DateTime DateLastPlayed;
+        public DateTime DateLastSave;
         /// <summary>
         /// Date joined the server.
         /// </summary>
-        public DateTime DateJoined;
+        public DateTime DateCreated;
 
         /// <summary>
         /// Unknown integer 2.
@@ -87,7 +87,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Google plus ID.
         /// </summary>
-        public string GooglePlusID;
+        public string GooglePlusId;
         /// <summary>
         /// Country code.
         /// </summary>
@@ -102,7 +102,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         ///  Gets the ID of the <see cref="LoginSuccessMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 20104; } }
+        public override ushort Id { get { return 20104; } }
 
         /// <summary>
         /// Reads the <see cref="LoginSuccessMessage"/> from the specified <see cref="MessageReader"/>.
@@ -115,11 +115,11 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            UserID = reader.ReadInt64();
-            UserID1 = reader.ReadInt64();
+            UserId = reader.ReadInt64();
+            HomeId = reader.ReadInt64();
             UserToken = reader.ReadString();
-            FacebookID = reader.ReadString();
-            GameCenterID = reader.ReadString();
+            FacebookId = reader.ReadString();
+            GameCenterId = reader.ReadString();
             MajorVersion = reader.ReadInt32();
             MinorVersion = reader.ReadInt32();
             RevisionVersion = reader.ReadInt32();
@@ -129,13 +129,13 @@ namespace CoCSharp.Network.Messages
 
             Unknown1 = reader.ReadInt32();
 
-            FacebookAppID = reader.ReadString();
-            DateLastPlayed = TimeUtils.FromJavaTimestamp(double.Parse(reader.ReadString()));
-            DateJoined = TimeUtils.FromJavaTimestamp(double.Parse(reader.ReadString()));
+            FacebookAppId = reader.ReadString();
+            DateLastSave = TimeUtils.FromJavaTimestamp(double.Parse(reader.ReadString()));
+            DateCreated = TimeUtils.FromJavaTimestamp(double.Parse(reader.ReadString()));
 
             Unknown2 = reader.ReadInt32();
 
-            GooglePlusID = reader.ReadString();
+            GooglePlusId = reader.ReadString();
             CountryCode = reader.ReadString();
 
             Unknown3 = reader.ReadString();
@@ -152,11 +152,11 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(UserID);
-            writer.Write(UserID1);
+            writer.Write(UserId);
+            writer.Write(HomeId);
             writer.Write(UserToken);
-            writer.Write(FacebookID);
-            writer.Write(GameCenterID);
+            writer.Write(FacebookId);
+            writer.Write(GameCenterId);
             writer.Write(MajorVersion);
             writer.Write(MinorVersion);
             writer.Write(RevisionVersion);
@@ -166,13 +166,13 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown1);
 
-            writer.Write(FacebookAppID);
-            writer.Write(TimeUtils.ToJavaTimestamp(DateLastPlayed).ToString());
-            writer.Write(TimeUtils.ToJavaTimestamp(DateJoined).ToString());
+            writer.Write(FacebookAppId);
+            writer.Write(TimeUtils.ToJavaTimestamp(DateLastSave).ToString());
+            writer.Write(TimeUtils.ToJavaTimestamp(DateCreated).ToString());
 
             writer.Write(Unknown2);
 
-            writer.Write(GooglePlusID);
+            writer.Write(GooglePlusId);
             writer.Write(CountryCode);
 
             writer.Write(Unknown3);

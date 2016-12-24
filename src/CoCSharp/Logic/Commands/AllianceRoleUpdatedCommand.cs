@@ -21,12 +21,12 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="AllianceRoleUpdatedCommand"/>.
         /// </summary>
-        public override int ID { get { return 8; } }
+        public override int Id { get { return 8; } }
 
         /// <summary>
         /// Clan ID which the client in.
         /// </summary>
-        public long ClanID;
+        public long ClanId;
        
         /// <summary>
         /// Unknown integer 1.
@@ -37,10 +37,6 @@ namespace CoCSharp.Logic.Commands
         /// Role.
         /// </summary>
         public ClanMemberRole Role;
-        /// <summary>
-        /// Current tick.
-        /// </summary>
-        public int Tick;
 
         /// Reads the <see cref="AllianceRoleUpdatedCommand"/> from the specified <see cref="MessageReader"/>.
         /// <summary>
@@ -53,7 +49,7 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfReaderNull(reader);
 
-            ClanID = reader.ReadInt64();
+            ClanId = reader.ReadInt64();
 
             Unknown1 = reader.ReadInt32();
 
@@ -72,7 +68,7 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ClanID);
+            writer.Write(ClanId);
 
             writer.Write(Unknown1);
 

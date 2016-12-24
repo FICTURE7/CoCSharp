@@ -17,12 +17,12 @@ namespace CoCSharp.Csv
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="id"/> is less than 0 or is less than 1000000.</exception>
         public CsvDataRowRef(int id)
         {
-            if (id < 0 || id < InternalConstants.IDBase)
+            if (id < 0 || id < InternalConstants.IdBase)
                 throw new ArgumentOutOfRangeException("id", "id must be non-negative and greater or equal to 1000000.");
 
             _id = id;
-            _tableIndex = id / InternalConstants.IDBase;
-            _rowIndex = id - (_tableIndex * InternalConstants.IDBase);
+            _tableIndex = id / InternalConstants.IdBase;
+            _rowIndex = id - (_tableIndex * InternalConstants.IdBase);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace CoCSharp.Csv
 
             _tableIndex = tableIndex;
             _rowIndex = rowIndex;
-            _id = (tableIndex * InternalConstants.IDBase) + rowIndex;
+            _id = (tableIndex * InternalConstants.IdBase) + rowIndex;
         }
         #endregion
 
@@ -51,7 +51,7 @@ namespace CoCSharp.Csv
         /// <summary>
         /// Gets the ID of the <see cref="CsvDataRowRef"/> class.
         /// </summary>
-        public int ID => _id;
+        public int Id => _id;
 
         /// <summary>
         /// Gets the table index of the <see cref="CsvDataRowRef"/> class.

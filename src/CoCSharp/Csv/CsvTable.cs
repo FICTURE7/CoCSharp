@@ -229,7 +229,7 @@ namespace CoCSharp.Csv
                 throw new ObjectDisposedException(null, "Cannot access CsvTable object because it was disposed.");
             if (path == null)
                 throw new ArgumentNullException("path");
-            if (compression > CsvTableCompression.Compressed || compression < CsvTableCompression.Uncompressed)
+            if (compression < CsvTableCompression.Compressed || compression > CsvTableCompression.Uncompressed)
                 throw new ArgumentException("Unexpected compression type.", "compression");
 
             // Write column names.
@@ -407,6 +407,8 @@ namespace CoCSharp.Csv
             // stream will be disposed as well when reader is disposed.
             using (var reader = (TextReader)new StreamReader(stream))
             {
+                stream.Seek(0, SeekOrigin.Begin);
+
                 var strTable = ParseTable(reader);
                 // First row of CSV files are the property names.
                 var rowNames = strTable[0];
@@ -459,7 +461,7 @@ namespace CoCSharp.Csv
                 var name = rowNames[i];
                 var type = (Type)null;
 
-                var columnType = RemoveCommas(rowTypes[i].ToLower());
+                var columnType = rowTypes[i].ToLower();
 
                 switch (columnType)
                 {
@@ -495,11 +497,32 @@ namespace CoCSharp.Csv
             if (row == null)
                 return null;
 
-            var columns = row.Split(',');
-            // Remove the inverted commas in the columns values.
-            for (int i = 0; i < columns.Length; i++)
-                columns[i] = RemoveCommas(columns[i]);
-            return columns;
+            var inCommas = false;
+            var columns = new List<string>(64);
+            var columnValue = string.Empty;
+            for (int i = 0; i < row.Length; i++)
+            {
+                var c = row[i];
+                if (c == '"')
+                {
+                    if (inCommas)
+                        inCommas = false;
+                    else
+                        inCommas = true;
+                }
+                else if (c == ',' && !inCommas)
+                {
+                    columns.Add(columnValue);
+                    columnValue = string.Empty;
+                }
+                else
+                {
+                    columnValue += c;
+                }
+            }
+            columns.Add(columnValue);
+
+            return columns.ToArray();
         }
 
         // Parses the table into a table of strings.
@@ -513,7 +536,7 @@ namespace CoCSharp.Csv
             do
             {
                 if (row.Length != tableWidth)
-                    throw new CsvException(string.Format("CSV file has an inconsistent table width. Expected row at {0} to have a width of {1} but was {2}",
+                    throw new CsvException(string.Format("CSV file has an inconsistent table width. Expected row at line {0} to have a width of {1} but was {2}",
                                                          rowLn, tableWidth, row.Length));
 
                 rows.Add(row);
@@ -605,18 +628,6 @@ namespace CoCSharp.Csv
             ReturnCompressed:
             stream.Seek(initialPos, SeekOrigin.Begin);
             return CsvTableCompression.Compressed;
-        }
-
-        private static string RemoveCommas(string value)
-        {
-            var invComOpn = value.IndexOf("\"");
-            var invComCls = value.LastIndexOf("\"");
-            if (invComOpn == -1 || invComCls == -1)
-                return value;
-
-            value = value.Remove(invComOpn, 1);
-            value = value.Remove(invComCls - 1, 1);
-            return value;
         }
         #endregion
     }

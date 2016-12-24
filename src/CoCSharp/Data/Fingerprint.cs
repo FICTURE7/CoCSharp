@@ -53,7 +53,6 @@ namespace CoCSharp.Data
         /// </summary>
         /// <param name="index">The zero-based index of the element to get or set.</param>
         /// <returns>The <see cref="FingerprintFile"/> at the specified index.</returns>
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is invalid.</exception>
         public FingerprintFile this[int index]
         {
@@ -68,8 +67,6 @@ namespace CoCSharp.Data
             }
             set
             {
-                if (IsReadOnly)
-                    throw new InvalidOperationException("Fingerprint object is readonly.");
                 if (index < 0)
                     throw new ArgumentOutOfRangeException("index", "index must be greater or equal to 0.");
                 if (index > _files.Count - 1)
@@ -79,61 +76,22 @@ namespace CoCSharp.Data
             }
         }
 
-        private byte[] _masterHash;
         /// <summary>
         /// Gets or sets the SHA-1 master hash of the <see cref="Fingerprint"/>.
         /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
-        public byte[] MasterHash
-        {
-            get
-            {
-                return _masterHash;
-            }
-            set
-            {
-                if (IsReadOnly)
-                    throw new InvalidOperationException("Fingerprint object is readonly.");
+        public string MasterHash { get; set; }
 
-                _masterHash = value;
-            }
-        }
-
-        private string _version;
         /// <summary>
         /// Gets or sets the version of the <see cref="Fingerprint"/>.
         /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
-        public string Version
-        {
-            get
-            {
-                return _version;
-            }
-            set
-            {
-                if (IsReadOnly)
-                    throw new InvalidOperationException("Fingerprint object is readonly.");
-
-                _version = value;
-            }
-        }
+        public string Version { get; set; }
 
         /// <summary>
         /// Gets the number of <see cref="FingerprintFile"/> in the <see cref="Fingerprint"/>.
         /// </summary>
-        public int Count
-        {
-            get
-            {
-                return _files.Count;
-            }
-        }
+        public int Count => _files.Count;
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="Fingerprint"/> is read only.
-        /// </summary>
-        public bool IsReadOnly { get; set; }
+        bool ICollection<FingerprintFile>.IsReadOnly => false;
 
         private List<FingerprintFile> _files;
 
@@ -141,20 +99,20 @@ namespace CoCSharp.Data
         /// Computes the master hash of the overall fingerprint file.
         /// </summary>
         /// <returns>Master hash of the overall fingerprint file.</returns>
-        public byte[] ComputeMasterHash()
+        public string ComputeMasterHash()
         {
             var hashes = new StringBuilder();
 
             // Appends all hashes of the FingerprintFiles into hex-strings.
             for (int i = 0; i < _files.Count; i++)
             {
-                var hash = InternalUtils.BytesToString(_files[i].Hash);
+                var hash = _files[i].Hash;
                 hashes.Append(hash);
             }
 
             var hashesBytes = Encoding.UTF8.GetBytes(hashes.ToString());
             using (var sha1 = SHA1.Create())
-                return sha1.ComputeHash(hashesBytes);
+                return InternalUtils.BytesToString(sha1.ComputeHash(hashesBytes));
         }
 
         /// <summary>
@@ -195,10 +153,10 @@ namespace CoCSharp.Data
                     jsonWriter.WriteStartObject();
 
                     jsonWriter.WritePropertyName("sha");
-                    jsonWriter.WriteValue(InternalUtils.BytesToString(_files[i].Hash));
+                    jsonWriter.WriteValue(_files[i].Hash);
 
-                    jsonWriter.WritePropertyName("path");
-                    jsonWriter.WriteValue(_files[i].Path);
+                    jsonWriter.WritePropertyName("file");
+                    jsonWriter.WriteValue(_files[i].Path.Replace('\\', '/'));
 
                     jsonWriter.WriteEndObject();
                 }
@@ -206,7 +164,7 @@ namespace CoCSharp.Data
                 jsonWriter.WriteEndArray();
 
                 jsonWriter.WritePropertyName("sha");
-                jsonWriter.WriteValue(InternalUtils.BytesToString(MasterHash));
+                jsonWriter.WriteValue(MasterHash);
 
                 jsonWriter.WritePropertyName("version");
                 jsonWriter.WriteValue(Version);
@@ -215,8 +173,6 @@ namespace CoCSharp.Data
 
                 jsonStr = textWriter.ToString();
             }
-
-            //return indent == true ? JsonConvert.SerializeObject(this, Formatting.Indented) : JsonConvert.SerializeObject(this);
             return jsonStr;
         }
 
@@ -282,21 +238,15 @@ namespace CoCSharp.Data
 
                                 case "sha":
                                     // Convert the "sha" string into a byte array.
-                                    var str = jsonReader.ReadAsString();
-                                    if (str == null || str.Length != 40)
-                                        return null;
-
-                                    var bytes = new byte[str.Length / 2];
-                                    for (int i = 0; i < bytes.Length; i++)
-                                        bytes[i] = byte.Parse(str.Substring(i * 2, 2), NumberStyles.HexNumber);
+                                    var hash = jsonReader.ReadAsString();
 
                                     // If we're inside the "files" array assign it to the
                                     // FingerprintFile.
                                     if (inFilesArray)
-                                        file.Hash = bytes;
+                                        file.Hash = hash;
                                     // If not assign it to the Fingerprint itself.
                                     else
-                                        fingerprint.MasterHash = bytes;
+                                        fingerprint.MasterHash = hash;
                                     break;
 
                                 case "version":
@@ -370,7 +320,7 @@ namespace CoCSharp.Data
                     var fingerprintFile = new FingerprintFile();
 
                     fingerprintFile.Path = filePath;
-                    fingerprintFile.Hash = sha1.ComputeHash(fileBytes);
+                    fingerprintFile.Hash = InternalUtils.BytesToString(sha1.ComputeHash(fileBytes));
 
                     fingerprintFiles.Add(fingerprintFile);
                 }
@@ -387,12 +337,9 @@ namespace CoCSharp.Data
         /// Adds a <see cref="FingerprintFile"/> to the <see cref="Fingerprint"/>.
         /// </summary>
         /// <param name="item">The <see cref="FingerprintFile"/> to add to the <see cref="Fingerprint"/>.</param>
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="item"/> is null.</exception>
         public void Add(FingerprintFile item)
         {
-            if (IsReadOnly)
-                throw new InvalidOperationException("Fingerprint object is readonly.");
             if (item == null)
                 throw new ArgumentNullException("item");
 
@@ -404,12 +351,9 @@ namespace CoCSharp.Data
         /// </summary>
         /// <param name="item">The <see cref="FingerprintFile"/> to remove from the <see cref="Fingerprint"/>.</param>
         /// <returns>Returns <c>true</c> if <paramref name="item"/> was successfully removed; otherwise, <c>false</c>.</returns>
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="item"/> is null.</exception>
         public bool Remove(FingerprintFile item)
         {
-            if (IsReadOnly)
-                throw new InvalidOperationException("Fingerprint object is readonly.");
             if (item == null)
                 throw new ArgumentNullException("item");
 
@@ -419,12 +363,8 @@ namespace CoCSharp.Data
         /// <summary>
         /// Removes all <see cref="FingerprintFile"/> from the <see cref="Fingerprint"/>.
         /// </summary>
-        /// <exception cref="InvalidOperationException"><see cref="IsReadOnly"/> is set to <c>true</c>.</exception>
         public void Clear()
         {
-            if (IsReadOnly)
-                throw new InvalidOperationException("Fingerprint object is readonly.");
-
             _files.Clear();
         }
 

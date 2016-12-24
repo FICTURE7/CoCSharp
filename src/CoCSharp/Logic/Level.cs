@@ -23,6 +23,9 @@ namespace CoCSharp.Logic
             if (assets == null)
                 throw new ArgumentNullException(nameof(assets));
 
+            if (!assets.LockMode.HasFlag(AssetManagerLockMode.Unloading))
+                throw new ArgumentException("Unloading of assets must be locked.");
+
             // Make sure the AssetManager specified has loaded all the
             // required assets.
             if (!assets.IsLoaded<CsvDataTable<BuildingData>>() ||
@@ -36,6 +39,7 @@ namespace CoCSharp.Logic
                 throw new ArgumentException("Specified AssetManager has not loaded all the required assets.");
 
             _logs = new LevelLog(this);
+            _dateInit = DateTime.UtcNow;
             _lastTick = DateTime.UtcNow;
 
             _assets = assets;
@@ -49,10 +53,13 @@ namespace CoCSharp.Logic
         // Logger which is going to log information about the level.
         private readonly LevelLog _logs;
 
+        private TimeSpan _playTime;
         // The tick value of the last time the Level was ticked.
         private int _lastTickValue;
         // Time of when the last time the Level was ticked.
         private DateTime _lastTick;
+        // Time of when the level instance was initialized.
+        private DateTime _dateInit;
 
         // The AssetManager that is going to provide the CsvDataTables and other
         // assets.
@@ -107,7 +114,33 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the <see cref="DateTime"/> of when the <see cref="Level"/> was last saved.
         /// </summary>
-        public DateTime LastSaveTime { get; set; }
+        public DateTime DateLastSave { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DateTime"/> of when the <see cref="Level"/> was created.
+        /// </summary>
+        public DateTime DateCreated { get; set; }
+
+        /// <summary>
+        /// Gets or sets the amount of time the <see cref="Level"/> was active.
+        /// </summary>
+        public TimeSpan PlayTime
+        {
+            get
+            {
+                return _playTime + (DateTime.UtcNow - _dateInit);
+            }
+            set
+            {
+                _dateInit = DateTime.UtcNow;
+                _playTime = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the amount of time the <see cref="Level"/> was logged in.
+        /// </summary>
+        public int LoginCount { get; set; }
 
         /// <summary>
         /// Gets a new instance of <see cref="OwnHomeDataMessage"/> representing this instance.
@@ -117,20 +150,25 @@ namespace CoCSharp.Logic
             get
             {
                 var now = DateTime.UtcNow;
-                var villageData = new VillageMessageComponent(this);
+                var villageData = new VillageMessageComponent(this)
+                {
+                    EventJson = "{\"event\":[]}"
+                };
                 var avatarData = new AvatarMessageComponent(this);
                 var ohdMessage = new OwnHomeDataMessage
                 {
-                    LastVisit = now - LastSaveTime,
+                    LastVisit = now - DateLastSave,
                     Timestamp = now,
 
                     OwnVillageData = villageData,
                     OwnAvatarData = avatarData,
 
-                    Unkonwn4 = 1462629754000,
-                    Unknown5 = 1462629754000,
-                    Unknown6 = 1462631554000,
+                    Unkonwn4 = 1482421076000,
+                    Unknown5 = 1482421076000,
+                    Unknown6 = 1482421076000,
                 };
+
+                //var ohdMessage = InternalUtils.ReadMessageAt<OwnHomeDataMessage>("ohd2.bin");
 
                 return ohdMessage;
             }
@@ -149,11 +187,14 @@ namespace CoCSharp.Logic
             get
             {
                 var now = DateTime.UtcNow;
-                var villageData = new VillageMessageComponent(this);
+                var villageData = new VillageMessageComponent(this)
+                {
+                    EventJson = "{\"event\":[]}"
+                };
                 var avatarData = new AvatarMessageComponent(this);
                 var ehdMessage = new EnemyHomeDataMessage
                 {
-                    LastVisit = now - LastSaveTime,
+                    LastVisit = now - DateLastSave,
                     Timestamp = now,
 
                     EnemyVillageData = villageData,
@@ -179,11 +220,15 @@ namespace CoCSharp.Logic
             get
             {
                 var now = DateTime.UtcNow;
-                var villageData = new VillageMessageComponent(this);
+                var villageData = new VillageMessageComponent(this)
+                {
+                    EventJson = "{\"event\":[]}"
+                };
                 var avatarData = new AvatarMessageComponent(this);
                 var vhdMessage = new VisitHomeDataMessage
                 {
-                    LastVisit = now - LastSaveTime,
+                    LastVisit = now - DateLastSave,
+                    Timestamp = now,
 
                     VisitVillageData = villageData,
                     VisitAvatarData = avatarData,
@@ -217,11 +262,15 @@ namespace CoCSharp.Logic
         /// </summary>
         public void Tick(int tick)
         {
-            _lastTick = DateTime.UtcNow;
-            _lastTickValue = tick;
+            // In case the level is being processed by more than 1 thread.
+            lock (Village)
+            {
+                _lastTick = DateTime.UtcNow;
+                _lastTickValue = tick;
 
-            Village.LastTickTime = _lastTick;
-            Village.Update(tick);
+                Village.LastTickTime = _lastTick;
+                Village.Update(tick);
+            }
         }
 
         /// <summary>

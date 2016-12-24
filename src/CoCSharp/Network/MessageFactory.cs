@@ -39,8 +39,8 @@ namespace CoCSharp.Network
                     var instance = (Message)Activator.CreateInstance(type);
 
                     // A message with the same ID as instance.ID was already added to the dictionary.
-                    Debug.Assert(!s_messageDictionary.ContainsKey(instance.ID), "s_messageDictionary already contains '" + instance.ID + "'.");
-                    s_messageDictionary.Add(instance.ID, type);
+                    Debug.Assert(!s_messageDictionary.ContainsKey(instance.Id), "s_messageDictionary already contains '" + instance.Id + "'.");
+                    s_messageDictionary.Add(instance.Id, type);
                 }
             }
         }
@@ -61,7 +61,7 @@ namespace CoCSharp.Network
         {
             var type = (Type)null;
             if (!s_messageDictionary.TryGetValue(id, out type))
-                return new UnknownMessage() { ID = id };
+                return new UnknownMessage() { Id = id };
             return (Message)Activator.CreateInstance(type);
         }
 

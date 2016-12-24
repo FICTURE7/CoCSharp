@@ -14,19 +14,23 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public AllianceStreamMessage()
         {
-            Entries = new List<AllianceStreamEntry>();
             // Space
         }
 
         /// <summary>
         /// Gets the ID of the <see cref="AllianceStreamMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24311; } }
+        public override ushort Id { get { return 24311; } }
 
-            /// <summary>
+        /// <summary>
+        /// Unknown integer 1.
+        /// </summary>
+        public int Unknown1;
+
+        /// <summary>
         /// List of <see cref="AllianceStreamEntry"/>.
         /// </summary>
-        public List<AllianceStreamEntry> Entries;
+        public AllianceStreamEntry[] Entries;
 
         /// <summary>
         /// Reads the <see cref="AllianceStreamMessage"/> from the specified <see cref="MessageReader"/>.
@@ -39,7 +43,10 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
+            Unknown1 = reader.ReadInt32();
+
             var count = reader.ReadInt32();
+            Entries = new AllianceStreamEntry[count];
             for (int i = 0; i < count; i++)
             {
                 var id = reader.ReadInt32();
@@ -48,7 +55,8 @@ namespace CoCSharp.Network.Messages
                     return;
 
                 entry.ReadStreamEntry(reader);
-            }            
+                Entries[i] = entry;
+            }
         }
 
         /// <summary>
@@ -62,12 +70,17 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            var count = Entries.Count;
+            writer.Write(Unknown1);
+
+            var count = Entries.Length;
             writer.Write(count);
             for (int i = 0; i < count; i++)
             {
                 var entry = Entries[i];
-                writer.Write(entry.ID);
+                if (entry == null)
+                    throw new Exception();
+
+                writer.Write(entry.Id);
                 entry.WriteStreamEntry(writer);
             }
         }

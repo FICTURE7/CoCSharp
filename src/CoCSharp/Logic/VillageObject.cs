@@ -31,7 +31,7 @@ namespace CoCSharp.Logic
             Interlocked.Increment(ref s_totalCreated);
             _components = new Component[ComponentArraySize];
 
-            Debug.WriteLine("Created new instance of VillageObject for JsonReading.");
+            //Debug.WriteLine("Created new instance of VillageObject for JsonReading.");
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets the string which <see cref="DebuggerDisplayAttribute"/> will use.
         /// </summary>
-        protected virtual string DebuggerDisplayString => $"ID = {ID}";
+        protected virtual string DebuggerDisplayString => $"ID = {Id}";
 
         /// <summary>
         /// The event raised when a property value has changed.
@@ -114,7 +114,7 @@ namespace CoCSharp.Logic
         /// The value of <see cref="ID"/> is dependent on its <see cref="VillageObject"/> kind
         /// and on <see cref="Village.VillageObjects"/> collection.
         /// </remarks>
-        public int ID => Thread.VolatileRead(ref _columnIndex) + ((500 + KindID) * InternalConstants.IDBase);
+        public int Id => Thread.VolatileRead(ref _columnIndex) + ((500 + KindId) * InternalConstants.IdBase);
 
         /// <summary>
         /// Gets or sets the X coordinate of the <see cref="VillageObject"/>.
@@ -168,7 +168,7 @@ namespace CoCSharp.Logic
         protected AssetManager Assets => _village.Assets;
 
         // Kind ID of the VillageObject.
-        internal abstract int KindID { get; }
+        internal abstract int KindId { get; }
         #endregion
 
         #region Methods

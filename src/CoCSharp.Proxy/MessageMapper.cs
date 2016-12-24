@@ -20,6 +20,12 @@ namespace CoCSharp.Proxy
             return MapType(type);
         }
 
+        public FieldMap[] Map(MessageComponent component)
+        {
+            var type = component.GetType();
+            return MapType(type);
+        }
+
         private FieldMap[] MapType(Type type)
         {
             var map = default(FieldMap[]);

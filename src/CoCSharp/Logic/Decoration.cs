@@ -42,7 +42,7 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Fields & Properties
-        internal override int KindID => 6;
+        internal override int KindId => 6;
         #endregion
 
         #region Methods
@@ -59,10 +59,10 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(Data.ID);
+            writer.WriteValue(Data.Id);
 
             writer.WritePropertyName("id");
-            writer.WriteValue(ID);
+            writer.WriteValue(Id);
 
             writer.WritePropertyName("x");
             writer.WriteValue(X);

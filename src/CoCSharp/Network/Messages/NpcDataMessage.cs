@@ -20,7 +20,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         ///  Gets the ID of the <see cref="NpcDataMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24133; } }
+        public override ushort Id { get { return 24133; } }
 
         /// <summary>
         /// Unknown integer 1.
@@ -43,7 +43,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// NPC ID that was attacked.
         /// </summary>
-        public int NpcID;
+        public int NpcId;
 
         /// <summary>
         /// Reads the <see cref="NpcDataMessage"/> from the specified <see cref="MessageReader"/>.
@@ -65,7 +65,7 @@ namespace CoCSharp.Network.Messages
 
             Unknown2 = reader.ReadInt32();
 
-            NpcID = reader.ReadInt32();
+            NpcId = reader.ReadInt32();
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown2);
 
-            writer.Write(NpcID);
+            writer.Write(NpcId);
         }
     }
 }

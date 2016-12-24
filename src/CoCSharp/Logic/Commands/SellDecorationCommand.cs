@@ -21,7 +21,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="SellDecorationCommand"/>.
         /// </summary>
-        public override int ID { get { return 503; } }
+        public override int Id { get { return 503; } }
 
         /// <summary>
         /// Game ID of the <see cref="Decoration"/> that was sold.

@@ -22,7 +22,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="BuyBuildingCommand"/>.
         /// </summary>
-        public override int ID { get { return 500; } }
+        public override int Id { get { return 500; } }
 
         /// <summary>
         /// X coordinates of the <see cref="Building"/> where it was placed.

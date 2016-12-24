@@ -68,7 +68,7 @@ namespace CoCSharp.Logic
             }
         }
 
-        internal override int KindID => 0;
+        internal override int KindId => 0;
         #endregion
 
         #region Methods
@@ -106,10 +106,10 @@ namespace CoCSharp.Logic
             writer.WriteStartObject();
 
             writer.WritePropertyName("data");
-            writer.WriteValue(RowCache.ID);
+            writer.WriteValue(RowCache.Id);
 
             writer.WritePropertyName("id");
-            writer.WriteValue(ID);
+            writer.WriteValue(Id);
 
             writer.WritePropertyName("lvl");
             writer.WriteValue(UpgradeLevel);

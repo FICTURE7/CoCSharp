@@ -32,6 +32,6 @@ namespace CoCSharp.Data
         /// <see cref="VillageObject"/> game ID in a <see cref="Village"/> that
         /// was moved.
         /// </summary>
-        public int VillageObjectGameID;
+        public int VillageObjectGameId;
     }
 }

@@ -23,7 +23,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="ReturnHomeMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14101; } }
+        public override ushort Id { get { return 14101; } }
 
         /// <summary>
         /// Reads the <see cref="ReturnHomeMessage"/> from the specified <see cref="MessageReader"/>.

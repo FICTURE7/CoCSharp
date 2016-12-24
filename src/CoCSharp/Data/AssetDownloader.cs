@@ -10,12 +10,15 @@ namespace CoCSharp.Data
     /// </summary>
     public class AssetDownloader : IDisposable
     {
+        #region Constants
         /// <summary>
         /// Official server from which assets are downloaded from. This field is readonly.
         /// </summary>
         public static readonly Uri OfficialAssetServer =
             new Uri("http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/");
+        #endregion
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetDownloader"/> class with the specified
         /// master hash. The <see cref="OfficialAssetServer"/> will be used as <see cref="Uri"/>.
@@ -55,17 +58,9 @@ namespace CoCSharp.Data
             _sha1 = SHA1.Create();
             _webClient = new WebClient();
         }
+        #endregion
 
-        /// <summary>
-        /// Gets the master hash of asset directory.
-        /// </summary>
-        public string MasterHash { get { return _masterHash; } }
-
-        /// <summary>
-        /// Gets the <see cref="Uri"/> pointing to the asset server.
-        /// </summary>
-        public Uri AssetServerUri { get { return _uri; } }
-
+        #region Fields & Properties
         private bool _disposed;
         private readonly string _masterHash;
         private readonly Uri _uri;
@@ -73,10 +68,24 @@ namespace CoCSharp.Data
         private readonly WebClient _webClient;
 
         /// <summary>
+        /// Gets the master hash of asset directory.
+        /// </summary>
+        public string MasterHash => _masterHash;
+
+        /// <summary>
+        /// Gets the <see cref="Uri"/> pointing to the asset server.
+        /// </summary>
+        public Uri AssetServerUri => _uri;
+        #endregion
+
+        #region Methods
+        /// <summary>
         /// Downloads the assets to the specified destination directory and checks the SHA1 hashes.
         /// The <see cref="AssetDownloader"/> will download the <see cref="Fingerprint"/> from the asset server.
         /// </summary>
+        /// 
         /// <param name="dstDir">Destination directory of the downloads.</param>
+        /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetDownloader"/> is disposed.</exception>
         /// <exception cref="DirectoryNotFoundException"><paramref name="dstDir"/> does not exist.</exception>
         public void DownloadAssets(string dstDir)
@@ -91,6 +100,8 @@ namespace CoCSharp.Data
             var uriBuilder = new UriBuilder(_uri) { Path = _masterHash };
             var remoteRootPath = uriBuilder.Uri;
             var fingerprint = DownloadFingerprint(remoteRootPath);
+            var fingerprintPath = Path.Combine(dstDir, "fingerprint.json");
+            File.WriteAllText(fingerprintPath, fingerprint.ToJson());
 
             // checkHash = true by default.
             InternalDownloadAssets(remoteRootPath, fingerprint, dstDir, true);
@@ -100,11 +111,14 @@ namespace CoCSharp.Data
         /// Downloads the assets to the specified destination directory and whether to check SHA1 hashes or not.
         /// The <see cref="AssetDownloader"/> will download the <see cref="Fingerprint"/> from the asset server.
         /// </summary>
+        /// 
         /// <param name="dstDir">Destination directory of the downloads.</param>
+        /// 
         /// <param name="checkHash">
         /// If set to <c>true</c> the <see cref="AssetDownloader"/> will check if the SHA1 hash of the downloads matches
         /// the ones of local files; otherwise no.
         /// </param>
+        /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetDownloader"/> is disposed.</exception>
         /// <exception cref="DirectoryNotFoundException"><paramref name="dstDir"/> does not exist.</exception>
         public void DownloadAssets(string dstDir, bool checkHash)
@@ -112,7 +126,9 @@ namespace CoCSharp.Data
             CheckDispose();
 
             if (dstDir == null)
+            {
                 dstDir = string.Empty;
+            }
             else
             {
                 if (dstDir != string.Empty && !Directory.Exists(dstDir))
@@ -122,19 +138,25 @@ namespace CoCSharp.Data
             var uriBuilder = new UriBuilder(_uri) { Path = _masterHash };
             var remoteRootPath = uriBuilder.Uri;
             var fingerprint = DownloadFingerprint(remoteRootPath);
+            var fingerprintPath = Path.Combine(dstDir, "fingerprint.json");
+            File.WriteAllText(fingerprintPath, fingerprint.ToJson());
 
             InternalDownloadAssets(remoteRootPath, fingerprint, dstDir, checkHash);
         }
 
         /// <summary>
         /// Downloads the assets according the specified <see cref="Fingerprint"/> to the specified destination directory and
-        /// whether to check SHA1 hashes or not.</summary>
+        /// whether to check SHA1 hashes or not.
+        /// </summary>
+        ///
         /// <param name="fingerprint"><see cref="Fingerprint"/> from which SHA1 hashes and paths will be fetched.</param>
         /// <param name="dstDir">Destination directory of the downloads.</param>
+        ///
         /// <param name="checkHash">
         /// If set to <c>true</c> the <see cref="AssetDownloader"/> will check if the SHA1 hash of the downloads matches
         /// the ones of local files; otherwise no.
         /// </param>
+        /// 
         /// <exception cref="ObjectDisposedException">The current instance of the <see cref="AssetDownloader"/> is disposed.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="fingerprint"/> is null.</exception>
         /// <exception cref="DirectoryNotFoundException"><paramref name="dstDir"/> does not exist.</exception>
@@ -143,10 +165,12 @@ namespace CoCSharp.Data
             CheckDispose();
 
             if (fingerprint == null)
-                throw new ArgumentNullException("fingerprint");
+                throw new ArgumentNullException(nameof(fingerprint));
 
             if (dstDir == null)
+            {
                 dstDir = string.Empty;
+            }
             else
             {
                 if (dstDir != string.Empty && !Directory.Exists(dstDir))
@@ -161,7 +185,8 @@ namespace CoCSharp.Data
 
         private void InternalDownloadAssets(Uri remoteRootPath, Fingerprint fingerprint, string dstDir, bool checkHash)
         {
-            var localRootDir = Path.Combine(dstDir, _masterHash);
+            //var localRootDir = Path.Combine(dstDir, _masterHash);
+            var localRootDir = dstDir;
 
             // Create a new directory called as the value of _masterHash.
             if (!Directory.Exists(localRootDir))
@@ -182,32 +207,44 @@ namespace CoCSharp.Data
 
                 var localFilePath = Path.Combine(localRootDir, file.Path);
 
+                // Compute the SHA1 hashes of the files and check if the new files needs to downloaded
                 if (checkHash)
                 {
                     // If we're checking the SHA1 and if a file already exists with the same name/path.
                     if (File.Exists(localFilePath))
                     {
                         var existingFileBytes = File.ReadAllBytes(localFilePath);
-                        var existingFileHash = _sha1.ComputeHash(existingFileBytes);
+                        var existingFileHash = InternalUtils.BytesToString(_sha1.ComputeHash(existingFileBytes));
 
                         // If the existing file have the same SHA1 as the one in the fingerprint
                         // we continue and ignore it.
-                        if (InternalUtils.CompareByteArray(existingFileHash, file.Hash))
+                        if (existingFileHash == file.Hash)
+                        {
+                            var e = new AssetDownloadProgressChangedEventArgs()
+                            {
+                                DownloadedCount = i + 1,
+                                FileDownloaded = file,
+                                WasDownloaded = false,
+                                NextDownload = fingerprint[i],
+                                ProgressPercentage = ((i + 1) / (double)fingerprint.Count) * 100,
+                            };
+                            OnDownloadProgressChanged(e);
                             continue;
+                        }
                     }
                 }
 
                 var fileBytes = DownloadFile(remoteRootPath, file.Path);
-
                 var args = new AssetDownloadProgressChangedEventArgs()
                 {
                     DownloadedCount = i + 1,
                     FileDownloaded = file,
+                    WasDownloaded = true,
                     NextDownload = fingerprint[i],
                     ProgressPercentage = ((i + 1) / (double)fingerprint.Count) * 100,
                 };
-
                 OnDownloadProgressChanged(args);
+
                 File.WriteAllBytes(localFilePath, fileBytes);
             }
 
@@ -224,8 +261,7 @@ namespace CoCSharp.Data
         /// <param name="e">The arguments.</param>
         protected virtual void OnDownloadProgressChanged(AssetDownloadProgressChangedEventArgs e)
         {
-            if (DownloadProgressChanged != null)
-                DownloadProgressChanged(this, e);
+            DownloadProgressChanged?.Invoke(this, e);
         }
 
         /// <summary>
@@ -238,8 +274,7 @@ namespace CoCSharp.Data
         /// <param name="e">The arguments.</param>
         protected virtual void OnDownloadCompleted(AssetDownloadCompletedEventArgs e)
         {
-            if (DownloadCompleted != null)
-                DownloadCompleted(this, e);
+            DownloadCompleted?.Invoke(this, e);
         }
 
         private Fingerprint DownloadFingerprint(Uri rootPath)
@@ -293,5 +328,6 @@ namespace CoCSharp.Data
         {
             Dispose(true);
         }
+        #endregion
     }
 }

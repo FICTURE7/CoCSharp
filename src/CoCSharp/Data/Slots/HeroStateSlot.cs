@@ -26,7 +26,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="state">State of the hero.</param>
         public HeroStateSlot(int id, int state)
         {
-            ID = id;
+            Id = id;
             State = state;
         }
 
@@ -48,7 +48,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             State = reader.ReadInt32();
         }
 
@@ -63,7 +63,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(State);
         }
 

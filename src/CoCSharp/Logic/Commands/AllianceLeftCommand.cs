@@ -20,20 +20,16 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="AllianceLeftCommand"/>.
         /// </summary>
-        public override int ID { get { return 2; } }
+        public override int Id { get { return 2; } }
 
         /// <summary>
         /// Clan ID which the client left.
         /// </summary>
-        public long ClanID;
+        public long ClanId;
         /// <summary>
         /// Reason why the client left.
         /// </summary>
         public int Reason; // TODO: Implement enum for it.
-        /// <summary>
-        /// Current tick.
-        /// </summary>
-        public int Tick;
 
         /// <summary>
         /// Reads the <see cref="AllianceLeftCommand"/> from the specified <see cref="MessageReader"/>.
@@ -46,7 +42,7 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfReaderNull(reader);
 
-            ClanID = reader.ReadInt64();
+            ClanId = reader.ReadInt64();
             Reason = reader.ReadInt32();
             Tick = reader.ReadInt32();
         }
@@ -62,7 +58,7 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ClanID);
+            writer.Write(ClanId);
             writer.Write(Reason);
             writer.Write(Tick);
         }

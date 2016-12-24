@@ -175,20 +175,20 @@ namespace CoCSharp.Data
 
         /// <summary>
         /// Returns the first <typeparamref name="TSlot"/> in the <see cref="SlotCollection{TSlot}"/> with the
-        /// same <see cref="Slot.ID"/> as the specified data ID.
+        /// same <see cref="Slot.Id"/> as the specified data ID.
         /// </summary>
         /// 
         /// <param name="dataId">Data ID of the <typeparamref name="TSlot"/> to look for.</param>
         /// 
         /// <returns>
         /// Returns null if not found, otherwise the instance of <typeparamref name="TSlot"/> with
-        /// the same <see cref="Slot.ID"/> as <paramref name="dataId"/>.
+        /// the same <see cref="Slot.Id"/> as <paramref name="dataId"/>.
         /// </returns>
         public TSlot GetSlot(int dataId)
         {
             for (int i = 0; i < Count; i++)
             {
-                if (_slots[i].ID == dataId)
+                if (_slots[i].Id == dataId)
                     return _slots[i];
             }
             return null;

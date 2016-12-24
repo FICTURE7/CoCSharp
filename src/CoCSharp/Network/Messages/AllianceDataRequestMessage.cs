@@ -19,12 +19,12 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="AllianceDataRequestMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14302; } }
+        public override ushort Id { get { return 14302; } }
 
         /// <summary>
         /// ID of the clan whose data was requested.
         /// </summary>
-        public long ClanID;
+        public long ClanId;
 
         /// <summary>
         /// Reads the <see cref="AllianceDataRequestMessage"/> from the specified <see cref="MessageReader"/>.
@@ -37,7 +37,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            ClanID = reader.ReadInt64();
+            ClanId = reader.ReadInt64();
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ClanID);
+            writer.Write(ClanId);
         }
     }
 }

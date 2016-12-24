@@ -36,7 +36,7 @@ namespace CoCSharp.Network
         /// <summary>
         /// Gets or sets the ID of the <see cref="Message"/>.
         /// </summary>
-        public virtual ushort ID { get; set; }
+        public virtual ushort Id { get; set; }
 
         /// <summary>
         /// Gets or sets the version of the <see cref="Message"/>.
@@ -77,7 +77,7 @@ namespace CoCSharp.Network
         /// <returns><see cref="MessageDirection"/> of the specified <see cref="Message"/>.</returns>
         public static MessageDirection GetMessageDirection(Message message)
         {
-            return GetMessageDirection(message.ID);
+            return GetMessageDirection(message.Id);
         }
 
         /// <summary>

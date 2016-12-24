@@ -24,7 +24,7 @@ namespace CoCSharp.Proxy
         public void Dump(Message message, byte[] kappa)
         {
             var time = DateTime.Now;
-            var fileName = $"{time.ToString("yy_MM_dd__hh_mm_ss")} - {message.GetType().Name} ({message.ID}).bin";
+            var fileName = $"{time.ToString("yy_MM_dd__hh_mm_ss")} - {message.GetType().Name} ({message.Id}).bin";
             var path = Path.Combine("message-dumps", fileName);
             File.WriteAllBytes(path, kappa);
 

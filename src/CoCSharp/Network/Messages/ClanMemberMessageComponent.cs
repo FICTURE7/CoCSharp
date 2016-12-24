@@ -21,28 +21,32 @@ namespace CoCSharp.Network.Messages
         /// the specified <see cref="ClanMember"/>.
         /// </summary>
         /// <param name="member"><see cref="ClanMember"/> from which to initialize this <see cref="ClanMemberMessageComponent"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="member"/> is null.</exception>
         public ClanMemberMessageComponent(ClanMember member)
         {
-            ID = member.ID;
+            if (member == null)
+                throw new ArgumentNullException(nameof(member));
+
+            Id = member.Id;
             Name = member.Name;
             Role = member.Role;
-            Level = member.Level;
-            LeagueLevel = member.LeagueLevel;
+            Level = member.ExpLevels;
+            LeagueLevel = member.League;
             Trophies = member.Trophies;
             TroopsDonated = member.TroopsDonated;
             TroopsReceived = member.TroopsReceived;
             Rank = member.Rank;
             PreviousRank = member.PreviousRank;
             NewMember = member.NewMember;
-            WarCoolDown = member.WarCoolDown;
+            WarCoolDown = member.WarCooldown;
             WarPreference = member.WarPreference;
-            ID2 = member.ID;
+            Id2 = member.Id;
         }
 
         /// <summary>
         /// User ID of the member.
         /// </summary>
-        public long ID;
+        public long Id;
         /// <summary>
         /// Name of the member.
         /// </summary>
@@ -92,17 +96,27 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public int WarPreference;
 
-        // Unknown1 & ID2 are ?LONG
-
         /// <summary>
         /// Unknown byte 1.
         /// </summary>
         public byte Unknown1;
+        /// <summary>
+        /// Unknown byte 2.
+        /// </summary>
+        public byte Unknown2;
+        /// <summary>
+        /// Unknown byte 3.
+        /// </summary>
+        public byte Unknown3;
+        /// <summary>
+        /// Unknown byte 4.
+        /// </summary>
+        public byte Unknown4;
 
         /// <summary>
         /// User ID of the member.
         /// </summary>
-        public long ID2;
+        public long Id2;
 
         /// <summary>
         /// Reads the <see cref="ClanCompleteMessageComponent"/> from the specified <see cref="MessageReader"/>.
@@ -115,7 +129,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt64();
+            Id = reader.ReadInt64();
             Name = reader.ReadString();
             Role = (ClanMemberRole)reader.ReadInt32();
             Level = reader.ReadInt32();
@@ -130,8 +144,11 @@ namespace CoCSharp.Network.Messages
             WarPreference = reader.ReadInt32();
 
             Unknown1 = reader.ReadByte();
-            if (Unknown1 == 1)
-                ID2 = reader.ReadInt64();
+            Unknown2 = reader.ReadByte();
+            Unknown3 = reader.ReadByte();
+            Unknown4 = reader.ReadByte();
+            if (Unknown4 == 1)
+                Id2 = reader.ReadInt64();
         }
 
         /// <summary>
@@ -145,7 +162,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Name);
             writer.Write((int)Role);
             writer.Write(Level);
@@ -161,8 +178,11 @@ namespace CoCSharp.Network.Messages
 
             // Apparently its ?LONG
             writer.Write(Unknown1);
-            if (Unknown1 == 1)
-                writer.Write(ID2);
+            writer.Write(Unknown2);
+            writer.Write(Unknown3);
+            writer.Write(Unknown4);
+            if (Unknown4 == 1)
+                writer.Write(Id2);
         }
     }
 }

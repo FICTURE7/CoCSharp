@@ -21,6 +21,8 @@ namespace CoCSharp.Logic
                 throw new ArgumentNullException(nameof(level));
 
             _level = level;
+            _fileName = _level.Token + "-level.log";
+            _sync = new object();
         }
         #endregion
 
@@ -30,6 +32,8 @@ namespace CoCSharp.Logic
         /// </summary>
         protected Level Level => _level;
 
+        private readonly object _sync;
+        private readonly string _fileName;
         private readonly Level _level;
         #endregion
 
@@ -40,13 +44,14 @@ namespace CoCSharp.Logic
         /// <param name="message">Message to log.</param>
         public void Log(string message)
         {
-            var fileName = _level.Token + "-level.log";
+            lock (_sync)
+            {
+                var file = File.Open(_fileName, FileMode.Append);
+                using (var writer = new StreamWriter(file))
+                    writer.WriteLine(message);
 
-            var file = File.Open(fileName, FileMode.Append);
-            using (var writer = new StreamWriter(file))
-                writer.WriteLine(message);
-
-            Debug.WriteLine(message);
+                Debug.WriteLine(message);
+            }
         }
         #endregion
     }

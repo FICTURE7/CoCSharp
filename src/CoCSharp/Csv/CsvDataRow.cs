@@ -43,7 +43,7 @@ namespace CoCSharp.Csv
         /// <summary>
         /// Gets the ID of the <see cref="CsvDataRow"/>; returns -1 if not in a <see cref="CsvDataTable"/>.
         /// </summary>
-        public int ID => Ref == null ? -1 : Ref.ID;
+        public int Id => Ref == null ? -1 : Ref.Id;
 
         /// <summary>
         /// 

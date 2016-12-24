@@ -23,7 +23,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="TrainUnitCommand"/>.
         /// </summary>
-        public override int ID => 508;
+        public override int Id => 508;
 
         /// <summary>
         /// Building that is going to train the units.

@@ -19,7 +19,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// User ID needed to login in a specific account.
         /// </summary>
-        public long UserID;
+        public long UserId;
         /// <summary>
         /// User token needed to login in a specific account.
         /// </summary>
@@ -128,7 +128,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         ///  Gets the ID of the <see cref="LoginRequestMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 10101; } }
+        public override ushort Id { get { return 10101; } }
 
         /// <summary>
         /// Reads the <see cref="LoginRequestMessage"/> from the specified <see cref="MessageReader"/>.
@@ -141,7 +141,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            UserID = reader.ReadInt64();
+            UserId = reader.ReadInt64();
             UserToken = reader.ReadString();
             MajorVersion = reader.ReadInt32();
             ContentVersion = reader.ReadInt32();
@@ -185,7 +185,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(UserID);
+            writer.Write(UserId);
             writer.Write(UserToken);
             writer.Write(MajorVersion);
             writer.Write(ContentVersion);

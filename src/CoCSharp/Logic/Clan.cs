@@ -16,18 +16,29 @@ namespace CoCSharp.Logic
         public Clan()
         {
             _level = 1;
+            _name = string.Empty;
             _description = string.Empty;
+            _sync = new object();
+
             Members = new List<ClanMember>();
+            Entries = new List<AllianceStreamEntry>();
         }
         #endregion
 
         #region Fields & Properties
+        private string _name;
+        private string _description;
+        private int _level;
+
+        // Clan instances should be thread safe, since multiple clients could
+        // use the same instance.
+        private readonly object _sync;
+
         /// <summary>
         /// Gets or sets the ID of the <see cref="Clan"/>.
         /// </summary>
-        public long ID { get; set; }
+        public long Id { get; set; }
 
-        private string _name;
         /// <summary>
         /// Gets or sets the name of the <see cref="Clan"/>.
         /// </summary>
@@ -40,13 +51,12 @@ namespace CoCSharp.Logic
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 _name = value;
             }
         }
 
-        private string _description;
         /// <summary>
         /// Gets or sets the description of the <see cref="Clan"/>.
         /// </summary>
@@ -59,20 +69,20 @@ namespace CoCSharp.Logic
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 _description = value;
             }
         }
 
-        private int _level;
         /// <summary>
         /// Gets or sets the level of the <see cref="Clan"/>.
         /// </summary>
+        /// 
         /// <remarks>
         /// Client seems to crash when level is less than 1.
         /// </remarks>
-        public int Level
+        public int ExpLevels
         {
             get
             {
@@ -80,8 +90,8 @@ namespace CoCSharp.Logic
             }
             set
             {
-                if (_level < 1)
-                    throw new ArgumentOutOfRangeException("value", "value cannot be less 1.");
+                if (value < 1)
+                    throw new ArgumentOutOfRangeException(nameof(value), "value cannot be less 1.");
 
                 _level = value;
             }
@@ -162,33 +172,48 @@ namespace CoCSharp.Logic
         public List<ClanMember> Members { get; set; }
 
         /// <summary>
-        /// Gets a new <see cref="Network.Messages.AllianceDataResponseMessage"/>
+        /// Gets or sets the list of <see cref="AllianceStreamEntry"/> in the
+        /// <see cref="Clan"/>.
+        /// </summary>
+        public List<AllianceStreamEntry> Entries { get; set; }
+
+        /// <summary>
+        /// Gets a new <see cref="AllianceDataResponseMessage"/>
         /// representing this <see cref="Clan"/> instance.
         /// </summary>
-        public AllianceDataResponseMessage AllianceDataResponseMessage
+        public AllianceDataResponseMessage AllianceDataResponse
         {
             get
             {
+                Update();
+
                 var data = new AllianceDataResponseMessage();
+
                 data.Clan = new ClanCompleteMessageComponent(this);
                 data.Description = Description;
                 data.Members = new ClanMemberMessageComponent[Members.Count];
                 for (int i = 0; i < Members.Count; i++)
+                {
                     data.Members[i] = new ClanMemberMessageComponent(Members[i])
                     {
-                        Unknown1 = 1
+                        Unknown4 = 1
                     };
+                }
+
                 return data;
             }
         }
+
         /// <summary>
-        /// Gets a new <see cref="Network.Messages.AllianceFullEntryMessage"/>
+        /// Gets a new <see cref="AllianceFullEntryMessage"/>
         /// representing this <see cref="Clan"/> instance.
         /// </summary>
-        public AllianceFullEntryMessage AllianceFullEntryMessage
+        public AllianceFullEntryMessage AllianceFullEntry
         {
             get
             {
+                Update();
+
                 var data = new AllianceFullEntryMessage();
                 data.Clan = new ClanCompleteMessageComponent(this);
                 data.Description = Description;
@@ -197,19 +222,75 @@ namespace CoCSharp.Logic
         }
 
         /// <summary>
+        /// Gets a new <see cref="AllianceStreamMessage"/> representing the <see cref="Clan.Entries"/> of this
+        /// <see cref="Clan"/> instance.
+        /// </summary>
+        public AllianceStreamMessage AllianceStream
+        {
+            get
+            {
+                Update();
+
+                var entries = Entries.ToArray();
+                var stream = new AllianceStreamMessage
+                {
+                    Entries = entries
+                };
+                return stream;
+            }
+        }
+        #endregion
+
+        #region Methods
+        public ChatAllianceStreamEntry Chat(long userId, string textMessage)
+        {
+            var member = Get(userId);
+            if (member == null)
+                return null;
+
+            lock (_sync)
+            {
+                var caStreamEntry = new ChatAllianceStreamEntry
+                {
+                    HomeId = member.Id,
+                    UserId = member.Id,
+                    League = member.League,
+                    ExpLevels = member.ExpLevels,
+                    Name = member.Name,
+                    Role = member.Role,
+                    MessageText = textMessage,
+
+                    Unknown1 = 1,
+
+                    EntryId = Entries.Count,
+
+                    Unknown2 = 3,
+                };
+
+                // Add that to the clans so that it gets saves later on.
+                // And sent again when the clan is loaded to the clients.
+                Entries.Add(caStreamEntry);
+                return caStreamEntry;
+            }
+        }
+
+        /// <summary>
         /// Finds a <see cref="ClanMember"/> with the same user ID as specified.
         /// </summary>
-        /// <param name="id">ID which the <see cref="ClanMember"/> must have.</param>
+        /// <param name="userId">ID which the <see cref="ClanMember"/> must have.</param>
         /// <returns><see cref="ClanMember"/> with the same user ID. If not found returns null.</returns>
-        public ClanMember FindMember(long id)
+        public ClanMember Get(long userId)
         {
-            for (int i = 0; i < Members.Count; i++)
+            lock (_sync)
             {
-                var member = Members[i];
-                if (member.ID == id)
-                    return member;
+                for (int i = 0; i < Members.Count; i++)
+                {
+                    var member = Members[i];
+                    if (member.Id == userId)
+                        return member;
+                }
+                return null;
             }
-            return null;
         }
 
         /// <summary>
@@ -222,38 +303,163 @@ namespace CoCSharp.Logic
         /// <remarks>
         /// Returns <c>false</c> if a <see cref="ClanMember"/> has the same ID as the specified <see cref="Avatar"/>.
         /// </remarks>
-        public bool AddMember(Avatar avatar)
+        public JoinedOrLeftAllianceStream Join(Avatar avatar)
         {
-            if (FindMember(avatar.ID) != null)
-                return false;
+            var member = Get(avatar.Id);
+            if (member != null)
+                return null;
 
-            //TODO: Order by Trophy count.
-            Members.Add(new ClanMember(avatar)
+            lock (_sync)
             {
-                Role = ClanMemberRole.Member,
-                Rank = Members.Count,
-                PreviousRank = Members.Count
-            });
-            return true;
+                var jolStreamEntry = new JoinedOrLeftAllianceStream
+                {
+                    HomeId = avatar.Id,
+                    UserId = avatar.Id,
+                    League = avatar.League,
+                    ExpLevels = avatar.ExpLevels,
+                    Name = avatar.Name,
+                    Role = ClanMemberRole.Member,
+
+                    Action = 3, // Action = 3 => Joined, Action = 4 => Left.
+                    ActorName = avatar.Name,
+                    ActorUserId = avatar.Id,
+
+                    Unknown1 = 1,
+
+                    EntryId = Entries.Count,
+
+                    Unknown2 = 3,
+                };
+
+                var newMember = new ClanMember
+                {
+                    Id = avatar.Id,
+                    Trophies = avatar.Trophies,
+                    ExpLevels = avatar.ExpLevels,
+                    Name = avatar.Name,
+                    League = avatar.League,
+                    Role = ClanMemberRole.Member,
+                    Rank = Members.Count + 1,
+                    PreviousRank = Members.Count + 1,
+                    NewMember = true
+                };
+
+                Members.Add(newMember);
+                Entries.Add(jolStreamEntry);
+                Update();
+                return jolStreamEntry;
+            }
         }
 
         /// <summary>
         /// Removes a <see cref="ClanMember"/> with the same user ID as specified and returns <c>true</c>
         /// if succeeded; otherwise, <c>false</c>.
         /// </summary>
-        /// <param name="id">ID which the <see cref="ClanMember"/> must have.</param>
+        /// <param name="userId">ID which the <see cref="ClanMember"/> must have.</param>
         /// <returns><c>true</c> if succeeded; otherwise, <c>false</c>.</returns>
-        public bool RemoveMember(long id)
+        public JoinedOrLeftAllianceStream Leave(long userId)
         {
-            for (int i = 0; i < Members.Count; i++)
+            lock (_sync)
             {
-                if (Members[i].ID == id)
+                for (int i = 0; i < Members.Count; i++)
                 {
-                    Members.RemoveAt(i);
-                    return true;
+                    var member = Members[i];
+                    if (member.Id == userId)
+                    {
+                        var jolStreamEntry = new JoinedOrLeftAllianceStream
+                        {
+                            HomeId = member.Id,
+                            UserId = member.Id,
+                            League = member.League,
+                            ExpLevels = member.ExpLevels,
+                            Name = member.Name,
+                            Role = member.Role,
+
+                            Action = 4, // Action = 3 => Joined, Action = 4 => Left.
+                            ActorName = member.Name,
+                            ActorUserId = member.Id,
+
+                            Unknown1 = 1,
+
+                            EntryId = Entries.Count,
+
+                            Unknown2 = 3,
+                        };
+
+                        Members.RemoveAt(i);
+                        Entries.Add(jolStreamEntry);
+
+                        Update();
+                        return jolStreamEntry;
+                    }
                 }
             }
-            return false;
+            return null;
+        }
+
+        public void Promote(long userId, ClanMemberRole newRole)
+        {
+            var member = Get(userId);
+
+            // If a new member is promoted, he is not considered new anymore.
+            if (member.NewMember)
+                member.NewMember = false;
+
+            member.Role = newRole;
+        }
+
+        public void Update()
+        {
+            var total = 0;
+
+            // Insertion sorting of clan members by amount of trophies.
+            for (int i = 1; i < Members.Count; i++)
+            {
+                var j = i;
+                while (j > 0 && Members[j].Trophies > Members[j - 1].Trophies)
+                {
+                    // Swap [j] and [j -1].
+                    var temp = Members[j - 1];
+                    Members[j - 1] = Members[j];
+                    Members[j] = temp;
+                    j--;
+                }
+            }
+
+            for (int i = 0; i < Members.Count; i++)
+            {
+                var member = Members[i];
+
+                // Update the Rank and PreviousRank of member.
+                var rank1 = i + 1;
+                if (member.Rank != rank1)
+                {
+                    member.PreviousRank = member.Rank;
+                    member.Rank = rank1;
+                }
+
+                // If the its been more than 3 days since the player joined, he is not considered new anymore.
+                if ((DateTime.UtcNow - member.DateJoined) >= TimeSpan.FromDays(3))
+                    member.NewMember = false;
+
+                // Calculate the number of clan trophies.
+                var rank2 = member.Rank;
+                var trophies = member.Trophies;
+                if (rank2 >= 1 || rank2 <= 10)
+                    total = (int)Math.Round(0.5 * trophies);
+                else if (rank2 >= 11 || rank2 <= 20)
+                    total = (int)Math.Round(0.25 * trophies);
+                else if (rank2 >= 21 || rank2 <= 30)
+                    total = (int)Math.Round(0.12 * trophies);
+                else if (rank2 >= 31 || rank2 <= 40)
+                    total = (int)Math.Round(0.10 * trophies);
+                else if (rank2 >= 41 || rank2 <= 50)
+                    total = (int)Math.Round(0.3 * trophies);
+
+                TotalTrophies += total;
+            }
+
+            TotalTrophies = total;
         }
         #endregion
     }

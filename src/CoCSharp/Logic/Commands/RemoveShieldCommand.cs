@@ -20,7 +20,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="RemoveShieldCommand"/>.
         /// </summary>
-        public override int ID { get { return 573; } }
+        public override int Id { get { return 573; } }
 
         /// <summary>
         /// Unknown byte 1.

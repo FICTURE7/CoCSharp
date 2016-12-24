@@ -1,4 +1,4 @@
-﻿using CoCSharp.Server.API.Events.Server;
+﻿using CoCSharp.Server.Api.Events.Server;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -24,7 +24,7 @@ namespace CoCSharp.Server
             var endpoint = new IPEndPoint(IPAddress.Any, PORT);
             try
             {
-                Log.Info($"Binding listening socket to {endpoint}...");
+                Logs.Info($"Binding listening socket to {endpoint}...");
                 _listener.Bind(endpoint);
                 _listener.Listen(BACKLOG);
 
@@ -32,8 +32,8 @@ namespace CoCSharp.Server
             }
             catch (SocketException ex)
             {
-                Log.Error("**Unable to start listener socket: " + ex);
-                Log.Error("**Socket Error: " + ex.SocketErrorCode);
+                Logs.Error("**Unable to start listener socket: " + ex);
+                Logs.Error("**Socket Error: " + ex.SocketErrorCode);
                 return false;
             }
 
@@ -67,7 +67,7 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Log.Error("Unable to start accept! " + ex);
+                Logs.Error("***Unable to start accept! " + ex);
             }
         }
 
@@ -94,7 +94,7 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Log.Error("Unable to process accept! " + ex);
+                Logs.Error("Unable to process accept! " + ex);
                 KillSocket(remoteSocket);
             }
         }

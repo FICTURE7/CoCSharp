@@ -134,14 +134,24 @@ namespace CoCSharp.Csv
                     }
 
                     var set = false;
-                    if (returnType.IsValueType)
+                    if (parameters != null)
                     {
-                        if (!parameters[0].Equals(defaultValue))
-                            set = true;
+                        if (returnType.IsValueType)
+                        {
+                            if (!parameters[0].Equals(defaultValue))
+                                set = true;
+                        }
+                        else
+                        {
+                            set = parameters[0] != null;
+                        }
                     }
                     else
                     {
-                        set = parameters[0] != null;
+                        parameters = new object[] 
+                        {
+                            defaultValue
+                        };
                     }
 
                     // If the property value is not a default value then
@@ -155,7 +165,7 @@ namespace CoCSharp.Csv
                     // Check if the property' name == "Name" and if the property's value is not null.
                     // If it meets the conditions then it is a parent.
                     // Because parents and children share the same name.
-                    isParent = property.PropertyName == "Name" && value != DBNull.Value;
+                    isParent = property.Name == "Name" && value != DBNull.Value;
                     if (isParent)
                     {
                         //dataRow = CsvDataRow.CreateInternal(type, dataTable, (string)parameters[0]);

@@ -26,7 +26,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="star">Star amount.</param>
         public NpcStarSlot(int id, int star)
         {
-            ID = id;
+            Id = id;
             Star = star;   
         }
 
@@ -46,7 +46,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Star = reader.ReadInt32();
         }
 
@@ -61,7 +61,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Star);
         }
     }

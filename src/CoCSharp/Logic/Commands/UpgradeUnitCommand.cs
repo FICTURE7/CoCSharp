@@ -13,7 +13,7 @@ namespace CoCSharp.Logic.Commands
             // Space
         }
 
-        public override int ID => 516;
+        public override int Id => 516;
 
         public int BuildingGameID;
         public int Unknown1;

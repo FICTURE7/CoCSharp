@@ -1,5 +1,4 @@
-﻿using CoCSharp.Server.Core;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
@@ -16,19 +15,15 @@ namespace CoCSharp.Server
 
             _server = server;
             _listener = new HttpListener();
-            _listener.Prefixes.Add("http://localhost:8081/");
-            _listener.Prefixes.Add("http://127.0.0.1:8081/");
+            _listener.Prefixes.Add("http://*:8081/");
 
-#if !DEBUG
-            _listener.Prefixes.Add($"http://{GetPublicIP()}:8081/");
-#endif
-
-            var curProcess = Process.GetCurrentProcess();
-            _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");            
+            _curProcess = Process.GetCurrentProcess();
+            _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         }
 
         private readonly Server _server;
         private readonly HttpListener _listener;
+        private readonly Process _curProcess;
         private readonly PerformanceCounter _cpuCounter;
 
         public void Start()
@@ -43,13 +38,6 @@ namespace CoCSharp.Server
             _listener.Stop();
         }
 
-        // Look up the external IP address using ipify.org.
-        private string GetPublicIP()
-        {
-            using (var wc = new WebClient())
-                return wc.DownloadString("https://api.ipify.org/");
-        }
-
         private void AcceptNewRequest()
         {
             var k = HandleRequestAsync();
@@ -61,8 +49,6 @@ namespace CoCSharp.Server
 
             // Begins handling new requests.
             AcceptNewRequest();
-
-            //_server.Log.Info("Handling new web API request.");
 
             var builder = new StringBuilder();
             if (context.Request.Url.LocalPath == "/net")
@@ -83,15 +69,13 @@ namespace CoCSharp.Server
             }
             else if (context.Request.Url.LocalPath == "/db")
             {
-                var totalEntries = ((LiteDbManager)_server.Db).TotalEntries;
-
+                var totalEntries = await _server.Db.GetLevelCountAsync();
                 builder.Append("totalEntries=").Append(totalEntries).Append(";");
             }
             else if (context.Request.Url.LocalPath == "/sys")
             {
                 var cpuUsage = _cpuCounter.NextValue();
-                //var memUsage = _memCounter.NextValue();
-                var memUsage = Process.GetCurrentProcess().WorkingSet64;
+                var memUsage = _curProcess.WorkingSet64;
 
                 builder.Append("cpuUsage=").Append(cpuUsage).Append(";");
                 builder.Append("memUsage=").Append(memUsage).Append(";");
@@ -106,6 +90,7 @@ namespace CoCSharp.Server
             var buffer = Encoding.UTF8.GetBytes(str);
 
             context.Response.ContentType = "application/json";
+            context.Response.Headers["Access-Control-Allow-Origin"] = "*";
             await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
 
             context.Response.Close();

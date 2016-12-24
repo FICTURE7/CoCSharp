@@ -27,7 +27,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="gold">Looted gold amount.</param>
         public NpcGoldSlot(int id, int gold)
         {
-            ID = id;
+            Id = id;
             Gold = gold;
         }
 
@@ -47,7 +47,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Gold = reader.ReadInt32();
         }
 
@@ -62,7 +62,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Gold);
         }
     }

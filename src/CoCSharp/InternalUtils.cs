@@ -10,6 +10,19 @@ namespace CoCSharp
     {
         public static Random Random = new Random();
 
+        public static T ReadMessageAt<T>(string path) where T : Message, new()
+        {
+            var message = new T();
+            var file = File.ReadAllBytes(path);
+            var stream = new MemoryStream(file);
+            using (var reader = new MessageReader(stream))
+            {
+                message.ReadMessage(reader);
+            }
+
+            return message;
+        }
+
         public static void DumpBuffer(SocketAsyncEventArgs args)
         {
             File.WriteAllBytes("dump", args.Buffer);

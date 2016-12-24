@@ -64,9 +64,9 @@ namespace CoCSharp.Network
 
         #region Fields & Properties
         // Represents how the incoming messages will be processed.
-        private int _incomingState;
-        // Represents how the outgoing messages will be processed.
         private int _incommingState;
+        // Represents how the outgoing messages will be processed.
+        private int _outgoingState;
 
         private States _nstate;
         private MessageDirection _direction;
@@ -122,9 +122,9 @@ namespace CoCSharp.Network
                 throw new ArgumentNullException(nameof(chiper));
 
             // Direction of where the message is *going to*.
-            var messageDirection = Message.GetMessageDirection(header.ID);
+            var messageDirection = Message.GetMessageDirection(header.Id);
             // Message instance that we will return to the caller.
-            var message = MessageFactory.Create(header.ID);
+            var message = MessageFactory.Create(header.Id);
 
             // Decrypt incoming data taking the message direction.
             // Header is only used to print debugging info.
@@ -133,7 +133,6 @@ namespace CoCSharp.Network
             Debug.Assert(plaintext != null);
             using (var reader = new MessageReader(new MemoryStream(plaintext)))
             {
-                var exception = (Exception)null;
                 try
                 {
                     message.ReadMessage(reader);
@@ -141,7 +140,7 @@ namespace CoCSharp.Network
                     // Set the session key if the message is HandshakeSucessMessage.
                     // This session key will then be used later on.
                     const int HANDSHAKE_SUCCESS_ID = 20100;
-                    if (header.ID == HANDSHAKE_SUCCESS_ID)
+                    if (header.Id == HANDSHAKE_SUCCESS_ID)
                     {
                         var hsMessage = (HandshakeSuccessMessage)message;
                         var sessionKey = hsMessage.SessionKey;
@@ -150,14 +149,14 @@ namespace CoCSharp.Network
                         _sessionKey = sessionKey;
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    exception = ex;
+                    Interlocked.Add(ref _incommingState, (int)_direction);
                     throw;
                 }
             }
 
-            Interlocked.Add(ref _incomingState, (int)_direction);
+            Interlocked.Add(ref _incommingState, (int)_direction);
             return message;
         }
 
@@ -180,7 +179,7 @@ namespace CoCSharp.Network
                 var body = bodyStream.ToArray();
                 var chiper = ProcessOutgoingData(messageDirection, body);
 
-                Interlocked.Add(ref _incommingState, (int)_direction);
+                Interlocked.Add(ref _outgoingState, (int)_direction);
                 return chiper;
             }
         }
@@ -191,7 +190,7 @@ namespace CoCSharp.Network
             var plaintext = (byte[])null;
 
             // Handshaking.
-            if (_incomingState == 0)
+            if (_incommingState == 0)
             {
                 // Handshakes are sent unencrypted.
                 // First message by both ends is always sent unencrypted.
@@ -215,9 +214,9 @@ namespace CoCSharp.Network
             if (GetOppositeDirection(direction) != _direction)
                 throw new InvalidOperationException("Tried to process an incoming data from a message coming from the same direction."); // -> Protocol Exception?
 
-            // _incomingState == 1 means we are the server.
+            // _incomingState == 2 means we are the server.
             // Usually processing 10101 - LoginRequestMessage.
-            if (_incomingState == 2)
+            if (_incommingState == 2)
             {
                 // -> Post-Encryption.
                 // Copies the public key appended to the beginning of the message
@@ -225,7 +224,7 @@ namespace CoCSharp.Network
                 var publicKey = new byte[CoCKeyPair.KeyLength];
                 Buffer.BlockCopy(chiper, 0, publicKey, 0, CoCKeyPair.KeyLength);
 
-                Debug.WriteLine($"Public-Key from {header.ID}: {ToHexString(publicKey)}");
+                Debug.WriteLine($"Public-Key from {header.Id}: {ToHexString(publicKey)}");
 
                 // Copies the remaining bytes into the postChier buffer which
                 // will be decrypted by _crypto.
@@ -246,8 +245,8 @@ namespace CoCSharp.Network
                 Buffer.BlockCopy(tmpPlaintext, 0, sessionKey, 0, CoCKeyPair.NonceLength);
                 Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength, remoteNonce, 0, CoCKeyPair.NonceLength);
 
-                Debug.WriteLine($"Session-key from {header.ID}: {ToHexString(sessionKey)}");
-                Debug.WriteLine($"Client-nonce from {header.ID}: {ToHexString(remoteNonce)}");
+                Debug.WriteLine($"Session-key from {header.Id}: {ToHexString(sessionKey)}");
+                Debug.WriteLine($"Client-nonce from {header.Id}: {ToHexString(remoteNonce)}");
 
                 // Copies the plaintext without the session key and the remote/client nonce.
                 var plaintextLen = tmpPlaintext.Length - (CoCKeyPair.NonceLength * 2);
@@ -261,9 +260,9 @@ namespace CoCSharp.Network
 
                 _nstate = States.Authentifying;
             }
-            // _incomingState == 2 means we are the client.
+            // _incomingState == 3 means we are the client.
             // Usually processing 20104 - LoginSuccessMessage.
-            else if (_incomingState == 3)
+            else if (_incommingState == 3)
             {
                 // -> Might want to generate random nonce here for the
                 // client nonce.
@@ -286,8 +285,8 @@ namespace CoCSharp.Network
                 Buffer.BlockCopy(tmpPlaintext, 0, remoteNonce, 0, CoCKeyPair.NonceLength);
                 Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength, key, 0, CoCKeyPair.KeyLength);
 
-                Debug.WriteLine($"Shared-key from {header.ID}: {ToHexString(key)}");
-                Debug.WriteLine($"Server-nonce from {header.ID}: {ToHexString(remoteNonce)}");
+                Debug.WriteLine($"Shared-key from {header.Id}: {ToHexString(key)}");
+                Debug.WriteLine($"Server-nonce from {header.Id}: {ToHexString(remoteNonce)}");
 
                 // Copies the plaintext without the server nonce and the new second secret key.
                 var plaintextLen = tmpPlaintext.Length - CoCKeyPair.NonceLength - CoCKeyPair.KeyLength;
@@ -303,7 +302,7 @@ namespace CoCSharp.Network
                 _nstate = States.Authentified;
             }
             // Messages after the previous states are processed the same way.
-            else if (_incomingState > (int)_direction)
+            else if (_incommingState > (int)_direction)
             {
                 _nstate = States.Completed;
 
@@ -321,7 +320,7 @@ namespace CoCSharp.Network
             var chiper = (byte[])null;
 
             // Handshaking
-            if (_incommingState == 0)
+            if (_outgoingState == 0)
             {
                 chiper = (byte[])plaintext.Clone();
 
@@ -333,9 +332,9 @@ namespace CoCSharp.Network
             if (direction != _direction)
                 throw new InvalidOperationException("Tried to process an outgoing message coming from a different direction."); // -> Protocol Exception?
 
-            // _outgoingState == 1 means we're the server.
+            // _outgoingState == 2 means we're the server.
             // Usually processing 20104 - LoginSuccessMessage.
-            if (_incommingState == 2)
+            if (_outgoingState == 2)
             {
                 Debug.Assert(_remoteNonce != null);
                 Debug.Assert(_localNonce == null);
@@ -361,9 +360,9 @@ namespace CoCSharp.Network
                 chiper = tmpChiper;
                 //_key = key;
             }
-            // _outgoingState == 2 means we're the client.
+            // _outgoingState == 3 means we're the client.
             // Usually processing 10101 - LoginRequestMessage.
-            else if (_incommingState == 3)
+            else if (_outgoingState == 3)
             {
                 var serverKey = _serverKey;
                 var sessionKey = _sessionKey;
@@ -396,7 +395,7 @@ namespace CoCSharp.Network
                 _localNonce = localNonce;
             }
             // Messages after the previous states are processed the same way.
-            else if (_incommingState > (int)_direction)
+            else if (_outgoingState > (int)_direction)
             {
                 var tmpChiper = (byte[])plaintext.Clone();
 

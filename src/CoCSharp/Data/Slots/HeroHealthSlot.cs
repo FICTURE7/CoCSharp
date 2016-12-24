@@ -26,7 +26,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="health">Health of the hero.</param>
         public HeroHealthSlot(int id, int health)
         {
-            ID = id;
+            Id = id;
             Health = health;
         }
 
@@ -46,7 +46,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Health = reader.ReadInt32();
         }
 
@@ -61,7 +61,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Health);
         }
     }

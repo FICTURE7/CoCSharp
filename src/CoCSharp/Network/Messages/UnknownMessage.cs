@@ -9,7 +9,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="UnknownMessage"/>.
         /// </summary>
-        public override ushort ID { get; set; }
+        public override ushort Id { get; set; }
 
         /// <summary>
         /// Gets the version of the <see cref="UnknownMessage"/>.

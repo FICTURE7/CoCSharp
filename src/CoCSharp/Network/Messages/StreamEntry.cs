@@ -10,7 +10,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="StreamEntry"/>.
         /// </summary>
-        public abstract int ID { get; }
+        public abstract int Id { get; }
 
         /// <summary>
         /// Reads the <see cref="StreamEntry"/> from the specified <see cref="MessageReader"/>.
@@ -18,7 +18,10 @@ namespace CoCSharp.Network.Messages
         /// <param name="reader">
         /// <see cref="MessageReader"/> that will be used to read the <see cref="StreamEntry"/>.
         /// </param>
-        public abstract void ReadStreamEntry(MessageReader reader);
+        public virtual void ReadStreamEntry(MessageReader reader)
+        {
+            // Space
+        }
 
         /// <summary>
         /// Writes the <see cref="StreamEntry"/> to the specified <see cref="MessageWriter"/>.
@@ -26,20 +29,21 @@ namespace CoCSharp.Network.Messages
         /// <param name="writer">
         /// <see cref="MessageWriter"/> that will be used to write the <see cref="StreamEntry"/>.
         /// </param>
-        public abstract void WriteStreamEntry(MessageWriter writer);
-
-        /// <summary>Throws ArgumentNullException if reader is null.</summary>
-        protected void ThrowIfReaderNull(MessageReader reader)
+        public virtual void WriteStreamEntry(MessageWriter writer)
         {
-            if (reader == null)
-                throw new ArgumentNullException("reader");
+            // Space
         }
 
-        /// <summary>Throws ArgumentNullException if writer is null.</summary>
-        protected void ThrowIfWriterNull(MessageWriter writer)
+        internal void ThrowIfReaderNull(MessageReader reader)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+        }
+
+        internal void ThrowIfWriterNull(MessageWriter writer)
         {
             if (writer == null)
-                throw new ArgumentNullException("writer");
+                throw new ArgumentNullException(nameof(writer));
         }
     }
 }

@@ -52,7 +52,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="HandshakeRequestMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 10100; } }
+        public override ushort Id { get { return 10100; } }
 
         /// <summary>
         /// Reads the <see cref="HandshakeRequestMessage"/> from the specified <see cref="MessageReader"/>.

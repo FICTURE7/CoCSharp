@@ -63,9 +63,9 @@ namespace CoCSharp.Proxy
 
         public override Message ProcessIncoming(MessageHeader header, byte[] chiper, ref byte[] plaintext)
         {
-            var messageDirection = Message.GetMessageDirection(header.ID);
+            var messageDirection = Message.GetMessageDirection(header.Id);
             // Message instance that we will return to the caller.
-            var message = MessageFactory.Create(header.ID);
+            var message = MessageFactory.Create(header.Id);
 
             // Unencrypted byte array.
             plaintext = null;
@@ -103,7 +103,7 @@ namespace CoCSharp.Proxy
                     var publicKey = new byte[CoCKeyPair.KeyLength];
                     Buffer.BlockCopy(chiper, 0, publicKey, 0, CoCKeyPair.KeyLength);
 
-                    Debug.WriteLine($"Public-Key from {header.ID}: {ToHexString(publicKey)}");
+                    Debug.WriteLine($"Public-Key from {header.Id}: {ToHexString(publicKey)}");
 
                     // Copies the remaining bytes into the plaintext buffer
                     var plaintextLen = header.Length - CoCKeyPair.KeyLength;
@@ -123,8 +123,8 @@ namespace CoCSharp.Proxy
                     Buffer.BlockCopy(plaintext, 0, _sessionKey, 0, CoCKeyPair.NonceLength);
                     Buffer.BlockCopy(plaintext, CoCKeyPair.NonceLength, _clientNonce, 0, CoCKeyPair.NonceLength);
 
-                    Debug.WriteLine($"Session-key from {header.ID}: {ToHexString(_sessionKey)}");
-                    Debug.WriteLine($"Client-nonce from {header.ID}: {ToHexString(_clientNonce)}");
+                    Debug.WriteLine($"Session-key from {header.Id}: {ToHexString(_sessionKey)}");
+                    Debug.WriteLine($"Client-nonce from {header.Id}: {ToHexString(_clientNonce)}");
 
                     var actualMessage = new byte[plaintext.Length - (CoCKeyPair.NonceLength * 2)];
                     Buffer.BlockCopy(plaintext, CoCKeyPair.NonceLength * 2, actualMessage, 0, actualMessage.Length);
@@ -149,8 +149,8 @@ namespace CoCSharp.Proxy
                     _serverCrypto.UpdateNonce((byte[])_clientNonce.Clone(), UpdateNonceType.Encrypt);
                     _serverCrypto.UpdateSharedKey(publicKey);
 
-                    Debug.WriteLine($"Server-Nonce from {header.ID}: {ToHexString(_serverNonce)}");
-                    Debug.WriteLine($"New Public-Key from {header.ID}: {ToHexString(publicKey)}");
+                    Debug.WriteLine($"Server-Nonce from {header.Id}: {ToHexString(_serverNonce)}");
+                    Debug.WriteLine($"New Public-Key from {header.Id}: {ToHexString(publicKey)}");
 
                     // Copies the remaining bytes into the plaintext buffer.
                     var plaintextLen = chiper.Length - CoCKeyPair.KeyLength - CoCKeyPair.NonceLength;

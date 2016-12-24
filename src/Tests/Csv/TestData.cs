@@ -5,7 +5,7 @@ namespace CoCSharp.Test.Csv
     // Test CsvData.
     public class TestData : CsvData
     {        
-        internal override int KindID
+        internal override int KindId
         {
             get
             {

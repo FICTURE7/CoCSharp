@@ -25,7 +25,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="id">ID of the mission.</param>
         public TutorialProgressSlot(int id)
         {
-            ID = id;
+            Id = id;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
         }
     }
 }

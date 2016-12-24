@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
@@ -77,6 +78,8 @@ namespace CoCSharp.Network
             var args = _receivePool.Pop();
             if (args == null)
             {
+                Debug.WriteLine("Creating new receive operation because pool was empty.");
+
                 args = new SocketAsyncEventArgs();
                 args.SetBuffer(new byte[settings.BufferSize], 0, settings.BufferSize);
                 MessageReceiveToken.Create(args);
@@ -178,7 +181,7 @@ namespace CoCSharp.Network
                 if (BitConverter.IsLittleEndian)
                     Array.Reverse(len);
 
-                writer.Write(message.ID);
+                writer.Write(message.Id);
                 writer.Write(len, 1, 3); // message length
                 writer.Write(message.Version);
                 writer.Write(chiper); // encrypted body
@@ -190,13 +193,15 @@ namespace CoCSharp.Network
                 var args = _sendPool.Pop();
                 if (args == null)
                 {
+                    Debug.WriteLine("Creating new send operation because pool was empty.");
+
                     args = new SocketAsyncEventArgs();
                     args.SetBuffer(new byte[65535], 0, 65535);
                     MessageSendToken.Create(args);
                 }
 
-                var token = args.UserToken as MessageSendToken;
-                token.ID = message.ID;
+                var token = (MessageSendToken)args.UserToken;
+                token.Id = message.Id;
                 token.Length = chiper.Length;
                 token.Version = message.Version;
                 token.Body = messageData;
@@ -256,7 +261,6 @@ namespace CoCSharp.Network
             if (token.SendRemaining > 0)
             {
                 StartSend(args);
-                return;
             }
             // Else reset and push back the SocketAsyncEventArgs.
             else
@@ -291,6 +295,7 @@ namespace CoCSharp.Network
         {
             var bytesToProcess = args.BytesTransferred;
             var token = (MessageReceiveToken)args.UserToken;
+            var messagesArgs = new List<MessageReceivedEventArgs>(2);
 
             Interlocked.Add(ref Statistics._totalReceived, args.BytesTransferred);
             Interlocked.Add(ref _settingsStats._totalReceived, args.BytesTransferred);
@@ -372,7 +377,7 @@ namespace CoCSharp.Network
                 var plaintext = (byte[])null;
                 try
                 {
-                    var header = new MessageHeader(token.ID, token.Length, token.Version);
+                    var header = new MessageHeader(token.Id, token.Length, token.Version);
                     message = _processor.ProcessIncoming(header, token.Body, ref plaintext);
                 }
                 catch (Exception ex)
@@ -380,24 +385,29 @@ namespace CoCSharp.Network
                     exception = ex;
                 }
 
-                OnMessageReceived(new MessageReceivedEventArgs()
+                var msgArgs = new MessageReceivedEventArgs()
                 {
                     Message = message,
                     Raw = messageData,
                     Plaintext = plaintext,
                     Exception = exception
-                });
+                };
+                messagesArgs.Add(msgArgs);
                 token.Reset();
             }
 
             token.Offset = args.Offset;
             _receivePool.Push(args);
+
             StartReceive(_receivePool.Pop());
+
+            for (int i = 0; i < messagesArgs.Count; i++)
+                OnMessageReceived(messagesArgs[i]);
         }
 
         private void ProcessReceiveToken(MessageReceiveToken token)
         {
-            token.ID = (ushort)((token.Header[0] << 8) | (token.Header[1]));
+            token.Id = (ushort)((token.Header[0] << 8) | (token.Header[1]));
             token.Length = (token.Header[2] << 16) | (token.Header[3] << 8) | (token.Header[4]);
             token.Version = (ushort)((token.Header[5] << 8) | (token.Header[6]));
 
@@ -468,7 +478,8 @@ namespace CoCSharp.Network
             }
             else
             {
-                Debug.Write("Semaphore not responding in time.");
+                Debug.WriteLine("Semaphore not responding in time.");
+                //TODO: Might want drop connection and release the semaphore.
             }
         }
 
@@ -493,8 +504,10 @@ namespace CoCSharp.Network
                 if (disposing)
                 {
                     try { Socket.Shutdown(SocketShutdown.Both); }
-                    catch { /* Painful swallow. */}
-                    Socket.Close();
+                    catch { /* Swallow. */}
+
+                    try { Socket.Close(); }
+                    catch { /* Swallow. */}
                 }
             }
         }

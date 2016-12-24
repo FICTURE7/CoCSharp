@@ -27,7 +27,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="amount">Amount of the resource.</param>
         public ResourceAmountSlot(int id, int amount)
         {
-            ID = id;
+            Id = id;
             Amount = amount;
         }
 
@@ -47,7 +47,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Amount = reader.ReadInt32();
         }
 
@@ -62,7 +62,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Amount);
         }
     }

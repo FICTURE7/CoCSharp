@@ -24,7 +24,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="HandshakeSuccessMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 20100; } }
+        public override ushort Id { get { return 20100; } }
 
         /// <summary>
         /// Reads the <see cref="HandshakeSuccessMessage"/> from the specified <see cref="MessageReader"/>.

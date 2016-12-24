@@ -17,7 +17,7 @@ namespace CoCSharp.Data.Models
         }
 
         #region Fields & Properties
-        internal override int KindID
+        internal override int KindId
         {
             get
             {
@@ -28,7 +28,7 @@ namespace CoCSharp.Data.Models
         /// <summary>
         /// Gets or sets the Name of building.
         /// </summary>
-        [CsvAlias("          ")]  // Its named like this in buildings.csv.
+        //[CsvAlias("          ")]  // Its named like this in buildings.csv.
         public string Name { get; set; }
         /// <summary>
         /// Gets or sets the TID Instructor.

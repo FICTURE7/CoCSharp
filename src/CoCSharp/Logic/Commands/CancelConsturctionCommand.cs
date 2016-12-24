@@ -22,7 +22,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="CancelConsturctionCommand"/>.
         /// </summary>
-        public override int ID { get { return 505; } }
+        public override int Id { get { return 505; } }
 
         /// <summary>
         /// Game ID of the <see cref="VillageObject"/> whose

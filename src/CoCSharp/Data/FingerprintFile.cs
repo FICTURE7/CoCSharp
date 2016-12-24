@@ -16,7 +16,7 @@
         /// <summary>
         /// Gets or sets the SHA-1 hash of the file.
         /// </summary>
-        public byte[] Hash { get; set; }
+        public string Hash { get; set; }
 
         /// <summary>
         /// Gets or sets the path of the file.

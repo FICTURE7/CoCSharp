@@ -16,7 +16,7 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int KindID => 11;
+        internal override int KindId => 11;
 
         // NOTE: This was generated from the experience_levels.csv using gen_csv_properties.py script.
 

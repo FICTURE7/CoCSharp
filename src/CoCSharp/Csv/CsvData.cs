@@ -19,7 +19,7 @@ namespace CoCSharp.Csv
         #region Constructors
         internal CsvData()
         {
-            _minId = KindID * InternalConstants.IDBase;
+            _minId = KindId * InternalConstants.IdBase;
             _maxId = _minId + MaxIndex;
         }
         #endregion
@@ -32,7 +32,7 @@ namespace CoCSharp.Csv
         private readonly int _maxId;
 
         [CsvIgnore]
-        internal abstract int KindID { get; }
+        internal abstract int KindId { get; }
 
         /// <summary>
         /// Gets the <see cref="CsvDataRowRef"/> which references 
@@ -44,7 +44,7 @@ namespace CoCSharp.Csv
         /// 
         /// </summary>
         [CsvIgnore]
-        public int ID => _ref == null ? -1 : _ref.ID;
+        public int Id => _ref == null ? -1 : _ref.Id;
         #endregion
 
         #region Methods
@@ -74,7 +74,7 @@ namespace CoCSharp.Csv
                 instance = (CsvData)Activator.CreateInstance(type);
                 s_instances.Add(type, instance);
             }
-            return instance.KindID;
+            return instance.KindId;
         }
 
         // Returns the index of data ID.

@@ -68,7 +68,7 @@ namespace CoCSharp.Test.Logic
             {
                 var building = _collection[500000000 + i];
                 Assert.AreEqual(i, building._columnIndex);
-                Assert.AreEqual(500000000 + i, building.ID);
+                Assert.AreEqual(500000000 + i, building.Id);
             }
         }
     }

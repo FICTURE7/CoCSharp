@@ -19,7 +19,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="AllianceDataResponseMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24301; } }
+        public override ushort Id { get { return 24301; } }
 
         /// <summary>
         /// Clan data.
@@ -40,7 +40,7 @@ namespace CoCSharp.Network.Messages
         /// ID of the war the clan is currently in.
         /// 0 If not in war.
         /// </summary>
-        public long WarID;
+        public long WarId;
 
         /// <summary>
         /// Unknown integer 2.
@@ -84,7 +84,7 @@ namespace CoCSharp.Network.Messages
             Unknown1 = reader.ReadInt32();
 
             if (reader.ReadBoolean())
-                WarID = reader.ReadInt64();
+                WarId = reader.ReadInt64();
 
             Unknown2 = reader.ReadInt32();
             Unknown3 = reader.ReadByte();
@@ -121,10 +121,10 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown1);
 
-            var inWar = WarID != 0;
+            var inWar = WarId != 0;
             writer.Write(inWar);
             if (inWar)
-                writer.Write(WarID);
+                writer.Write(WarId);
             
             writer.Write(Unknown2);
             writer.Write(Unknown3);

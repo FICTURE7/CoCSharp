@@ -17,7 +17,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="LeaveAllianceMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14308; } }
+        public override ushort Id { get { return 14308; } }
 
         /// <summary>
         /// Reads the <see cref="LeaveAllianceMessage"/> from the specified <see cref="MessageReader"/>.

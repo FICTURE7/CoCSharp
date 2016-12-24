@@ -19,12 +19,12 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="ChatMessageClientMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14715; } }
+        public override ushort Id { get { return 14715; } }
 
         /// <summary>
         /// Message that will be sent to the lobby chat.
         /// </summary>
-        public string Message;
+        public string TextMessage;
 
         /// <summary>
         /// Reads the <see cref="ChatMessageClientMessage"/> from the specified <see cref="MessageReader"/>.
@@ -37,7 +37,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            Message = reader.ReadString();
+            TextMessage = reader.ReadString();
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(Message);
+            writer.Write(TextMessage);
         }
     }
 }

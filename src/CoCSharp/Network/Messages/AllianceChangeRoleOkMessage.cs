@@ -21,7 +21,7 @@ namespace CoCSharp.Network.Messages
         /// User ID of the player.
         /// That promoted/demoted
         /// </summary>
-        public long UserID;
+        public long UserId;
         /// <summary>
         /// Role that the player gain
         /// </summary>
@@ -30,7 +30,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="AllianceChangeRoleOkMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24306; } }
+        public override ushort Id { get { return 24306; } }
 
         /// <summary>
         /// Reads the <see cref="AllianceChangeRoleOkMessage"/> from the specified <see cref="MessageReader"/>.
@@ -43,7 +43,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            UserID = reader.ReadInt64();
+            UserId = reader.ReadInt64();
             Role = (ClanMemberRole)reader.ReadInt32();
         }
 
@@ -58,7 +58,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(UserID);
+            writer.Write(UserId);
             writer.Write((int)Role);
         }
     }

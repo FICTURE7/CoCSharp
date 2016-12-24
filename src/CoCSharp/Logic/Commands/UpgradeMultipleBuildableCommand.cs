@@ -1,6 +1,5 @@
 ﻿using CoCSharp.Network;
 using System;
-using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -22,7 +21,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="UpgradeMultipleBuildableCommand"/>.
         /// </summary>
-        public override int ID { get { return 549; } }
+        public override int Id { get { return 549; } }
 
         /// <summary>
         /// Determines whether to use the buildings alternative resources.
@@ -111,16 +110,24 @@ namespace CoCSharp.Logic.Commands
                     {
                         var building = (Building)vilobj;
                         var data = building.NextUpgrade;
-                        var resource = UseAlternativeResource ? data.AltBuildResource : data.BuildResource;
-
-                        if (building.IsConstructing)
+                        if (data == null)
                         {
-                            level.Logs.Log($"Building at {gameId} was already in construction.");
+                            var name = building.Data?.Name;
+                            level.Logs.Log($"Unable to find next upgrade for building with level {building.UpgradeLevel + 1} {name}.");
                         }
                         else
                         {
-                            level.Avatar.UseResource(resource, data.BuildCost);
-                            building.BeginConstruction(Tick);
+                            var resource = UseAlternativeResource ? data.AltBuildResource : data.BuildResource;
+
+                            if (building.IsConstructing)
+                            {
+                                level.Logs.Log($"Building at {gameId} was already in construction.");
+                            }
+                            else
+                            {
+                                level.Avatar.UseResource(resource, data.BuildCost);
+                                building.BeginConstruction(Tick);
+                            }
                         }
                     }
                     else

@@ -40,13 +40,13 @@ namespace CoCSharp.Network
 
                 if (type.IsSubclassOf(typeof(AllianceStreamEntry)))
                 {
-                    Debug.Assert(!s_allianceStreamDictionary.ContainsKey(instance.ID), "s_allianceStreamDictionary already contains '" + instance.ID + "'.");
-                    s_allianceStreamDictionary.Add(instance.ID, type);
+                    Debug.Assert(!s_allianceStreamDictionary.ContainsKey(instance.Id), "s_allianceStreamDictionary already contains '" + instance.Id + "'.");
+                    s_allianceStreamDictionary.Add(instance.Id, type);
                 }
                 else if (type.IsSubclassOf(typeof(AvatarStreamEntry)))
                 {
-                    Debug.Assert(!s_avatarStreamDictionary.ContainsKey(instance.ID), "s_avatarStreamDictionary already contains '" + instance.ID + "'.");
-                    s_avatarStreamDictionary.Add(instance.ID, type);
+                    Debug.Assert(!s_avatarStreamDictionary.ContainsKey(instance.Id), "s_avatarStreamDictionary already contains '" + instance.Id + "'.");
+                    s_avatarStreamDictionary.Add(instance.Id, type);
                 }
                 else
                 {

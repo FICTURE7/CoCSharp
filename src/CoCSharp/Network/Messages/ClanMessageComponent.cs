@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Logic;
+using System;
 
 namespace CoCSharp.Network.Messages
 {
@@ -19,7 +20,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Clan ID.
         /// </summary>
-        public long ID;
+        public long Id;
         /// <summary>
         /// Clan name.
         /// </summary>

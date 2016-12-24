@@ -20,12 +20,16 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="VisitHomeDataMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24113; } }
+        public override ushort Id { get { return 24113; } }
 
         /// <summary>
         /// Time since last visit.
         /// </summary>
         public TimeSpan LastVisit;
+        /// <summary>
+        /// Timestamp.
+        /// </summary>
+        public DateTime Timestamp;
         /// <summary>
         /// Visit village data.
         /// </summary>
@@ -61,9 +65,11 @@ namespace CoCSharp.Network.Messages
             ThrowIfReaderNull(reader);
 
             LastVisit = TimeSpan.FromSeconds(reader.ReadInt32());
+            Timestamp = TimeUtils.FromUnixTimestamp(reader.ReadInt32());
 
             VisitVillageData = new VillageMessageComponent();
             VisitVillageData.ReadMessageComponent(reader);
+
             VisitAvatarData = new AvatarMessageComponent();
             VisitAvatarData.ReadMessageComponent(reader);
 
@@ -96,6 +102,7 @@ namespace CoCSharp.Network.Messages
                 throw new InvalidOperationException("OwnAvatarData cannot be null.");
 
             writer.Write((int)LastVisit.TotalSeconds);
+            writer.Write((int)TimeUtils.ToUnixTimestamp(Timestamp));
             VisitVillageData.WriteMessageComponent(writer);
             VisitAvatarData.WriteMessageComponent(writer);
 

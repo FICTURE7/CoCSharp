@@ -1,6 +1,7 @@
 ﻿using CoCSharp.Data.Slots;
 using CoCSharp.Network;
 using System;
+using System.Diagnostics;
 
 namespace CoCSharp.Logic.Commands
 {
@@ -21,7 +22,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="BuyResourcesCommand"/>.
         /// </summary>
-        public override int ID { get { return 518; } }
+        public override int Id { get { return 518; } }
 
         /// <summary>
         /// Amount of resources bought.
@@ -66,7 +67,6 @@ namespace CoCSharp.Logic.Commands
             if (EmbedCommand)
             {
                 Depth++;
-                //Console.WriteLine("Depth: {0}", Depth);
 
                 if (Depth >= MaxEmbeddedDepth)
                     throw new CommandException("A command contained embedded command depth was greater than max embedded commands.");
@@ -104,7 +104,7 @@ namespace CoCSharp.Logic.Commands
             writer.Write(EmbedCommand);
             if (EmbedCommand)
             {
-                writer.Write(Command.ID);
+                writer.Write(Command.Id);
                 Command.WriteCommand(writer);
             }
 

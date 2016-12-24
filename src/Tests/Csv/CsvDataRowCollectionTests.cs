@@ -48,14 +48,14 @@ namespace CoCSharp.Test.Csv
         {
             var row = _table.NewRow("lerow");
             Assert.Null(row.Ref);
-            Assert.AreEqual(-1, row.ID);
+            Assert.AreEqual(-1, row.Id);
 
             _rows.Add(row);
 
             var rowRef = row.Ref;
             Assert.NotNull(rowRef);
             Assert.AreEqual(0, rowRef.RowIndex);
-            Assert.AreEqual(row.ID, rowRef.ID);
+            Assert.AreEqual(row.Id, rowRef.Id);
         }
 
         [Test]

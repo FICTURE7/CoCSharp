@@ -26,7 +26,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="progress">Progress of the achievement.</param>
         public AchievementProgessSlot(int id, int progress)
         {
-            ID = id;
+            Id = id;
             Progress = progress;
         }
 
@@ -46,7 +46,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Progress = reader.ReadInt32();
         }
 
@@ -61,7 +61,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Progress);
         }
     }

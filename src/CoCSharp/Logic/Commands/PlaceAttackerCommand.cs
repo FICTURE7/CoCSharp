@@ -13,11 +13,11 @@ namespace CoCSharp.Logic.Commands
             // Space
         }
 
-        public override int ID => 600;
+        public override int Id => 600;
 
         public int X;
         public int Y;
-        public int UnitDataID;
+        public int UnitDataId;
 
         public override void ReadCommand(MessageReader reader)
         {
@@ -25,7 +25,7 @@ namespace CoCSharp.Logic.Commands
 
             X = reader.ReadInt32();
             Y = reader.ReadInt32();
-            UnitDataID = reader.ReadInt32();
+            UnitDataId = reader.ReadInt32();
             Tick = reader.ReadInt32();
         }
 
@@ -35,7 +35,7 @@ namespace CoCSharp.Logic.Commands
 
             writer.Write(X);
             writer.Write(Y);
-            writer.Write(UnitDataID);
+            writer.Write(UnitDataId);
             writer.Write(Tick);
         }
 
@@ -50,7 +50,7 @@ namespace CoCSharp.Logic.Commands
 
             // Look the UnitSlot in the avatar's UnitSlotCollection and
             // decrement its amount.
-            var slot = level.Avatar.Units.GetSlot(UnitDataID);
+            var slot = level.Avatar.Units.GetSlot(UnitDataId);
             if (slot != null)
                 slot.Amount--;
         }

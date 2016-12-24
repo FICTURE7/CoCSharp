@@ -20,12 +20,12 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="AllianceJoinedCommand"/>.
         /// </summary>
-        public override int ID { get { return 1; } }
+        public override int Id { get { return 1; } }
 
         /// <summary>
         /// ID of the alliance the client joined.
         /// </summary>
-        public long ClanID;
+        public long ClanId;
         /// <summary>
         /// Name of the alliance the client joined.
         /// </summary>
@@ -43,7 +43,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Level of the alliance the client joined.
         /// </summary>
-        public int Level;
+        public int ExpLevels;
 
         /// <summary>
         /// Unknown integer 2.
@@ -66,13 +66,13 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfReaderNull(reader);
 
-            ClanID = reader.ReadInt64();
+            ClanId = reader.ReadInt64();
             Name = reader.ReadString();
             Badge = reader.ReadInt32();
 
             Unknown1 = reader.ReadByte();
 
-            Level = reader.ReadInt32();
+            ExpLevels = reader.ReadInt32();
 
             Unknown2 = reader.ReadInt32();
 
@@ -91,13 +91,13 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ClanID);
+            writer.Write(ClanId);
             writer.Write(Name);
             writer.Write(Badge);
 
             writer.Write(Unknown1);
 
-            writer.Write(Level);
+            writer.Write(ExpLevels);
 
             writer.Write(Unknown2);
 

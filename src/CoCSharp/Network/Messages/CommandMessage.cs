@@ -20,7 +20,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="CommandMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14102; } }
+        public override ushort Id { get { return 14102; } }
 
         /// <summary>
         /// Tick value.
@@ -92,7 +92,7 @@ namespace CoCSharp.Network.Messages
             for (int i = 0; i < Commands.Length; i++)
             {
                 var cmd = Commands[i];
-                writer.Write(cmd.ID);
+                writer.Write(cmd.Id);
                 cmd.WriteCommand(writer);
             }
         }

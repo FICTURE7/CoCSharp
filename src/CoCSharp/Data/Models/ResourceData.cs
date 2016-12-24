@@ -16,7 +16,7 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int KindID
+        internal override int KindId
         {
             get
             {

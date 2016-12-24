@@ -22,7 +22,7 @@ namespace CoCSharp.Data
 
         private readonly TCsvData _instance;
 
-        internal override bool InvalidDataID(int dataId)
+        internal override bool InvalidDataId(int dataId)
         {
             return _instance.InvalidDataID(dataId);
         }

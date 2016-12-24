@@ -2,13 +2,16 @@ using CoCSharp.Csv;
 using CoCSharp.Data;
 using CoCSharp.Data.Models;
 using CoCSharp.Network;
-using CoCSharp.Server.API;
-using CoCSharp.Server.API.Core;
-using CoCSharp.Server.API.Events.Server;
-using CoCSharp.Server.API.Logging;
+using CoCSharp.Server.Api;
+using CoCSharp.Server.Api.Core;
+using CoCSharp.Server.Api.Db;
+using CoCSharp.Server.Api.Events.Server;
+using CoCSharp.Server.Api.Logging;
 using CoCSharp.Server.Core;
+using CoCSharp.Server.Db;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -20,43 +23,54 @@ namespace CoCSharp.Server
         #region Constructors
         public Server()
         {
-            const string CONTENT_PATH = "contents";
-            const string CONFIG_PATH = "server_config.xml";
+            const string LOG_DIR_PATH = "logs";
+            const string CONFIG_FILE_PATH = "server_config.xml";
 
             // Initialize our loggers.
             _log = new Log();
             _log.MainLogger
                 .Next(new ConsoleLogger())
-                .Next(new FileLogger("logs"));
+                .Next(new FileLogger(LOG_DIR_PATH));
 
-            _log.Info($"Loading config at '{CONFIG_PATH}'...");
+            _log.Info($"Loading config at '{CONFIG_FILE_PATH}'...");
+
             // Initialize our configs.
             _config = new ServerConfiguration();
             // If the config does not exists we create it.
-            if (!File.Exists(CONFIG_PATH))
+            if (!File.Exists(CONFIG_FILE_PATH))
             {
-                _log.Warn($"Config at '{CONFIG_PATH}' was not found; creating one.");
-                _config.Save(CONFIG_PATH);
+                _log.Warn($"Config at '{CONFIG_FILE_PATH}' was not found; creating one.");
+                _config.Save(CONFIG_FILE_PATH);
             }
             // If we couldn't load all of the configs or part of the config is missing
             // we overwrite it.
-            else if (!_config.Load(CONFIG_PATH))
+            else if (!_config.Load(CONFIG_FILE_PATH))
             {
                 // Keep a backup of the old config.
-                var oldName = CONFIG_PATH;
-                var newName = Path.GetFileNameWithoutExtension(CONFIG_PATH) + "_old_" + DateTime.Now.ToString("dd-HH-mm-ss-ff") + Path.GetExtension(CONFIG_PATH);
+                var oldName = CONFIG_FILE_PATH;
+                var newName = $"{Path.GetFileNameWithoutExtension(CONFIG_FILE_PATH)}_old_{DateTime.Now.ToString("dd-HH-mm-ss-ff")}{Path.GetExtension(CONFIG_FILE_PATH)}";
                 File.Move(oldName, newName);
 
-                _log.Warn($"Was unable to load config at '{CONFIG_PATH}' completely; overwriting old one.");
-                _config.Save(CONFIG_PATH);
+                _log.Warn($"Was unable to load config at '{CONFIG_FILE_PATH}' completely; overwriting old one.");
+                _config.Save(CONFIG_FILE_PATH);
             }
 
-            // Initialize our client list.
+            // Check whether the values in server configuration is valid.
+            if (!CheckConfig())
+            {
+                _log.Error("Server configuration was incorrect.");
+                Close();
+
+                Environment.Exit(1);
+            }
+
+            // Initialize our thread-safe client list.
             _clients = new ClientCollection();
+            _cache = new CacheManager();
 
+            // Initialize the Web API.
+            // TODO: Turn into plugin when the plugin system is set up.
             _api = new WebApi(this);
-
-            _assets = new AssetManager(CONTENT_PATH);
 
             _handler = new MessageHandler(this);
 
@@ -68,26 +82,29 @@ namespace CoCSharp.Server
         #endregion
 
         #region Fields & Properties
-        public event EventHandler<EventArgs> Started;
         public event EventHandler<ServerConnectionEventArgs> ClientConnected;
 
         private bool _disposed;
-        private LiteDbManager _db;
+        private MySqlDbManager _db;
+        private AssetManager _assets;
 
-        private readonly Timer _heartbeat;
-        private readonly Log _log;
+        //TODO: Turn into a plugin instead.
         private readonly WebApi _api;
-        private readonly AssetManager _assets;
-        private readonly ClientCollection _clients;
+
+        private readonly Log _log;
+        private readonly Timer _heartbeat;
+        private readonly CacheManager _cache;
         private readonly MessageHandler _handler;
+        private readonly ClientCollection _clients;
         private readonly ServerConfiguration _config;
         private readonly NetworkManagerAsyncSettings _settings;
 
         internal NetworkManagerAsyncSettings Settings => _settings;
 
         public AssetManager Assets => _assets;
-        public Log Log => _log;
+        public Log Logs => _log;
         public IDbManager Db => _db;
+        public ICacheManager Cache => _cache;
         public IMessageHandler Handler => _handler;
         public ICollection<IClient> Clients => _clients;
         public IServerConfiguration Configuration => _config;
@@ -99,25 +116,58 @@ namespace CoCSharp.Server
             if (_disposed)
                 throw new ObjectDisposedException(null, "Can't Start disposed Server object.");
 
-            _assets.Load<CsvDataTable<BuildingData>>("logic/buildings.csv");
-            _assets.Load<CsvDataTable<ObstacleData>>("logic/obstacles.csv");
-            _assets.Load<CsvDataTable<TrapData>>("logic/traps.csv");
-            _assets.Load<CsvDataTable<DecorationData>>("logic/decos.csv");
-            _assets.Load<CsvDataTable<ResourceData>>("logic/resources.csv");
-            _assets.Load<CsvDataTable<GlobalData>>("logic/globals.csv");
-            _assets.Load<CsvDataTable<CharacterData>>("logic/characters.csv");
-            _assets.Load<CsvDataTable<ExperienceLevelData>>("logic/experience_levels.csv");
+            const string CONTENT_DIR_PATH = "contents";
 
-            _db = new LiteDbManager(this);
-
-            if (!StartListener())
+            try
             {
-                Log.Error("Listening socket failed to bind or listen.");
-                Log.Error("Closing server...");
+                // Sync assets with the assets available on the asset server.
+                SyncAssets(CONTENT_DIR_PATH);
+            }
+            catch (Exception ex)
+            {
+                Logs.Error("Unable to synchronize assets with asset server.");
+                Logs.Error(ex.ToString());
                 Close();
 
                 Environment.Exit(1);
             }
+
+            // After we've been synced up with the asset server we can load
+            // the assets.
+            _assets = new AssetManager(CONTENT_DIR_PATH);
+
+            LoadCsvDataTable<BuildingData>("logic/buildings.csv");
+            LoadCsvDataTable<ObstacleData>("logic/obstacles.csv");
+            LoadCsvDataTable<TrapData>("logic/traps.csv");
+            LoadCsvDataTable<DecorationData>("logic/decos.csv");
+            LoadCsvDataTable<ResourceData>("logic/resources.csv");
+            LoadCsvDataTable<GlobalData>("logic/globals.csv");
+            LoadCsvDataTable<CharacterData>("logic/characters.csv");
+            LoadCsvDataTable<ExperienceLevelData>("logic/experience_levels.csv");
+
+            // Lock the AssetManager to prevent unloading of assets.
+            _assets.Lock(AssetManagerLockMode.Both);
+
+            try
+            {
+                _db = new MySqlDbManager(this);
+            }
+            catch (Exception ex)
+            {
+                Logs.Error($"Unable to start IDbManager instance: {ex}.");
+                Environment.Exit(1);
+            }
+
+            if (!StartListener())
+            {
+                Logs.Error("Listening socket failed to bind or listen.");
+                Logs.Error("Closing server...");
+                Close();
+
+                Environment.Exit(1);
+            }
+
+            Logs.Info("Starting web API...");
 
             try
             {
@@ -125,10 +175,8 @@ namespace CoCSharp.Server
             }
             catch (Exception ex)
             {
-                Log.Error($"Unable to start web API, {ex.Message}.");
+                Logs.Error($"Unable to start web API, {ex.Message}.");
             }
-
-            OnStarted(EventArgs.Empty);
         }
 
         public void Close()
@@ -138,43 +186,131 @@ namespace CoCSharp.Server
 
         public void Dispose()
         {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
             if (_disposed)
                 return;
 
-            StopListener();
+            if (disposing)
+            {
+                StopListener();
 
-            // Disconnects all clients.
-            foreach (var c in _clients)
-                c.Disconnect();
+                if (_clients != null)
+                {
+                    // Disconnects all clients.
+                    foreach (var c in _clients)
+                        c.Dispose();
+                }
 
-            _heartbeat.Dispose();
-            _assets.Dispose();
-            _acceptPool.Dispose();
-            _listener.Close();
-            _log.Dispose();
-            _db.Dispose();
+                _heartbeat?.Dispose();
+                _assets?.Dispose();
+                _acceptPool?.Dispose();
+                _listener?.Close();
+                _log?.Dispose();
+                _db?.Dispose();
+            }
 
             _disposed = true;
         }
 
         private void DoHeartbeat(object state)
         {
-            foreach (var c in Clients)
+            try
             {
-                // Remove and disconnect clients whose keep alive has been expired.
-                if (DateTime.UtcNow >= c.KeepAliveExpireTime)
-                    c.Disconnect();
+                // Look for clients who's keep-alives have been expired.
+                foreach (var c in Clients)
+                {
+                    // Remove and disconnect clients whose keep alive has been expired.
+                    if (DateTime.UtcNow >= c.KeepAliveExpireTime)
+                    {
+                        try
+                        {
+                            c.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            Logs.Error($"Failed to disconnect client: {ex}");
+
+                            // Try to remove refs to it.
+                            Clients.Remove(c);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logs.Error($"DoHeartbeat failed: {ex}");
             }
         }
 
-        protected virtual void OnStarted(EventArgs args)
+        private void SyncAssets(string contentPath)
         {
-            Started?.Invoke(this, args);
+            var sw = Stopwatch.StartNew();
+            // Synchronize the assets with the asset server.
+            using (var downloader = new AssetDownloader(_config.MasterHash, new Uri(_config.ContentUrl)))
+            {
+                downloader.DownloadProgressChanged += (sender, e) =>
+                Logs.Info(!e.WasDownloaded ? $"Synced asset '{e.FileDownloaded.Path}'... {Math.Round(e.ProgressPercentage, 2)}%" :
+                                            $"Synced asset & downloaded '{e.FileDownloaded.Path}'... {Math.Round(e.ProgressPercentage, 2)}% ");
+                downloader.DownloadCompleted += (sender, e) => Logs.Info($"Syncing completed in {sw.Elapsed.TotalMilliseconds}ms.");
+
+                downloader.DownloadAssets(contentPath);
+            }
+        }
+
+        private void LoadCsvDataTable<T>(string path) where T : CsvData, new()
+        {
+            Logs.Info($"Loading CsvDataTable at '{path}' into AssetManager...");
+            _assets.Load<CsvDataTable<T>>(path);
         }
 
         protected virtual void OnConnection(ServerConnectionEventArgs args)
         {
             ClientConnected?.Invoke(this, args);
+        }
+
+        private bool CheckConfig()
+        {
+            var result = true;
+            var errorList = new List<string>();
+
+            if (_config.MasterHash.Length != 40)
+            {
+                errorList.Add("MasterHash in server configuration must be 40 characters long.");
+                result = false;
+            }
+            if (!IsValidHexString(_config.MasterHash))
+            {
+                errorList.Add("MasterHash in server configuration contains invalid hex characters.");
+                result = false;
+            }
+            if (!Uri.IsWellFormedUriString(_config.ContentUrl, UriKind.Absolute))
+            {
+                errorList.Add("ContentUrl in server configuration must be a valid URL.");
+                result = false;
+            }
+
+            foreach (var err in errorList)
+                Logs.Error(err);
+
+            return result;
+        }
+
+        public static bool IsValidHexString(string value)
+        {
+            const string VALID_HEX_CHARS = "0123456789abcdef";
+            if (value.Length == 0)
+                return true;
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (!VALID_HEX_CHARS.Contains(value[i].ToString()))
+                    return false;
+            }
+            return true;
         }
         #endregion
     }

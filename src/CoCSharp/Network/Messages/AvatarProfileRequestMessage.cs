@@ -17,17 +17,16 @@
         /// <summary>
         /// Gets the ID of the <see cref="AvatarProfileRequestMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14325; } }
+        public override ushort Id { get { return 14325; } }
 
         /// <summary>
         /// User ID of avatar whose profile was requested.
         /// </summary>
-        public long UserID;
-
+        public long UserId;
         /// <summary>
         /// Home ID of avatar whose profile was requested.
         /// </summary>
-        public long HomeID;
+        public long HomeId;
 
         /// <summary>
         /// Unknown byte 1.
@@ -42,9 +41,9 @@
         /// </param>
         public override void ReadMessage(MessageReader reader)
         {
-            UserID = reader.ReadInt64();
+            UserId = reader.ReadInt64();
             if (reader.ReadBoolean())
-                HomeID = reader.ReadInt64();
+                HomeId = reader.ReadInt64();
 
             Unknown1 = reader.ReadByte();
         }
@@ -57,9 +56,10 @@
         /// </param>
         public override void WriteMessage(MessageWriter writer)
         {
-            writer.Write(UserID);
-            if (HomeID != 0)
-                writer.Write(HomeID);
+            writer.Write(UserId);
+            writer.Write(HomeId != 0);
+            if (HomeId != 0)
+                writer.Write(HomeId);
 
             writer.Write(Unknown1);
         }

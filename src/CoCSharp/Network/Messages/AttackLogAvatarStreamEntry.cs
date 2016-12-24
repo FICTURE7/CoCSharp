@@ -19,7 +19,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="AttackLogAvatarStreamEntry"/>.
         /// </summary>
-        public override int ID { get { return 7; } }
+        public override int Id { get { return 7; } }
 
         /// <summary>
         /// Unknown long 1.

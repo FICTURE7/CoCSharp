@@ -15,7 +15,7 @@ namespace CoCSharp.Data.Models
             // Space
         }
 
-        internal override int KindID => 18;
+        internal override int KindId => 18;
 
         // NOTE: This was generated from the decos.csv using gen_csv_properties.py script.
 

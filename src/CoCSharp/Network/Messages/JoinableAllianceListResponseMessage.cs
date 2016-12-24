@@ -19,7 +19,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="JoinableAllianceListResponseMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24304; } }
+        public override ushort Id { get { return 24304; } }
 
         /// <summary>
         /// Clans available to join.

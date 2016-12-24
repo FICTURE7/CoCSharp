@@ -1,4 +1,6 @@
-﻿namespace CoCSharp.Logic
+﻿using System;
+
+namespace CoCSharp.Logic
 {
     /// <summary>
     /// Represents a member of a <see cref="Clan"/>.
@@ -15,45 +17,49 @@
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClanMember"/> class
-        /// with the specified <see cref="Avatar"/>.
+        /// with the specified <see cref="Level"/>.
         /// </summary>
-        /// <param name="avatar"><see cref="Avatar"/> with which to initialize the <see cref="ClanMember"/> object.</param>
-        public ClanMember(Avatar avatar)
+        /// <param name="level"><see cref="Level"/> with which to initialize the <see cref="ClanMember"/> object.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="level"/> is null.</exception>
+        public ClanMember(Level level)
         {
-            ID = avatar.ID;
-            Name = avatar.Name;
-            Level = avatar.ExpLevel;
-            LeagueLevel = avatar.League;
-            Trophies = avatar.Trophies;
+            if (level == null)
+                throw new ArgumentNullException(nameof(level));
+
+            Id = level.Avatar.Id;
+            Name = level.Avatar.Name;
+            ExpLevels = level.Avatar.ExpLevels;
+            League = level.Avatar.League;
+            Trophies = level.Avatar.Trophies;
         }
 
         /// <summary>
-        /// Gets or sets the User ID of the member.
+        /// Gets or sets the user ID of the member.
         /// </summary>
-        public long ID { get; set; }
+        public long Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the Name of the member.
+        /// Gets or sets the name of the member.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the Role of the member.
+        /// Gets or sets the role of the member.
         /// </summary>
         public ClanMemberRole Role { get; set; }
 
         /// <summary>
-        /// Gets or sets the Level of the member.
+        /// Gets or sets the experience level of the member.
         /// </summary>
-        public int Level { get; set; }
+        public int ExpLevels { get; set; }
 
         /// <summary>
-        /// Gets or sets the Level of the league of the member.
+        /// Gets or sets the league of the member.
         /// </summary>
-        public int LeagueLevel { get; set; }
+        public int League { get; set; }
 
         /// <summary>
-        /// Gets or sets the Trophies of the member.
+        /// Gets or sets the number trophies of the member.
         /// </summary>
         public int Trophies { get; set; }
 
@@ -85,11 +91,16 @@
         /// <summary>
         /// Gets or sets the war cool down of the member.
         /// </summary>
-        public int WarCoolDown { get; set; }
+        public int WarCooldown { get; set; }
 
         /// <summary>
         /// Gets or sets the war preference of the member.
         /// </summary>
         public int WarPreference { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time of when the player joined the clan.
+        /// </summary>
+        public DateTime DateJoined { get; set; }
     }
 }

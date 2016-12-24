@@ -27,7 +27,7 @@ namespace CoCSharp.Network.Messages
             if (clan == null)
                 throw new ArgumentNullException(nameof(clan));
 
-            ID = clan.ID;
+            Id = clan.Id;
             Name = clan.Name;
             Badge = clan.Badge;
             InviteType = clan.InviteType;
@@ -41,14 +41,14 @@ namespace CoCSharp.Network.Messages
             WarFrequency = clan.WarFrequency;
             Location = clan.Location;
             PerkPoints = clan.PerkPoints;
-            Level = clan.Level;
+            Level = clan.ExpLevels;
             WinStreak = clan.WinStreak;
         }
 
         /// <summary>
         /// ID of the clan.
         /// </summary>
-        public long ID;
+        public long Id;
         /// <summary>
         /// Name of the clan.
         /// </summary>
@@ -134,7 +134,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt64();
+            Id = reader.ReadInt64();
             Name = reader.ReadString();
             Badge = reader.ReadInt32();
             InviteType = reader.ReadInt32();
@@ -167,7 +167,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Name);
             writer.Write(Badge);
             writer.Write(InviteType);

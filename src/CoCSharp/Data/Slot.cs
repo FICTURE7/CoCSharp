@@ -7,7 +7,7 @@ namespace CoCSharp.Data
     /// <summary>
     /// Base <see cref="Slot"/> class.
     /// </summary>
-    [DebuggerDisplay("ID = {ID}")]
+    [DebuggerDisplay("Id = {Id}")]
     public abstract class Slot
     {
         #region Constructors
@@ -26,7 +26,7 @@ namespace CoCSharp.Data
         /// <summary>
         /// Gets or sets the data ID of the <see cref="Slot"/>.
         /// </summary>
-        public int ID
+        public int Id
         {
             get
             {
@@ -35,7 +35,7 @@ namespace CoCSharp.Data
             set
             {
                 // Check if the specified Data ID is valid for this slot.
-                if (InvalidDataID(value))
+                if (InvalidDataId(value))
                     throw new ArgumentOutOfRangeException(nameof(value), GetArgsOutOfRangeMessage(nameof(value)));
 
                 _id = value;
@@ -60,7 +60,7 @@ namespace CoCSharp.Data
         /// </param>
         public abstract void WriteSlot(MessageWriter writer);
 
-        internal virtual bool InvalidDataID(int dataId)
+        internal virtual bool InvalidDataId(int dataId)
         {
             return false;
         }

@@ -27,7 +27,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="level">Level of the unit.</param>
         public AllianceUnitSlot(int id, int amount, int level)
         {
-            ID = id;
+            Id = id;
             Amount = amount;
         }
 
@@ -52,7 +52,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
             
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Amount = reader.ReadInt32();
             Level = reader.ReadInt32();
         }
@@ -68,7 +68,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Amount);
             writer.Write(Level);
         }

@@ -9,7 +9,7 @@ namespace CoCSharp.Logic
     /// </summary>
     public sealed class VillageObjectCollection : ICollection<VillageObject>
     {
-        private const int MinID = 500 * InternalConstants.IDBase;
+        private const int MinID = 500 * InternalConstants.IdBase;
 
         internal VillageObjectCollection()
         {
@@ -103,7 +103,7 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Removes the specified <see cref="VillageObject"/> from the <see cref="VillageObjectCollection"/> by using
-        /// its <see cref="VillageObject.ID"/> value.
+        /// its <see cref="VillageObject.Id"/> value.
         /// </summary>
         /// <param name="villageObj"><see cref="VillageObject"/> to remove from the <see cref="VillageObjectCollection"/>.</param>
         /// <returns><c>true</c> if success; otherwise, returns <c>false</c>.</returns>
@@ -114,7 +114,7 @@ namespace CoCSharp.Logic
             if (villageObj == null)
                 throw new ArgumentNullException("villageObj");
 
-            var gameId = villageObj.ID;
+            var gameId = villageObj.Id;
             var rowIndex = GetRowIndex(gameId);
             var columnIndex = GetColumnIndex(gameId, rowIndex);
             lock (_sync)
@@ -155,7 +155,7 @@ namespace CoCSharp.Logic
 
         /// <summary>
         /// Determines whether the <see cref="VillageObjectCollection"/> contains a specific <see cref="VillageObject"/> by using
-        /// its <see cref="VillageObject.ID"/>.
+        /// its <see cref="VillageObject.Id"/>.
         /// </summary>
         /// <param name="villageObj"><see cref="VillageObject"/> to locate.</param>
         /// <returns>
@@ -170,7 +170,7 @@ namespace CoCSharp.Logic
 
             lock (_sync)
             {
-                return Contains(villageObj.ID);
+                return Contains(villageObj.Id);
             }
         }
 
@@ -277,7 +277,7 @@ namespace CoCSharp.Logic
 
         private void AddInternal(VillageObject villageObj)
         {
-            var rowIndex = villageObj.KindID;
+            var rowIndex = villageObj.KindId;
             var tableLength = _table.Length - 1;
             if (rowIndex > tableLength)
                 Array.Resize(ref _table, rowIndex + 4);
@@ -316,13 +316,13 @@ namespace CoCSharp.Logic
 
         private static int GetRowIndex(int gameId)
         {
-            return (gameId / InternalConstants.IDBase) - 500;
+            return (gameId / InternalConstants.IdBase) - 500;
         }
 
         private static int GetColumnIndex(int gameId, int rowIndex)
         {
             // return gameId - ((500 + GetRowIndex(gameId)) * InternalConstants.IDBase);
-            return gameId - ((500 + rowIndex) * InternalConstants.IDBase);
+            return gameId - ((500 + rowIndex) * InternalConstants.IdBase);
         }
         #endregion
     }

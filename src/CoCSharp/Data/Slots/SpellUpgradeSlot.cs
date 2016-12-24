@@ -26,7 +26,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="level">Level of the spell upgrade.</param>
         public SpellUpgradeSlot(int id, int level)
         {
-            ID = id;
+            Id = id;
             Level = level;
         }
 
@@ -46,7 +46,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Level = reader.ReadInt32();
         }
 
@@ -61,7 +61,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Level);
         }
     }

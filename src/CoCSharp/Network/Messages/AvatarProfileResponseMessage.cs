@@ -22,7 +22,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="AvatarProfileResponseMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24334; } }
+        public override ushort Id { get { return 24334; } }
 
         /// <summary>
         /// Data about the requested avatar profile.
@@ -74,7 +74,6 @@ namespace CoCSharp.Network.Messages
                     var decompressedLength = br.ReadInt32();
                     var compressedVillage = br.ReadBytes(villageBytes.Length - 4);
                     var villageJson = ZlibStream.UncompressString(compressedVillage);
-                    //VillageJson = VillageJson.FromJson(villageJson);
                     VillageJson = villageJson;
                 }
             }

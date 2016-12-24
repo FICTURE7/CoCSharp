@@ -52,7 +52,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="ChangeAllianceSettingMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14316; } }
+        public override ushort Id { get { return 14316; } }
 
         /// <summary>
         /// Reads the <see cref="ChangeAllianceSettingMessage"/> from the specified <see cref="MessageReader"/>.

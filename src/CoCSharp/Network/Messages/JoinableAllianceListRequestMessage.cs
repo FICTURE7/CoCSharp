@@ -17,7 +17,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="JoinableAllianceListRequestMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 14303; } }
+        public override ushort Id { get { return 14303; } }
 
         /// <summary>
         /// Reads the <see cref="JoinableAllianceListRequestMessage"/> from the specified <see cref="MessageReader"/>.

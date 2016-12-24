@@ -20,7 +20,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="AvatarNameChangedCommand"/>.
         /// </summary>
-        public override int ID { get { return 3; } }
+        public override int Id { get { return 3; } }
 
         /// <summary>
         /// New name confirmed by server.

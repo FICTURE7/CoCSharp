@@ -26,7 +26,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets the ID of the <see cref="Command"/>.
         /// </summary>
-        public abstract int ID { get; }
+        public abstract int Id { get; }
 
         /// <summary>
         /// Gets or sets the tick at which the command was executed.

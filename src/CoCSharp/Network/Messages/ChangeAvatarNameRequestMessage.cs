@@ -29,7 +29,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="ChangeAvatarNameRequestMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 10212; } }
+        public override ushort Id { get { return 10212; } }
 
         /// <summary>
         /// Reads the <see cref="ChangeAvatarNameRequestMessage"/> from the specified <see cref="MessageReader"/>.

@@ -1,7 +1,9 @@
-﻿using CoCSharp.Network;
+﻿using CoCSharp.Logic;
+using CoCSharp.Network;
 using System;
+using System.Collections;
+using System.IO;
 using System.Text;
-using System.Threading;
 
 namespace CoCSharp.Proxy
 {
@@ -9,76 +11,149 @@ namespace CoCSharp.Proxy
     {
         public MessageLogger()
         {
-            _indent = 0;
-            _mapper = new MessageMapper();
+            _sync = new object();
+            _cmdMapper = new CommandMapper();
+            _msgMapper = new MessageMapper();
         }
 
-        private volatile int _indent;
-        private readonly MessageMapper _mapper;
+        private object _sync;
+        private readonly CommandMapper _cmdMapper;
+        private readonly MessageMapper _msgMapper;
 
         public void Log(Message message)
         {
-            var map = _mapper.Map(message);
-            var header = $"{message.GetType().Name} - {message.ID}: ";
-            var log = LogRecursive(map, message);
+            // Get the field mapping of the message.
+            var map = _msgMapper.Map(message);
+            var header = $"{message.GetType().Name} - {message.Id}: ";
 
+            // Start crafting the log with the map.
+            var log = LogRecursive(map, message, 0);
+
+            // No need to add the logs after a new line
+            // if its body is empty.
             if (map.Length == 0)
+            {
                 log = header + log;
+            }
             else
+            {
                 log = header + Environment.NewLine + log;
+            }
 
-            Console.WriteLine(log);
+            lock (_sync)
+            {
+                Console.WriteLine(log);
+
+                var file = new FileStream("message-log.log", FileMode.Append);
+                using (var writer = new StreamWriter(file))
+                    writer.WriteLine(log);
+            }
         }
 
-        private string LogRecursive(FieldMap[] map, object message)
+        private string LogRecursive(FieldMap[] map, object obj, int indent)
         {
             var builder = new StringBuilder();
+
+            // If the log does not have a body,
+            // no need to add a new line.
             if (map.Length == 0)
             {
                 builder.Append("{ }");
             }
             else
             {
-                builder.Append(GetIndent()).AppendLine("{");
-
-                Interlocked.Increment(ref _indent);
+                builder.Append(GetIndent(indent)).AppendLine("{");
+                indent++;
 
                 for (int i = 0; i < map.Length; i++)
                 {
                     var field = map[i];
-                    var value = field.Field.GetValue(message);
+                    // Get the value of the field on obj.
+                    var value = field.Field.GetValue(obj);
+                    // Get it string representation.
+                    var valueTxt = GetValue(value, indent);
 
-                    var valueTxt = (string)null;
-                    if (value == null)
-                    {
-                        valueTxt = "null";
-                    }
-                    else if (value is string)
-                    {
-                        valueTxt = "\"" + value + "\"";
-                    }
+                    builder.Append(GetIndent(indent)).Append(field.Name).Append(": ");
+                    if (value is Command || field.Field.FieldType.BaseType == typeof(MessageComponent))
+                        builder.AppendLine().Append(valueTxt);
                     else
-                    {
-                        valueTxt = value.ToString();
-                    }
+                        builder.Append(valueTxt);
 
-                    builder.Append(GetIndent()).Append(field.Name).Append(": ").Append(valueTxt).AppendLine();
-
-                    if (field.Child != null && value != null)
-                        builder.Append(LogRecursive(field.Child, value));
+                    builder.AppendLine();
                 }
 
-                Interlocked.Decrement(ref _indent);
-
-                builder.Append(GetIndent()).AppendLine("}");
+                indent--;
+                builder.Append(GetIndent(indent)).Append("}");
             }
 
             return builder.ToString();
         }
 
-        private string GetIndent()
+        private string GetValue(object value, int indent)
         {
-            return new string(' ', 4 * _indent);
+            var valueTxt = (string)null;
+
+            if (value == null)
+            {
+                valueTxt = "null";
+            }
+            else if (value is string)
+            {
+                valueTxt = "\"" + value + "\"";
+            }
+            else if (value is MessageComponent)
+            {
+                var component = (MessageComponent)value;
+                var map = _msgMapper.Map(component);
+
+                valueTxt = LogRecursive(map, component, indent);
+            }
+            else if (value is Command)
+            {
+                var cmd = (Command)value;
+                var cmdMap = _cmdMapper.Map(cmd);
+                var header = $"{cmd.GetType().Name} - {cmd.Id}: {Environment.NewLine}";
+                var log = header + LogRecursive(cmdMap, cmd, indent);
+
+                valueTxt = log;
+            }
+            else if (value is ICollection)
+            {
+                var collectionBuilder = new StringBuilder();
+
+                var valueCollection = (ICollection)value;
+                if (valueCollection.Count == 0)
+                {
+                    collectionBuilder.Append("[ ]");
+                }
+                else
+                {
+                    collectionBuilder.AppendLine().Append(GetIndent(indent)).AppendLine("[");
+                    indent++;
+
+                    foreach (var k in valueCollection)
+                    {
+                        var vvalue = GetValue(k, indent);
+                        collectionBuilder.Append(GetIndent(indent)).AppendLine(vvalue);
+                    }
+
+                    indent--;
+                    collectionBuilder.Append(GetIndent(indent)).Append("]");
+                }
+
+                valueTxt = collectionBuilder.ToString();
+            }
+            else
+            {
+                valueTxt = value.ToString();
+            }
+
+            return valueTxt;
+        }
+
+        private string GetIndent(int indent)
+        {
+            return new string(' ', 4 * indent);
         }
     }
 }

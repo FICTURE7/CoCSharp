@@ -16,7 +16,7 @@ namespace CoCSharp.Data.Models
         }
 
         // NOTE: This was generated from the globals.csv using gen_csv_properties.py script.
-        internal override int KindID => 14;
+        internal override int KindId => 14;
 
         /// <summary>
         /// Gets or sets the Name of the global.

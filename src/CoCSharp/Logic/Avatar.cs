@@ -15,11 +15,11 @@ namespace CoCSharp.Logic
         #region Constants
         private static readonly PropertyChangedEventArgs s_namedChanged = new PropertyChangedEventArgs(nameof(Name));
         private static readonly PropertyChangedEventArgs s_isNamedChanged = new PropertyChangedEventArgs(nameof(IsNamed));
-        private static readonly PropertyChangedEventArgs s_idChanged = new PropertyChangedEventArgs(nameof(ID));
+        private static readonly PropertyChangedEventArgs s_idChanged = new PropertyChangedEventArgs(nameof(Id));
         private static readonly PropertyChangedEventArgs s_shieldEndTimeChanged = new PropertyChangedEventArgs(nameof(ShieldEndTime));
         private static readonly PropertyChangedEventArgs s_allianceChanged = new PropertyChangedEventArgs(nameof(Alliance));
         private static readonly PropertyChangedEventArgs s_leagueChanged = new PropertyChangedEventArgs(nameof(League));
-        private static readonly PropertyChangedEventArgs s_expLevelChanged = new PropertyChangedEventArgs(nameof(ExpLevel));
+        private static readonly PropertyChangedEventArgs s_expLevelChanged = new PropertyChangedEventArgs(nameof(ExpLevels));
         private static readonly PropertyChangedEventArgs s_expPointsChanged = new PropertyChangedEventArgs(nameof(ExpPoints));
         private static readonly PropertyChangedEventArgs s_gemsChanged = new PropertyChangedEventArgs(nameof(Gems));
         private static readonly PropertyChangedEventArgs s_freeGemsChanged = new PropertyChangedEventArgs(nameof(FreeGems));
@@ -72,7 +72,6 @@ namespace CoCSharp.Logic
         private string _name;
         private bool _isNamed;
 
-        private string _token;
         // Also known as UserID.
         private long _id;
 
@@ -154,7 +153,7 @@ namespace CoCSharp.Logic
         /// <summary>
         /// Gets or sets the user ID of the <see cref="Avatar"/>.
         /// </summary>
-        public long ID
+        public long Id
         {
             get
             {
@@ -248,7 +247,7 @@ namespace CoCSharp.Logic
         /// Gets or sets the level of the <see cref="Avatar"/>.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> is less than 1.</exception>
-        public int ExpLevel
+        public int ExpLevels
         {
             get
             {
@@ -506,7 +505,7 @@ namespace CoCSharp.Logic
         {
             var assets = _level.Assets;
             var resourceTable = assets.Get<CsvDataTable<ResourceData>>();
-            var resourceId = resourceTable.Rows[resourceName].ID;
+            var resourceId = resourceTable.Rows[resourceName].Id;
 
             var slot = ResourcesAmount.GetSlot(resourceId);
             if (slot == null)
@@ -515,6 +514,9 @@ namespace CoCSharp.Logic
             }
             else
             {
+                if (amount > slot.Amount)
+                    Level.Logs.Log("Resource transaction caused balance to switch to negative.");
+
                 // Do some maths.
                 slot.Amount -= amount;
 

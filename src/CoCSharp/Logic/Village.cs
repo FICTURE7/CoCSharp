@@ -23,6 +23,10 @@ namespace CoCSharp.Logic
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Village"/> class from the specified <see cref="Logic.Level"/>.
+        /// </summary>
+        /// <param name="level"><see cref="Logic.Level"/> to use.</param>
         public Village(Level level)
         {
             if (level == null)
@@ -76,11 +80,6 @@ namespace CoCSharp.Logic
         private readonly VillageObjectCollection _villageObjects;
 
         /// <summary>
-        /// The event raised when a logic action has taken place.
-        /// </summary>
-        public event EventHandler<LogicEventArgs> Logic;
-
-        /// <summary>
         /// Gets the <see cref="Assets"/> from which data will be
         /// used.
         /// </summary>
@@ -90,6 +89,8 @@ namespace CoCSharp.Logic
         /// Gets the <see cref="Logic.WorkerManager"/> associated with this <see cref="Village"/>.
         /// </summary>
         public WorkerManager WorkerManager => _workers;
+
+        //TODO: Might want to make this read-only.
 
         /// <summary>
         /// Gets or sets the <see cref="Logic.Level"/> associated with this <see cref="Village"/>.
@@ -107,7 +108,7 @@ namespace CoCSharp.Logic
         /// </remarks>
         public int ExperienceVersion { get; set; }
 
-        //TODO: Depend on Level instead to get LasTick time directly.
+        //TODO: Depend on Level instead to get LastTick time directly.
         /// <summary>
         /// Gets or sets the <see cref="DateTime"/> of when village was last ticked.
         /// </summary>
@@ -199,15 +200,6 @@ namespace CoCSharp.Logic
             }
 
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Raises the <see cref="Logic"/> event with the specified <see cref="LogicEventArgs"/>.
-        /// </summary>
-        /// <param name="args"></param>
-        protected internal virtual void OnLogic(LogicEventArgs args)
-        {
-            Logic?.Invoke(this, args);
         }
         #endregion
     }

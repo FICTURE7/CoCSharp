@@ -20,12 +20,12 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="UnlockBuildingCommand"/>.
         /// </summary>
-        public override int ID { get { return 520; } }
+        public override int Id { get { return 520; } }
 
         /// <summary>
         /// Game ID of the <see cref="Building"/> that was unlocked.
         /// </summary>
-        public int BuildingID;
+        public int BuildingGameID;
 
         /// <summary>
         /// Unknown integer 1.
@@ -43,7 +43,7 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfReaderNull(reader);
 
-            BuildingID = reader.ReadInt32();
+            BuildingGameID = reader.ReadInt32();
 
             Unknown1 = reader.ReadInt32();
         }
@@ -59,9 +59,36 @@ namespace CoCSharp.Logic.Commands
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(BuildingID);
+            writer.Write(BuildingGameID);
 
             writer.Write(Unknown1);
+        }
+
+        public override void Execute(Level level)
+        {
+            ThrowIfLevelNull(level);
+            ThrowIfLevelVillageNull(level);
+
+            var vilobj = level.Village.VillageObjects[BuildingGameID];
+            if (vilobj == null)
+            {
+                level.Logs.Log($"Could not find village object with game ID {BuildingGameID}.");
+            }
+            else
+            {
+                if (vilobj is Building)
+                {
+                    var building = (Building)vilobj;
+                    var data = building.Data;
+
+                    level.Avatar.UseResource(data.BuildResource, data.BuildCost);
+                    building.IsLocked = false;
+                }
+                else
+                {
+                    level.Logs.Log($"Unexpected VillageObject type: {vilobj.GetType().Name} was asked to be unlocked.");
+                }
+            }
         }
     }
 }

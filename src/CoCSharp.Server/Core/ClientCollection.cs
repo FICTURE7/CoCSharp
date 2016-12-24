@@ -1,4 +1,4 @@
-﻿using CoCSharp.Server.API;
+﻿using CoCSharp.Server.Api;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace CoCSharp.Server.Core
         public ClientCollection()
         {
             _sync = new object();
-            _clients = new IClient[1];
+            _clients = new IClient[64];
         }
 
         private int _count;

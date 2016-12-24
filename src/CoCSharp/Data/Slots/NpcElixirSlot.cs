@@ -27,7 +27,7 @@ namespace CoCSharp.Data.Slots
         /// <param name="elixir">Looted elixir amount.</param>
         public NpcElixirSlot(int id, int elixir)
         {
-            ID = id;
+            Id = id;
             Elixir = elixir;
         }
 
@@ -47,7 +47,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Elixir = reader.ReadInt32();
         }
 
@@ -61,7 +61,7 @@ namespace CoCSharp.Data.Slots
         public override void WriteSlot(MessageWriter writer)
         {
             ThrowIfWriterNull(writer);
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Elixir);
         }
     }

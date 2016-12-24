@@ -67,12 +67,10 @@ namespace CoCSharp.Network.Messages
         /// Reason why login failed.
         /// </summary>
         public LoginFailureReason Reason;
-
         /// <summary>
-        /// Unknown string 1.
+        /// Uncompressed fingerprint JSON.
         /// </summary>
-        public string Unknown1;
-
+        public string FingerprintJson;
         /// <summary>
         /// Host name.
         /// </summary>
@@ -80,11 +78,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Download root URL from where all the assets will be downloaded.
         /// </summary>
-        public string DownloadRootUrl;
+        public string ContentUrl;
         /// <summary>
-        /// Unknown string 2.
+        /// Market URL.
         /// </summary>
-        public string AppStoreUrl;
+        public string MarketUrl;
         /// <summary>
         /// Message shown when under maintenance.
         /// </summary>
@@ -93,6 +91,7 @@ namespace CoCSharp.Network.Messages
         /// Duration of the maintenance.
         /// </summary>
         public TimeSpan MaintenanceDuration;
+
         /// <summary>
         /// Unknown byte 4.
         /// </summary>
@@ -102,7 +101,7 @@ namespace CoCSharp.Network.Messages
         /// New fingerprint that the server wants the client
         /// to use.
         /// </summary>
-        public Fingerprint Fingerprint;
+        public string FingerprintJsonCompressed;
 
         /// <summary>
         /// Unknown integer 6.
@@ -124,7 +123,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         ///  Gets the ID of the <see cref="LoginFailedMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 20103; } }
+        public override ushort Id { get { return 20103; } }
 
         /// <summary>
         /// Gets the version of the <see cref="LoginFailedMessage"/>.
@@ -144,11 +143,11 @@ namespace CoCSharp.Network.Messages
 
             Reason = (LoginFailureReason)reader.ReadInt32(); // Returned 2 when data is not valid.
 
-            Unknown1 = reader.ReadString(); // null
+            FingerprintJson = reader.ReadString(); // null
 
             Hostname = reader.ReadString(); // stage.clashofclans.com
-            DownloadRootUrl = reader.ReadString(); // http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/
-            AppStoreUrl = reader.ReadString(); // market://details?id=com.supercell.clashofclans
+            ContentUrl = reader.ReadString(); // http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/
+            MarketUrl = reader.ReadString(); // market://details?id=com.supercell.clashofclans
             Message = reader.ReadString();
             MaintenanceDuration = TimeSpan.FromSeconds(reader.ReadInt32());
 
@@ -163,7 +162,7 @@ namespace CoCSharp.Network.Messages
                     var decompressedLength = br.ReadInt32();
                     var compressedFingerprint = br.ReadBytes(fingerprintData.Length - 4);
                     var fingerprintJson = ZlibStream.UncompressString(compressedFingerprint);
-                    Fingerprint = Fingerprint.FromJson(fingerprintJson);
+                    FingerprintJsonCompressed = fingerprintJson;
                 }
             }
 
@@ -184,25 +183,24 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            Version = 2;
             writer.Write((int)Reason);
 
-            writer.Write(Unknown1);
+            writer.Write(FingerprintJson);
 
             writer.Write(Hostname);
-            writer.Write(DownloadRootUrl);
-            writer.Write(AppStoreUrl);
+            writer.Write(ContentUrl);
+            writer.Write(MarketUrl);
             writer.Write(Message);
             writer.Write((int)MaintenanceDuration.TotalSeconds);
             writer.Write(Unknown4);
 
-            if (Fingerprint != null)
+            if (FingerprintJsonCompressed != null)
             {
                 // Uses BinaryWriter for little-endian writing.
                 var mem = new MemoryStream();
                 using (var bw = new BinaryWriter(mem))
                 {
-                    var fingerprintJson = Fingerprint.ToJson();
+                    var fingerprintJson = FingerprintJsonCompressed;
                     var compressedFingerprintJson = ZlibStream.CompressString(fingerprintJson);
 
                     bw.Write(fingerprintJson.Length);
@@ -211,7 +209,9 @@ namespace CoCSharp.Network.Messages
                 }
             }
             else
+            {
                 writer.Write(-1);
+            }
 
             writer.Write(Unknown6);
             writer.Write(Unknown7);

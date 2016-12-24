@@ -33,21 +33,21 @@ namespace CoCSharp.Network.Messages
                 throw new ArgumentNullException(nameof(level));
 
             var avatar = level.Avatar;
-            UserID = avatar.ID;
-            HomeID = avatar.ID;
+            UserId = avatar.Id;
+            HomeId = avatar.Id;
 
             if (avatar.Alliance != null)
             {
-                var member = avatar.Alliance.FindMember(avatar.ID);
+                var member = avatar.Alliance.Get(avatar.Id);
                 Debug.Assert(member != null);
 
                 ClanData = new ClanMessageComponent
                 {
-                    ID = avatar.Alliance.ID,
+                    Id = avatar.Alliance.Id,
                     Name = avatar.Alliance.Name,
                     Badge = avatar.Alliance.Badge,
                     Role = member.Role,
-                    Level = avatar.Alliance.Level
+                    Level = avatar.Alliance.ExpLevels
                 };
             }
             else
@@ -55,14 +55,7 @@ namespace CoCSharp.Network.Messages
                 AllianceCastleLevel = -1;
             }
 
-            //LegenderyTrophy = 99;
-            //BestSeasonEnabled = 1;
-            //BestSeasonMonth = 1;
-            //BestSeasonYear = 1999;
-            //BestSeasonTrophies = 99;
-            //BestSeasonPosition = 1;
             LeagueLevel = avatar.League;
-            //TownHallLevel = avatar.Home.TownHall.Level;
             if (level.Village.TownHall == null)
             {
                 level.Logs.Log("TownHall reference was null; using TownHallLevel 5.");
@@ -79,7 +72,7 @@ namespace CoCSharp.Network.Messages
             Unknown15 = -1;
 
             ExpPoints = avatar.ExpPoints;
-            ExpLevel = avatar.ExpLevel;
+            ExpLevels = avatar.ExpLevels;
             Gems = avatar.Gems;
             FreeGems = avatar.FreeGems;
 
@@ -107,7 +100,7 @@ namespace CoCSharp.Network.Messages
             HeroUpgrades = avatar.HeroUpgrades;
             HeroHealths = avatar.HeroHealths;
             HeroStates = avatar.HeroStates;
-            TutorialProgess = avatar.TutorialProgess;
+            TutorialProgress = avatar.TutorialProgess;
             Achievements = avatar.Achievements;
             AchievementProgress = avatar.AchievementProgress;
             NpcStars = avatar.NpcStars;
@@ -117,27 +110,22 @@ namespace CoCSharp.Network.Messages
             UnknownSlot1 = new SlotCollection<UnknownSlot>();
             UnknownSlot2 = new SlotCollection<UnknownSlot>();
             UnknownSlot3 = new SlotCollection<UnknownSlot>();
-            //UnknownSlot4 = new SlotCollection<UnknownSlot>();
-
-            UnknownSlot5 = new SlotCollection<UnitSlot>();
-
+            UnknownSlot4 = new SlotCollection<UnknownSlot>();
+            UnknownSlot5 = new SlotCollection<UnknownSlot>();
+            UnknownSlot6 = new SlotCollection<UnknownSlot>();
+            UnknownSlot7 = new SlotCollection<UnitSlot>();
         }
         #endregion
 
         #region Fields
         /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1;
-
-        /// <summary>
         /// User ID.
         /// </summary>
-        public long UserID;
+        public long UserId;
         /// <summary>
-        /// Home ID. Usually same as <see cref="UserID"/>.
+        /// Home ID. Usually same as <see cref="UserId"/>.
         /// </summary>
-        public long HomeID;
+        public long HomeId;
         /// <summary>
         /// Data of the clan of the avatar.
         /// </summary>
@@ -226,7 +214,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Level of avatar.
         /// </summary>
-        public int ExpLevel;
+        public int ExpLevels;
         /// <summary>
         /// Experience of avatar.
         /// </summary>
@@ -373,7 +361,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Tutorial progress.
         /// </summary>
-        public SlotCollection<TutorialProgressSlot> TutorialProgess;
+        public SlotCollection<TutorialProgressSlot> TutorialProgress;
         /// <summary>
         /// Achievements state.
         /// </summary>
@@ -412,24 +400,26 @@ namespace CoCSharp.Network.Messages
         /// Unknown slot 3.
         /// </summary>
         public SlotCollection<UnknownSlot> UnknownSlot3;
-
         /// <summary>
-        /// Unknown integer 31.
+        /// Unknown slot 4.
         /// </summary>
-        public int Unknown32;
-        /// <summary>
-        /// Unknown integer 32.
-        /// </summary>
-        public int Unknown33;
-        /// <summary>
-        /// Unknown integer 33.
-        /// </summary>
-        public int Unknown34;
-
+        public SlotCollection<UnknownSlot> UnknownSlot4;
         /// <summary>
         /// Unknown slot 5;
         /// </summary>
-        public SlotCollection<UnitSlot> UnknownSlot5;
+        public SlotCollection<UnknownSlot> UnknownSlot5;
+        /// <summary>
+        /// Unknown slot 6;
+        /// </summary>
+        public SlotCollection<UnknownSlot> UnknownSlot6;
+        /// <summary>
+        /// Unknown slot 7;
+        /// </summary>
+        public SlotCollection<UnitSlot> UnknownSlot7;
+        /// <summary>
+        /// Unknown slot 8;
+        /// </summary>
+        public SlotCollection<UnknownSlot> UnknownSlot8;
         #endregion
 
         #region Methods
@@ -444,14 +434,12 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            Unknown1 = reader.ReadInt32();
-
-            UserID = reader.ReadInt64();
-            HomeID = reader.ReadInt64();
+            UserId = reader.ReadInt64();
+            HomeId = reader.ReadInt64();
             if (reader.ReadBoolean())
             {
                 ClanData = new ClanMessageComponent();
-                ClanData.ID = reader.ReadInt64();
+                ClanData.Id = reader.ReadInt64();
                 ClanData.Name = reader.ReadString();
                 ClanData.Badge = reader.ReadInt32();
                 ClanData.Role = (ClanMemberRole)reader.ReadInt32();
@@ -486,7 +474,7 @@ namespace CoCSharp.Network.Messages
 
             Unknown15 = reader.ReadInt32(); // -1, Facebook ID
 
-            ExpLevel = reader.ReadInt32();
+            ExpLevels = reader.ReadInt32();
             ExpPoints = reader.ReadInt32();
             Gems = reader.ReadInt32(); // Scrambled when not own avatar data.
             FreeGems = reader.ReadInt32(); // Scrambled when not own avatar data.
@@ -532,7 +520,7 @@ namespace CoCSharp.Network.Messages
             HeroHealths = reader.ReadSlotCollection<HeroHealthSlot>();
             HeroStates = reader.ReadSlotCollection<HeroStateSlot>();
             AllianceUnits = reader.ReadSlotCollection<AllianceUnitSlot>();
-            TutorialProgess = reader.ReadSlotCollection<TutorialProgressSlot>();
+            TutorialProgress = reader.ReadSlotCollection<TutorialProgressSlot>();
             Achievements = reader.ReadSlotCollection<AchievementSlot>();
             AchievementProgress = reader.ReadSlotCollection<AchievementProgessSlot>();
             NpcStars = reader.ReadSlotCollection<NpcStarSlot>();
@@ -544,15 +532,16 @@ namespace CoCSharp.Network.Messages
             UnknownSlot1 = reader.ReadSlotCollection<UnknownSlot>();
             UnknownSlot2 = reader.ReadSlotCollection<UnknownSlot>();
             UnknownSlot3 = reader.ReadSlotCollection<UnknownSlot>();
-            //UnknownSlot4 = reader.ReadSlotCollection<UnknownSlot>();
 
             // 8.551.4
-            // Those might be resource lists as well.
-            Unknown32 = reader.ReadInt32();
-            Unknown33 = reader.ReadInt32();
-            Unknown34 = reader.ReadInt32();
+            UnknownSlot4 = reader.ReadSlotCollection<UnknownSlot>();
+            UnknownSlot5 = reader.ReadSlotCollection<UnknownSlot>();
+            UnknownSlot6 = reader.ReadSlotCollection<UnknownSlot>();
+            UnknownSlot7 = reader.ReadSlotCollection<UnitSlot>();
 
-            UnknownSlot5 = reader.ReadSlotCollection<UnitSlot>();
+            // 8.709.2
+            // Could be an int32 instead.
+            UnknownSlot8 = reader.ReadSlotCollection<UnknownSlot>();
         }
 
         /// <summary>
@@ -566,14 +555,12 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(Unknown1);
-
-            writer.Write(UserID);
-            writer.Write(HomeID);
+            writer.Write(UserId);
+            writer.Write(HomeId);
             writer.Write(ClanData != null);
             if (ClanData != null)
             {
-                writer.Write(ClanData.ID);
+                writer.Write(ClanData.Id);
                 writer.Write(ClanData.Name);
                 writer.Write(ClanData.Badge);
                 writer.Write((int)ClanData.Role);
@@ -606,7 +593,7 @@ namespace CoCSharp.Network.Messages
 
             writer.Write(Unknown15); // -1
 
-            writer.Write(ExpLevel);
+            writer.Write(ExpLevels);
             writer.Write(ExpPoints);
             writer.Write(Gems);
             writer.Write(FreeGems);
@@ -653,7 +640,7 @@ namespace CoCSharp.Network.Messages
             writer.WriteSlotCollection(HeroHealths);
             writer.WriteSlotCollection(HeroStates);
             writer.WriteSlotCollection(AllianceUnits);
-            writer.WriteSlotCollection(TutorialProgess);
+            writer.WriteSlotCollection(TutorialProgress);
             writer.WriteSlotCollection(Achievements);
             writer.WriteSlotCollection(AchievementProgress);
             writer.WriteSlotCollection(NpcStars);
@@ -665,13 +652,12 @@ namespace CoCSharp.Network.Messages
             writer.WriteSlotCollection(UnknownSlot1);
             writer.WriteSlotCollection(UnknownSlot2);
             writer.WriteSlotCollection(UnknownSlot3);
-            //writer.WriteSlotCollection(UnknownSlot4);
-
-            writer.Write(Unknown32);
-            writer.Write(Unknown33);
-            writer.Write(Unknown34);
-
+            writer.WriteSlotCollection(UnknownSlot4);
             writer.WriteSlotCollection(UnknownSlot5);
+            writer.WriteSlotCollection(UnknownSlot6);
+            writer.WriteSlotCollection(UnknownSlot7);
+
+            writer.WriteSlotCollection(UnknownSlot8);
         }
         #endregion
     }

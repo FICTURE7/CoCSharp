@@ -17,7 +17,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="ServerErrorMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24115; } }
+        public override ushort Id { get { return 24115; } }
 
         /// <summary>
         /// Error message.

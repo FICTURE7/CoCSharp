@@ -18,7 +18,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="EncryptionMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 20000; } }
+        public override ushort Id { get { return 20000; } }
 
         /// <summary>
         /// Byte array of the server random.

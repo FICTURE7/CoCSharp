@@ -32,7 +32,7 @@ namespace CoCSharp.Logic
         // Pushes the specified VillageObject to the corresponding pool.
         public static void Push(VillageObject obj)
         {
-            GetPool(obj.KindID).Add(obj);
+            GetPool(obj.KindId).Add(obj);
         }
 
         // Tries to get the VillageObject with the corresponding game ID.

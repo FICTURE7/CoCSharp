@@ -54,7 +54,7 @@ namespace CoCSharp.Logic
             if (vilObj == null)
                 throw new ArgumentNullException(nameof(vilObj));
 
-            var id = vilObj.ID;
+            var id = vilObj.Id;
             if (_villageObjects.Contains(vilObj))
             {
                 _villageObjects.Remove(vilObj);

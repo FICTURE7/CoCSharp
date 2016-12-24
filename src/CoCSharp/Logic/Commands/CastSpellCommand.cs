@@ -12,7 +12,7 @@ namespace CoCSharp.Logic.Commands
             // Space
         }
 
-        public override int ID => 604;
+        public override int Id => 604;
 
         public int X;
         public int Y;

@@ -23,7 +23,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="MoveMultipleVillageObjectCommand"/>.
         /// </summary>
-        public override int ID { get { return 533; } }
+        public override int Id { get { return 533; } }
 
         /// <summary>
         /// Data about the moves command.
@@ -56,7 +56,7 @@ namespace CoCSharp.Logic.Commands
                 var data = new MoveVillageObjectMessageComponent();
                 data.X = reader.ReadInt32();
                 data.Y = reader.ReadInt32();
-                data.VillageObjectGameID = reader.ReadInt32();
+                data.VillageObjectGameId = reader.ReadInt32();
 
                 MovesData[i] = data;
             }
@@ -87,7 +87,7 @@ namespace CoCSharp.Logic.Commands
 
                 writer.Write(MovesData[i].X);
                 writer.Write(MovesData[i].Y);
-                writer.Write(MovesData[i].VillageObjectGameID);
+                writer.Write(MovesData[i].VillageObjectGameId);
             }
 
             writer.Write(Unknown1);
@@ -108,10 +108,10 @@ namespace CoCSharp.Logic.Commands
             for (int i = 0; i < MovesData.Length; i++)
             {
                 var moveData = MovesData[i];
-                var vilobj = village.VillageObjects[moveData.VillageObjectGameID];
+                var vilobj = village.VillageObjects[moveData.VillageObjectGameId];
                 if (vilobj == null)
                 {
-                    level.Logs.Log($"Could not find village object with game ID {moveData.VillageObjectGameID}.");
+                    level.Logs.Log($"Could not find village object with game ID {moveData.VillageObjectGameId}.");
                 }
                 else
                 {

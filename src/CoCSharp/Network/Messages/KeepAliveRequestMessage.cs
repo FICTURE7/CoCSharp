@@ -17,7 +17,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="KeepAliveRequestMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 10108; } }
+        public override ushort Id { get { return 10108; } }
 
         /// <summary>
         /// Reads the <see cref="KeepAliveRequestMessage"/> from the specified <see cref="MessageReader"/>.

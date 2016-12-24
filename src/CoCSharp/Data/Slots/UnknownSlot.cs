@@ -7,7 +7,7 @@ namespace CoCSharp.Data.Slots
     /// <summary>
     /// Represents an unknown slot.
     /// </summary>
-    [DebuggerDisplay("ID = {ID}, Value = {Value}")]
+    [DebuggerDisplay("ID = {Id}, Value = {Value}")]
     public class UnknownSlot : Slot
     {
         /// <summary>
@@ -34,7 +34,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfReaderNull(reader);
 
-            ID = reader.ReadInt32();
+            Id = reader.ReadInt32();
             Value = reader.ReadInt32();
         }
 
@@ -49,7 +49,7 @@ namespace CoCSharp.Data.Slots
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(ID);
+            writer.Write(Id);
             writer.Write(Value);
         }
     }

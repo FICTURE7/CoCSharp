@@ -22,7 +22,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="SpeedUpConstructionCommand"/>.
         /// </summary>
-        public override int ID { get { return 504; } }
+        public override int Id { get { return 504; } }
 
         /// <summary>
         /// Game ID of the <see cref="Buildable{TCsvData}"/> whose

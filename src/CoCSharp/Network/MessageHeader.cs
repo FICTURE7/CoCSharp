@@ -24,7 +24,7 @@ namespace CoCSharp.Network
             if (length < 0 || length > Message.MaxSize)
                 throw new ArgumentOutOfRangeException(nameof(length), "Length must be non-negative and less or equal to the maximum size of a message.");
 
-            ID = id;
+            Id = id;
             Length = length;
             Version = version;
         }
@@ -32,7 +32,7 @@ namespace CoCSharp.Network
         /// <summary>
         /// ID of the <see cref="Message"/>.
         /// </summary>
-        public readonly ushort ID;
+        public readonly ushort Id;
         /// <summary>
         /// Length of the <see cref="Message"/>.
         /// </summary>

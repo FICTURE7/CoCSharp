@@ -17,7 +17,7 @@
         /// <summary>
         /// Gets the ID of the <see cref="ServerShutdownInfoMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 20161; } }
+        public override ushort Id { get { return 20161; } }
 
         /// <summary>
         /// Reads the <see cref="ServerShutdownInfoMessage"/> from the specified <see cref="MessageReader"/>.

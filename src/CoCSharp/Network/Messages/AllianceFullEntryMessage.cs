@@ -3,7 +3,7 @@
 namespace CoCSharp.Network.Messages
 {
     /// <summary>
-    /// Message that is sent by the server to the client after login/>
+    /// Message that is sent by the server to the client after login
     /// was sent to provide data about an alliance/clan.
     /// </summary>
     public class AllianceFullEntryMessage : Message
@@ -37,12 +37,12 @@ namespace CoCSharp.Network.Messages
         /// ID of the war the clan is currently in.
         /// 0 If not in war.
         /// </summary>
-        public long WarID;
+        public long WarId;
 
         /// <summary>
         /// Gets the ID of the <see cref="AllianceFullEntryMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24324; } }
+        public override ushort Id { get { return 24324; } }
 
         /// <summary>
         /// Reads the <see cref="AllianceFullEntryMessage"/> from the specified <see cref="MessageReader"/>.
@@ -60,7 +60,7 @@ namespace CoCSharp.Network.Messages
             Unknown2 = reader.ReadInt32();
 
             if (reader.ReadBoolean())
-                WarID = reader.ReadInt64();
+                WarId = reader.ReadInt64();
 
             Clan = new ClanCompleteMessageComponent();
             Clan.ReadMessageComponent(reader);
@@ -84,10 +84,10 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown1);
             writer.Write(Unknown2);
 
-            var inWar = WarID != 0;
+            var inWar = WarId != 0;
             writer.Write(inWar);
             if (inWar)
-                writer.Write(WarID);
+                writer.Write(WarId);
 
             Clan.WriteMessageComponent(writer);
         }

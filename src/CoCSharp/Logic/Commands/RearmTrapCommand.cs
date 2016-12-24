@@ -21,7 +21,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="RearmTrapCommand"/>.
         /// </summary>
-        public override int ID { get { return 545; } }
+        public override int Id { get { return 545; } }
 
         /// <summary>
         /// Unknown integer 1.

@@ -6,7 +6,7 @@ namespace CoCSharp.Csv
 {
     internal class ObjectMapper
     {
-        private const string TIDName = "TID";
+        private const string NameColumn = "Name";
 
         public ObjectMapper()
         {
@@ -50,7 +50,7 @@ namespace CoCSharp.Csv
                 map.DeclaringType = property.DeclaringType;
 
                 // Make sure TID property is first.
-                if (map.Name == TIDName)
+                if (map.Name == NameColumn)
                     propertyMaps.Insert(0, map);
                 else
                     propertyMaps.Add(map);

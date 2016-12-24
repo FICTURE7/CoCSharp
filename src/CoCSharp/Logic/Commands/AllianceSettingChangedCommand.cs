@@ -20,7 +20,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="AllianceSettingChangedCommand"/>.
         /// </summary>
-        public override int ID { get { return 6; } }
+        public override int Id { get { return 6; } }
 
         /// <summary>
         /// ID of the alliance whose settings was changed.
@@ -33,7 +33,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Level of the alliance whose settings was changed.
         /// </summary>
-        public int Level; 
+        public int Level;
         /// <summary>
         /// Current tick.
         /// </summary>

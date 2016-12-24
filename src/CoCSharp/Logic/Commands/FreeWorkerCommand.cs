@@ -19,7 +19,7 @@ namespace CoCSharp.Logic.Commands
         /// <summary>
         /// Gets the ID of the <see cref="FreeWorkerCommand"/>.
         /// </summary>
-        public override int ID => 521;
+        public override int Id => 521;
 
         /// <summary>
         /// Embeds command.
@@ -75,7 +75,7 @@ namespace CoCSharp.Logic.Commands
             writer.Write(EmbedCommand);
             if (EmbedCommand)
             {
-                writer.Write(Command.ID);
+                writer.Write(Command.Id);
                 Command.Tick = -1;
                 Command.WriteCommand(writer);
             }

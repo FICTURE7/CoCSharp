@@ -50,7 +50,7 @@ namespace CoCSharp.Logic
         internal TCsvData _data;
 
         /// <summary/>
-        protected override string DebuggerDisplayString => $"ID = {ID} Data = {(_data.RowRef == null ? "null" : _data.ID.ToString())}";
+        protected override string DebuggerDisplayString => $"ID = {Id} Data = {(_data.RowRef == null ? "null" : _data.Id.ToString())}";
 
         /// <summary>
         /// Gets the <typeparamref name="TCsvData"/> associated with this <see cref="VillageObject"/>.

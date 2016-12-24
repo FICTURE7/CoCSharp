@@ -28,7 +28,7 @@ namespace CoCSharp.Test.Data
         {
             var fingerprint = new Fingerprint(_fingerprintPath);
             Assert.AreEqual(681, fingerprint.Count, "Did not fully deserialize the fingerprint file.");
-            Assert.AreEqual("9d075b9546211da641d06f4c576aa9b9c62212fb", InternalUtils.BytesToString(fingerprint.MasterHash));
+            Assert.AreEqual("9d075b9546211da641d06f4c576aa9b9c62212fb", fingerprint.MasterHash);
             Assert.AreEqual("8.116.5", fingerprint.Version);
         }
 
@@ -47,7 +47,7 @@ namespace CoCSharp.Test.Data
             var fingerprint = Fingerprint.FromJson(json);
 
             Assert.AreEqual(681, fingerprint.Count, "Did not fully read the fingerprint file.");
-            Assert.AreEqual("9d075b9546211da641d06f4c576aa9b9c62212fb", InternalUtils.BytesToString(fingerprint.MasterHash));
+            Assert.AreEqual("9d075b9546211da641d06f4c576aa9b9c62212fb",fingerprint.MasterHash);
             Assert.AreEqual("8.116.5", fingerprint.Version);
         }
 

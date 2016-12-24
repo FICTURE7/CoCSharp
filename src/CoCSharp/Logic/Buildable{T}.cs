@@ -99,7 +99,7 @@ namespace CoCSharp.Logic
 
                 // If level is -1 (NotConstructedLevel), VillageObject.Data will be null.
                 // and NextUpgrade will point to a CsvData of level 0 from CollectionCache.
-                UpdateData(RowCache.ID, value);
+                UpdateData(RowCache.Id, value);
                 UpdateIsUpgradable();
             }
         }
@@ -234,7 +234,7 @@ namespace CoCSharp.Logic
         private void FinishConstruction(int ctick)
         {
             _timer.Stop();
-            Debug.WriteLine($"FinishConstruction: Construction for {ID} finished on tick {ctick} expected {_timer.EndTick}...");
+            Debug.WriteLine($"FinishConstruction: Construction for {Id} finished on tick {ctick} expected {_timer.EndTick}...");
 
             Village.WorkerManager.DeallotateWorker(this);
 
@@ -244,10 +244,10 @@ namespace CoCSharp.Logic
             //TODO: Clean up level and experience calculation.
             var expPointsGained = LogicUtils.CalculateExpPoints(duration);
             var expPoints = player.Avatar.ExpPoints + expPointsGained;
-            var expCurLevel = player.Avatar.ExpLevel;
+            var expCurLevel = player.Avatar.ExpLevels;
             var expLevel = LogicUtils.CalculateExpLevel(Assets, ref expCurLevel, ref expPoints);
             player.Avatar.ExpPoints = expPoints;
-            player.Avatar.ExpLevel = expLevel;
+            player.Avatar.ExpLevels = expLevel;
 
             _upgradeLevel++;
             _data = NextUpgrade;
@@ -342,7 +342,7 @@ namespace CoCSharp.Logic
             if (RowCache == null)
             {
                 Debug.WriteLine("UpdateIsUpgradable: RowCache was null, calling UpdateData to set RowCache.");
-                UpdateData(Data.ID, _upgradeLevel);
+                UpdateData(Data.Id, _upgradeLevel);
             }
 
             _nextUprade = RowCache[_upgradeLevel + 1];

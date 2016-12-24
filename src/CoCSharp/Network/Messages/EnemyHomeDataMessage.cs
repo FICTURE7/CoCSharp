@@ -1,5 +1,7 @@
 ﻿using CoCSharp.Network;
+using Ionic.Zlib;
 using System;
+using System.IO;
 
 namespace CoCSharp.Network.Messages
 {
@@ -20,7 +22,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Gets the ID of the <see cref="EnemyHomeDataMessage"/>.
         /// </summary>
-        public override ushort ID { get { return 24107; } }
+        public override ushort Id { get { return 24107; } }
 
         /// <summary>
         /// Time since last visit.
@@ -79,9 +81,11 @@ namespace CoCSharp.Network.Messages
 
             Timestamp = TimeUtils.FromUnixTimestamp(reader.ReadInt32());
             EnemyVillageData = new VillageMessageComponent();
-            EnemyVillageData.ReadMessageComponent(reader);
+            EnemyVillageData.ReadMessageComponent(reader);           
+
             EnemyAvatarData = new AvatarMessageComponent();
             EnemyAvatarData.ReadMessageComponent(reader);
+
             OwnAvatarData = new AvatarMessageComponent();
             OwnAvatarData.ReadMessageComponent(reader);
 

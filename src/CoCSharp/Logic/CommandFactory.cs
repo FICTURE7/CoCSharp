@@ -38,8 +38,8 @@ namespace CoCSharp.Logic
                     var instance = (Command)Activator.CreateInstance(type);
 
                     // A command with the same ID as instance.ID was already added to the dictionary.
-                    Debug.Assert(!s_commandDictionary.ContainsKey(instance.ID), "s_commandDictionary already contains '" + instance.ID + "'.");
-                    s_commandDictionary.Add(instance.ID, type);
+                    Debug.Assert(!s_commandDictionary.ContainsKey(instance.Id), "s_commandDictionary already contains '" + instance.Id + "'.");
+                    s_commandDictionary.Add(instance.Id, type);
                 }
             }
         }
