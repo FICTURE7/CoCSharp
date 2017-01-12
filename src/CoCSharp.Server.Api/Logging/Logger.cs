@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace CoCSharp.Server.Api.Logging
 {
@@ -7,58 +8,63 @@ namespace CoCSharp.Server.Api.Logging
     /// </summary>
     public abstract class Logger : IDisposable
     {
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Logger"/> class.
+        /// </summary>
+        protected Logger()
+        {
+            _sync = new object();
+            ToConsole = true;
+        }
+        #endregion
+
         #region Fields & Properties
+        // Figure out if we're disposed.
         private bool _disposed;
-        private Logger _nextLogger;
+        private readonly object _sync;
 
         /// <summary>
-        /// Gets the next <see cref="Logger"/> in the responsibility chain.
+        /// Gets or sets whether the <see cref="Logger"/> should log to the console.
         /// </summary>
-        public Logger NextLogger => _nextLogger;
+        public virtual bool ToConsole { get; set; }
 
         /// <summary>
-        /// Gets the <see cref="LogLevel"/> of the <see cref="Logger"/>.
+        /// Gets the name of the <see cref="Logger"/>.
         /// </summary>
-        protected abstract LogLevel Level { get; }
+        public abstract string Name { get; }
+
+        /// <summary>
+        /// Gets or sets the path of this <see cref="Logger"/> instance.
+        /// </summary>
+        public string Path { get; set; }
         #endregion
 
         #region Method
         /// <summary>
-        /// Sets the next <see cref="Logger"/> in the responsibility chain.
+        /// Logs the specified object.
         /// </summary>
-        /// <param name="logger"><see cref="Logger"/> to be next in the responsibility chain.</param>
-        /// <returns>Same instance as <paramref name="logger"/>.</returns>
-        public Logger Next(Logger logger)
+        /// <param name="toLog">Object to log.</param>
+        public void Log(object toLog)
         {
-            // Avoid circular references to avoid recursion and a StackOverflowException.
-            if (logger == this)
-                throw new ArgumentException("Logger must not be of the same instance.");
+            var log = Write(toLog);
 
-            _nextLogger = logger;
-            return logger;
+            lock (_sync)
+            {
+                if (ToConsole)
+                    Console.WriteLine(log);
+
+                var file = new FileStream(Path, FileMode.Append);
+                using (var writer = new StreamWriter(file))
+                    writer.WriteLine(log);
+            }
         }
 
         /// <summary>
-        /// Logs the specified message with the specified arguments and passes those
-        /// parameters to the <see cref="NextLogger"/> if not null.
+        /// Method that is going to get called when <see cref="Log(object)"/> gets called.
         /// </summary>
-        /// <param name="message">Message to log.</param>
-        /// <param name="level">Level of the log.</param>
-        public void Log(string message, LogLevel level)
-        {
-            if (Level.HasFlag(level))
-                Write(message, level);
-
-            if (_nextLogger != null)
-                _nextLogger.Log(message, level);
-        }
-
-        /// <summary>
-        /// Method that is going to get called when <see cref="Log(string, LogLevel)"/> is called.
-        /// </summary>
-        /// <param name="message">Message to log.</param>
-        /// <param name="level">Level of the log.</param>
-        protected abstract void Write(string message, LogLevel level);
+        /// <param name="toLog">Message to log.</param>
+        protected abstract string Write(object toLog);
 
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="Logger"/> class.
@@ -80,8 +86,7 @@ namespace CoCSharp.Server.Api.Logging
 
             if (disposing)
             {
-                // Dispose the logger who is next in the chain.
-                _nextLogger?.Dispose();
+                // Space
             }
 
             _disposed = true;

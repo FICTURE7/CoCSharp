@@ -99,7 +99,13 @@ namespace CoCSharp.Logic
 
             var expLevelTable = assets.Get<CsvDataTable<ExperienceLevelData>>();
             var curData = expLevelTable.Rows[expLevel.ToString()][0];
-            var nextData = expLevelTable.Rows[(expLevel + 1).ToString()][0];
+
+            // Incase the player has reached max level.
+            var nextDataRow = expLevelTable.Rows[(expLevel + 1).ToString()];
+            if (nextDataRow == null)
+                return expLevel;
+
+            var nextData = nextDataRow[0];
             if (expPoints >= nextData.ExpPoints)
             {
                 expLevel++;

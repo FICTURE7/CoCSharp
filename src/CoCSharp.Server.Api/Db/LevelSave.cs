@@ -16,31 +16,13 @@ namespace CoCSharp.Server.Api.Db
     public class LevelSave
     {
         #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LevelSave"/> class.
-        /// </summary>
-        public LevelSave()
+        internal LevelSave()
         {
-            //_level = new Level();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LevelSave"/> class from the specified <see cref="Level"/>.
-        /// </summary>
-        /// <param name="level"><see cref="Level"/> form which this <see cref="LevelSave"/> will sets its values.</param>
-        public LevelSave(Level level)
-        {
-            if (level == null)
-                throw new ArgumentNullException(nameof(level));
-
-            _level = level;
-            FromLevel(level);
+            // Space
         }
         #endregion
 
         #region Fields & Properties
-        private readonly Level _level;
-
         /// <summary>
         /// Gets or sets the time <see cref="LevelSave"/> was first saved.
         /// </summary>
@@ -277,12 +259,7 @@ namespace CoCSharp.Server.Api.Db
         /// <returns>A <see cref="Level"/> representing this <see cref="LevelSave"/> instance.</returns>
         public Level ToLevel(AssetManager assets)
         {
-            var level = (Level)null;
-            if (_level == null)
-                level = new Level(assets);
-            else
-                level = _level;
-
+            var level = new Level(assets);
             Overwrite(level);
             return level;
         }

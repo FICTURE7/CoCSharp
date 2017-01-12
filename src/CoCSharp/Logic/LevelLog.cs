@@ -44,6 +44,7 @@ namespace CoCSharp.Logic
         /// <param name="message">Message to log.</param>
         public void Log(string message)
         {
+#if DEBUG
             lock (_sync)
             {
                 var file = File.Open(_fileName, FileMode.Append);
@@ -52,6 +53,7 @@ namespace CoCSharp.Logic
 
                 Debug.WriteLine(message);
             }
+#endif
         }
         #endregion
     }

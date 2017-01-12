@@ -118,15 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InsertUpdateClan" xml:space="preserve">
-    <value>INSERT INTO clans(clan_id, name, description_, exp_levels, badge, invite_type, total_trophies, required_trophies, wars_won, wars_lost, wars_tried, language_, war_frequency, location_, perk_points, win_streak, war_logs_public, entries)
+    <value>INSERT INTO clans(clan_id, name, description, exp_levels, badge, invite_type, total_trophies, required_trophies, wars_won, wars_lost, wars_tried, language, war_frequency, location, perk_points, win_streak, war_logs_public, entries)
 
 VALUES(@ClanId, @Name, @Description, @ExpLevels, @Badge, @InviteType, @TotalTrophies, @RequiredTrophies, @WarsWon, @WarsLost, @WarsTried, @Language, @WarFrequency, @Location, @PerkPoints, @WinStreak, @WarLogsPublic, @entries)
 
 ON DUPLICATE KEY UPDATE
-name = VALUES(name), description_ = VALUES(description_), exp_levels = VALUES(exp_levels), badge = VALUES(badge), invite_type = VALUES(invite_type), total_trophies = VALUES(total_trophies), required_trophies = VALUES(required_trophies), wars_won = VALUES(wars_won), wars_lost = VALUES(wars_lost), wars_tried = VALUES(wars_tried), language_ = VALUES(language_), war_frequency = VALUES(war_frequency), location_ = VALUES(location_), perk_points = VALUES(perk_points), win_streak = VALUES(win_streak), war_logs_public = VALUES(war_logs_public), entries = VALUES(entries)</value>
+name = VALUES(name), description = VALUES(description), exp_levels = VALUES(exp_levels), badge = VALUES(badge), invite_type = VALUES(invite_type), total_trophies = VALUES(total_trophies), required_trophies = VALUES(required_trophies), wars_won = VALUES(wars_won), wars_lost = VALUES(wars_lost), wars_tried = VALUES(wars_tried), language = VALUES(language), war_frequency = VALUES(war_frequency), location = VALUES(location), perk_points = VALUES(perk_points), win_streak = VALUES(win_streak), war_logs_public = VALUES(war_logs_public), entries = VALUES(entries)</value>
   </data>
   <data name="InsertUpdateClanMember" xml:space="preserve">
-    <value>INSERT INTO clans_members(user_id, clan_id, role, troops_donated, troops_received, rank, rank_prev, new_member, war_cooldown, war_preference)
+    <value>INSERT INTO clan_members(user_id, clan_id, role, troops_donated, troops_received, rank, rank_prev, new_member, war_cooldown, war_preference)
 
 VALUES(@UserId, @ClanId, @Role, @TroopsDonated, @TroopsReceived, @Rank, @PreviousRank, @NewMember, @WarCooldown, @WarPreference)
 

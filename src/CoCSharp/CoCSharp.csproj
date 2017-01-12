@@ -132,6 +132,7 @@
     <Compile Include="Network\MessageProcessor.cs" />
     <Compile Include="Network\MessageProcessorNaCl.cs" />
     <Compile Include="Network\MessageProcessorRC4.cs" />
+    <Compile Include="Network\MessageSentEventArgs.cs" />
     <Compile Include="Network\Messages\AllianceChangeRoleOkMessage.cs" />
     <Compile Include="Network\Messages\AllianceChatMessage.cs" />
     <Compile Include="Network\Messages\AllianceDataRequestMessage.cs" />

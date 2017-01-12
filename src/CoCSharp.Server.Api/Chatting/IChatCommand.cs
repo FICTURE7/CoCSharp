@@ -1,6 +1,4 @@
-﻿using CoCSharp.Logic;
-
-namespace CoCSharp.Server.Api.Chat
+﻿namespace CoCSharp.Server.Api.Chatting
 {
     /// <summary>
     /// Interface representing a chat command.

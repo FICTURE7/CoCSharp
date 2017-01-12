@@ -1,9 +1,9 @@
 ﻿using CoCSharp.Server.Api;
-using CoCSharp.Server.Api.Chat;
+using CoCSharp.Server.Api.Chatting;
 using System;
 using System.Text;
 
-namespace CoCSharp.Server.Chat.Commands
+namespace CoCSharp.Server.Chatting.Commands
 {
     public class HelpChatCommand : ChatCommand
     {

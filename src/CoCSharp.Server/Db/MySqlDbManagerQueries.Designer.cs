@@ -61,12 +61,12 @@ namespace CoCSharp.Server.Db {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to INSERT INTO clans(clan_id, name, description_, exp_levels, badge, invite_type, total_trophies, required_trophies, wars_won, wars_lost, wars_tried, language_, war_frequency, location_, perk_points, win_streak, war_logs_public, entries)
+        ///   Looks up a localized string similar to INSERT INTO clans(clan_id, name, description, exp_levels, badge, invite_type, total_trophies, required_trophies, wars_won, wars_lost, wars_tried, language, war_frequency, location, perk_points, win_streak, war_logs_public, entries)
         ///
         ///VALUES(@ClanId, @Name, @Description, @ExpLevels, @Badge, @InviteType, @TotalTrophies, @RequiredTrophies, @WarsWon, @WarsLost, @WarsTried, @Language, @WarFrequency, @Location, @PerkPoints, @WinStreak, @WarLogsPublic, @entries)
         ///
         ///ON DUPLICATE KEY UPDATE
-        ///name = VALUES(name), [rest of string was truncated]&quot;;.
+        ///name = VALUES(name), de [rest of string was truncated]&quot;;.
         /// </summary>
         public static string InsertUpdateClan {
             get {
@@ -75,12 +75,12 @@ namespace CoCSharp.Server.Db {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to INSERT INTO clans_members(user_id, clan_id, role, troops_donated, troops_received, rank, rank_prev, new_member, war_cooldown, war_preference)
+        ///   Looks up a localized string similar to INSERT INTO clan_members(user_id, clan_id, role, troops_donated, troops_received, rank, rank_prev, new_member, war_cooldown, war_preference)
         ///
         ///VALUES(@UserId, @ClanId, @Role, @TroopsDonated, @TroopsReceived, @Rank, @PreviousRank, @NewMember, @WarCooldown, @WarPreference)
         ///
         ///ON DUPLICATE KEY UPDATE
-        ///user_id = VALUES(user_id), clan_id = VALUES(clan_id), role = VALUES(role), troops_donated = VALUES(troops_donated), troops_received = VALUES(troops_received), rank = VALUES(rank), rank_prev = VALUES(rank_prev), [rest of string was truncated]&quot;;.
+        ///user_id = VALUES(user_id), clan_id = VALUES(clan_id), role = VALUES(role), troops_donated = VALUES(troops_donated), troops_received = VALUES(troops_received), rank = VALUES(rank), rank_prev = VALUES(rank_prev),  [rest of string was truncated]&quot;;.
         /// </summary>
         public static string InsertUpdateClanMember {
             get {

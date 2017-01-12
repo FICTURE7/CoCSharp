@@ -35,34 +35,49 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiteDB, Version=2.0.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
-      <HintPath>..\packages\LiteDB.2.0.4\lib\net35\LiteDB.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+    <Reference Include="MySqlConnector, Version=0.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySqlConnector.0.9.2\lib\net45\MySqlConnector.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.0.0\lib\netstandard1.1\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.0.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chat\ChatManager.cs" />
-    <Compile Include="Chat\Commands\ChangeLogChatCommand.cs" />
-    <Compile Include="Chat\Commands\HelpChatCommand.cs" />
+    <Compile Include="Chatting\ChatManager.cs" />
+    <Compile Include="Chatting\Commands\ChangeLogChatCommand.cs" />
+    <Compile Include="Chatting\Commands\HelpChatCommand.cs" />
+    <Compile Include="Chatting\Commands\StatisticsChatCommand.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Core\CacheManager.cs" />
+    <Compile Include="Core\ClanManager.cs" />
     <Compile Include="Core\ClientCollection.cs" />
+    <Compile Include="Core\LevelManager.cs" />
     <Compile Include="Core\MessageHandler.cs" />
     <Compile Include="Core\SaveQueue{T}.cs" />
+    <Compile Include="Db\MySqlCommandExtensions.cs" />
     <Compile Include="Db\MySqlDbManager.Clan.cs" />
     <Compile Include="Db\MySqlDbManager.cs" />
     <Compile Include="Db\MySqlDbManager.Level.cs" />
     <Compile Include="Db\MySqlTemplate.cs" />
+    <Compile Include="Logging\ClanLogger.cs" />
+    <Compile Include="Logging\CleanErrorLogger.cs" />
     <Compile Include="RemoteSession.cs" />
     <Compile Include="Db\MySqlDbManagerQueries.Designer.cs">
       <AutoGen>True</AutoGen>

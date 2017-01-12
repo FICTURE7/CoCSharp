@@ -40,6 +40,8 @@ namespace CoCSharp.Network.Messages
             {
                 var member = avatar.Alliance.Get(avatar.Id);
                 Debug.Assert(member != null);
+                if (member == null)
+                    throw new InvalidOperationException($"Unable to find ClanMember {avatar.Id} in the Alliance {avatar.Alliance.Id}.");
 
                 ClanData = new ClanMessageComponent
                 {

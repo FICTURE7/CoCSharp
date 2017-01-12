@@ -1,5 +1,5 @@
 ﻿using CoCSharp.Network;
-using CoCSharp.Server.Api.Chat;
+using CoCSharp.Server.Api.Chatting;
 using System.Threading.Tasks;
 
 namespace CoCSharp.Server.Api.Core

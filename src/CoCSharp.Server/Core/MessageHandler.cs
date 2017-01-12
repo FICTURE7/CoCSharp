@@ -5,15 +5,17 @@ using CoCSharp.Logic.Commands;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
 using CoCSharp.Server.Api;
-using CoCSharp.Server.Api.Chat;
+using CoCSharp.Server.Api.Chatting;
 using CoCSharp.Server.Api.Core;
+using CoCSharp.Server.Api.Core.Factories;
 using CoCSharp.Server.Api.Db;
-using CoCSharp.Server.Chat;
+using CoCSharp.Server.Chatting;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoCSharp.Server.Core
@@ -23,7 +25,7 @@ namespace CoCSharp.Server.Core
         // All KeepAliveResponseMessage are the same.
         private static readonly KeepAliveResponseMessage s_response = new KeepAliveResponseMessage();
 
-        private delegate Task HandlerAsync(IClient client, Message message);
+        private delegate Task HandlerAsync(IClient client, Message message, CancellationToken cancellationToken);
 
         #region Constructors
         public MessageHandler(IServer server)
@@ -32,6 +34,8 @@ namespace CoCSharp.Server.Core
                 throw new ArgumentNullException(nameof(server));
 
             _server = server;
+
+            // Initialize our chat manager to handle chat.
             _chat = new ChatManager();
             _attackingDict = new ConcurrentDictionary<long, AttackInfo>();
 
@@ -54,8 +58,8 @@ namespace CoCSharp.Server.Core
             _handlers.Add(new CreateAllianceMessage().Id, HandleCreateAlliance);
             _handlers.Add(new AllianceChatMessage().Id, HandleAllianceChat);
 
+            // Determine if we're on the maintenance mode from the server configuration.
             var maintenaceString = Server.Configuration["maintenance"];
-
             if (maintenaceString == null)
                 _maintenance = false;
             else
@@ -74,6 +78,8 @@ namespace CoCSharp.Server.Core
         #endregion
 
         #region Fields & Properties
+        private static readonly string s_welcome = File.ReadAllText("contents/welcome");
+
         private readonly ConcurrentDictionary<long, AttackInfo> _attackingDict;
         private readonly Dictionary<int, HandlerAsync> _handlers;
         private readonly IChatManager _chat;
@@ -87,24 +93,38 @@ namespace CoCSharp.Server.Core
         #region Methods
         public async Task HandleAsync(IClient client, Message message)
         {
-            Debug.Assert(client != null, "A null Client was passed to the MessageHandler.");
-            Debug.Assert(message != null, "A null Message was passed to the MessageHandler.");
-
-            var handler = (HandlerAsync)null;
-
-            // Look for the specific message handler in our dictionary of handlers.
-            if (_handlers.TryGetValue(message.Id, out handler))
+            using (var source = new CancellationTokenSource())
             {
-                // Handle the message with the message handler.
-                await handler(client, message);
-            }
-            else
-            {
-                Server.Logs.Warn($"MessageHandler does not contain a handler for message with ID: {message.Id}");
+                var token = source.Token;
+
+                Debug.Assert(client != null, "A null Client was passed to the MessageHandler.");
+                Debug.Assert(message != null, "A null Message was passed to the MessageHandler.");
+
+                var handler = (HandlerAsync)null;
+                // Look for the specific message handler in our dictionary of handlers.
+                if (_handlers.TryGetValue(message.Id, out handler))
+                {
+                    const int PROCESS_TIME = 4000;
+                    //source.CancelAfter(PROCESS_TIME);
+                    try
+                    {
+                        // Handle the message with the message handler.
+                        await handler(client, message, token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        //TODO: Add some cancel handlers?
+                        Server.Logs.Warn($"Processing of {message.GetType().Name} was canceled.");
+                    }
+                }
+                else
+                {
+                    Server.Logs.Warn($"MessageHandler does not contain a handler for message with ID: {message.Id}");
+                }
             }
         }
 
-        private async Task HandleReturnHome(IClient client, Message message)
+        private async Task HandleReturnHome(IClient client, Message message, CancellationToken cancellationToken)
         {
             var rhMessage = (ReturnHomeMessage)message;
             var level = client.Session.Level;
@@ -128,17 +148,25 @@ namespace CoCSharp.Server.Core
                     // Make sure we don't get negative trophies count.
                     if (defender.Avatar.Trophies >= lost)
                         defender.Avatar.Trophies -= lost;
+                    else
+                        defender.Avatar.Trophies = 0;
 
                     level.Avatar.Trophies += reward;
                     var atk = default(AttackInfo);
                     if (!_attackingDict.TryRemove(level.Avatar.Id, out atk))
                         Server.Logs.Error("Unable to remove attack-info from dictionary.");
 
-                    // Save attacker and defender.
-                    var defenderSave = new LevelSave(defender);
-                    var attackerSave = new LevelSave(level);
+                    var factory = Server.Factories.GetFactory<LevelSaveFactory>();
+                    var defenderSave = factory.Create();
+                    var attackerSave = factory.Create();
 
-                    await Task.WhenAll(Server.Db.SaveLevelAsync(defenderSave), Server.Db.SaveLevelAsync(attackerSave));
+                    // Save attacker and defender.
+                    defenderSave.FromLevel(defender);
+                    attackerSave.FromLevel(level);
+
+                    await Task.WhenAll(Server.Db.SaveLevelAsync(defenderSave, cancellationToken), 
+                                       Server.Db.SaveLevelAsync(attackerSave, cancellationToken))
+                              .ConfigureAwait(false);
                 }
             }
 
@@ -148,7 +176,7 @@ namespace CoCSharp.Server.Core
             client.SendMessage(ohdMessage);
         }
 
-        private async Task HandleAvatarProfileRequest(IClient client, Message message)
+        private async Task HandleAvatarProfileRequest(IClient client, Message message, CancellationToken cancellationToken)
         {
             var aprMessage = (AvatarProfileRequestMessage)message;
             var ownLevel = client.Session.Level;
@@ -162,22 +190,24 @@ namespace CoCSharp.Server.Core
             }
             else
             {
-                var save = await Server.Db.LoadLevelAsync(aprMessage.UserId);
-                var level = save.ToLevel(Server.Assets);
+                //var save = await Server.Db.LoadLevelAsync(aprMessage.UserId);
+                //var level = save.ToLevel(Server.Assets);
+                var level = await Server.Levels.GetLevelAsync(aprMessage.UserId, cancellationToken);
                 var aprrMessage = level.AvatarProfileResponse;
 
                 client.SendMessage(aprrMessage);
             }
         }
 
-        private async Task HandleVisitHome(IClient client, Message message)
+        private async Task HandleVisitHome(IClient client, Message message, CancellationToken cancellationToken)
         {
             var vhMessage = (VisitHomeMessage)message;
-            var visitSave = await Server.Db.LoadLevelAsync(vhMessage.HomeId);
+            //var visitSave = await Server.Db.LoadLevelAsync(vhMessage.HomeId);
+            var visitLevel = await Server.Levels.GetLevelAsync(vhMessage.HomeId, cancellationToken);
 
             // If we failed to retrieve the Level that was requested
             // we return the client home.
-            if (visitSave == null)
+            if (visitLevel == null)
             {
                 Server.Logs.Error($"Failed to retrieve LevelSave with ID {vhMessage.HomeId}");
 
@@ -186,27 +216,6 @@ namespace CoCSharp.Server.Core
             }
             else
             {
-                // Look up the clan in the db if the LevelSave.ClanId is referencing a 
-                // clan.
-                var visitLevel = visitSave.ToLevel(Server.Assets);
-                if (visitSave.ClanId != null)
-                {
-                    var clanSave = await Server.Db.LoadClanAsync(visitSave.ClanId.Value);
-
-                    // If somehow we weren't able to load the clan, we just
-                    // do as if we don't have a clan.
-                    if (clanSave == null)
-                    {
-                        Server.Logs.Warn("Unable to load for ClanSave for a LevelSave");
-                    }
-                    else
-                    {
-                        // Otherwise thing seems good we move on.
-                        var clan = clanSave.ToClan();
-                        visitLevel.Avatar.Alliance = clan;
-                    }
-                }
-
                 // Turn the LevelSave into a Level.
                 var vhdMessage = visitLevel.VisitHomeData;
                 vhdMessage.OwnAvatarData = new AvatarMessageComponent(client.Session.Level);
@@ -215,7 +224,7 @@ namespace CoCSharp.Server.Core
             }
         }
 
-        private Task HandleHandshakeRequest(IClient client, Message message)
+        private Task HandleHandshakeRequest(IClient client, Message message, CancellationToken cancellationToken)
         {
             var hsMessage = new HandshakeSuccessMessage
             {
@@ -226,12 +235,11 @@ namespace CoCSharp.Server.Core
             return Task.FromResult<object>(null);
         }
 
-        private async Task HandleLoginRequest(IClient client, Message message)
+        private async Task HandleLoginRequest(IClient client, Message message, CancellationToken cancellationToken)
         {
             var lrMessage = (LoginRequestMessage)message;
-            var levelSave = (LevelSave)null;
             var level = (Level)null;
-            
+
             const string ERROR_ACC_RESOLVE = "Problem resolving account. Clear application data and try again.";
             const string MARKET_URL = "market://details?id=com.supercell.clashofclans";
             const int MAJ_VER = 8;
@@ -293,8 +301,7 @@ namespace CoCSharp.Server.Core
                         // Meaning its a requesting a new account.
                         else
                         {
-                            levelSave = await Server.Db.NewLevelAsync();
-                            level = levelSave.ToLevel(Server.Assets);
+                            level = await Server.Levels.NewLevelAsync(cancellationToken);
                         }
                     }
                     else
@@ -311,16 +318,14 @@ namespace CoCSharp.Server.Core
                         }
                         else
                         {
-                            levelSave = await Server.Db.LoadLevelAsync(lrMessage.UserId);
+                            level = await Server.Levels.GetLevelAsync(lrMessage.UserId, cancellationToken);
 
-                            // If the level/account does not exists in the database, we create
-                            // one with the same ID and user token.
-                            if (levelSave == null)
-                                levelSave = await Server.Db.NewLevelAsync(lrMessage.UserId, lrMessage.UserToken);
+                            // If there is no level in the db with the same user id as specified, we create
+                            // a level with the same user id and token as specified.
+                            if (level == null)
+                                level = await Server.Levels.NewLevelAsync(lrMessage.UserId, lrMessage.UserToken, cancellationToken);
 
-                            // Check if the loaded Level with the specified ID in LoginRequestMessage has the same Token
-                            // as the specified Token in LoginRequestMessage.
-                            if (levelSave.Token != lrMessage.UserToken)
+                            if (level.Token != lrMessage.UserToken)
                             {
                                 var lfMessage = new LoginFailedMessage
                                 {
@@ -329,44 +334,17 @@ namespace CoCSharp.Server.Core
                                 client.SendMessage(lfMessage);
                                 return;
                             }
-
-                            level = levelSave.ToLevel(Server.Assets);
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     var lfMessage = new LoginFailedMessage
                     {
-                        Message = "Unable to login, try to clear app data."
+                        Message = ERROR_ACC_RESOLVE // Sorta lie since its not related to account resolving.
                     };
                     client.SendMessage(lfMessage);
-
-                    Server.Logs.Error($"Unable to log client in: {ex}");
                     throw;
-                }
-
-                var clanSave = (ClanSave)null;
-                var clan = (Clan)null;
-
-                // Look up the clan if the LevelSave.ClanId is referencing a 
-                // clan.
-                if (levelSave.ClanId != null)
-                {
-                    var clanId = levelSave.ClanId.Value;
-
-                    clanSave = await Server.Db.LoadClanAsync(clanId);
-                    // If somehow we weren't able to load the clan, we just
-                    // do as if we don't have a clan.
-                    if (clanSave == null)
-                    {
-                        Server.Logs.Warn("Unable to load for ClanSave for a LevelSave");
-                    }
-                    else
-                    {
-                        clan = clanSave.ToClan();
-                        level.Avatar.Alliance = clan;
-                    }
                 }
 
                 // Client has been successfully logged in!
@@ -377,9 +355,9 @@ namespace CoCSharp.Server.Core
 
                 var lsMessage = new LoginSuccessMessage
                 {
-                    UserToken = levelSave.Token,
-                    UserId = levelSave.UserId,
-                    HomeId = levelSave.UserId,
+                    UserToken = level.Token,
+                    UserId = level.Avatar.Id,
+                    HomeId = level.Avatar.Id,
 
                     FacebookId = null,
                     GameCenterId = null,
@@ -389,15 +367,11 @@ namespace CoCSharp.Server.Core
                     RevisionVersion = 0,
 
                     ServerEnvironment = ENV_PROD,
-
                     LoginCount = level.LoginCount,
-
-                    PlayTime = levelSave.PlayTime,
-
+                    PlayTime = level.PlayTime,
                     FacebookAppId = FB_APP_ID,
-
-                    DateLastSave = levelSave.DateLastSave,
-                    DateCreated = levelSave.DateCreated,
+                    DateLastSave = level.DateLastSave,
+                    DateCreated = level.DateCreated,
 
                     GooglePlusId = null,
                     CountryCode = "EN" //TODO: Return Country code of IP.
@@ -412,15 +386,13 @@ namespace CoCSharp.Server.Core
                 // So that the client knows when stuff was sent.
                 if (level.Avatar.Alliance != null)
                 {
-                    var asMessage = clan.AllianceStream;
+                    var asMessage = level.Avatar.Alliance.AllianceStream;
                     client.SendMessage(asMessage);
                 }
-
-                await Server.Db.SaveLevelAsync(levelSave);
             }
         }
 
-        private Task HandleKeepAlive(IClient client, Message message)
+        private Task HandleKeepAlive(IClient client, Message message, CancellationToken cancellationToken)
         {
             client.LastKeepAliveTime = DateTime.UtcNow;
             client.KeepAliveExpireTime = client.LastKeepAliveTime.AddSeconds(30);
@@ -429,11 +401,11 @@ namespace CoCSharp.Server.Core
             return Task.FromResult<object>(null);
         }
 
-        private async Task HandleJoinableAllianceListRequest(IClient client, Message message)
+        private async Task HandleJoinableAllianceListRequest(IClient client, Message message, CancellationToken cancellationToken)
         {
             // Sends the first 64 clans to the client.
             var clans = new List<ClanCompleteMessageComponent>();
-            var joinableClans = await Server.Db.SearchClansAsync(client.Session.Level);
+            var joinableClans = await Server.Db.SearchClansAsync(client.Session.Level, cancellationToken).ConfigureAwait(false);
             if (joinableClans != null)
             {
                 foreach (var c in joinableClans)
@@ -450,7 +422,7 @@ namespace CoCSharp.Server.Core
             client.SendMessage(jarrMessage);
         }
 
-        private async Task HandleAllianceSearchRequest(IClient client, Message message)
+        private async Task HandleAllianceSearchRequest(IClient client, Message message, CancellationToken cancellationToken)
         {
             var asrMessage = (AllianceSearchRequestMessage)message;
             var level = client.Session.Level;
@@ -468,7 +440,7 @@ namespace CoCSharp.Server.Core
                 ExpLevels = asrMessage.ExpLevels
             };
 
-            var searchClans = await Server.Db.SearchClansAsync(level, search);
+            var searchClans = await Server.Db.SearchClansAsync(level, search, cancellationToken);
             if (searchClans != null)
             {
                 foreach (var c in searchClans)
@@ -487,12 +459,12 @@ namespace CoCSharp.Server.Core
             client.SendMessage(asrrMessage);
         }
 
-        private async Task HandleAllianceDataRequest(IClient client, Message message)
+        private async Task HandleAllianceDataRequest(IClient client, Message message, CancellationToken cancellationToken)
         {
             var adrMessage = (AllianceDataRequestMessage)message;
-            var clanSave = await Server.Db.LoadClanAsync(adrMessage.ClanId);
+            var clan = await Server.Clans.GetClanAsync(adrMessage.ClanId, cancellationToken);
 
-            if (clanSave == null)
+            if (clan == null)
             {
                 Server.Logs.Error($"Failed to retrieve ClanSave with ID {adrMessage.ClanId}");
 
@@ -501,14 +473,12 @@ namespace CoCSharp.Server.Core
             }
             else
             {
-                var clan = clanSave.ToClan();
                 var adrrMessage = clan.AllianceDataResponse;
-
                 client.SendMessage(adrrMessage);
             }
         }
 
-        private async Task HandleAllianceChat(IClient client, Message message)
+        private async Task HandleAllianceChat(IClient client, Message message, CancellationToken cancellationToken)
         {
             var acMessage = (AllianceChatMessage)message;
             var level = client.Session.Level;
@@ -530,8 +500,12 @@ namespace CoCSharp.Server.Core
                     var caStreamEntry = clan.Chat(level.Avatar.Id, acMessage.MessageText);
                     Debug.Assert(caStreamEntry != null);
 
-                    var clanSave = new ClanSave(clan);
-                    await Server.Db.SaveClanAsync(clanSave);
+                    var clanSave = Server.Factories.GetFactory<ClanSaveFactory>().Create();
+                    clanSave.FromClan(clan);
+
+                    await Server.Db.SaveClanAsync(clanSave, cancellationToken);
+
+                    //TODO: Handle this stuff with the ChatManager.
 
                     // Send this message to all the clients online who are in the clans.
                     foreach (var c in Server.Clients)
@@ -546,28 +520,25 @@ namespace CoCSharp.Server.Core
                         {
                             var cclan = c.Session.Level.Avatar.Alliance;
                             if (cclan.Id == clan.Id)
-                            {
                                 c.SendMessage(aseMessage);
-                            }
                         }
                     }
                 }
             }
         }
 
-        private async Task HandleJoinAlliance(IClient client, Message message)
+        private async Task HandleJoinAlliance(IClient client, Message message, CancellationToken cancellationToken)
         {
             var jaMessage = (JoinAllianceMessage)message;
-            var clanSave = await Server.Db.LoadClanAsync(jaMessage.ClanId);
+            var clan = await Server.Clans.GetClanAsync(jaMessage.ClanId, cancellationToken);
             var level = client.Session.Level;
 
-            if (clanSave == null)
+            if (clan == null)
             {
                 Server.Logs.Warn("Client tried to join a clan that does not exists.");
             }
             else
             {
-                var clan = clanSave.ToClan();
                 var jolStreamEntry = clan.Join(level.Avatar);
                 if (jolStreamEntry == null)
                 {
@@ -594,9 +565,7 @@ namespace CoCSharp.Server.Core
                     client.SendMessage(ascMessage);
                     client.SendMessage(asMessage);
 
-                    clanSave.FromClan(clan);
-                    await Server.Db.SaveClanAsync(clanSave);
-                    await Server.Db.SaveLevelAsync(client.Save);
+                    await Server.Db.SaveLevelAsync(client.Save, cancellationToken);
 
                     // Send this message to all the clients online who are in the clans.
                     foreach (var c in Server.Clients)
@@ -620,7 +589,7 @@ namespace CoCSharp.Server.Core
             }
         }
 
-        private async Task HandleLeaveAlliance(IClient client, Message message)
+        private async Task HandleLeaveAlliance(IClient client, Message message, CancellationToken cancellationToken)
         {
             var level = client.Session.Level;
             var clan = level.Avatar.Alliance;
@@ -657,10 +626,12 @@ namespace CoCSharp.Server.Core
 
                     // Set clan_id to NULL so that the FOREIGN KEY constraint does not fail.
                     var levelSave = client.Save;
-                    await Server.Db.SaveLevelAsync(levelSave);
+                    await Server.Db.SaveLevelAsync(levelSave, cancellationToken);
 
-                    var clanSave = new ClanSave(clan);
-                    await Server.Db.SaveClanAsync(clanSave);
+                    var clanSave = Server.Factories.GetFactory<ClanSaveFactory>().Create();
+                    clanSave.FromClan(clan);
+
+                    await Server.Db.SaveClanAsync(clanSave, cancellationToken);
 
                     // Send this message to all the clients online who are in the clans.
                     foreach (var c in Server.Clients)
@@ -684,7 +655,7 @@ namespace CoCSharp.Server.Core
             }
         }
 
-        private async Task HandleCreateAlliance(IClient client, Message message)
+        private async Task HandleCreateAlliance(IClient client, Message message, CancellationToken cancellationToken)
         {
             var caMessage = (CreateAllianceMessage)message;
 
@@ -698,7 +669,7 @@ namespace CoCSharp.Server.Core
             level.Avatar.UseResource(resource, cost);
 
             // Request the db for a new clan.
-            var clanSave = await Server.Db.NewClanAsync();
+            var clanSave = await Server.Db.NewClanAsync(cancellationToken);
             var clan = clanSave.ToClan();
 
             // Set the values as specified in the message.
@@ -726,11 +697,11 @@ namespace CoCSharp.Server.Core
 
             // Save the level which contains a ref to the ID of the clan.
             var levelSave = client.Save;
-            await Server.Db.SaveLevelAsync(levelSave);
+            await Server.Db.SaveLevelAsync(levelSave, cancellationToken);
 
             clanSave.FromClan(clan);
             // Save the clan to the db.
-            await Server.Db.SaveClanAsync(clanSave);
+            await Server.Db.SaveClanAsync(clanSave, cancellationToken);
 
             // Let the client know he was added to the clan.
             var ascCommand1 = new AvailableServerCommandMessage
@@ -762,9 +733,7 @@ namespace CoCSharp.Server.Core
             client.SendMessage(ascCommand2);
         }
 
-        private static readonly string s_welcome = File.ReadAllText("contents/welcome");
-
-        private async Task HandleCommand(IClient client, Message message)
+        private async Task HandleCommand(IClient client, Message message, CancellationToken cancellationToken)
         {
             var cmdMessage = (CommandMessage)message;
 
@@ -797,17 +766,17 @@ namespace CoCSharp.Server.Core
                     {
                         // Tries to look for a RandomLevel which is not
                         // the same the requesting player's level 5 times.
-                        var eneLevelSave = (LevelSave)null;
+                        var eneLevel = (Level)null;
                         var count = 0;
                         do
                         {
-                            eneLevelSave = await Server.Db.RandomLevelAsync();
+                            eneLevel = await Server.Levels.GetRandomLevelAsync(cancellationToken);
                             count++;
-                        } while (eneLevelSave.UserId == level.Avatar.Id && count <= 5);
+                        } while (eneLevel.Avatar.Id == level.Avatar.Id && count <= 5);
 
                         // Return the client home if we were unable to find
                         // a random level which is not the same as its own home.
-                        if (eneLevelSave == null || eneLevelSave.UserId == level.Avatar.Id)
+                        if (eneLevel.Avatar.Id == level.Avatar.Id)
                         {
                             Server.Logs.Warn("Unable to find a random LevelSave.");
 
@@ -816,7 +785,6 @@ namespace CoCSharp.Server.Core
                         }
                         else
                         {
-                            var eneLevel = eneLevelSave.ToLevel(Server.Assets);
                             var trophyDiff = Math.Abs(eneLevel.Avatar.Trophies - level.Avatar.Trophies);
 
                             // State 1 == searching for opponent.
@@ -881,14 +849,14 @@ namespace CoCSharp.Server.Core
                 if (needSave)
                 {
                     var save = client.Save;
-                    await Server.Db.SaveLevelAsync(save);
+                    await Server.Db.SaveLevelAsync(save, cancellationToken);
                 }
             }
 
             level.Tick(cmdMessage.Tick);
         }
 
-        private Task HandleChatMessageClient(IClient client, Message message)
+        private Task HandleChatMessageClient(IClient client, Message message, CancellationToken cancellationToken)
         {
             var senderLevel = client.Session.Level;
             var cmcMessage = (ChatMessageClientMessage)message;
@@ -899,6 +867,9 @@ namespace CoCSharp.Server.Core
             }
             else
             {
+                if (cmcMessage.TextMessage.ToLower().Contains("savegame"))
+                    ChatManager.SendChatMessage(client, "Did you know? 'savegame' isn't a command and does nothing? ^^");
+
                 var cmsMessage = new ChatMessageServerMessage
                 {
                     UserId = senderLevel.Avatar.Id,
@@ -920,7 +891,7 @@ namespace CoCSharp.Server.Core
             return Task.FromResult<object>(null);
         }
 
-        private async Task HandleChangeAvatarRequestName(IClient client, Message message)
+        private async Task HandleChangeAvatarRequestName(IClient client, Message message, CancellationToken cancellationToken)
         {
             var careqMessage = (ChangeAvatarNameRequestMessage)message;
             var level = client.Session.Level;
@@ -953,7 +924,7 @@ namespace CoCSharp.Server.Core
 
             // Save the client.
             var save = client.Save;
-            await Server.Db.SaveLevelAsync(save);
+            await Server.Db.SaveLevelAsync(save, cancellationToken);
         }
         #endregion
     }

@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\CoCSharp.Server.Api.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -37,10 +38,18 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Chat\ChatCommand.cs" />
-    <Compile Include="Chat\IChatCommand.cs" />
-    <Compile Include="Chat\IChatManager.cs" />
+    <Compile Include="Chatting\ChatCommand.cs" />
+    <Compile Include="Chatting\IChatCommand.cs" />
+    <Compile Include="Chatting\IChatManager.cs" />
+    <Compile Include="Core\Factories\ClanSaveFactory.cs" />
+    <Compile Include="Core\Factories\LevelSaveFactory.cs" />
+    <Compile Include="Core\FactoryManager.cs" />
     <Compile Include="Core\ICacheManager.cs" />
+    <Compile Include="Core\IClanManager.cs" />
+    <Compile Include="Core\IFactory.cs" />
+    <Compile Include="Core\IFactoryManager.cs" />
+    <Compile Include="Core\IFactory{T}.cs" />
+    <Compile Include="Core\ILevelManager.cs" />
     <Compile Include="Db\ClanQuery.cs" />
     <Compile Include="Db\ClanSave.cs" />
     <Compile Include="Db\IDbManager.cs" />
@@ -51,12 +60,11 @@
     <Compile Include="IClient.cs" />
     <Compile Include="IServer.cs" />
     <Compile Include="IServerConfiguration.cs" />
-    <Compile Include="Logging\ConsoleLogger.cs" />
-    <Compile Include="Logging\EmptyLogger.cs" />
-    <Compile Include="Logging\FileLogger.cs" />
-    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\WarnLogger.cs" />
+    <Compile Include="Logging\ErrorLogger.cs" />
+    <Compile Include="Logging\InfoLogger.cs" />
+    <Compile Include="Logging\Logs.cs" />
     <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

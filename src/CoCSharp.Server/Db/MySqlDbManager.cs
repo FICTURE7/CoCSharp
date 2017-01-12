@@ -2,8 +2,10 @@
 using CoCSharp.Data.Models;
 using CoCSharp.Server.Api;
 using CoCSharp.Server.Api.Db;
+using CoCSharp.Server.Logging;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,7 +31,9 @@ namespace CoCSharp.Server.Db
             "Davi",
             "Osie",
             "Keem",
-            "Alfred"
+            "Alfred",
+            "Dimitri",
+            "Valdimir"
         };
         private static readonly int s_nameCount = s_names.Length;
 
@@ -58,15 +62,18 @@ namespace CoCSharp.Server.Db
             if (configError)
                 throw new InvalidOperationException("Missing config information.");
 
+            _userIds = new List<long>();
+            _logger = Server.Logs.GetLogger<ClanLogger>();
+
             builder.Server = host;
             builder.UserID = user;
             builder.Password = pwd;
-
-            builder.Pooling = true;
+            
+            // Disable pooling, reopening a connection from the pool,
+            // seems to be causing issues.
+            builder.Pooling = false;
             builder.Database = "cocsharp";
             builder.MinimumPoolSize = 1;
-            builder.MaximumPoolSize = 10;
-            builder.ConnectionTimeout = 1000;
 
             _connectionString = builder.ToString();
 
@@ -77,7 +84,7 @@ namespace CoCSharp.Server.Db
                 Server.Logs.Info($"Successfully made a MySqlConnection to {user}@{host}.");
 
                 Server.Logs.Info("Counting number of levels in the database...");
-                var command = new MySqlCommand("SELECT COUNT(*) FROM levels;", sql);
+                var command = new MySqlCommand("SELECT COUNT(*) FROM `levels`", sql);
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
@@ -85,7 +92,7 @@ namespace CoCSharp.Server.Db
                 }
 
                 Server.Logs.Info("Counting number of clans in the database...");
-                command = new MySqlCommand("SELECT COUNT(*) FROM clans;", sql);
+                command = new MySqlCommand("SELECT COUNT(*) FROM `clans`", sql);
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
@@ -105,10 +112,12 @@ namespace CoCSharp.Server.Db
             _startingVillage = _server.Configuration.StartingVillage;
         }
 
+        private List<long> _userIds;
         private long _levelCount;
         private long _clanCount;
 
         private readonly IServer _server;
+        private readonly ClanLogger _logger;
         private readonly string _connectionString;
 
         private readonly int _goldId;

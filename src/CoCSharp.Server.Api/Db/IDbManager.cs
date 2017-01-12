@@ -1,6 +1,7 @@
 using CoCSharp.Logic;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoCSharp.Server.Api.Db
@@ -20,19 +21,19 @@ namespace CoCSharp.Server.Api.Db
         /// </summary>
         /// <param name="userId">ID of <see cref="Level"/> to load.</param>
         /// <returns>Returns the <see cref="Level"/> that was loaded if found; otherwise <c>null</c>.</returns>
-        Task<LevelSave> LoadLevelAsync(long userId);
+        Task<LevelSave> LoadLevelAsync(long userId, CancellationToken token);
 
         /// <summary>
         /// Saves the specified <see cref="LevelSave"/> to the database asynchronously.
         /// </summary>
         /// <param name="level"><see cref="LevelSave"/> to save.</param>
-        Task SaveLevelAsync(LevelSave level);
+        Task SaveLevelAsync(LevelSave level, CancellationToken token);
 
         /// <summary>
         /// Returns a new <see cref="LevelSave"/>.
         /// </summary>
         /// <returns>A new <see cref="LevelSave"/>.</returns>
-        Task<LevelSave> NewLevelAsync();
+        Task<LevelSave> NewLevelAsync(CancellationToken token);
 
         /// <summary>
         /// Returns a new <see cref="LevelSave"/> with the specified token and ID.
@@ -40,32 +41,32 @@ namespace CoCSharp.Server.Api.Db
         /// <param name="userId">ID of the new <see cref="LevelSave"/>.</param>
         /// <param name="userToken">Token of the new <see cref="LevelSave"/>.</param>
         /// <returns>A new <see cref="LevelSave"/> with the specified token and ID.</returns>
-        Task<LevelSave> NewLevelAsync(long userId, string userToken);
+        Task<LevelSave> NewLevelAsync(long userId, string userToken, CancellationToken token);
 
         /// <summary>
         /// Returns a random <see cref="LevelSave"/> from the database asynchronously.
         /// </summary>
         /// <returns>A random <see cref="LevelSave"/> from the database.</returns>
-        Task<LevelSave> RandomLevelAsync();
+        Task<LevelSave> RandomLevelAsync(CancellationToken token);
 
         /// <summary>
         /// Loads a <see cref="ClanSave"/> with the specified ID asynchronously.
         /// </summary>
         /// <param name="clanId">ID of <see cref="ClanSave"/> to load.</param>
         /// <returns>Returns the <see cref="ClanSave"/> that was loaded if found; otherwise <c>null</c>.</returns>
-        Task<ClanSave> LoadClanAsync(long clanId);
+        Task<ClanSave> LoadClanAsync(long clanId, CancellationToken token);
 
         /// <summary>
         /// Saves the specified <see cref="ClanSave"/> to the database asynchronously.
         /// </summary>
         /// <param name="clan"><see cref="ClanSave"/> to save.</param>
-        Task SaveClanAsync(ClanSave clan);
+        Task SaveClanAsync(ClanSave clan, CancellationToken token);
 
         /// <summary>
         /// Returns a new <see cref="ClanSave"/> asynchronously.
         /// </summary>
         /// <returns>A new <see cref="ClanSave"/>.</returns>
-        Task<ClanSave> NewClanAsync();
+        Task<ClanSave> NewClanAsync(CancellationToken token);
 
         /// <summary>
         /// Searches for clans for the specified <see cref="Level"/> with the specified <see cref="ClanQuery"/> search.
@@ -73,14 +74,14 @@ namespace CoCSharp.Server.Api.Db
         /// <param name="level"></param>
         /// <param name="search"></param>
         /// <returns></returns>
-        Task<IEnumerable<ClanSave>> SearchClansAsync(Level level, ClanQuery search);
+        Task<IEnumerable<ClanSave>> SearchClansAsync(Level level, ClanQuery search, CancellationToken token);
 
         /// <summary>
         /// Returns an <see cref="IEnumerable{T}"/> that iterates through all the clans that the specified level can join.
         /// </summary>
         /// <param name="level"><see cref="Level"/> that join-able clans will be searched for.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> that iterates through all the clans.</returns>
-        Task<IEnumerable<ClanSave>> SearchClansAsync(Level level);
+        Task<IEnumerable<ClanSave>> SearchClansAsync(Level level, CancellationToken token);
 
         /// <summary>
         /// Returns the number of <see cref="LevelSave"/> in the database.

@@ -17,7 +17,7 @@ namespace CoCSharp.Logic.Commands
 
         public int BuildingGameID;
         public int Unknown1;
-        public int UnitDataID;
+        public int UnitDataId;
 
         public override void ReadCommand(MessageReader reader)
         {
@@ -25,7 +25,7 @@ namespace CoCSharp.Logic.Commands
 
             BuildingGameID = reader.ReadInt32();
             Unknown1 = reader.ReadInt32();
-            UnitDataID = reader.ReadInt32();
+            UnitDataId = reader.ReadInt32();
             Tick = reader.ReadInt32();
         }
 
@@ -35,7 +35,7 @@ namespace CoCSharp.Logic.Commands
 
             writer.Write(BuildingGameID);
             writer.Write(Unknown1);
-            writer.Write(UnitDataID);
+            writer.Write(UnitDataId);
             writer.Write(Tick);
         }
 
@@ -47,20 +47,20 @@ namespace CoCSharp.Logic.Commands
             //TODO: Implement proper loading of data instead of checking ID range.
 
             // Spell.
-            if (UnitDataID >= 26000000 && UnitDataID < 27000000)
+            if (UnitDataId >= 26000000 && UnitDataId < 27000000)
             {
-                var slot = level.Avatar.SpellUpgrades.GetSlot(UnitDataID);
+                var slot = level.Avatar.SpellUpgrades.GetSlot(UnitDataId);
                 if (slot == null)
-                    level.Avatar.SpellUpgrades.Add(new SpellUpgradeSlot(UnitDataID, 1));
+                    level.Avatar.SpellUpgrades.Add(new SpellUpgradeSlot(UnitDataId, 1));
                 else
                     slot.Level++;
             }
             // Character.
-            else if (UnitDataID >= 4000000 && UnitDataID < 5000000)
+            else if (UnitDataId >= 4000000 && UnitDataId < 5000000)
             {
-                var slot = level.Avatar.UnitUpgrades.GetSlot(UnitDataID);
+                var slot = level.Avatar.UnitUpgrades.GetSlot(UnitDataId);
                 if (slot == null)
-                    level.Avatar.UnitUpgrades.Add(new UnitUpgradeSlot(UnitDataID, 1));
+                    level.Avatar.UnitUpgrades.Add(new UnitUpgradeSlot(UnitDataId, 1));
                 else
                     slot.Level++;
             }

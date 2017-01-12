@@ -73,6 +73,10 @@ namespace CoCSharp.Logic
 #endif
         }
 
+        /// <summary>
+        /// Searches for an opponent.
+        /// </summary>
+        /// <returns>An opponent.</returns>
         public abstract Level SearchOpponent();
         #endregion
     }

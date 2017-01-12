@@ -6,10 +6,11 @@ namespace CoCSharp.Network
     {
         public MessageSendToken()
         {
-            TokenID = NetworkManagerAsyncStatistics.NextTokenID;
+            TokenId = NetworkManagerAsyncStatistics.NextTokenID;
         }
 
-        public int TokenID { get; set; }
+        public int TokenId { get; set; }
+        public Message Message { get; set; }
         public SocketAsyncEventArgs Args { get; set; }
 
         public ushort Id { get; set; }
@@ -23,6 +24,8 @@ namespace CoCSharp.Network
 
         public void Reset()
         {
+            Message = null;
+
             Id = 0;
             Length = 0;
             Version = 0;

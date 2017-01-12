@@ -1,12 +1,12 @@
 ﻿using CoCSharp.Network.Messages;
 using CoCSharp.Server.Api;
-using CoCSharp.Server.Api.Chat;
-using CoCSharp.Server.Chat.Commands;
+using CoCSharp.Server.Api.Chatting;
+using CoCSharp.Server.Chatting.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoCSharp.Server.Chat
+namespace CoCSharp.Server.Chatting
 {
     public class ChatManager : IChatManager
     {
@@ -17,6 +17,7 @@ namespace CoCSharp.Server.Chat
 
             RegisterCommand(new HelpChatCommand());
             RegisterCommand(new ChangeLogChatCommand());
+            RegisterCommand(new StatisticsChatCommand());
         }
 
         private List<Type> _commandTypes;

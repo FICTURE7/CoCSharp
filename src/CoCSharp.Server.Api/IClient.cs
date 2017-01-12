@@ -48,9 +48,6 @@ namespace CoCSharp.Server.Api
         /// </summary>
         DateTime KeepAliveExpireTime { get; set; }
 
-        /// <summary>
-        /// Gets the <see cref="LevelSave"/> representing this <see cref="Session.Level"/>.
-        /// </summary>
         LevelSave Save { get; }
         #endregion
 

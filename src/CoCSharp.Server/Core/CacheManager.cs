@@ -1,5 +1,4 @@
 ﻿using CoCSharp.Server.Api.Core;
-using CoCSharp.Server.Api.Db;
 using System;
 using System.Collections.Concurrent;
 
@@ -10,67 +9,85 @@ namespace CoCSharp.Server.Core
     {
         public CacheManager()
         {
-            _levelCache = new ConcurrentDictionary<long, WeakReference<LevelSave>>();
-            _clanCache = new ConcurrentDictionary<long, WeakReference<ClanSave>>();
+            _cache = new ConcurrentDictionary<Type, ConcurrentDictionary<long, WeakReference<object>>>();
         }
 
-        // Dictionary that is going to map UserIds to their respective level.
-        private readonly ConcurrentDictionary<long, WeakReference<LevelSave>> _levelCache;
-        // Dictionary that is going to map ClanIds to their respective clan.
-        private readonly ConcurrentDictionary<long, WeakReference<ClanSave>> _clanCache;
+        private readonly ConcurrentDictionary<Type, ConcurrentDictionary<long, WeakReference<object>>> _cache;
 
-        public LevelSave GetLevel(long userId)
+        public bool TryGet<T>(long id, out T obj)
         {
-            var weakRef = (WeakReference<LevelSave>)null;
-            if (!_levelCache.TryGetValue(userId, out weakRef))
+            var type = typeof(T);
+            var dict = GetDictionary(type);
+            if (dict == null)
+            {
+                obj = default(T);
+                return false;
+            }
+
+            var weakRef = default(WeakReference<object>);
+            if (!dict.TryGetValue(id, out weakRef))
+            {
+                obj = default(T);
+                return false;
+            }
+
+            var outObj = default(object);
+            if (!weakRef.TryGetTarget(out outObj))
+            {
+                // Remove from cache, since the object has been picked up by the GC.
+                dict.TryRemove(id, out weakRef);
+
+                obj = default(T);
+                return false;
+            }
+
+            obj = (T)outObj;
+            return true;
+        }
+
+        public bool Register<T>(long id, T obj)
+        {
+            var type = typeof(T);
+            var dict = GetDictionary(type);
+            if (dict == null)
+            {
+                dict = new ConcurrentDictionary<long, WeakReference<object>>();
+                if (!_cache.TryAdd(type, dict))
+                {
+                    // Ops.
+                }
+            }
+
+            var overwritten = dict.ContainsKey(id);
+            var weakRef = new WeakReference<object>(obj);
+            if (overwritten)
+            {
+                dict[id] = weakRef;
+            }
+            else if (!dict.TryAdd(id, weakRef))
+            {
+                // Ops.
+            }
+            return overwritten;
+        }
+
+        public void Unregister<T>(long id)
+        {
+            var type = typeof(T);
+            var dict = GetDictionary(type);
+            if (dict == null)
+                return;
+
+            var weakRef = default(WeakReference<object>);
+            dict.TryRemove(id, out weakRef);
+        }
+
+        private ConcurrentDictionary<long, WeakReference<object>> GetDictionary(Type type)
+        {
+            var dict = default(ConcurrentDictionary<long, WeakReference<object>>);
+            if (!_cache.TryGetValue(type, out dict))
                 return null;
-
-            var target = (LevelSave)null;
-            if (!weakRef.TryGetTarget(out target))
-                _levelCache.TryRemove(userId, out weakRef);
-            return target;
-        }
-
-        public void RegisterLevel(LevelSave level, long userId)
-        {
-            if (level == null)
-                throw new ArgumentNullException(nameof(level));
-
-            var weakRef = new WeakReference<LevelSave>(level);
-            if (_levelCache.ContainsKey(userId))
-                _levelCache[userId] = weakRef;
-            else
-                _levelCache.TryAdd(userId, weakRef);
-        }
-
-        public ClanSave GetClan(long clanId)
-        {
-            var weakRef = (WeakReference<ClanSave>)null;
-            if (!_clanCache.TryGetValue(clanId, out weakRef))
-                return null;
-
-            var target = (ClanSave)null;
-            if (!weakRef.TryGetTarget(out target))
-                _clanCache.TryRemove(clanId, out weakRef);
-            return target;
-        }
-
-        public void RegisterClan(ClanSave clan, long clanId)
-        {
-            if (clan == null)
-                throw new ArgumentNullException(nameof(clan));
-
-            var weakRef = new WeakReference<ClanSave>(clan);
-            if (_clanCache.ContainsKey(clanId))
-                _clanCache[clanId] = weakRef;
-            else
-                _clanCache.TryAdd(clanId, weakRef);
-        }
-
-        public void Clear()
-        {
-            _levelCache.Clear();
-            _clanCache.Clear();
+            return dict;
         }
     }
 }

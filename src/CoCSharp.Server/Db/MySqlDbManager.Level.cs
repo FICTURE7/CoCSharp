@@ -1,10 +1,12 @@
 ﻿using CoCSharp.Data;
 using CoCSharp.Data.Slots;
 using CoCSharp.Network;
+using CoCSharp.Server.Api.Core.Factories;
 using CoCSharp.Server.Api.Db;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
@@ -15,112 +17,117 @@ namespace CoCSharp.Server.Db
 {
     public partial class MySqlDbManager
     {
-        public async Task<LevelSave> LoadLevelAsync(long userId)
+        public async Task<LevelSave> LoadLevelAsync(long userId, CancellationToken cancellationToken)
         {
             // Look up instance in our cache.
-            var levelSave = Server.Cache.GetLevel(userId);
-            if (levelSave != null)
+            var levelSave = default(LevelSave);
+            if (Server.Cache.TryGet(userId, out levelSave))
                 return levelSave;
 
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Otherwise we look up in the db.
             using (var sql = new MySqlConnection(_connectionString))
             {
-                var command = new MySqlCommand($"SELECT * FROM levels WHERE user_id = @UserId", sql);
-                command.Parameters.AddWithValue("UserId", userId);
+                await sql.OpenAsync(cancellationToken);
 
-                await sql.OpenAsync();
-
-                using (var reader = await command.ExecuteReaderAsync())
+                using (var command = new MySqlCommand("SELECT * FROM `levels` WHERE `user_id` = @UserId", sql))
                 {
-                    if (reader.HasRows)
+                    command.Parameters.AddWithValue("UserId", userId);
+
+                    using (var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken))
                     {
-                        if (await reader.ReadAsync())
+                        if (reader.HasRows)
                         {
-                            // Create a new instance of the LevelSave class and sets
-                            // its value from the DbDataReader.
-                            levelSave = new LevelSave();
-                            FromMySqlDataReader(levelSave, reader);
+                            if (await reader.ReadAsync(cancellationToken))
+                            {
+                                // Create a new instance of the LevelSave class and sets
+                                // its value from the DbDataReader.
+                                levelSave = Server.Factories.GetFactory<LevelSaveFactory>().Create();
+                                FromMySqlDataReader(levelSave, reader);
 
-                            // UserId returned should be the same as the id as requested.
-                            Debug.Assert(levelSave.UserId == userId, "Requested user ID and loaded user ID differ.");
+                                // UserId returned should be the same as the id as requested.
+                                Debug.Assert(levelSave.UserId == userId, "Requested user ID and loaded user ID differ.");
 
-                            // Register this instance to our cache.
-                            Server.Cache.RegisterLevel(levelSave, userId);
-                            return levelSave;
+                                // Register this instance to our cache.
+                                Server.Cache.Register(userId, levelSave);
+                                return levelSave;
+                            }
                         }
-                    }
 
-                    return null;
+                        return null;
+                    }
                 }
             }
         }
 
-        public Task SaveLevelAsync(LevelSave level) => InternalSaveLevelAsync(level, false);
+        public Task SaveLevelAsync(LevelSave level, CancellationToken token)
+            => InternalSaveLevelAsync(level, false, token);
 
-        private async Task InternalSaveLevelAsync(LevelSave level, bool newLevel)
+        private async Task InternalSaveLevelAsync(LevelSave level, bool newLevel, CancellationToken cancellationToken)
         {
             using (var sql = new MySqlConnection(_connectionString))
             {
-                await sql.OpenAsync();
+                await sql.OpenAsync(cancellationToken);
 
                 // Don't forget to update the DateLastSave value.
                 level.DateLastSave = DateTime.UtcNow;
 
                 // Convert the LevelSave to a MySqlCommand with the correct parameters.
-                var command = ToMySqlCommand(level);
-                command.Connection = sql;
-
-                var numRows = await command.ExecuteNonQueryAsync();
-
-                if (newLevel && numRows == 1)
+                using (var command = ToMySqlCommand(level))
                 {
-                    var newId = command.LastInsertedId;
-                    Debug.Assert(newId != 0, "Number of rows affected was 1, however last insert id was 0.");
+                    command.Connection = sql;
 
-                    level.UserId = command.LastInsertedId;
-                }
-                else
-                {
-                    Debug.Assert(level.UserId != 0);
-
-                    // If the level isn't in a clan, we make sure its not in the clans_members table.
-                    if (level.ClanId == null)
+                    var numRows = await command.ExecuteNonQueryAsync(cancellationToken);
+                    if (newLevel && numRows == 1)
                     {
-                        command = new MySqlCommand("DELETE FROM clans_members WHERE user_id = @UserId", sql);
-                        command.Parameters.AddWithValue("UserId", level.UserId);
+                        var newId = command.LastInsertedId;
+                        Debug.Assert(newId != -1, "Number of rows affected was 1, however last insert id was 0.");
 
-                        var numRows2 = await command.ExecuteNonQueryAsync();
-                        if (numRows2 == 1)
-                            Server.Logs.Info("Deleting entry from clans_members since level is not in clan.");
+                        level.UserId = command.LastInsertedId;
+                    }
+                    else
+                    {
+                        Debug.Assert(level.UserId != 0);
+
+                        // If the level isn't in a clan, we make sure its not in the clans_members table.
+                        if (level.ClanId == null)
+                        {
+                            using (var command2 = new MySqlCommand("DELETE FROM `clan_members` WHERE `user_id` = @UserId", sql))
+                            {
+                                command2.Parameters.AddWithValue("UserId", level.UserId);
+
+                                var numRows2 = await command2.ExecuteNonQueryAsync(cancellationToken);
+                                if (numRows2 == 1)
+                                    Server.Logs.Info("Deleting entry from clans_members since level is not in clan.");
+                            }
+                        }
                     }
                 }
             }
         }
 
-        public Task<LevelSave> NewLevelAsync() => InternalNewLevelAsync(0, TokenUtils.GenerateToken());
+        public Task<LevelSave> NewLevelAsync(CancellationToken cancellationToken)
+            => InternalNewLevelAsync(0, TokenUtils.GenerateToken(), cancellationToken);
 
-        public Task<LevelSave> NewLevelAsync(long id, string token) => InternalNewLevelAsync(id, token);
+        public Task<LevelSave> NewLevelAsync(long userId, string userToken, CancellationToken cancellationToken)
+            => InternalNewLevelAsync(userId, userToken, cancellationToken);
 
-        private async Task<LevelSave> InternalNewLevelAsync(long id, string token)
+        private async Task<LevelSave> InternalNewLevelAsync(long userId, string userToken, CancellationToken cancellationToken)
         {
-            var save = new LevelSave
-            {
-                DateCreated = DateTime.UtcNow,
-                UserId = id,
-                Token = token,
-
-                // Prevent client from crashing.
-                // Because a name == null, will cause the client to crash.
-                Name = GetRandomName(),
-
-                Gems = _startingGems,
-                FreeGems = _startingGems,
-
-                // Prevent client from crashing.
-                // Because a level less than 1 will cause the client to crash.
-                ExpLevels = 1,
-
-                LevelJson = _startingVillage,
-            };
+            var save = Server.Factories.GetFactory<LevelSaveFactory>().Create();
+            save.DateCreated = DateTime.UtcNow;
+            save.UserId = userId;
+            save.Token = userToken;
+            // Prevent client from crashing.
+            // Because a name == null, will cause the client to crash.
+            save.Name = GetRandomName();
+            save.Gems = _startingGems;
+            save.FreeGems = _startingGems;
+            // Prevent client from crashing.
+            // Because a level less than 1 will cause the client to crash.
+            save.ExpLevels = 1;
+            save.LevelJson = _startingVillage;
 
             // Skip the initial tutorials.
             var tutorialProgress = new TutorialProgressSlot[10];
@@ -138,48 +145,53 @@ namespace CoCSharp.Server.Db
             save.ResourcesAmount = resourceAmount;
 
             // Save LevelSave to set the ID using the AutoId stuff.
-            await InternalSaveLevelAsync(save, true);
+            await InternalSaveLevelAsync(save, true, cancellationToken);
             Interlocked.Increment(ref _levelCount);
 
             return save;
         }
 
-        public async Task<LevelSave> RandomLevelAsync()
+        public async Task<LevelSave> RandomLevelAsync(CancellationToken cancellationToken)
         {
             using (var sql = new MySqlConnection(_connectionString))
             {
-                await sql.OpenAsync();
+                await sql.OpenAsync(cancellationToken);
 
-                var command = new MySqlCommand("SELECT * FROM levels ORDER BY RAND() LIMIT 1;", sql);
-                var reader = await command.ExecuteReaderAsync();
-
-                if (reader.HasRows)
+                using (var command = new MySqlCommand("SELECT * FROM `levels` ORDER BY RAND() LIMIT 1;", sql))
                 {
-                    if (await reader.ReadAsync())
+                    var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken);
+
+                    if (reader.HasRows)
                     {
-                        // Could mess the cache up.
+                        if (await reader.ReadAsync(cancellationToken))
+                        {
+                            // Could mess the cache up.
+                            var levelSave = Server.Factories.GetFactory<LevelSaveFactory>().Create();
+                            FromMySqlDataReader(levelSave, reader);
 
-                        var levelSave = new LevelSave();
-                        FromMySqlDataReader(levelSave, reader);
-
-                        Server.Cache.RegisterLevel(levelSave, levelSave.UserId);
-                        return levelSave;
+                            Server.Cache.Register(levelSave.UserId, levelSave);
+                            return levelSave;
+                        }
                     }
+                    return null;
                 }
-                return null;
             }
         }
 
         private static void FromMySqlDataReader(LevelSave save, DbDataReader reader)
         {
-            save.DateCreated = (DateTime)reader["create_date"];
-            save.DateLastSave = (DateTime)reader["last_save_date"];
-            save.LoginCount = (int)reader["login_count"];
-            save.PlayTime = TimeSpan.FromSeconds((int)reader["play_time_seconds"]);
-            save.LevelJson = (string)reader["level_json"];
             save.UserId = (long)reader["user_id"];
             save.ClanId = reader["clan_id"] is DBNull ? null : (long?)reader["clan_id"];
+
+            save.DateCreated = (DateTime)reader["create_date"];
+            save.DateLastSave = (DateTime)reader["last_save_date"];
+            save.PlayTime = TimeSpan.FromSeconds((int)reader["play_time_seconds"]);
+            save.LoginCount = (int)reader["login_count"];
+
+            save.LevelJson = (string)reader["level_json"];
+
             save.Token = (string)reader["token"];
+
             save.Name = (string)reader["name"];
             save.IsNamed = (bool)reader["is_named"];
             save.Trophies = (int)reader["trophies"];

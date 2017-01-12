@@ -47,11 +47,11 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// UDID.
         /// </summary>
-        public string UDID;
+        public string Udid;
         /// <summary>
         /// Open UDID.
         /// </summary>
-        public string OpenUDID;
+        public string OpenUdid;
         /// <summary>
         /// MAC address of the device.
         /// </summary>
@@ -71,7 +71,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Advertising GUID.
         /// </summary>
-        public string AdvertisingGUID;
+        public string AdvertisingGuid;
         /// <summary>
         /// Operating system version.
         /// </summary>
@@ -89,7 +89,7 @@ namespace CoCSharp.Network.Messages
         /// <summary>
         /// Android device ID.
         /// </summary>
-        public string AndroidDeviceID;
+        public string AndroidDeviceId;
         /// <summary>
         /// Facebook distribution ID.
         /// </summary>
@@ -148,20 +148,20 @@ namespace CoCSharp.Network.Messages
             MinorVersion = reader.ReadInt32();
             MasterHash = reader.ReadString();
 
-            UDID = reader.ReadString();
+            Udid = reader.ReadString();
 
-            OpenUDID = reader.ReadString();
+            OpenUdid = reader.ReadString();
             MacAddress = reader.ReadString();
             DeviceModel = reader.ReadString();
             LocaleKey = reader.ReadInt32();
             Language = reader.ReadString();
-            AdvertisingGUID = reader.ReadString();
+            AdvertisingGuid = reader.ReadString();
             OSVersion = reader.ReadString();
 
             Unknown2 = reader.ReadByte();
             Unknown3 = reader.ReadString();
 
-            AndroidDeviceID = reader.ReadString();
+            AndroidDeviceId = reader.ReadString();
             FacebookDistributionID = reader.ReadString();
             IsAdvertisingTrackingEnabled = reader.ReadBoolean();
             VendorGUID = reader.ReadString();
@@ -192,20 +192,20 @@ namespace CoCSharp.Network.Messages
             writer.Write(MinorVersion);
             writer.Write(MasterHash);
 
-            writer.Write(UDID);
+            writer.Write(Udid);
 
-            writer.Write(OpenUDID);
+            writer.Write(OpenUdid);
             writer.Write(MacAddress);
             writer.Write(DeviceModel);
             writer.Write(LocaleKey);
             writer.Write(Language);
-            writer.Write(AdvertisingGUID);
+            writer.Write(AdvertisingGuid);
             writer.Write(OSVersion);
 
             writer.Write(Unknown2);
             writer.Write(Unknown3);
 
-            writer.Write(AndroidDeviceID);
+            writer.Write(AndroidDeviceId);
             writer.Write(FacebookDistributionID);
             writer.Write(IsAdvertisingTrackingEnabled);
             writer.Write(VendorGUID);

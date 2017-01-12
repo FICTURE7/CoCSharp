@@ -8,6 +8,15 @@ namespace CoCSharp.Network.Messages
     /// </summary>
     public abstract class AllianceStreamEntry : StreamEntry
     {
+        private DateTime _dateSent;
+        private TimeSpan _sinceOccured;
+
+        /// <summary>
+        /// Gets the time at which it was sent.
+        /// </summary>
+        public DateTime DateSent => _dateSent;
+
+        // Unknown 1 and EntryId could an Int64 instead.
         /// <summary>
         /// Unknown integer 1.
         /// </summary>
@@ -47,10 +56,22 @@ namespace CoCSharp.Network.Messages
         /// Role of the member that sent the entry.
         /// </summary>
         public ClanMemberRole Role;
+
         /// <summary>
         /// Amount of time since the entry was sent.
         /// </summary>
-        private TimeSpan SinceOccured;
+        public TimeSpan SinceOccured
+        {
+            get
+            {
+                return _sinceOccured;
+            }
+            set
+            {
+                _sinceOccured = value;
+                _dateSent = DateTime.UtcNow - value;
+            }
+        }
 
         /// <summary>
         /// Writes the <see cref="AllianceStreamEntry"/> to the specified <see cref="MessageWriter"/>.
@@ -102,6 +123,11 @@ namespace CoCSharp.Network.Messages
             League = reader.ReadInt32();
             Role = (ClanMemberRole)reader.ReadInt32();
             SinceOccured = TimeSpan.FromSeconds(reader.ReadInt32());
+        }
+
+        public virtual void Update()
+        {
+            SinceOccured = DateTime.UtcNow - DateSent;
         }
     }
 }

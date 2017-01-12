@@ -27,6 +27,9 @@ namespace CoCSharp.Logic.Commands
             Y = reader.ReadInt32();
             UnitDataId = reader.ReadInt32();
             Tick = reader.ReadInt32();
+
+            //var nx = (X >> 8) / 2;
+            //var ny = (Y >> 8) / 2;
         }
 
         public override void WriteCommand(MessageWriter writer)

@@ -95,6 +95,10 @@ namespace CoCSharp.Network
         /// </summary>
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
         /// <summary>
+        /// The event raised when a <see cref="Message"/> is sent.
+        /// </summary>
+        public event EventHandler<MessageSentEventArgs> MessageSent;
+        /// <summary>
         /// The event raised when <see cref="Socket"/> socket got disconnected.
         /// </summary>
         public event EventHandler<DisconnectedEventArgs> Disconnected;
@@ -201,6 +205,7 @@ namespace CoCSharp.Network
                 }
 
                 var token = (MessageSendToken)args.UserToken;
+                token.Message = message;
                 token.Id = message.Id;
                 token.Length = chiper.Length;
                 token.Version = message.Version;
@@ -265,8 +270,11 @@ namespace CoCSharp.Network
             // Else reset and push back the SocketAsyncEventArgs.
             else
             {
-                Interlocked.Increment(ref Statistics._totalMessagesSent);
-                Interlocked.Increment(ref _settingsStats._totalMessagesSent);
+                OnMessageSent(new MessageSentEventArgs
+                {
+                    Message = token.Message,
+                });
+
                 token.Reset();
 
                 // Just in case.
@@ -402,7 +410,17 @@ namespace CoCSharp.Network
             StartReceive(_receivePool.Pop());
 
             for (int i = 0; i < messagesArgs.Count; i++)
+            {
+#if DEBUG
+                var sw = Stopwatch.StartNew();
+#endif
                 OnMessageReceived(messagesArgs[i]);
+
+#if DEBUG
+                sw.Stop();
+                Debug.WriteLine("Done raising event for {0} in {1}ms.", messagesArgs[i].Message.GetType(), sw.Elapsed.TotalMilliseconds);
+#endif
+            }
         }
 
         private void ProcessReceiveToken(MessageReceiveToken token)
@@ -478,7 +496,9 @@ namespace CoCSharp.Network
             }
             else
             {
+                Console.WriteLine("Semaphore not responding in time.");
                 Debug.WriteLine("Semaphore not responding in time.");
+
                 //TODO: Might want drop connection and release the semaphore.
             }
         }
@@ -523,6 +543,19 @@ namespace CoCSharp.Network
 
             if (MessageReceived != null && Thread.VolatileRead(ref _disposed) == 0)
                 MessageReceived(this, e);
+        }
+
+        /// <summary>
+        /// Use this method to trigger the <see cref="MessageSent"/> event.
+        /// </summary>
+        /// <param name="e">The arguments.</param>
+        protected virtual void OnMessageSent(MessageSentEventArgs e)
+        {
+            Interlocked.Increment(ref Statistics._totalMessagesSent);
+            Interlocked.Increment(ref _settingsStats._totalMessagesSent);
+
+            if (MessageSent != null && Thread.VolatileRead(ref _disposed) == 0)
+                MessageSent(this, e);
         }
 
         /// <summary>

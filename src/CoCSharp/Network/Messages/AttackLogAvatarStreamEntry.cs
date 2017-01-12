@@ -34,7 +34,7 @@ namespace CoCSharp.Network.Messages
         /// User ID of the avatar associated with this
         /// entry.
         /// </summary>
-        public long UserID;
+        public long UserId;
         /// <summary>
         /// Username of the avatar associated with this
         /// entry.
@@ -100,7 +100,7 @@ namespace CoCSharp.Network.Messages
             Unknown1 = reader.ReadInt64();
             Unknown2 = reader.ReadByte();
 
-            UserID = reader.ReadInt64();
+            UserId = reader.ReadInt64();
             Username = reader.ReadString();
 
             Unknown5 = reader.ReadInt32();
@@ -138,7 +138,7 @@ namespace CoCSharp.Network.Messages
             writer.Write(Unknown1);
             writer.Write(Unknown2);
 
-            writer.Write(UserID);
+            writer.Write(UserId);
             writer.Write(Username);
 
             writer.Write(Unknown5);

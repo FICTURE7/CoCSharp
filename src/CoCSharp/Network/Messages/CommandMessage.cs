@@ -59,8 +59,8 @@ namespace CoCSharp.Network.Messages
             for (int i = 0; i < length; i++)
             {
                 var cmd = (Command)null;
-                var cmdID = reader.ReadInt32();
-                if (!CommandFactory.TryCreate(cmdID, out cmd))
+                var cmdId = reader.ReadInt32();
+                if (!CommandFactory.TryCreate(cmdId, out cmd))
                     break; // Breaking early because we don't want to mess the stream up.
 
                 cmd.ReadCommand(reader);

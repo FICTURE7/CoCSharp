@@ -10,7 +10,7 @@ namespace CoCSharp.Client
 
         public static void Main(string[] args)
         {
-            var endPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9339);
+            var endPoint = new IPEndPoint(IPAddress.Parse("51.254.134.86"), 9339);
 
             var client = new Client();
             client.Connect(endPoint);

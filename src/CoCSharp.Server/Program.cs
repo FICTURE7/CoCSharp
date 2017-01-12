@@ -11,6 +11,8 @@ namespace CoCSharp.Server
 
         public static void Main(string[] args)
         {
+            ThreadPool.QueueUserWorkItem((a) => Console.WriteLine("k"));
+
             Console.CancelKeyPress += (sender, e) =>
             {
                 if (!e.Cancel)
@@ -33,19 +35,10 @@ namespace CoCSharp.Server
             };
             Server.Start();
 
-            //var x = Server.Db.LoadClanAsync(194);
-            //x.Wait();
-
-            //var r = x.Result;
-            //var c = r.ToClan();
-            //c.Update();
-
-            sw.Stop();
-
             Server.Logs.Info($"Done in {sw.Elapsed.TotalMilliseconds}ms...");
 
             // Wasting the main thread, because we can.
             Thread.Sleep(Timeout.Infinite);
-        }
+        }       
     }
 }

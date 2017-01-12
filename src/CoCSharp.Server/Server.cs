@@ -4,11 +4,13 @@ using CoCSharp.Data.Models;
 using CoCSharp.Network;
 using CoCSharp.Server.Api;
 using CoCSharp.Server.Api.Core;
+using CoCSharp.Server.Api.Core.Factories;
 using CoCSharp.Server.Api.Db;
 using CoCSharp.Server.Api.Events.Server;
 using CoCSharp.Server.Api.Logging;
 using CoCSharp.Server.Core;
 using CoCSharp.Server.Db;
+using CoCSharp.Server.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,19 +29,17 @@ namespace CoCSharp.Server
             const string CONFIG_FILE_PATH = "server_config.xml";
 
             // Initialize our loggers.
-            _log = new Log();
-            _log.MainLogger
-                .Next(new ConsoleLogger())
-                .Next(new FileLogger(LOG_DIR_PATH));
-
-            _log.Info($"Loading config at '{CONFIG_FILE_PATH}'...");
+            _logs = new Logs(LOG_DIR_PATH);
+            _logs.RegisterLogger<ClanLogger>();
+            _logs.RegisterLogger<CleanErrorLogger>();
+            _logs.Info($"Loading config at '{CONFIG_FILE_PATH}'...");
 
             // Initialize our configs.
             _config = new ServerConfiguration();
             // If the config does not exists we create it.
             if (!File.Exists(CONFIG_FILE_PATH))
             {
-                _log.Warn($"Config at '{CONFIG_FILE_PATH}' was not found; creating one.");
+                _logs.Warn($"Config at '{CONFIG_FILE_PATH}' was not found; creating one.");
                 _config.Save(CONFIG_FILE_PATH);
             }
             // If we couldn't load all of the configs or part of the config is missing
@@ -51,14 +51,14 @@ namespace CoCSharp.Server
                 var newName = $"{Path.GetFileNameWithoutExtension(CONFIG_FILE_PATH)}_old_{DateTime.Now.ToString("dd-HH-mm-ss-ff")}{Path.GetExtension(CONFIG_FILE_PATH)}";
                 File.Move(oldName, newName);
 
-                _log.Warn($"Was unable to load config at '{CONFIG_FILE_PATH}' completely; overwriting old one.");
+                _logs.Warn($"Was unable to load config at '{CONFIG_FILE_PATH}' completely; overwriting old one.");
                 _config.Save(CONFIG_FILE_PATH);
             }
 
             // Check whether the values in server configuration is valid.
             if (!CheckConfig())
             {
-                _log.Error("Server configuration was incorrect.");
+                _logs.Error("Server configuration was incorrect.");
                 Close();
 
                 Environment.Exit(1);
@@ -68,10 +68,17 @@ namespace CoCSharp.Server
             _clients = new ClientCollection();
             _cache = new CacheManager();
 
+            _factories = new FactoryManager(this);
+            _factories.RegisterFactory<LevelSaveFactory>();
+            _factories.RegisterFactory<ClanSaveFactory>();
+
             // Initialize the Web API.
             // TODO: Turn into plugin when the plugin system is set up.
-            _api = new WebApi(this);
+            _webApi = new WebApi(this);
 
+            _levels = new LevelManager(this);
+            _clans = new ClanManager(this);
+            // Initialize our message handler, to handle incoming messages.
             _handler = new MessageHandler(this);
 
             _heartbeat = new Timer(DoHeartbeat, null, 5000, 5000);
@@ -89,12 +96,15 @@ namespace CoCSharp.Server
         private AssetManager _assets;
 
         //TODO: Turn into a plugin instead.
-        private readonly WebApi _api;
+        private readonly WebApi _webApi;
 
-        private readonly Log _log;
+        private readonly Logs _logs;
         private readonly Timer _heartbeat;
         private readonly CacheManager _cache;
+        private readonly LevelManager _levels;
+        private readonly ClanManager _clans;
         private readonly MessageHandler _handler;
+        private readonly FactoryManager _factories;
         private readonly ClientCollection _clients;
         private readonly ServerConfiguration _config;
         private readonly NetworkManagerAsyncSettings _settings;
@@ -102,10 +112,13 @@ namespace CoCSharp.Server
         internal NetworkManagerAsyncSettings Settings => _settings;
 
         public AssetManager Assets => _assets;
-        public Log Logs => _log;
+        public Logs Logs => _logs;
         public IDbManager Db => _db;
+        public IClanManager Clans => _clans;
+        public ILevelManager Levels => _levels;
         public ICacheManager Cache => _cache;
         public IMessageHandler Handler => _handler;
+        public IFactoryManager Factories => _factories;
         public ICollection<IClient> Clients => _clients;
         public IServerConfiguration Configuration => _config;
         #endregion
@@ -171,7 +184,7 @@ namespace CoCSharp.Server
 
             try
             {
-                _api.Start();
+                _webApi.Start();
             }
             catch (Exception ex)
             {
@@ -209,7 +222,7 @@ namespace CoCSharp.Server
                 _assets?.Dispose();
                 _acceptPool?.Dispose();
                 _listener?.Close();
-                _log?.Dispose();
+                _logs?.Dispose();
                 _db?.Dispose();
             }
 

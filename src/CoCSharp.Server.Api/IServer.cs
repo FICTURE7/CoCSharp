@@ -26,9 +26,9 @@ namespace CoCSharp.Server.Api
         AssetManager Assets { get; }
 
         /// <summary>
-        /// Gets the <see cref="Log"/> associated with the <see cref="IServer"/>.
+        /// Gets the <see cref="Logging.Logs"/> associated with the <see cref="IServer"/>.
         /// </summary>
-        Log Logs { get; }
+        Logs Logs { get; }
 
         /// <summary>
         /// Gets the <see cref="IDbManager"/> that manages the database.
@@ -36,9 +36,24 @@ namespace CoCSharp.Server.Api
         IDbManager Db { get; }
 
         /// <summary>
+        /// Gets the <see cref="IClanManager"/> that manages clans.
+        /// </summary>
+        IClanManager Clans { get; }
+
+        /// <summary>
+        /// Gets the <see cref="ILevelManager"/> that manages levels.
+        /// </summary>
+        ILevelManager Levels { get; }
+
+        /// <summary>
         /// Gets the <see cref="ICacheManager"/> that manages the caches.
         /// </summary>
         ICacheManager Cache { get; }
+
+        /// <summary>
+        /// Gets the <see cref="IFactoryManager"/> that manages the object factories.
+        /// </summary>
+        IFactoryManager Factories { get; }
 
         /// <summary>
         /// Gets the <see cref="ICollection{T}"/> of <see cref="IClient"/> connected

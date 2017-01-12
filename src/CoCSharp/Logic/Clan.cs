@@ -252,24 +252,27 @@ namespace CoCSharp.Logic
             {
                 var caStreamEntry = new ChatAllianceStreamEntry
                 {
+                    Unknown1 = 0,
+
+                    EntryId = Entries.Count,
+
+                    Unknown2 = 3,
+
                     HomeId = member.Id,
                     UserId = member.Id,
                     League = member.League,
                     ExpLevels = member.ExpLevels,
                     Name = member.Name,
                     Role = member.Role,
+
                     MessageText = textMessage,
-
-                    Unknown1 = 1,
-
-                    EntryId = Entries.Count,
-
-                    Unknown2 = 3,
                 };
 
                 // Add that to the clans so that it gets saves later on.
                 // And sent again when the clan is loaded to the clients.
                 Entries.Add(caStreamEntry);
+
+                Update();
                 return caStreamEntry;
             }
         }
@@ -313,6 +316,12 @@ namespace CoCSharp.Logic
             {
                 var jolStreamEntry = new JoinedOrLeftAllianceStream
                 {
+                    Unknown1 = 0,
+
+                    EntryId = Entries.Count,
+
+                    Unknown2 = 3,
+
                     HomeId = avatar.Id,
                     UserId = avatar.Id,
                     League = avatar.League,
@@ -323,12 +332,6 @@ namespace CoCSharp.Logic
                     Action = 3, // Action = 3 => Joined, Action = 4 => Left.
                     ActorName = avatar.Name,
                     ActorUserId = avatar.Id,
-
-                    Unknown1 = 1,
-
-                    EntryId = Entries.Count,
-
-                    Unknown2 = 3,
                 };
 
                 var newMember = new ClanMember
@@ -345,6 +348,7 @@ namespace CoCSharp.Logic
                 };
 
                 Members.Add(newMember);
+
                 Entries.Add(jolStreamEntry);
                 Update();
                 return jolStreamEntry;
@@ -368,6 +372,12 @@ namespace CoCSharp.Logic
                     {
                         var jolStreamEntry = new JoinedOrLeftAllianceStream
                         {
+                            Unknown1 = 0,
+
+                            EntryId = Entries.Count,
+
+                            Unknown2 = 3,
+
                             HomeId = member.Id,
                             UserId = member.Id,
                             League = member.League,
@@ -379,14 +389,15 @@ namespace CoCSharp.Logic
                             ActorName = member.Name,
                             ActorUserId = member.Id,
 
-                            Unknown1 = 1,
-
-                            EntryId = Entries.Count,
-
-                            Unknown2 = 3,
+                            SinceOccured = TimeSpan.FromSeconds(0)
                         };
 
                         Members.RemoveAt(i);
+
+                        // Clamp the entries count to 100.
+                        if (Entries.Count >= 100)
+                            Entries.RemoveAt(0);
+
                         Entries.Add(jolStreamEntry);
 
                         Update();
@@ -411,7 +422,6 @@ namespace CoCSharp.Logic
         public void Update()
         {
             var total = 0;
-
             // Insertion sorting of clan members by amount of trophies.
             for (int i = 1; i < Members.Count; i++)
             {
@@ -438,28 +448,37 @@ namespace CoCSharp.Logic
                     member.Rank = rank1;
                 }
 
-                // If the its been more than 3 days since the player joined, he is not considered new anymore.
+                // If its been more than 3 days since the player joined, he is not considered new anymore.
                 if ((DateTime.UtcNow - member.DateJoined) >= TimeSpan.FromDays(3))
                     member.NewMember = false;
 
                 // Calculate the number of clan trophies.
                 var rank2 = member.Rank;
                 var trophies = member.Trophies;
+                var accountedTrophies = 0;
                 if (rank2 >= 1 || rank2 <= 10)
-                    total = (int)Math.Round(0.5 * trophies);
+                    accountedTrophies = (int)Math.Round(0.5 * trophies);
                 else if (rank2 >= 11 || rank2 <= 20)
-                    total = (int)Math.Round(0.25 * trophies);
+                    accountedTrophies = (int)Math.Round(0.25 * trophies);
                 else if (rank2 >= 21 || rank2 <= 30)
-                    total = (int)Math.Round(0.12 * trophies);
+                    accountedTrophies = (int)Math.Round(0.12 * trophies);
                 else if (rank2 >= 31 || rank2 <= 40)
-                    total = (int)Math.Round(0.10 * trophies);
+                    accountedTrophies = (int)Math.Round(0.10 * trophies);
                 else if (rank2 >= 41 || rank2 <= 50)
-                    total = (int)Math.Round(0.3 * trophies);
+                    accountedTrophies = (int)Math.Round(0.3 * trophies);
 
-                TotalTrophies += total;
+                total += accountedTrophies;
             }
 
             TotalTrophies = total;
+
+            // Clamp the number of entries to 100 only.
+            while (Entries.Count >= 100)
+                Entries.RemoveAt(0);
+
+            // Update the time since the entries were sent.
+            for (int i = 0; i < Entries.Count; i++)
+                Entries[i].Update();
         }
         #endregion
     }

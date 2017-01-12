@@ -1,14 +1,15 @@
 using CoCSharp.Logic;
-using CoCSharp.Logic.Commands;
 using CoCSharp.Network;
 using CoCSharp.Network.Cryptography;
-using CoCSharp.Network.Messages;
 using CoCSharp.Server.Api;
+using CoCSharp.Server.Api.Core.Factories;
 using CoCSharp.Server.Api.Db;
+using CoCSharp.Server.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoCSharp.Server
@@ -31,11 +32,12 @@ namespace CoCSharp.Server
             _socket = socket;
             _localEndPoint = socket.LocalEndPoint;
             _remoteEndPoint = socket.RemoteEndPoint;
-            _save = new LevelSave();
             _session = new RemoteSession(server);
+            _save = Server.Factories.GetFactory<LevelSaveFactory>().Create();
 
             _networkManager = new NetworkManagerAsync(_socket, server.Settings, new MessageProcessorNaCl(Crypto8.StandardKeyPair));
-            _networkManager.MessageReceived += OnMessage;
+            _networkManager.MessageReceived += OnMessageReceived;
+            _networkManager.MessageSent += OnMessageSent;
             _networkManager.Disconnected += OnDisconnected;
         }
         #endregion
@@ -58,6 +60,7 @@ namespace CoCSharp.Server
         public Session Session => _session;
 
         public IServer Server => _server;
+        [Obsolete]
         public LevelSave Save
         {
             get
@@ -96,7 +99,7 @@ namespace CoCSharp.Server
             if (disposing)
             {
                 // Make sure we don't handle incoming messages when disconnecting.
-                _networkManager.MessageReceived -= OnMessage;
+                _networkManager.MessageReceived -= OnMessageReceived;
 
                 var now = DateTime.UtcNow;
                 var level = _session.Level;
@@ -114,10 +117,10 @@ namespace CoCSharp.Server
                     // Now that all the VillageObject has been ticked and updated
                     // we can push the Level back to the database.
                     var save = Save;
-                    Server.Db.SaveLevelAsync(save); // TODO: Wait for save when disposing IDbManager.
+                    Server.Db.SaveLevelAsync(save, new CancellationToken()); // TODO: Wait for save when disposing IDbManager.
 
                     // Push back VillageObjects to pool.
-                    level.Dispose();
+                    //level.Dispose();
                 }
 
                 // Disconnect socket.
@@ -129,11 +132,14 @@ namespace CoCSharp.Server
             _disposed = true;
         }
 
-        private async void OnMessage(object sender, MessageReceivedEventArgs e)
+        private readonly List<Task> _tasks = new List<Task>();
+
+        private async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             if (e.Message == null)
                 return;
 
+            Server.Logs.Info($"Received & Processing {e.Message.GetType().Name}...");
             try
             {
                 // Ask the server to handle the message received on this client connection.
@@ -142,7 +148,15 @@ namespace CoCSharp.Server
             catch (Exception ex)
             {
                 Server.Logs.Error($"Failed to handle {e.Message}: {ex}");
+
+                Server.Logs.GetLogger<CleanErrorLogger>().Log(ex.GetType().Name + ":" + ex.Message);
             }
+            Server.Logs.Info($"Processing {e.Message.GetType().Name}...done!");
+        }
+
+        private void OnMessageSent(object sender, MessageSentEventArgs e)
+        {
+            Server.Logs.Info($"Sent {e.Message.GetType().Name}");
         }
 
         private void OnDisconnected(object sender, DisconnectedEventArgs e)
@@ -157,6 +171,8 @@ namespace CoCSharp.Server
             catch (Exception ex)
             {
                 Server.Logs.Error("Failed to disconnect client: " + ex);
+
+                Server.Logs.GetLogger<CleanErrorLogger>().Log(ex.GetType().Name + ":" + ex.Message);
             }
         }
         #endregion

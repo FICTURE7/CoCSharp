@@ -15,26 +15,12 @@ namespace CoCSharp.Server.Api.Db
         // DbData -> ClanSave -> Clan.
         // DbData <- ClanSave <- Clan.
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ClanSave"/> class.
-        /// </summary>
-        public ClanSave()
+        #region Constructors
+        internal ClanSave()
         {
-            _clan = new Clan();
+            // Space
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ClanSave"/> class from the specified <see cref="Clan"/>.
-        /// </summary>
-        /// <param name="clan"></param>
-        public ClanSave(Clan clan)
-        {
-            if (clan == null)
-                throw new ArgumentNullException(nameof(clan));
-
-            _clan = clan;
-            FromClan(clan);
-        }
+        #endregion
 
         #region Fields & Properties
         // Instance that is going to get returned everytime ToClan is called.
@@ -157,8 +143,9 @@ namespace CoCSharp.Server.Api.Db
         /// <returns>A <see cref="Clan"/> representing this <see cref="ClanSave"/> instance.</returns>
         public Clan ToClan()
         {
-            Overwrite(_clan);
-            return _clan;
+            var c = new Clan();
+            Overwrite(c);
+            return c;
         }
 
         /// <summary>
@@ -225,13 +212,9 @@ namespace CoCSharp.Server.Api.Db
             else
             {
                 if (Members is List<ClanMember>)
-                {
                     clan.Members = (List<ClanMember>)Members;
-                }
                 else
-                {
                     clan.Members = Members.ToList();
-                }
             }
 
             if (Entries == null)
@@ -241,13 +224,9 @@ namespace CoCSharp.Server.Api.Db
             else
             {
                 if (Entries is List<ClanMember>)
-                {
                     clan.Entries = (List<AllianceStreamEntry>)Entries;
-                }
                 else
-                {
                     clan.Entries = Entries.ToList();
-                }
             }
         }
         #endregion

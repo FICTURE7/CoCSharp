@@ -18,9 +18,9 @@ namespace CoCSharp.Network
             _pool = new Stack<SocketAsyncEventArgs>(capacity);
         }
 
-        private object _lock;
         private bool _disposed;
-        private Stack<SocketAsyncEventArgs> _pool;
+        private readonly object _lock;
+        private readonly Stack<SocketAsyncEventArgs> _pool;
 
         public int Capacity { get; private set; }
 

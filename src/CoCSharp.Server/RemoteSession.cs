@@ -18,6 +18,7 @@ namespace CoCSharp.Server
 
         #region Fields & Properties
         private readonly IServer _server;
+
         public IServer Server => _server;
         #endregion
 

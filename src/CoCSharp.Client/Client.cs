@@ -69,7 +69,7 @@ namespace CoCSharp.Client
                 ContentVersion = 0,
                 LocaleKey = 2000000,
                 Language = "en",
-                AdvertisingGUID = "",
+                AdvertisingGuid = "",
                 OSVersion = "4.4.2",
                 IsAdvertisingTrackingEnabled = true,
                 MasterHash = "6d0bafd1e0b46a34d503c8e88caea088bf5ff20b",

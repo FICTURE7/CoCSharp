@@ -1,10 +1,12 @@
 ﻿using CoCSharp.Logic;
 using CoCSharp.Network;
 using CoCSharp.Network.Messages;
+using CoCSharp.Server.Api.Core.Factories;
 using CoCSharp.Server.Api.Db;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
@@ -15,39 +17,42 @@ namespace CoCSharp.Server.Db
 {
     public partial class MySqlDbManager
     {
-        public async Task<ClanSave> LoadClanAsync(long clanId)
+        #region Loading
+        public async Task<ClanSave> LoadClanAsync(long clanId, CancellationToken cancellationToken)
         {
             if (clanId < 1)
                 throw new ArgumentOutOfRangeException(nameof(clanId));
 
             // If the clan is already in the cache, we return that instance.
-            var clanSave = Server.Cache.GetClan(clanId);
-            if (clanSave != null)
+            var clanSave = default(ClanSave);
+            if (Server.Cache.TryGet(clanId, out clanSave))
                 return clanSave;
 
             // Otherwise we query the db to find the clan save.
             using (var sql = new MySqlConnection(_connectionString))
             {
+                await sql.OpenAsync(cancellationToken);
+
                 // Search for clan with specified clanId.
-                var command = new MySqlCommand("SELECT * FROM clans WHERE clan_id = @ClanId", sql);
-                command.Parameters.AddWithValue("ClanId", clanId);
-
-                await sql.OpenAsync();
-
-                using (var reader = await command.ExecuteReaderAsync())
+                using (var command = new MySqlCommand("SELECT * FROM `clans` WHERE `clan_id` = @ClanId", sql))
                 {
-                    // If the query did not return any rows, it means the clan does not exists.
-                    // So we return null;
-                    if (!reader.HasRows)
+                    command.Parameters.AddWithValue("ClanId", clanId);
+
+                    using (var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, cancellationToken))
                     {
-                        return null;
-                    }
-                    else
-                    {
-                        if (await reader.ReadAsync())
+                        // If the query did not return any rows, it means the clan does not exists.
+                        // So we return null;
+                        if (!reader.HasRows)
                         {
-                            clanSave = new ClanSave();
-                            FromMySqlDataReader(clanSave, reader);
+                            return null;
+                        }
+                        else
+                        {
+                            if (await reader.ReadAsync())
+                            {
+                                clanSave = Server.Factories.GetFactory<ClanSaveFactory>().Create();
+                                FromMySqlDataReader(clanSave, reader);
+                            }
                         }
                     }
                 }
@@ -56,134 +61,152 @@ namespace CoCSharp.Server.Db
                 var members = new List<ClanMember>(4);
 
                 // Look for entries in the clans_members table which has the same clan_id.
-                command = new MySqlCommand("SELECT * FROM clans_members WHERE clan_id = @ClanId", sql);
-                command.Parameters.AddWithValue("ClanId", clanSave.ClanId);
-
-                using (var reader = await command.ExecuteReaderAsync())
+                using (var command = new MySqlCommand("SELECT * FROM `clan_members` WHERE `clan_id` = @ClanId", sql))
                 {
-                    if (!reader.HasRows)
+                    command.Parameters.AddWithValue("ClanId", clanSave.ClanId);
+
+                    using (var reader = await command.ExecuteReaderAsync(cancellationToken))
                     {
-                        shouldDelete = true;
-                    }
-                    else
-                    {
-                        while (await reader.ReadAsync())
+                        if (!reader.HasRows)
                         {
-                            var member = new ClanMember();
-                            FromMySqlDataReader(member, reader);
-
-                            // Load the level with the UserId.
-                            // LoadLevelAsync will cache the loaded instance as well.
-                            var level = await LoadLevelAsync(member.Id);
-
-                            member.Name = level.Name;
-                            member.League = level.League;
-                            member.Trophies = level.Trophies;
-                            member.ExpLevels = level.ExpLevels;
-
-                            members.Add(member);
+                            shouldDelete = true;
                         }
+                        else
+                        {
+                            while (await reader.ReadAsync(cancellationToken))
+                            {
+                                var member = new ClanMember();
+                                FromMySqlDataReader(member, reader);
 
-                        clanSave.Members = members;
+                                var level = await Server.Db.LoadLevelAsync(member.Id, cancellationToken);
+
+                                member.Name = level.Name;
+                                member.League = level.League;
+                                member.Trophies = level.Trophies;
+                                member.ExpLevels = level.ExpLevels;
+
+                                members.Add(member);
+                            }
+
+                            clanSave.Members = members;
+                        }
                     }
                 }
 
                 if (shouldDelete)
                 {
-                    command = new MySqlCommand("DELETE FROM clans WHERE clan_id = @ClanId", sql);
-                    command.Parameters.AddWithValue("ClanId", clanSave.ClanId);
+                    using (var command = new MySqlCommand("DELETE FROM `clans` WHERE `clan_id` = @ClanId", sql))
+                    {
+                        command.Parameters.AddWithValue("ClanId", clanSave.ClanId);
 
-                    var numRows = await command.ExecuteNonQueryAsync();
-                    if (numRows != 1)
-                        Server.Logs.Warn($"Tried to delete an empty clan however, number of rows affected was '{numRows}'.");
+                        var numRows = await command.ExecuteNonQueryAsync(cancellationToken);
+                        if (numRows != 1)
+                            Server.Logs.Warn($"Tried to delete an empty clan however, number of rows affected was '{numRows}'.");
 
-                    return null;
+                        Server.Cache.Unregister<ClanSave>(clanId);
+                        return null;
+                    }
                 }
 
                 // Register this instance to our cache.
-                Server.Cache.RegisterClan(clanSave, clanId);
+                Server.Cache.Register(clanId, clanSave);
                 return clanSave;
             }
         }
+        #endregion
 
-        public Task SaveClanAsync(ClanSave clan)
+        #region Saving
+        public Task SaveClanAsync(ClanSave clan, CancellationToken cancellationToken)
         {
             if (clan == null)
                 throw new ArgumentNullException(nameof(clan));
 
-            return InternalSaveClanAsync(clan, false);
+            return InternalSaveClanAsync(clan, false, cancellationToken);
         }
 
-        private async Task InternalSaveClanAsync(ClanSave clan, bool newClan)
+        private async Task InternalSaveClanAsync(ClanSave clanSave, bool newClan, CancellationToken cancellationToken)
         {
             using (var sql = new MySqlConnection(_connectionString))
             {
                 await sql.OpenAsync();
 
-                var command = ToMySqlCommand(clan);
-                command.Connection = sql;
-
-                var numRows = await command.ExecuteNonQueryAsync();
-
-                // numRows affected 1 means that the ClanSave was inserted into the db,
-                // numRows affected 2 means that the ClanSave was updated.
-                // Since its new, it shouldn't have any members.
-                if (newClan && numRows == 1)
+                using (var command = ToMySqlCommand(clanSave))
                 {
-                    var newId = command.LastInsertedId;
-                    Debug.Assert(newId != 0, "Number of rows affected was 1, however last insert id was 0.");
+                    command.Connection = sql;
 
-                    clan.ClanId = newId;
-                }
-                else
-                {
-                    Debug.Assert(clan.ClanId != 0);
+                    var numRows = await command.ExecuteNonQueryAsync(cancellationToken);
 
-                    // Count how many members are in the clan to
-                    // figure out if the clans needs to be deleted from the db.
-                    var count = 0;
-
-                    // Iterates through our list of clan members and store in them
-                    // in the clans_members table.
-                    foreach (var c in clan.Members)
+                    // numRows affected 1 means that the ClanSave was inserted into the db,
+                    // numRows affected 2 means that the ClanSave was updated.
+                    // Since its new, it shouldn't have any members.
+                    if (newClan && numRows == 1)
                     {
-                        var ccommand = ToMySqlCommand(c, clan);
-                        ccommand.Connection = sql;
+                        var newId = command.LastInsertedId;
+                        Debug.Assert(newId != 0, "Number of rows affected was 1, however last insert id was 0.");
 
-                        // Make sure to await since we can't do multiple queries on the same connection.
-                        await ccommand.ExecuteNonQueryAsync();
-
-                        count++;
-                    }
-
-                    // If there are no members left in the clan, we delete the clan from table.
-                    var shouldDelete = count == 0;
-                    if (shouldDelete)
-                    {
-                        command = new MySqlCommand("DELETE FROM clans WHERE clan_id = @ClanId", sql);
-                        command.Parameters.AddWithValue("ClanId", clan.ClanId);
-
-                        var numRows2 = await command.ExecuteNonQueryAsync();
-                        if (numRows != 1)
-                            Server.Logs.Warn($"Tried to delete an empty clan however, number of rows affected was '{numRows2}'.");
+                        clanSave.ClanId = newId;
+                        Server.Cache.Register(newId, clanSave);
                     }
                     else
                     {
-                        Server.Cache.RegisterClan(clan, clan.ClanId);
+                        Debug.Assert(clanSave.ClanId != 0);
+
+                        // Count how many members are in the clan to
+                        // figure out if the clans needs to be deleted from the db.
+                        var count = 0;
+                        using (var command2 = new MySqlCommand("DELETE FROM `clan_members` WHERE `clan_id` = @ClanId", sql))
+                        {
+                            command2.Parameters.AddWithValue("ClanId", clanSave.ClanId);
+
+                            var numRows3 = await command2.ExecuteNonQueryAsync(cancellationToken);
+
+                            // Iterates through our list of clan members and store in them
+                            // in the clans_members table.
+                            foreach (var c in clanSave.Members)
+                            {
+                                var ccommand = ToMySqlCommand(c, clanSave);
+                                ccommand.Connection = sql;
+
+                                // Make sure to await since we can't do multiple queries on the same connection.
+                                await ccommand.ExecuteNonQueryAsync(cancellationToken);
+
+                                count++;
+                            }
+                        }
+
+                        // If there are no members left in the clan, we delete the clan from table.
+                        var shouldDelete = count == 0;
+                        if (shouldDelete)
+                        {
+                            using (var command2 = new MySqlCommand("DELETE FROM `clans` WHERE `clan_id` = @ClanId", sql))
+                            {
+                                command2.Parameters.AddWithValue("ClanId", clanSave.ClanId);
+
+                                var numRows2 = await command2.ExecuteNonQueryAsync(cancellationToken);
+                                if (numRows2 != 1)
+                                    Server.Logs.Warn($"Tried to delete an empty clan however, number of rows affected was '{numRows2}'.");
+
+                                Server.Cache.Unregister<ClanSave>(clanSave.ClanId);
+                            }
+                        }
+                        else
+                        {
+                            Server.Cache.Register(clanSave.ClanId, clanSave);
+                        }
                     }
                 }
             }
         }
 
-        public async Task<ClanSave> NewClanAsync()
+        public async Task<ClanSave> NewClanAsync(CancellationToken cancellationToken)
         {
-            var clan = new ClanSave();
+            var clan = Server.Factories.GetFactory<ClanSaveFactory>().Create();
             clan.Name = string.Empty;
             clan.Description = string.Empty;
             clan.ExpLevels = 1;
             clan.Members = new List<ClanMember>();
 
-            await InternalSaveClanAsync(clan, true);
+            await InternalSaveClanAsync(clan, true, cancellationToken);
 
             // Keep track of number of clans without making use of
             // SQL queries.
@@ -191,44 +214,49 @@ namespace CoCSharp.Server.Db
 
             return clan;
         }
+        #endregion
 
-        //TODO: Merge SearchJoinableClansAsync and SearchClansAsync.
-        public async Task<IEnumerable<ClanSave>> SearchClansAsync(Level level, ClanQuery search)
+        #region Searching
+        public async Task<IEnumerable<ClanSave>> SearchClansAsync(Level level, ClanQuery search, CancellationToken cancellationToken)
         {
             using (var sql = new MySqlConnection(_connectionString))
             {
                 await sql.OpenAsync();
 
-                var commandTxt = "SELECT clan_id FROM clans WHERE invite_type < 3 AND name LIKE @TextSearch AND perk_points <= @PerkPoints AND exp_levels <= @ExpLevels";
-                var command = new MySqlCommand(commandTxt, sql);
-                command.Parameters.AddWithValue("TextSearch", search.TextSearch + '%');
-                command.Parameters.AddWithValue("PerkPoints", search.PerkPoints);
-                command.Parameters.AddWithValue("ExpLevels", search.ExpLevels);
-                if (search.ClanLocation != null)
-                {
-                    command.CommandText += " AND location_ = @ClanLocation";
-                    command.Parameters.AddWithValue("ClanLocation", search.ClanLocation);
-                }
-
-                if (search.WarFrequency != null)
-                {
-                    command.CommandText += " AND war_frequency = @ClanLocation";
-                    command.Parameters.AddWithValue("WarFrequency", search.WarFrequency);
-                }
-
-                if (search.OnlyCanJoin)
-                {
-                    command.CommandText += " AND required_trophies <= @Trophies";
-                    command.Parameters.AddWithValue("Trophies", search.PerkPoints);
-                }
-
-                command.CommandText += " LIMIT 64";
-
+                // Look for clan IDs with the basic criteria.
                 var clanIds = new List<long>(64);
-                using (var reader = await command.ExecuteReaderAsync())
+                var commandTxt = "SELECT `clan_id` FROM `clans` WHERE `invite_type` < 3 AND name LIKE @TextSearch AND `perk_points` <= @PerkPoints AND `exp_levels` <= @ExpLevels";
+                using (var command = new MySqlCommand(commandTxt, sql))
                 {
-                    while (await reader.ReadAsync())
-                        clanIds.Add((long)reader[0]);
+                    command.Parameters.AddWithValue("TextSearch", search.TextSearch + '%');
+                    command.Parameters.AddWithValue("PerkPoints", search.PerkPoints);
+                    command.Parameters.AddWithValue("ExpLevels", search.ExpLevels);
+                    if (search.ClanLocation != null)
+                    {
+                        command.CommandText += " AND `location` = @ClanLocation";
+                        command.Parameters.AddWithValue("ClanLocation", search.ClanLocation);
+                    }
+
+                    if (search.WarFrequency != null)
+                    {
+                        command.CommandText += " AND `war_frequency` = @WarFrequency";
+                        command.Parameters.AddWithValue("WarFrequency", search.WarFrequency);
+                    }
+
+                    if (search.OnlyCanJoin)
+                    {
+                        command.CommandText += " AND `required_trophies` <= @Trophies";
+                        command.Parameters.AddWithValue("Trophies", search.PerkPoints);
+                    }
+
+                    // Select 64 random clans.
+                    command.CommandText += " LIMIT 64";
+
+                    using (var reader = await command.ExecuteReaderAsync(CommandBehavior.KeyInfo, cancellationToken))
+                    {
+                        while (await reader.ReadAsync())
+                            clanIds.Add((long)reader[0]);
+                    }
                 }
 
                 if (clanIds.Count > 0)
@@ -237,52 +265,38 @@ namespace CoCSharp.Server.Db
                     var clanToDelete = new List<long>(clanIds.Count);
                     var clanToLoad = new List<long>(clanIds.Count);
 
+                    // Load up the clan member count in the db.
                     for (int i = 0; i < clanIds.Count; i++)
                     {
-                        command = new MySqlCommand("SELECT COUNT(clan_id) FROM clans_members WHERE clan_id = @ClanId", sql);
-                        command.Parameters.AddWithValue("ClanId", clanIds[i]);
-
-                        using (var reader = await command.ExecuteReaderAsync())
+                        using (var command = new MySqlCommand("SELECT COUNT(`clan_id`) FROM `clan_members` WHERE `clan_id` = @ClanId", sql))
                         {
-                            if (await reader.ReadAsync())
+                            command.Parameters.AddWithValue("ClanId", clanIds[i]);
+
+                            using (var reader = await command.ExecuteReaderAsync(cancellationToken))
                             {
-                                var count = (long)reader[0];
-                                // If clan is completely full the user can't join it.
-                                if (count >= 50 && search.OnlyCanJoin)
-                                    continue;
+                                if (await reader.ReadAsync())
+                                {
+                                    var count = (long)reader[0];
+                                    // If clan is completely full the user can't join it.
+                                    if (count >= 50 && search.OnlyCanJoin)
+                                        continue;
 
-                                if (count == 0)
-                                    clanToDelete.Add(clanIds[i]);
-                                else if (count >= search.MinimumMembers && count <= search.MaximumMembers)
-                                    clanToLoad.Add(clanIds[i]);
+                                    // Mark the clan for deletion if it has no clan members.
+                                    if (count == 0)
+                                        clanToDelete.Add(clanIds[i]);
+                                    else if (count >= search.MinimumMembers && count <= search.MaximumMembers)
+                                        clanToLoad.Add(clanIds[i]);
+                                }
                             }
-                        }
-                    }
-
-
-                    for (int i = 0; i < clanToDelete.Count; i++)
-                    {
-                        command = new MySqlCommand("DELETE FROM clans WHERE clan_id = @ClanId", sql);
-                        command.Parameters.AddWithValue("ClanId", clanToDelete[i]);
-
-                        try
-                        {
-                            var numRows = await command.ExecuteNonQueryAsync();
-                            if (numRows == 1)
-                                Server.Logs.Info("Deleting clan from database since its empty.");
-                            else
-                                Server.Logs.Info($"Tried to delete a from the database since its empty, but number of rows affected was {numRows}.");
-                        }
-                        catch
-                        {
-                            // Space
                         }
                     }
 
                     for (int i = 0; i < clanToLoad.Count; i++)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+
                         var clanId = clanToLoad[i];
-                        var clan = await LoadClanAsync(clanId);
+                        var clan = await LoadClanAsync(clanId, cancellationToken);
 
                         clans.Add(clan);
                     }
@@ -293,7 +307,7 @@ namespace CoCSharp.Server.Db
             }
         }
 
-        public Task<IEnumerable<ClanSave>> SearchClansAsync(Level level)
+        public Task<IEnumerable<ClanSave>> SearchClansAsync(Level level, CancellationToken cancellationToken)
         {
             if (level == null)
                 throw new ArgumentNullException(nameof(level));
@@ -308,8 +322,9 @@ namespace CoCSharp.Server.Db
                 WarFrequency = null,
                 PerkPoints = 0,
                 OnlyCanJoin = true,
-            });
+            }, cancellationToken);
         }
+        #endregion
 
         private static void FromMySqlDataReader(ClanMember member, DbDataReader reader)
         {
@@ -329,7 +344,7 @@ namespace CoCSharp.Server.Db
             var command = new MySqlCommand(MySqlDbManagerQueries.InsertUpdateClanMember);
             command.Parameters.AddWithValue("UserId", member.Id);
             command.Parameters.AddWithValue("ClanId", clan.ClanId);
-            command.Parameters.AddWithValue("Role", member.Role);
+            command.Parameters.AddWithValue("Role", (int)member.Role);
             command.Parameters.AddWithValue("TroopsDonated", member.TroopsDonated);
             command.Parameters.AddWithValue("TroopsReceived", member.TroopsReceived);
             command.Parameters.AddWithValue("Rank", member.Rank);
@@ -344,8 +359,12 @@ namespace CoCSharp.Server.Db
         private static void FromMySqlDataReader(ClanSave save, DbDataReader reader)
         {
             save.ClanId = (long)reader["clan_id"];
+
+            //save.DateCreated = (DateTime)reader["create_date"];
+            //save.DateLastSave = (DateTime)reader["last_save_date"];
+
             save.Name = (string)reader["name"];
-            save.Description = (string)reader["description_"];
+            save.Description = (string)reader["description"];
             save.ExpLevels = (int)reader["exp_levels"];
             save.Badge = (int)reader["badge"];
             save.InviteType = (int)reader["invite_type"];
@@ -354,7 +373,7 @@ namespace CoCSharp.Server.Db
             save.WarsWon = (int)reader["wars_won"];
             save.WarsLost = (int)reader["wars_lost"];
             save.WarsTried = (int)reader["wars_tried"];
-            save.Location = (int)reader["location_"];
+            save.Location = (int)reader["location"];
             save.PerkPoints = (int)reader["perk_points"];
             save.WinStreak = (int)reader["win_streak"];
             save.WarLogsPublic = (bool)reader["war_logs_public"];

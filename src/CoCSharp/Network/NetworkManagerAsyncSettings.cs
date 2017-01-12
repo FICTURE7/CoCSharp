@@ -52,7 +52,7 @@ namespace CoCSharp.Network
             _bufferSize = bufferSize;
             _statistics = new NetworkManagerAsyncStatistics();
 
-            var concurrentOpsCount = Environment.ProcessorCount * 2;
+            var concurrentOpsCount = Environment.ProcessorCount * 4;
             _concurrentOps = new Semaphore(concurrentOpsCount, concurrentOpsCount);
             _receivePool = new SocketAsyncEventArgsPool(receiveCount);
             _sendPool = new SocketAsyncEventArgsPool(sendCount);
