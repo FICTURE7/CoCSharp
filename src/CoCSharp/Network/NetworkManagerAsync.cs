@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoCSharp.Network
 {
@@ -70,6 +71,11 @@ namespace CoCSharp.Network
             _socket = socket;
             _settings = settings;
             _stats = new NetworkManagerAsyncStatistics();
+#if DEBUG
+            _ident = Guid.NewGuid().ToString();
+#endif
+            //_receiveTask = new TaskCompletionSource<Message>();
+            //_sendTask = new TaskCompletionSource<Message>();
 
             _settingsStats = Settings.Statistics;
             _receivePool = Settings._receivePool;
@@ -128,6 +134,14 @@ namespace CoCSharp.Network
         // was initialize with.
         private readonly NetworkManagerAsyncStatistics _settingsStats;
 
+        // The results of the TaskCompletionSources are set in there respective
+        // "event raiser" methods.
+
+        // TaskCompletionSource for ReceiveMessageAsync.
+        private TaskCompletionSource<Message> _receiveTask;
+        // TaskCompletionSource for SendMessageAsync.
+        private TaskCompletionSource<object> _sendTask;
+
 #if DEBUG
         // ID of the NetworkManagerAysnc to debug stuff.
         private readonly string _ident;
@@ -160,7 +174,55 @@ namespace CoCSharp.Network
 
         #region Methods
         /// <summary>
-        /// Sends the specified message using the <see cref="Socket"/> socket.
+        /// Sends the specified <see cref="Message"/> using the <see cref="Socket"/> socket asynchronously using a <see cref="Task"/>
+        /// to represent the send operation.
+        /// </summary>
+        /// <param name="message"><see cref="Message"/> to send.</param>
+        /// 
+        /// <returns><see cref="Task"/> representing the asynchronous operation.</returns>
+        /// 
+        /// <exception cref="ObjectDisposedException">The current instance of the <see cref="NetworkManagerAsync"/> is disposed.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is null.</exception>
+        /// 
+        /// <remarks>
+        /// The <see cref="SendMessageAsync(Message)"/> method is simply a wrapper around <see cref="SendMessage(Message)"/> and
+        /// <see cref="MessageSent"/> using <see cref="TaskCompletionSource{TResult}"/>.
+        /// </remarks>
+        public Task SendMessageAsync(Message message)
+        {
+            if (Thread.VolatileRead(ref _disposed) == 1)
+                throw new ObjectDisposedException(null, "Cannot SendMessage because the NetworkManagerAsync object was disposed.");
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
+
+            _sendTask = new TaskCompletionSource<object>();
+            SendMessage(message);
+            return _sendTask.Task;
+        }
+
+        /// <summary>
+        /// Receives a <see cref="Message"/> from the <see cref="Socket"/> socket asynchronously using a <see cref="Task"/> to represent
+        /// the receive operation.
+        /// </summary>
+        /// 
+        /// <returns><see cref="Message"/> that was received.</returns>
+        /// 
+        /// <exception cref="ObjectDisposedException">The current instance of the <see cref="NetworkManagerAsync"/> is disposed.</exception>
+        /// 
+        /// <remarks>
+        /// The <see cref="ReceiveMessageAsync"/> method is simply a wrapper around <see cref="MessageReceived"/> using <see cref="TaskCompletionSource{TResult}"/>.
+        /// </remarks>
+        public Task<Message> ReceiveMessageAsync()
+        {
+            if (Thread.VolatileRead(ref _disposed) == 1)
+                throw new ObjectDisposedException(null, "Cannot SendMessage because the NetworkManagerAsync object was disposed.");
+
+            _receiveTask = new TaskCompletionSource<Message>();
+            return _receiveTask.Task;
+        }
+
+        /// <summary>
+        /// Sends the specified <see cref="Message"/> using the <see cref="Socket"/> socket asynchronously.
         /// </summary>
         /// <param name="message"><see cref="Message"/> to send.</param>
         /// 
@@ -407,6 +469,7 @@ namespace CoCSharp.Network
             token.Offset = args.Offset;
             _receivePool.Push(args);
 
+            // Start receiving before passing the code back to the user.
             StartReceive(_receivePool.Pop());
 
             for (int i = 0; i < messagesArgs.Count; i++)
@@ -418,7 +481,8 @@ namespace CoCSharp.Network
 
 #if DEBUG
                 sw.Stop();
-                Debug.WriteLine("Done raising event for {0} in {1}ms.", messagesArgs[i].Message.GetType(), sw.Elapsed.TotalMilliseconds);
+                if (messagesArgs[i].Message != null)
+                    Debug.WriteLine("Done raising event for {0} in {1}ms.", messagesArgs[i].Message.GetType(), sw.Elapsed.TotalMilliseconds);
 #endif
             }
         }
@@ -541,6 +605,10 @@ namespace CoCSharp.Network
             Interlocked.Increment(ref Statistics._totalMessagesReceived);
             Interlocked.Increment(ref _settingsStats._totalMessagesReceived);
 
+            // If the _receiveTask is not null, we set its result.
+            _receiveTask?.SetResult(e.Message);
+            _receiveTask = null;
+
             if (MessageReceived != null && Thread.VolatileRead(ref _disposed) == 0)
                 MessageReceived(this, e);
         }
@@ -553,6 +621,9 @@ namespace CoCSharp.Network
         {
             Interlocked.Increment(ref Statistics._totalMessagesSent);
             Interlocked.Increment(ref _settingsStats._totalMessagesSent);
+
+            _sendTask?.SetResult(e.Message);
+            _sendTask = null;
 
             if (MessageSent != null && Thread.VolatileRead(ref _disposed) == 0)
                 MessageSent(this, e);
