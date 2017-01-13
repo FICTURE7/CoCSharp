@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading;
 
 namespace CoCSharp.Client
 {
@@ -10,11 +9,12 @@ namespace CoCSharp.Client
 
         public static void Main(string[] args)
         {
-            var endPoint = new IPEndPoint(IPAddress.Parse("51.254.134.86"), 9339);
+            var endPoint = new IPEndPoint(IPAddress.Loopback, 9339);
 
             var client = new Client();
             client.Connect(endPoint);
             client.Login(0, null);
+
             //const int NUM_CLIENT = 50;
             //Clients = new Client[NUM_CLIENT];
             //for (int i = 0; i < NUM_CLIENT; i++)

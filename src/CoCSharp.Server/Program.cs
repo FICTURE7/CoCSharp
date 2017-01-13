@@ -49,6 +49,8 @@ namespace CoCSharp.Server
         }
 
         static void hack(int k)
-        { }
+        {
+            // hacking...
+        }
     }
 }

@@ -25,6 +25,8 @@ namespace CoCSharp.Client
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
+        public NetworkManagerAsync NetworkManager => _networkManager;
+
         private bool _disposed;
         private readonly Socket _socket;
 
@@ -39,7 +41,7 @@ namespace CoCSharp.Client
                 throw new ArgumentNullException(nameof(endPoint));
 
             _socket.Connect(endPoint);
-            _networkManager = new NetworkManagerAsync(_socket, s_settings, new MessageProcessorNaCl(Crypto8.GenerateKeyPair(), Crypto8.StandardKeyPair.PublicKey));
+            _networkManager = new NetworkManagerAsync(_socket, s_settings, new MessageProcessorNaCl(Crypto8.GenerateKeyPair(), Crypto8.SupercellPublicKey));
             _networkManager.MessageReceived += OnMessageReceived;
             _networkManager.Disconnected += OnDisconnected;
         }
@@ -49,10 +51,10 @@ namespace CoCSharp.Client
             var handshake = new HandshakeRequestMessage
             {
                 AppStore = 2,
-                Build = 551,
+                Build = 709,
                 DeviceType = 2,
-                Hash = "6d0bafd1e0b46a34d503c8e88caea088bf5ff20b",
-                KeyVersion = 15,
+                Hash = "2f2c3464104feb771097b42ebf4dfe871bd56062",
+                KeyVersion = 20,
                 MajorVersion = 8,
                 MinorVersion = 0,
                 Protocol = 1,
@@ -65,17 +67,17 @@ namespace CoCSharp.Client
                 UserToken = userToken,
 
                 MajorVersion = 8,
-                MinorVersion = 551,
+                MinorVersion = 709,
                 ContentVersion = 0,
                 LocaleKey = 2000000,
                 Language = "en",
                 AdvertisingGuid = "",
                 OSVersion = "4.4.2",
                 IsAdvertisingTrackingEnabled = true,
-                MasterHash = "6d0bafd1e0b46a34d503c8e88caea088bf5ff20b",
+                MasterHash = "2f2c3464104feb771097b42ebf4dfe871bd56062",
                 FacebookDistributionID = "",
                 VendorGUID = "",
-                ClientVersion = "8.551.18",
+                ClientVersion = "8.709.2",
                 Seed = new Random().Next()
             };
 
@@ -126,6 +128,10 @@ namespace CoCSharp.Client
                     Console.WriteLine("Got stuff to attack.");
 
                     _state = 4;
+                }
+                else if (e.Message is OwnHomeDataMessage)
+                {
+                    //Console.WriteLine(((OwnHomeDataMessage)e.Message).OwnVillageData.VillageJson);
                 }
             }
         }
