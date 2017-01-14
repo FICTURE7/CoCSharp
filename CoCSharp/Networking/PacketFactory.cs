@@ -19,6 +19,7 @@ namespace CoCSharp.Networking
             m_PacketDictionary.Add(new SetDeviceTokenPacket().ID, typeof(SetDeviceTokenPacket)); // 10113
             m_PacketDictionary.Add(new ChangeAvatarNamePacket().ID, typeof(ChangeAvatarNamePacket)); // 10212
             m_PacketDictionary.Add(new VisitHomeRequestPacket().ID, typeof(VisitHomeRequestPacket)); // 14113
+            m_PacketDictionary.Add(new EndClientTurnPacket().ID, typeof(EndClientTurnPacket)); // 14102
             m_PacketDictionary.Add(new BindFacebookAccountPacket().ID, typeof(BindFacebookAccountPacket)); // 14201
             m_PacketDictionary.Add(new AllianceChatMessageClientPacket().ID, typeof(AllianceChatMessageClientPacket)); // 14315
             m_PacketDictionary.Add(new AvatarProfileRequestPacket().ID, typeof(AvatarProfileRequestPacket)); // 14325

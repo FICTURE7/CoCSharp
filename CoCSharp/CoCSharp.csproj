@@ -155,6 +155,7 @@
     <Compile Include="Networking\Packets\AllianceRankingListLocalResponsePacket.cs" />
     <Compile Include="Networking\Packets\AllianceRankingListRequestPacket.cs" />
     <Compile Include="Networking\Packets\AllianceRankingListResponsePacket.cs" />
+    <Compile Include="Networking\Packets\EndClientTurnPacket.cs" />
     <Compile Include="Networking\Packets\FacebookFriendsRequestPacket.cs" />
     <Compile Include="Networking\Packets\LeagueMemberListRequestPacket.cs" />
     <Compile Include="Networking\Packets\LeagueMemberListResponsePacket.cs" />
