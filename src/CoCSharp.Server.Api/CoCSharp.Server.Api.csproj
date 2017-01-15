@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5B995462-1628-4FC1-B2F0-BE7E0F8305A6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CoCSharp.Server.Api</RootNamespace>
+    <AssemblyName>CoCSharp.Server.Api</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CoCSharp.Server.Api.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\CoCSharp.Server.Api.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Chatting\ChatCommand.cs" />
+    <Compile Include="Chatting\IChatCommand.cs" />
+    <Compile Include="Chatting\IChatManager.cs" />
+    <Compile Include="Core\Factories\ClanSaveFactory.cs" />
+    <Compile Include="Core\Factories\LevelSaveFactory.cs" />
+    <Compile Include="Core\FactoryManager.cs" />
+    <Compile Include="Core\ICacheManager.cs" />
+    <Compile Include="Core\IClanManager.cs" />
+    <Compile Include="Core\IFactory.cs" />
+    <Compile Include="Core\IFactoryManager.cs" />
+    <Compile Include="Core\IFactory{T}.cs" />
+    <Compile Include="Core\ILevelManager.cs" />
+    <Compile Include="Db\ClanQuery.cs" />
+    <Compile Include="Db\ClanSave.cs" />
+    <Compile Include="Db\IDbManager.cs" />
+    <Compile Include="Core\IMessageHandler.cs" />
+    <Compile Include="Db\LevelSave.cs" />
+    <Compile Include="Events\Server\ServerConnectionEventArgs.cs" />
+    <Compile Include="Events\Server\ServerEventArgs.cs" />
+    <Compile Include="IClient.cs" />
+    <Compile Include="IServer.cs" />
+    <Compile Include="IServerConfiguration.cs" />
+    <Compile Include="Logging\WarnLogger.cs" />
+    <Compile Include="Logging\ErrorLogger.cs" />
+    <Compile Include="Logging\InfoLogger.cs" />
+    <Compile Include="Logging\Logs.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">
+      <Project>{7481E33E-B214-421B-8F9B-A812958395DD}</Project>
+      <Name>CoCSharp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Events\Player\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

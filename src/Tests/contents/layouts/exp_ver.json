@@ -1,0 +1,10 @@
+﻿{
+    "exp_ver": 2,
+    "buildings":
+    [
+        {
+            "data": 1000001, // Town Hall to prevent throwing of no town hall stuff.
+            "lvl": 1
+        } 
+    ]
+}

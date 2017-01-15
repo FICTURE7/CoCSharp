@@ -1,0 +1,298 @@
+// NOTE: This was generated from the decomp_spells.csv using gen_csv_properties.py script.
+
+/// <summary>
+/// Gets or sets Name.
+/// </summary>
+public string Name { get; set; }
+/// <summary>
+/// Gets or sets T i d.
+/// </summary>
+public string TID { get; set; }
+/// <summary>
+/// Gets or sets Info t i d.
+/// </summary>
+public string InfoTID { get; set; }
+/// <summary>
+/// Gets or sets Disable production.
+/// </summary>
+public bool DisableProduction { get; set; }
+/// <summary>
+/// Gets or sets Spell forge level.
+/// </summary>
+public int SpellForgeLevel { get; set; }
+/// <summary>
+/// Gets or sets Laboratory level.
+/// </summary>
+public int LaboratoryLevel { get; set; }
+/// <summary>
+/// Gets or sets Training resource.
+/// </summary>
+public string TrainingResource { get; set; }
+/// <summary>
+/// Gets or sets Training cost.
+/// </summary>
+public int TrainingCost { get; set; }
+/// <summary>
+/// Gets or sets Donate cost.
+/// </summary>
+public int DonateCost { get; set; }
+/// <summary>
+/// Gets or sets Housing space.
+/// </summary>
+public int HousingSpace { get; set; }
+/// <summary>
+/// Gets or sets Training time.
+/// </summary>
+public int TrainingTime { get; set; }
+/// <summary>
+/// Gets or sets Deploy time m s.
+/// </summary>
+public int DeployTimeMS { get; set; }
+/// <summary>
+/// Gets or sets Charging time m s.
+/// </summary>
+public int ChargingTimeMS { get; set; }
+/// <summary>
+/// Gets or sets Hit time m s.
+/// </summary>
+public int HitTimeMS { get; set; }
+/// <summary>
+/// Gets or sets Upgrade time h.
+/// </summary>
+public int UpgradeTimeH { get; set; }
+/// <summary>
+/// Gets or sets Upgrade resource.
+/// </summary>
+public string UpgradeResource { get; set; }
+/// <summary>
+/// Gets or sets Upgrade cost.
+/// </summary>
+public int UpgradeCost { get; set; }
+/// <summary>
+/// Gets or sets Boost time m s.
+/// </summary>
+public int BoostTimeMS { get; set; }
+/// <summary>
+/// Gets or sets Speed boost.
+/// </summary>
+public int SpeedBoost { get; set; }
+/// <summary>
+/// Gets or sets Speed boost2.
+/// </summary>
+public int SpeedBoost2 { get; set; }
+/// <summary>
+/// Gets or sets Jump housing limit.
+/// </summary>
+public int JumpHousingLimit { get; set; }
+/// <summary>
+/// Gets or sets Jump boost m s.
+/// </summary>
+public int JumpBoostMS { get; set; }
+/// <summary>
+/// Gets or sets Damage boost percent.
+/// </summary>
+public int DamageBoostPercent { get; set; }
+/// <summary>
+/// Gets or sets Building damage boost percent.
+/// </summary>
+public int BuildingDamageBoostPercent { get; set; }
+/// <summary>
+/// Gets or sets Damage.
+/// </summary>
+public int Damage { get; set; }
+/// <summary>
+/// Gets or sets Troop damage permil.
+/// </summary>
+public int TroopDamagePermil { get; set; }
+/// <summary>
+/// Gets or sets Building damage permil.
+/// </summary>
+public int BuildingDamagePermil { get; set; }
+/// <summary>
+/// Gets or sets Execute health permil.
+/// </summary>
+public int ExecuteHealthPermil { get; set; }
+/// <summary>
+/// Gets or sets Damage permil min.
+/// </summary>
+public int DamagePermilMin { get; set; }
+/// <summary>
+/// Gets or sets Preferred damage permil min.
+/// </summary>
+public int PreferredDamagePermilMin { get; set; }
+/// <summary>
+/// Gets or sets Radius.
+/// </summary>
+public int Radius { get; set; }
+/// <summary>
+/// Gets or sets Number of hits.
+/// </summary>
+public int NumberOfHits { get; set; }
+/// <summary>
+/// Gets or sets Random radius.
+/// </summary>
+public int RandomRadius { get; set; }
+/// <summary>
+/// Gets or sets Time between hits m s.
+/// </summary>
+public int TimeBetweenHitsMS { get; set; }
+/// <summary>
+/// Gets or sets Icon s w f.
+/// </summary>
+public string IconSWF { get; set; }
+/// <summary>
+/// Gets or sets Icon export name.
+/// </summary>
+public string IconExportName { get; set; }
+/// <summary>
+/// Gets or sets Big picture.
+/// </summary>
+public string BigPicture { get; set; }
+/// <summary>
+/// Gets or sets Pre deploy effect.
+/// </summary>
+public string PreDeployEffect { get; set; }
+/// <summary>
+/// Gets or sets Deploy effect.
+/// </summary>
+public string DeployEffect { get; set; }
+/// <summary>
+/// Gets or sets Deploy effect2 delay.
+/// </summary>
+public int DeployEffect2Delay { get; set; }
+/// <summary>
+/// Gets or sets Deploy effect2.
+/// </summary>
+public string DeployEffect2 { get; set; }
+/// <summary>
+/// Gets or sets Charging effect.
+/// </summary>
+public string ChargingEffect { get; set; }
+/// <summary>
+/// Gets or sets Hit effect.
+/// </summary>
+public string HitEffect { get; set; }
+/// <summary>
+/// Gets or sets Random radius affects only gfx.
+/// </summary>
+public bool RandomRadiusAffectsOnlyGfx { get; set; }
+/// <summary>
+/// Gets or sets Freeze time m s.
+/// </summary>
+public int FreezeTimeMS { get; set; }
+/// <summary>
+/// Gets or sets Spawn obstacle.
+/// </summary>
+public string SpawnObstacle { get; set; }
+/// <summary>
+/// Gets or sets Num obstacles.
+/// </summary>
+public int NumObstacles { get; set; }
+/// <summary>
+/// Gets or sets Strength weight.
+/// </summary>
+public int StrengthWeight { get; set; }
+/// <summary>
+/// Gets or sets Unit of type.
+/// </summary>
+public int UnitOfType { get; set; }
+/// <summary>
+/// Gets or sets Troops only.
+/// </summary>
+public bool TroopsOnly { get; set; }
+/// <summary>
+/// Gets or sets Target info string.
+/// </summary>
+public string TargetInfoString { get; set; }
+/// <summary>
+/// Gets or sets Preferred target.
+/// </summary>
+public string PreferredTarget { get; set; }
+/// <summary>
+/// Gets or sets Preferred target damage mod.
+/// </summary>
+public int PreferredTargetDamageMod { get; set; }
+/// <summary>
+/// Gets or sets Boost defenders.
+/// </summary>
+public bool BoostDefenders { get; set; }
+/// <summary>
+/// Gets or sets Hero damage multiplier.
+/// </summary>
+public int HeroDamageMultiplier { get; set; }
+/// <summary>
+/// Gets or sets Shield projectile speed.
+/// </summary>
+public int ShieldProjectileSpeed { get; set; }
+/// <summary>
+/// Gets or sets Shield projectile damage mod.
+/// </summary>
+public int ShieldProjectileDamageMod { get; set; }
+/// <summary>
+/// Gets or sets Extra health permil.
+/// </summary>
+public int ExtraHealthPermil { get; set; }
+/// <summary>
+/// Gets or sets Extra health min.
+/// </summary>
+public int ExtraHealthMin { get; set; }
+/// <summary>
+/// Gets or sets Extra health max.
+/// </summary>
+public int ExtraHealthMax { get; set; }
+/// <summary>
+/// Gets or sets Poison d p s.
+/// </summary>
+public int PoisonDPS { get; set; }
+/// <summary>
+/// Gets or sets Attack speed boost.
+/// </summary>
+public int AttackSpeedBoost { get; set; }
+/// <summary>
+/// Gets or sets Boost linked to poison.
+/// </summary>
+public bool BoostLinkedToPoison { get; set; }
+/// <summary>
+/// Gets or sets Scale deploy effects.
+/// </summary>
+public bool ScaleDeployEffects { get; set; }
+/// <summary>
+/// Gets or sets Invulnerability time.
+/// </summary>
+public int InvulnerabilityTime { get; set; }
+/// <summary>
+/// Gets or sets Max units hit.
+/// </summary>
+public int MaxUnitsHit { get; set; }
+/// <summary>
+/// Gets or sets Enemy deploy effect.
+/// </summary>
+public string EnemyDeployEffect { get; set; }
+/// <summary>
+/// Gets or sets Snap to grid.
+/// </summary>
+public bool SnapToGrid { get; set; }
+/// <summary>
+/// Gets or sets Duplicate housing.
+/// </summary>
+public int DuplicateHousing { get; set; }
+/// <summary>
+/// Gets or sets Duplicate lifetime.
+/// </summary>
+public int DuplicateLifetime { get; set; }
+/// <summary>
+/// Gets or sets Summon troop.
+/// </summary>
+public string SummonTroop { get; set; }
+/// <summary>
+/// Gets or sets Units to spawn.
+/// </summary>
+public int UnitsToSpawn { get; set; }
+/// <summary>
+/// Gets or sets Spawn duration.
+/// </summary>
+public int SpawnDuration { get; set; }
+/// <summary>
+/// Gets or sets Spawn first group size.
+/// </summary>
+public int SpawnFirstGroupSize { get; set; }

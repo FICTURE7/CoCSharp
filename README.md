@@ -1,8 +1,7 @@
 <h1>
-CoC# <a href="https://travis-ci.org/FICTURE7/CoCSharp"><img src="https://travis-ci.org/FICTURE7/CoCSharp.svg?branch=rewrite" alt="Build Status"></a>
+CoC# <a href="https://travis-ci.org/FICTURE7/CoCSharp"><img src="https://travis-ci.org/FICTURE7/CoCSharp.svg?branch=server-dev" alt="Build Status"></a>
 </h1>
-This is the `rewrite` branch where am doing what the branch's name is telling. I decided to rewrite
-CoCSharp because some stuff could have been done better.
+This is the `server-dev` branch where I am actively developping the server and breaking everything.
 
 Clash of Clans library written in C# to handle networking, csv files and more to come.
 It was written based off of [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/)

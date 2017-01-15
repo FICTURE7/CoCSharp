@@ -1,0 +1,106 @@
+-- Defines the database 'cocsharp'.
+
+-- Clean our database first.
+DROP DATABASE IF EXISTS `cocsharp`;
+-- Create our main database.
+CREATE DATABASE `cocsharp`;
+-- Switch to our freshly created 'cocsharp' database.
+USE `cocsharp`;
+
+-- Create the 'clans' table which is 
+-- going contain clan info.
+CREATE TABLE `clans`(
+	`clan_id` BIGINT NOT NULL AUTO_INCREMENT,
+
+    `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `last_save_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+	`name` VARCHAR(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`description` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`exp_levels` INT NOT NULL DEFAULT 0,
+	`badge` INT NOT NULL DEFAULT 0,
+	`invite_type` INT NOT NULL DEFAULT 0,
+	`total_trophies` INT NOT NULL DEFAULT 0,
+	`required_trophies` INT NOT NULL DEFAULT 0,
+	`wars_won` INT NOT NULL DEFAULT 0,
+	`wars_lost` INT NOT NULL DEFAULT 0,
+	`wars_tried` INT NOT NULL DEFAULT 0,
+	`language` INT NOT NULL DEFAULT 0,
+	`war_frequency` INT NOT NULL DEFAULT 0,
+	`location` INT NOT NULL DEFAULT 0,
+	`perk_points` INT NOT NULL DEFAULT 0,
+	`win_streak` INT NOT NULL DEFAULT 0,
+	`war_logs_public` BOOL NOT NULL DEFAULT 0,
+
+    -- Storing AllianceStreamEntry in tables whould be a pain in the ass,
+    -- store them in a AllianceStreamEntry serialized form.
+    `entries` BLOB NOT NULL,
+
+	PRIMARY KEY(`clan_id`)
+);
+
+-- Start with clan IDs of 1.
+ALTER TABLE `clans` AUTO_INCREMENT = 1;
+
+-- Create the 'levels' table which is going
+-- to contain level info.
+CREATE TABLE `levels`(
+ 	`user_id` BIGINT NOT NULL AUTO_INCREMENT,
+	`clan_id` BIGINT NULL,
+  
+    `create_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `last_save_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `play_time_seconds` INT NOT NULL DEFAULT 0,	
+    `login_count` INT NOT NULL DEFAULT 0,
+
+    -- Json that describes the level and game objects.
+    `level_json` TEXT NOT NULL,
+
+    -- UserToken which is basically the password for the user_id.
+	`token` VARCHAR(40) NOT NULL, 
+	`name` VARCHAR(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+	`is_named` BOOL NOT NULL DEFAULT FALSE,
+	`trophies` INT NOT NULL DEFAULT 0,
+	`league` INT NOT NULL DEFAULT 0,
+	`exp_points` INT NOT NULL DEFAULT 0,
+	`exp_levels` INT NOT NULL DEFAULT 0,
+	`gems` INT NOT NULL DEFAULT 0,
+	`free_gems` INT NOT NULL DEFAULT 0,
+	`atk_won` INT NOT NULL DEFAULT 0,
+	`atk_lost` INT NOT NULL DEFAULT 0,
+	`def_won` INT NOT NULL DEFAULT 0,
+	`def_lost` INT NOT NULL DEFAULT 0,
+
+    -- Storing slots in tables whould be a pain in the ass,
+    -- serialize them in binary form instead.
+    `slots` BLOB NOT NULL,    
+
+	PRIMARY KEY(`user_id`),
+	FOREIGN KEY(`clan_id`) REFERENCES clans(`clan_id`)
+);
+
+-- Start with level IDs of 1.
+ALTER TABLE `levels` AUTO_INCREMENT = 1;
+
+-- Create the 'clan_members' table which is going
+-- to contain information about clan members.
+CREATE TABLE `clan_members`(
+    `user_id` BIGINT NOT NULL,
+    `clan_id` BIGINT NOT NULL,
+
+	-- Date when the member joined.
+    `joined_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    `role` INT NOT NULL DEFAULT 0,
+    `troops_donated` INT NOT NULL DEFAULT 0,
+    `troops_received` INT NOT NULL DEFAULT 0,
+    `rank` INT NOT NULL DEFAULT 0,
+    `rank_prev` INT NOT NULL DEFAULT 0,
+    `new_member` BOOL NOT NULL DEFAULT FALSE,
+    `war_cooldown` INT NOT NULL DEFAULT 0,
+    `war_preference` INT NOT NULL DEFAULT 0,
+
+    PRIMARY KEY(`user_id`, `clan_id`),
+	FOREIGN KEY(`user_id`) REFERENCES `levels`(`user_id`),
+	FOREIGN KEY(`clan_id`) REFERENCES `clans`(`clan_id`)
+);

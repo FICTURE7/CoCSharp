@@ -1,0 +1,60 @@
+﻿1/6/2017:
+	- Changed MySQL driver for true asynchronicity.
+	- Messages that takes more than 4 seconds to process are canceled.
+1/5/2017:
+	- Improved memory management.
+	- Minor MySQL table changes.
+12/30/2016:
+	- Fixed clan trophies calculations.
+12/29/2016:
+	- Added separate clan logs.
+	- Reworked cache management.
+12/28/2016:
+	- Empty clans are now removed from the cache.
+	- Fixed clan trophies calculations.
+	- Time of when clan messages are sent are
+		now tracked.
+	- Added '/statistics' command.
+12/27/2016:
+	- Reworked logging system.
+12/24/2016:
+	- Fixed ExpPoints calculation issue.
+	- Fixed frozen login screen issue.
+	- Proper clan trophies calculations.
+	- Proper clan member rankings.
+	- Fixed .csv parsing issue which caused
+		ExpPoints calculation issues.
+12/22/2016:
+	- Outdated client are now asked to download
+		new updates.
+12/21/2016:
+	- Added welcome message.
+	- Minor MySQL database modification.
+	- Updated VisitHomeDataMessage
+		to 8.709.2.
+12/20/2016:
+	- Changed protocol message receiving 
+		and processing order.
+	- Updated AvatarProfileResponseMessage 
+		to 8.709.2.
+	- Updated EnemyHomeDataMessage 
+		to 8.709.2.
+	- Updated AllianceDataReponseMessage 
+		to 8.709.2.
+	- Updated AllianceStreamMessage
+		to 8.709.2.
+12/19/2016:
+	- Updated OwnHomeDataMessage 
+		to 8.709.2.
+12/18/2016:
+	- Added '/changelog' command.
+	- Fixed potential issue with clan crashing client.
+12/16/2016:
+	- Reworked clan searching with filters.
+	- Reworked clan MySQL management.
+	- Improved cache management.
+12/13/2016:
+	- Moved the entire saving system to MySQL.
+12/11/2016:
+	- Added base of chat command handling.
+		Use '/help' for more information.

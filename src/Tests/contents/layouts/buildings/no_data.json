@@ -1,0 +1,11 @@
+﻿{
+    "buildings":
+    [
+        {
+            //"data": 1000000, No data ID should throw.
+            "lvl": 1,
+            "x": 1,
+            "y":  2
+        }
+    ]
+}
