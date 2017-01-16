@@ -18,10 +18,18 @@ namespace CoCSharp.Server
             StartingVillage = _defaultVillage;
             ContentUrl = _defaultContentUrl;
             MasterHash = _defaultMasterHash;
+            MysqlHost = _defaultMysqlHost;
+            MysqlUser = _defaultMysqlUser;
+            MysqlPass = _defaultMysqlPass;
+            MysqlPort = _defaultMysqlPort;
         }
 
         private static readonly string _defaultVillage = File.ReadAllText("contents/starting_village.json");
-        private static readonly string _defaultMasterHash = "79f170d5321478488a1becc25996f8d246879edf";
+        private static readonly string _defaultMysqlHost = "127.0.0.1";
+        private static readonly string _defaultMysqlUser = "root";
+        private static readonly string _defaultMysqlPass = " ";
+        private static readonly int _defaultMysqlPort = 3306;
+        private static readonly string _defaultMasterHash = "2f2c3464104feb771097b42ebf4dfe871bd56062";
         private static readonly string _defaultContentUrl = "http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/";
         private static readonly int _defaultGems = (int)1e7;
         private static readonly int _defaultGold = (int)1e8;
@@ -47,6 +55,10 @@ namespace CoCSharp.Server
         public int StartingElixir { get; set; }
         public string ContentUrl { get; set; }
         public string MasterHash { get; set; }
+        public string MysqlHost { get; set; }
+        public string MysqlUser { get; set; }
+        public string MysqlPass { get; set; }
+        public int MysqlPort { get; set; }
         public string StartingVillage { get; set; }
 
         public bool Load(string path)
@@ -62,6 +74,11 @@ namespace CoCSharp.Server
             var startingElixirSet = false;
             var masterHashSet = false;
             var contentUrlSet = false;
+            var mysqlHostSet = false;
+            var mysqlUserSet = false;
+            var mysqlPassSet = false;
+            var mysqlPortSet = false;
+
 
             if (!File.Exists(path))
                 return false;
@@ -117,6 +134,34 @@ namespace CoCSharp.Server
                                             masterHashSet = true;
                                         }
                                         break;
+                                    case "mysql_host":
+                                        if (reader.Read())
+                                        {
+                                            MysqlHost = reader.ReadContentAsString();
+                                            mysqlHostSet = true;
+                                        }
+                                        break;
+                                    case "mysql_user":
+                                        if (reader.Read())
+                                        {
+                                            MysqlUser = reader.ReadContentAsString();
+                                            mysqlUserSet = true;
+                                        }
+                                        break;
+                                    case "mysql_pwd":
+                                        if (reader.Read())
+                                        {
+                                            MysqlPass = reader.ReadContentAsString();
+                                            mysqlPassSet = true;
+                                        }
+                                        break;
+                                    case "mysql_port":
+                                        if (reader.Read())
+                                        {
+                                            MysqlPort = reader.ReadContentAsInt();
+                                            mysqlPortSet = true;
+                                        }
+                                        break;
 
                                     case "server_config":
                                         break;
@@ -140,7 +185,7 @@ namespace CoCSharp.Server
             // If some configs are missing we
             // rewrite a new .xml config file with the missing configs
             // as the default value.
-            if (!startingGemsSet || !startingGoldSet || !startingElixirSet || !contentUrlSet || !masterHashSet)
+            if (!startingGemsSet || !startingGoldSet || !startingElixirSet || !contentUrlSet || !masterHashSet || !mysqlHostSet || !mysqlUserSet || !mysqlPassSet || !mysqlPortSet)
                 return false;
 
             return true;
@@ -164,6 +209,10 @@ namespace CoCSharp.Server
                 writer.WriteElementString("starting_elixir", StartingElixir.ToString());
                 writer.WriteElementString("content_url", ContentUrl);
                 writer.WriteElementString("master_hash", MasterHash);
+                writer.WriteElementString("mysql_host", MysqlHost);
+                writer.WriteElementString("mysql_user", MysqlUser);
+                writer.WriteElementString("mysql_pwd", MysqlPass);
+                writer.WriteElementString("mysql_port", MysqlPort.ToString());
 
                 writer.WriteEndElement();
                 writer.WriteEndDocument();

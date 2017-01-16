@@ -46,17 +46,21 @@ namespace CoCSharp.Server.Db
 
             var builder = new MySqlConnectionStringBuilder();
 
-            var host = Server.Configuration["mysql_host"];
+            var host = Server.Configuration.MysqlHost;
             if (host == null)
                 Server.Logs.Error("Configuration did not contain 'mysql_host' entry.");
 
-            var user = server.Configuration["mysql_user"];
+            var user = Server.Configuration.MysqlUser;
             if (user == null)
                 Server.Logs.Error("Configuration did not contain 'mysql_user' entry.");
 
-            var pwd = server.Configuration["mysql_pwd"];
+            var pwd = Server.Configuration.MysqlPass;
             if (pwd == null)
                 Server.Logs.Error("Configuration did not contain 'mysql_pwd' entry.");
+
+            var port = Server.Configuration.MysqlPort;
+            if (pwd == null)
+                Server.Logs.Error("Configuration did not contain 'mysql_port' entry.");
 
             var configError = host == null || user == null || pwd == null;
             if (configError)
@@ -67,8 +71,9 @@ namespace CoCSharp.Server.Db
 
             builder.Server = host;
             builder.UserID = user;
+            if (!string.IsNullOrWhiteSpace(pwd))
             builder.Password = pwd;
-            
+            builder.Port = (uint)port;
             // Disable pooling, reopening a connection from the pool,
             // seems to be causing issues.
             builder.Pooling = false;
@@ -76,7 +81,6 @@ namespace CoCSharp.Server.Db
             builder.MinimumPoolSize = 1;
 
             _connectionString = builder.ToString();
-
             using (var sql = new MySqlConnection(_connectionString))
             {
                 sql.Open();
