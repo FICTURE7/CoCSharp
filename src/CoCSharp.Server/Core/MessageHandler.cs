@@ -673,8 +673,20 @@ namespace CoCSharp.Server.Core
             var clan = clanSave.ToClan();
 
             // Set the values as specified in the message.
-            clan.Name = caMessage.Name;
-            clan.Description = caMessage.Description;
+            if (String.IsNullOrEmpty(caMessage.Name))
+                clan.Name = "CoCSharp";
+            else if (caMessage.Name.Length > 15)
+                clan.Name = caMessage.Name.Substring(0, 15);
+            else
+                clan.Name = caMessage.Name;
+
+            if (String.IsNullOrEmpty(caMessage.Description))
+                clan.Description = "Powered by CoCSharp";
+            else if (caMessage.Description.Length > 255)
+                clan.Description = caMessage.Description.Substring(0, 255);
+            else
+                clan.Description = caMessage.Description;
+
             clan.Badge = caMessage.Badge;
             clan.InviteType = caMessage.InviteType;
             clan.RequiredTrophies = caMessage.RequiredTrophy;
