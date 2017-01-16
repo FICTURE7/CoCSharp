@@ -51,7 +51,7 @@
         /// <summary>
         /// Gets the mysql port.
         /// </summary>
-        uint MysqlPort { get; }
+        int MysqlPort { get; }
 
         /// <summary>
         /// Gets the starting village JSON.

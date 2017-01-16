@@ -28,7 +28,7 @@ namespace CoCSharp.Server
         private static readonly string _defaultMysqlHost = "127.0.0.1";
         private static readonly string _defaultMysqlUser = "root";
         private static readonly string _defaultMysqlPass = " ";
-        private static readonly uint _defaultMysqlPort = 3306;
+        private static readonly int _defaultMysqlPort = 3306;
         private static readonly string _defaultMasterHash = "2f2c3464104feb771097b42ebf4dfe871bd56062";
         private static readonly string _defaultContentUrl = "http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/";
         private static readonly int _defaultGems = (int)1e7;
@@ -58,7 +58,7 @@ namespace CoCSharp.Server
         public string MysqlHost { get; set; }
         public string MysqlUser { get; set; }
         public string MysqlPass { get; set; }
-        public uint MysqlPort { get; set; }
+        public int MysqlPort { get; set; }
         public string StartingVillage { get; set; }
 
         public bool Load(string path)
@@ -158,7 +158,7 @@ namespace CoCSharp.Server
                                     case "mysql_port":
                                         if (reader.Read())
                                         {
-                                            MysqlPort = Convert.ToUInt32(reader.ReadContentAsInt());
+                                            MysqlPort = reader.ReadContentAsInt();
                                             mysqlPortSet = true;
                                         }
                                         break;

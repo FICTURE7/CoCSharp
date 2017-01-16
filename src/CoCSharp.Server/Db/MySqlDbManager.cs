@@ -73,7 +73,7 @@ namespace CoCSharp.Server.Db
             builder.UserID = user;
             if (!string.IsNullOrWhiteSpace(pwd))
             builder.Password = pwd;
-            builder.Port = port;
+            builder.Port = (uint)port;
             // Disable pooling, reopening a connection from the pool,
             // seems to be causing issues.
             builder.Pooling = false;
