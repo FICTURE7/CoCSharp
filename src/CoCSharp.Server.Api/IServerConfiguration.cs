@@ -36,6 +36,22 @@
         /// Gets the master hash.
         /// </summary>
         string MasterHash { get; }
+        /// <summary>
+        /// Gets the mysql host.
+        /// </summary>
+        string MysqlHost { get; }
+        /// <summary>
+        /// Gets the mysql user.
+        /// </summary>
+        string MysqlUser { get; }
+        /// <summary>
+        /// Gets the mysql pass.
+        /// </summary>
+        string MysqlPass { get; }
+        /// <summary>
+        /// Gets the mysql port.
+        /// </summary>
+        uint MysqlPort { get; }
 
         /// <summary>
         /// Gets the starting village JSON.
