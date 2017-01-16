@@ -680,8 +680,8 @@ namespace CoCSharp.Server.Core
             else
                 clan.Name = caMessage.Name;
 
-            if (String.IsNullOrEmpty(caMessage.Description))
-                clan.Description = "Powered by CoCSharp";
+            if (caMessage.Description == null)
+                clan.Description = string.Empty;
             else if (caMessage.Description.Length > 255)
                 clan.Description = caMessage.Description.Substring(0, 255);
             else
@@ -879,9 +879,12 @@ namespace CoCSharp.Server.Core
             }
             else
             {
+                int lenght = Server.Assets.DataTables.GetTable<GlobalData>().Rows["MAX_MESSAGE_LENGTH"][0].NumberValue;
                 if (cmcMessage.TextMessage.ToLower().Contains("savegame"))
                     ChatManager.SendChatMessage(client, "Did you know? 'savegame' isn't a command and does nothing? ^^");
 
+                if (cmcMessage.TextMessage.Length > lenght)
+                    cmcMessage.TextMessage = cmcMessage.TextMessage.Substring(0, lenght);
                 var cmsMessage = new ChatMessageServerMessage
                 {
                     UserId = senderLevel.Avatar.Id,
