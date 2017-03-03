@@ -1,4 +1,5 @@
 ﻿using CoCSharp.Network.Cryptography;
+using CoCSharp.Network.Cryptography.NaCl;
 using CoCSharp.Network.Messages;
 using System;
 using System.Diagnostics;
@@ -12,24 +13,39 @@ namespace CoCSharp.Network
     /// </summary>
     public class MessageProcessorNaCl : MessageProcessor
     {
+        /// <summary>
+        /// Defines the states of the processor.
+        /// </summary>
         public enum States : byte
         {
+            /// <summary>
+            /// Handshaking state.
+            /// </summary>
             Handshaking,
 
+            /// <summary>
+            /// Authenticating state.
+            /// </summary>
             Authentifying,
 
+            /// <summary>
+            /// Authenticated state.
+            /// </summary>
             Authentified,
 
+            /// <summary>
+            /// Completed state.
+            /// </summary>
             Completed
         };
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/> with the specified <see cref="CoCKeyPair"/>
+        /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/> with the specified <see cref="KeyPair"/>
         /// </summary>
-        /// <param name="keyPair"><see cref="CoCKeyPair"/> to use.</param>
+        /// <param name="keyPair"><see cref="KeyPair"/> to use.</param>
         /// <exception cref="ArgumentNullException"><paramref name="keyPair"/> is null.</exception>
-        public MessageProcessorNaCl(CoCKeyPair keyPair)
+        public MessageProcessorNaCl(KeyPair keyPair)
         {
             if (keyPair == null)
                 throw new ArgumentNullException(nameof(keyPair));
@@ -38,7 +54,7 @@ namespace CoCSharp.Network
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/> with the specified <see cref="CoCKeyPair"/>
+        /// Initializes a new instance of the <see cref="MessageProcessorNaCl"/> with the specified <see cref="KeyPair"/>
         /// and server public key.
         /// </summary>
         /// 
@@ -46,15 +62,15 @@ namespace CoCSharp.Network
         /// Use this constructor initialize as a client.
         /// </remarks>
         /// 
-        /// <param name="keyPair"><see cref="CoCKeyPair"/> to use.</param>
+        /// <param name="keyPair"><see cref="KeyPair"/> to use.</param>
         /// <param name="serverKey">Public key of the server.</param>
         /// <exception cref="ArgumentNullException"><paramref name="keyPair"/> is null.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="serverKey"/> is null.</exception>
-        public MessageProcessorNaCl(CoCKeyPair keyPair, byte[] serverKey)
+        public MessageProcessorNaCl(KeyPair keyPair, byte[] serverKey)
         {
             if (keyPair == null)
                 throw new ArgumentNullException(nameof(keyPair));
-            if (serverKey == null)
+            if (serverKey == null || serverKey.Length == 0)
                 throw new ArgumentNullException(nameof(serverKey));
 
             _keyPair = keyPair;
@@ -71,13 +87,16 @@ namespace CoCSharp.Network
         private States _nstate;
         private MessageDirection _direction;
 
+        private readonly MessageReader _reader;
+        private readonly MessageWriter _writer;
+
         // Crypto8 object that is going to decrypt incoming
         // and encrypt outgoing messages.
         private Crypto8 _crypto;
         // Key pair to use to initialize _crypto with, this key pair
         // can be the server private and public key, or the generated
         // client private and public key.
-        private readonly CoCKeyPair _keyPair;
+        private readonly KeyPair _keyPair;
         // Public-key of the server. This key will be used to update _crypto.UpdateSharedKey(_serverKey)
         // when the processor is processing as a client.
         // This is not used when _direction is going to the client.
@@ -113,13 +132,14 @@ namespace CoCSharp.Network
         /// the resulting <see cref="Message"/>.
         /// </summary>
         /// <param name="header">Header of the message.</param>
-        /// <param name="chiper">Chippered array of bytes representing a message to process.</param>
-        /// <param name="plaintext">Plaintext representation of <paramref name="chiper"/>.</param>
+        /// <param name="stream">Chippered array of bytes representing a message to process.</param>
+        /// <param name="raw">Raw array of bytes representing the message.</param>
+        /// <param name="plaintext">Plaintext representation of the data read.</param>
         /// <returns>Resulting <see cref="Message"/>.</returns>
-        public override Message ProcessIncoming(MessageHeader header, byte[] chiper, ref byte[] plaintext)
+        public override Message ProcessIncoming(MessageHeader header, BufferStream stream, ref byte[] raw, ref byte[] plaintext)
         {
-            if (chiper == null)
-                throw new ArgumentNullException(nameof(chiper));
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
 
             // Direction of where the message is *going to*.
             var messageDirection = Message.GetMessageDirection(header.Id);
@@ -128,7 +148,7 @@ namespace CoCSharp.Network
 
             // Decrypt incoming data taking the message direction.
             // Header is only used to print debugging info.
-            plaintext = ProcessIncomingData(messageDirection, header, chiper);
+            plaintext = ProcessIncomingData(messageDirection, header, stream);
 
             Debug.Assert(plaintext != null);
             using (var reader = new MessageReader(new MemoryStream(plaintext)))
@@ -185,16 +205,19 @@ namespace CoCSharp.Network
         }
 
         #region Incoming
-        private byte[] ProcessIncomingData(MessageDirection direction, MessageHeader header, byte[] chiper)
+        private byte[] ProcessIncomingData(MessageDirection direction, MessageHeader header, BufferStream stream)
         {
             var plaintext = (byte[])null;
+            var chiper = new byte[header.Length];
+            stream.Read(chiper, 0, header.Length);
 
             // Handshaking.
             if (_incommingState == 0)
             {
                 // Handshakes are sent unencrypted.
                 // First message by both ends is always sent unencrypted.
-                plaintext = (byte[])chiper.Clone();
+                plaintext = new byte[header.Length];
+                Buffer.BlockCopy(chiper, 0, plaintext, 0, header.Length);
 
                 // Use the first message direction to configure the processor.
                 // If message is coming in, then the going out is opposite direction.
@@ -221,16 +244,16 @@ namespace CoCSharp.Network
                 // -> Post-Encryption.
                 // Copies the public key appended to the beginning of the message
                 // sent of message 20100.
-                var publicKey = new byte[CoCKeyPair.KeyLength];
-                Buffer.BlockCopy(chiper, 0, publicKey, 0, CoCKeyPair.KeyLength);
+                var publicKey = new byte[KeyPair.KeyLength];
+                Buffer.BlockCopy(chiper, 0, publicKey, 0, KeyPair.KeyLength);
 
                 Debug.WriteLine($"Public-Key from {header.Id}: {ToHexString(publicKey)}");
 
-                // Copies the remaining bytes into the postChier buffer which
+                // Copies the remaining bytes into the postChiper buffer which
                 // will be decrypted by _crypto.
-                var tmpPlaintextLen = header.Length - CoCKeyPair.KeyLength;
+                var tmpPlaintextLen = header.Length - KeyPair.KeyLength;
                 var tmpPlaintext = new byte[tmpPlaintextLen];
-                Buffer.BlockCopy(chiper, CoCKeyPair.KeyLength, tmpPlaintext, 0, tmpPlaintextLen);
+                Buffer.BlockCopy(chiper, KeyPair.KeyLength, tmpPlaintext, 0, tmpPlaintextLen);
 
                 // Crypto8 will take the client's publicKey & _keyPair.PublicKey and generate a blake2b nonce
                 _crypto.UpdateSharedKey(publicKey);
@@ -238,20 +261,20 @@ namespace CoCSharp.Network
                 _crypto.Decrypt(ref tmpPlaintext);
 
                 // -> Pre-Encryption.
-                var sessionKey = new byte[CoCKeyPair.NonceLength];
-                var remoteNonce = new byte[CoCKeyPair.NonceLength];
+                var sessionKey = new byte[KeyPair.NonceLength];
+                var remoteNonce = new byte[KeyPair.NonceLength];
 
                 // Copy the SessionKey and the ClientNonce.
-                Buffer.BlockCopy(tmpPlaintext, 0, sessionKey, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength, remoteNonce, 0, CoCKeyPair.NonceLength);
+                Buffer.BlockCopy(tmpPlaintext, 0, sessionKey, 0, KeyPair.NonceLength);
+                Buffer.BlockCopy(tmpPlaintext, KeyPair.NonceLength, remoteNonce, 0, KeyPair.NonceLength);
 
                 Debug.WriteLine($"Session-key from {header.Id}: {ToHexString(sessionKey)}");
                 Debug.WriteLine($"Client-nonce from {header.Id}: {ToHexString(remoteNonce)}");
 
                 // Copies the plaintext without the session key and the remote/client nonce.
-                var plaintextLen = tmpPlaintext.Length - (CoCKeyPair.NonceLength * 2);
+                var plaintextLen = tmpPlaintext.Length - (KeyPair.NonceLength * 2);
                 plaintext = new byte[plaintextLen];
-                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength * 2, plaintext, 0, plaintextLen);
+                Buffer.BlockCopy(tmpPlaintext, KeyPair.NonceLength * 2, plaintext, 0, plaintextLen);
 
                 _crypto.UpdateNonce(remoteNonce, UpdateNonceType.Decrypt);
                 _crypto.UpdateNonce(remoteNonce, UpdateNonceType.Blake);
@@ -278,20 +301,20 @@ namespace CoCSharp.Network
                 _crypto.Decrypt(ref tmpPlaintext);
 
                 // -> Post-Encryption
-                var remoteNonce = new byte[CoCKeyPair.NonceLength];
-                var key = new byte[CoCKeyPair.KeyLength];
+                var remoteNonce = new byte[KeyPair.NonceLength];
+                var key = new byte[KeyPair.KeyLength];
 
                 // Copies the ServerNonce and the new second secret key.
-                Buffer.BlockCopy(tmpPlaintext, 0, remoteNonce, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength, key, 0, CoCKeyPair.KeyLength);
+                Buffer.BlockCopy(tmpPlaintext, 0, remoteNonce, 0, KeyPair.NonceLength);
+                Buffer.BlockCopy(tmpPlaintext, KeyPair.NonceLength, key, 0, KeyPair.KeyLength);
 
                 Debug.WriteLine($"Shared-key from {header.Id}: {ToHexString(key)}");
                 Debug.WriteLine($"Server-nonce from {header.Id}: {ToHexString(remoteNonce)}");
 
                 // Copies the plaintext without the server nonce and the new second secret key.
-                var plaintextLen = tmpPlaintext.Length - CoCKeyPair.NonceLength - CoCKeyPair.KeyLength;
+                var plaintextLen = tmpPlaintext.Length - KeyPair.NonceLength - KeyPair.KeyLength;
                 plaintext = new byte[plaintextLen];
-                Buffer.BlockCopy(tmpPlaintext, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, plaintext, 0, plaintextLen);
+                Buffer.BlockCopy(tmpPlaintext, KeyPair.NonceLength + KeyPair.KeyLength, plaintext, 0, plaintextLen);
 
                 _crypto.UpdateNonce(remoteNonce, UpdateNonceType.Decrypt);
                 _crypto.UpdateSharedKey(key);
@@ -343,10 +366,10 @@ namespace CoCSharp.Network
                 var localNonce = Crypto8.GenerateNonce();
                 var remoteNonce = _remoteNonce;
 
-                var tmpChiper = new byte[plaintext.Length + CoCKeyPair.NonceLength + CoCKeyPair.KeyLength];
-                Buffer.BlockCopy(localNonce, 0, tmpChiper, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(key.PublicKey, 0, tmpChiper, CoCKeyPair.NonceLength, CoCKeyPair.KeyLength);
-                Buffer.BlockCopy(plaintext, 0, tmpChiper, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, plaintext.Length);
+                var tmpChiper = new byte[plaintext.Length + KeyPair.NonceLength + KeyPair.KeyLength];
+                Buffer.BlockCopy(localNonce, 0, tmpChiper, 0, KeyPair.NonceLength);
+                Buffer.BlockCopy(key.PublicKey, 0, tmpChiper, KeyPair.NonceLength, KeyPair.KeyLength);
+                Buffer.BlockCopy(plaintext, 0, tmpChiper, KeyPair.NonceLength + KeyPair.KeyLength, plaintext.Length);
 
                 _crypto.Encrypt(ref tmpChiper);
 
@@ -376,10 +399,10 @@ namespace CoCSharp.Network
 
                 // Craft the new packet which is
                 // tmpChiper = sessionKey + localNonce + plaintext.
-                var tmpChiper = new byte[plaintext.Length + CoCKeyPair.NonceLength * 2];
-                Buffer.BlockCopy(sessionKey, 0, tmpChiper, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(localNonce, 0, tmpChiper, CoCKeyPair.NonceLength, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(plaintext, 0, tmpChiper, CoCKeyPair.NonceLength * 2, plaintext.Length);
+                var tmpChiper = new byte[plaintext.Length + KeyPair.NonceLength * 2];
+                Buffer.BlockCopy(sessionKey, 0, tmpChiper, 0, KeyPair.NonceLength);
+                Buffer.BlockCopy(localNonce, 0, tmpChiper, KeyPair.NonceLength, KeyPair.NonceLength);
+                Buffer.BlockCopy(plaintext, 0, tmpChiper, KeyPair.NonceLength * 2, plaintext.Length);
 
                 // Use our specified from the constructor _keyPair.PublicKey and specified _serverKey from the constructor
                 // to generate the blake2b nonce and encrypt using _keyPair.PrivateKey and the generated blake2b nonce.
@@ -388,9 +411,9 @@ namespace CoCSharp.Network
 
                 // Craft another new packet which is
                 // chiper = _keyPair.PublicKey + tmpChiper.
-                chiper = new byte[tmpChiper.Length + CoCKeyPair.KeyLength];
-                Buffer.BlockCopy(_crypto.KeyPair.PublicKey, 0, chiper, 0, CoCKeyPair.KeyLength);
-                Buffer.BlockCopy(tmpChiper, 0, chiper, CoCKeyPair.KeyLength, tmpChiper.Length);
+                chiper = new byte[tmpChiper.Length + KeyPair.KeyLength];
+                Buffer.BlockCopy(_crypto.KeyPair.PublicKey, 0, chiper, 0, KeyPair.KeyLength);
+                Buffer.BlockCopy(tmpChiper, 0, chiper, KeyPair.KeyLength, tmpChiper.Length);
 
                 _localNonce = localNonce;
             }

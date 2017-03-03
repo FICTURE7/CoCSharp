@@ -8,6 +8,14 @@ namespace CoCSharp.Network
     public abstract class MessageProcessor
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="MessageProcessor"/> class.
+        /// </summary>
+        protected MessageProcessor()
+        {
+            // Space
+        }
+
+        /// <summary>
         /// Gets the <see cref="CoCCrypto"/> that is going to decrypt incoming and encrypt outgoing
         /// messages.
         /// </summary>
@@ -18,10 +26,11 @@ namespace CoCSharp.Network
         /// the resulting <see cref="Message"/>.
         /// </summary>
         /// <param name="header">Header of the message.</param>
-        /// <param name="chiper">Ciphered array of bytes representing a message to process.</param>
-        /// <param name="plaintext">Plaintext representation of <paramref name="chiper"/>.</param>
+        /// <param name="stream">Chippered array of bytes representing a message to process.</param>
+        /// <param name="raw">Raw array of bytes representing the message.</param>
+        /// <param name="plaintext">Plaintext representation of the data read.</param>
         /// <returns>Resulting <see cref="Message"/>.</returns>
-        public abstract Message ProcessIncoming(MessageHeader header, byte[] chiper, ref byte[] plaintext);
+        public abstract Message ProcessIncoming(MessageHeader header, BufferStream stream, ref byte[] raw, ref byte[] plaintext);
 
         /// <summary>
         /// Processes the specified <see cref="Message"/> and returns

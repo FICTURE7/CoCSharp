@@ -84,7 +84,7 @@ namespace CoCSharp.Server
             _heartbeat = new Timer(DoHeartbeat, null, 5000, 5000);
             _listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _acceptPool = new SocketAsyncEventArgsPool(8, AcceptCompleted);
-            _settings = new NetworkManagerAsyncSettings(64, 64);
+            _settings = new NetworkManagerAsyncSettings(64, 64, 32);
         }
         #endregion
 
@@ -95,7 +95,7 @@ namespace CoCSharp.Server
         private MySqlDbManager _db;
         private AssetManager _assets;
 
-        //TODO: Turn into a plugin instead.
+        //TODO: Turn into a plugin instead when plugin system is ready.
         private readonly WebApi _webApi;
 
         private readonly Logs _logs;
@@ -131,18 +131,21 @@ namespace CoCSharp.Server
 
             const string CONTENT_DIR_PATH = "contents";
 
-            try
+            if (Configuration.SynchronizeAssets)
             {
-                // Sync assets with the assets available on the asset server.
-                SyncAssets(CONTENT_DIR_PATH);
-            }
-            catch (Exception ex)
-            {
-                Logs.Error("Unable to synchronize assets with asset server.");
-                Logs.Error(ex.ToString());
-                Close();
+                try
+                {
+                    // Sync assets with the assets available on the asset server.
+                    SyncAssets(CONTENT_DIR_PATH);
+                }
+                catch (Exception ex)
+                {
+                    Logs.Error("Unable to synchronize assets with asset server.");
+                    Logs.Error(ex.ToString());
+                    Close();
 
-                Environment.Exit(1);
+                    Environment.Exit(1);
+                }
             }
 
             // After we've been synced up with the asset server we can load

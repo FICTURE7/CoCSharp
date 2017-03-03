@@ -1,15 +1,17 @@
 ﻿using System;
-using Sodium;
+using CoCSharp.Network.Cryptography.NaCl;
+using CoCSharp.Network.Cryptography.NaCl.Internal.Blake2;
 
 namespace CoCSharp.Network.Cryptography
 {
     /// <summary>
     /// Implements method to encrypt or decrypt network traffic of the Clash of Clan protocol
-    /// version 8.x.x. This was based of clugh's work(https://github.com/clugh/cocdp/wiki/Protocol) and
+    /// version 8.x.x. This was based of clugh's work(https://github.com/clugh/cocdp/wiki/Protocol and
     /// (https://github.com/clugh/coc-proxy-csharp). :]
     /// </summary>
     public class Crypto8 : CoCCrypto
     {
+        #region Constants
         private static readonly byte[] _standardPrivateKey = new byte[]
         {
             0x18, 0x91, 0xD4, 0x01, 0xFA, 0xDB, 0x51, 0xD2, 0x5D, 0x3A, 0x91, 0x74,
@@ -30,12 +32,12 @@ namespace CoCSharp.Network.Cryptography
         /// <remarks>
         /// More information here (https://github.com/FICTURE7/CoCSharp/issues/54#issuecomment-173556064).
         /// </remarks>
-        public static CoCKeyPair StandardKeyPair
+        public static KeyPair StandardKeyPair
         {
             // Cloning just not to mess up with refs
-            get { return new CoCKeyPair((byte[])_standardPublicKey.Clone(), (byte[])_standardPrivateKey.Clone()); }
+            get { return new KeyPair((byte[])_standardPublicKey.Clone(), (byte[])_standardPrivateKey.Clone()); }
         }
-       
+
         /// <summary>
         /// Gets a new instance of Supercell server's public key.
         /// </summary>
@@ -90,10 +92,12 @@ namespace CoCSharp.Network.Cryptography
                 };
             }
         }
+        #endregion
 
+        #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="Crypto8"/> class with the
-        /// specified <see cref="MessageDirection"/> and a generated <see cref="CoCKeyPair"/> using <see cref="GenerateKeyPair"/>.
+        /// specified <see cref="MessageDirection"/> and a generated <see cref="NaCl.KeyPair"/> using <see cref="GenerateKeyPair()"/>.
         /// </summary>
         /// <param name="direction">Direction of the data.</param>
         /// <exception cref="ArgumentException">Incorrect direction.</exception>
@@ -104,13 +108,13 @@ namespace CoCSharp.Network.Cryptography
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Crypto8"/> class with the
-        /// specified <see cref="MessageDirection"/> and <see cref="CoCKeyPair"/>.
+        /// specified <see cref="MessageDirection"/> and <see cref="NaCl.KeyPair"/>.
         /// </summary>
         /// <param name="direction">Direction of the data.</param>
         /// <param name="keyPair">Public and private key pair to use for encryption.</param>
         /// <exception cref="ArgumentException"><paramref name="direction"/> is incorrect.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="keyPair"/> is null.</exception>"
-        public Crypto8(MessageDirection direction, CoCKeyPair keyPair)
+        public Crypto8(MessageDirection direction, KeyPair keyPair)
         {
             if (direction != MessageDirection.Client && direction != MessageDirection.Server)
                 throw new ArgumentException("Cannot initialize Crypto8 with direction '" + direction + "'.", nameof(direction));
@@ -120,16 +124,18 @@ namespace CoCSharp.Network.Cryptography
             _direction = direction;
             _keyPair = keyPair;
         }
+        #endregion
 
+        #region Fields & Properties
         /// <summary>
         /// Gets the version of the <see cref="CoCCrypto"/>.
         /// </summary>
         public override int Version => 8;
 
         /// <summary>
-        /// Gets the current <see cref="CoCKeyPair"/> used by the <see cref="Crypto8"/> to encrypt or decrypt data.
+        /// Gets the current <see cref="NaCl.KeyPair"/> used by the <see cref="Crypto8"/> to encrypt or decrypt data.
         /// </summary>
-        public CoCKeyPair KeyPair => _keyPair;
+        public KeyPair KeyPair => _keyPair;
 
         /// <summary>
         /// Gets the shared public key.
@@ -144,7 +150,10 @@ namespace CoCSharp.Network.Cryptography
         /// </summary>
         public MessageDirection Direction => _direction;
 
-        private readonly CoCKeyPair _keyPair;
+        // Precomputered shared key.
+        private KeyPair _precompKey;
+
+        private readonly KeyPair _keyPair;
         private readonly MessageDirection _direction;
 
         // Other end's public key can either be clientkey(pk), serverkey and k.
@@ -157,6 +166,7 @@ namespace CoCSharp.Network.Cryptography
         private byte[] _decryptNonce;
         // Crypto state. To have an idea where we are in the authentication.
         internal CryptoState _cryptoState;
+        #endregion
 
         internal enum CryptoState
         {
@@ -182,15 +192,13 @@ namespace CoCSharp.Network.Cryptography
             {
                 case CryptoState.InitialKey:
                 case CryptoState.BlakeNonce:
-                    data = PublicKeyBox.Create(data, _blake2bNonce, _keyPair.PrivateKey, _sharedKey);
+                    data = PublicKeyBox.Box(data, _sharedKey, _keyPair.PrivateKey, _blake2bNonce);
                     break;
 
                 case CryptoState.SecoundKey:
                     IncrementNonce(_encryptNonce);
-                    var padData = SecretBox.Create(data, _encryptNonce, _sharedKey);
-                    // Skip 16 bytes pad.
-                    data = new byte[padData.Length - 16];
-                    Buffer.BlockCopy(padData, 16, data, 0, padData.Length - 16);
+
+                    data = SecretBox.Box(data, _sharedKey, _encryptNonce);
                     break;
 
                 default:
@@ -211,14 +219,13 @@ namespace CoCSharp.Network.Cryptography
             {
                 case CryptoState.InitialKey:
                 case CryptoState.BlakeNonce:
-                    data = PublicKeyBox.Open(data, _blake2bNonce, _keyPair.PrivateKey, _sharedKey); // use blake nonce
+                    data = PublicKeyBox.Open(data, _sharedKey, _keyPair.PrivateKey, _blake2bNonce);
                     break;
 
                 case CryptoState.SecoundKey:
                     IncrementNonce(_decryptNonce);
-                    var padData = new byte[data.Length + 16]; // append a 16 bytes long pad to it
-                    Buffer.BlockCopy(data, 0, padData, 16, data.Length);
-                    data = SecretBox.Open(padData, _decryptNonce, _sharedKey); // use decrypt nonce
+
+                    data = SecretBox.Open(data, _sharedKey, _decryptNonce);
                     break;
 
                 default:
@@ -240,8 +247,8 @@ namespace CoCSharp.Network.Cryptography
         {
             if (publicKey == null)
                 throw new ArgumentNullException(nameof(publicKey));
-            if (publicKey.Length != CoCKeyPair.KeyLength)
-                throw new ArgumentOutOfRangeException(nameof(publicKey), "publicKey must be 32 bytes in length.");
+            if (publicKey.Length != PublicKeyBox.PublicKeyLength)
+                throw new ArgumentOutOfRangeException(nameof(publicKey), "Key must be 32 bytes in length.");
 
             if (_cryptoState == CryptoState.SecoundKey)
                 throw new InvalidOperationException("Cannot update 'k' because it has already been set.");
@@ -287,7 +294,7 @@ namespace CoCSharp.Network.Cryptography
                 throw new InvalidOperationException("Cannot update nonce after updated with shared key 'k'.");
             if (nonce == null)
                 throw new ArgumentNullException(nameof(nonce));
-            if (nonce.Length != CoCKeyPair.NonceLength)
+            if (nonce.Length != 24)
                 throw new ArgumentOutOfRangeException(nameof(nonce), "nonce must be 24 bytes in length.");
 
             switch (nonceType)
@@ -318,16 +325,24 @@ namespace CoCSharp.Network.Cryptography
         }
 
         /// <summary>
-        /// Generates a public and private <see cref="CoCKeyPair"/>.
+        /// Generates a <see cref="NaCl.KeyPair"/>.
         /// </summary>
-        /// <remarks>
-        /// This is a wrapper around <see cref="PublicKeyBox.GenerateKeyPair()"/>.
-        /// </remarks>
-        /// <returns>Generated <see cref="CoCKeyPair"/>.</returns>
-        public static CoCKeyPair GenerateKeyPair()
+        /// <returns>Generated <see cref="NaCl.KeyPair"/>.</returns>
+        public static KeyPair GenerateKeyPair()
         {
             var keyPair = PublicKeyBox.GenerateKeyPair();
-            return new CoCKeyPair(keyPair.PublicKey, keyPair.PrivateKey);
+            return new KeyPair(keyPair.PublicKey, keyPair.PrivateKey);
+        }
+
+        /// <summary>
+        /// Generates a <see cref="NaCl.KeyPair"/> from the specified private key.
+        /// </summary>
+        /// <param name="privateKey">Private key from which to generate the <see cref="NaCl.KeyPair"/>.</param>
+        /// <returns>Generated <see cref="NaCl.KeyPair"/>.</returns>
+        public static KeyPair GenerateKeyPair(byte[] privateKey)
+        {
+            var keyPair = PublicKeyBox.GenerateKeyPair(privateKey);
+            return new KeyPair(keyPair.PublicKey, keyPair.PrivateKey);
         }
 
         /// <summary>
@@ -348,9 +363,10 @@ namespace CoCSharp.Network.Cryptography
             var hashBuffer = new byte[clientKey.Length + serverKey.Length];
 
             Buffer.BlockCopy(clientKey, 0, hashBuffer, 0, clientKey.Length);
-            Buffer.BlockCopy(serverKey, 0, hashBuffer, CoCKeyPair.KeyLength, serverKey.Length);
+            Buffer.BlockCopy(serverKey, 0, hashBuffer, PublicKeyBox.PublicKeyLength, serverKey.Length);
 
-            return GenericHash.Hash(hashBuffer, null, CoCKeyPair.NonceLength);
+            using (var blake = new Blake2B(24))
+                return blake.ComputeHash(hashBuffer);
         }
 
         // Generate blake2b nonce with snonce, clientkey and serverkey.
@@ -358,18 +374,26 @@ namespace CoCSharp.Network.Cryptography
         {
             var hashBuffer = new byte[clientKey.Length + serverKey.Length + snonce.Length];
 
-            Buffer.BlockCopy(snonce, 0, hashBuffer, 0, CoCKeyPair.NonceLength);
-            Buffer.BlockCopy(clientKey, 0, hashBuffer, CoCKeyPair.NonceLength, clientKey.Length);
-            Buffer.BlockCopy(serverKey, 0, hashBuffer, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, serverKey.Length);
+            Buffer.BlockCopy(snonce, 0, hashBuffer, 0, PublicKeyBox.NonceLength);
+            Buffer.BlockCopy(clientKey, 0, hashBuffer, PublicKeyBox.NonceLength, clientKey.Length);
+            Buffer.BlockCopy(serverKey, 0, hashBuffer, PublicKeyBox.NonceLength + PublicKeyBox.PublicKeyLength, serverKey.Length);
 
-            return GenericHash.Hash(hashBuffer, null, CoCKeyPair.NonceLength);
+            using (var blake = new Blake2B(PublicKeyBox.NonceLength))
+                return blake.ComputeHash(hashBuffer);
         }
 
         // Increment nonce by 2.
         private static void IncrementNonce(byte[] nonce)
         {
-            // TODO: Write own method for incrementing nonces by 2.
-            nonce = Utilities.Increment(Utilities.Increment(nonce));
+            ushort c = 2;
+            for (int i = 0; i < nonce.Length; i++)
+            {
+                c += nonce[i];
+                nonce[i] = (byte)c;
+
+                // 8 bits right shift to get the carry.
+                c >>= 8;
+            }
         }
     }
 }

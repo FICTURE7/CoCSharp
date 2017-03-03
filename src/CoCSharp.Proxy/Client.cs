@@ -39,17 +39,17 @@ namespace CoCSharp.Proxy
             var sendingBytes = e.Raw;
             if (Processor.State == 3)
             {
-                var body = new byte[e.Plaintext.Length + CoCKeyPair.NonceLength * 2];
-                Buffer.BlockCopy(Processor.SessionKey, 0, body, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(Processor.ClientNonce, 0, body, CoCKeyPair.NonceLength, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(e.Plaintext, 0, body, CoCKeyPair.NonceLength * 2, e.Plaintext.Length);
+                var body = new byte[e.Plaintext.Length + KeyPair.NonceLength * 2];
+                Buffer.BlockCopy(Processor.SessionKey, 0, body, 0, KeyPair.NonceLength);
+                Buffer.BlockCopy(Processor.ClientNonce, 0, body, KeyPair.NonceLength, KeyPair.NonceLength);
+                Buffer.BlockCopy(e.Plaintext, 0, body, KeyPair.NonceLength * 2, e.Plaintext.Length);
 
                 Processor.ServerCrypto.Encrypt(ref body);
 
-                sendingBytes = new byte[body.Length + MessageHeader.Size + CoCKeyPair.KeyLength];
+                sendingBytes = new byte[body.Length + MessageHeader.Size + KeyPair.KeyLength];
                 Buffer.BlockCopy(e.Raw, 0, sendingBytes, 0, MessageHeader.Size);
-                Buffer.BlockCopy(Processor.ServerCrypto.KeyPair.PublicKey, 0, sendingBytes, MessageHeader.Size, CoCKeyPair.KeyLength);
-                Buffer.BlockCopy(body, 0, sendingBytes, MessageHeader.Size + CoCKeyPair.KeyLength, body.Length);
+                Buffer.BlockCopy(Processor.ServerCrypto.KeyPair.PublicKey, 0, sendingBytes, MessageHeader.Size, KeyPair.KeyLength);
+                Buffer.BlockCopy(body, 0, sendingBytes, MessageHeader.Size + KeyPair.KeyLength, body.Length);
             }
             else if (Processor.State > 3)
             {
@@ -80,10 +80,10 @@ namespace CoCSharp.Proxy
 
             if (Processor.State == 4)
             {
-                var body = new byte[e.Plaintext.Length + CoCKeyPair.NonceLength + CoCKeyPair.KeyLength];
-                Buffer.BlockCopy(Processor.ServerNonce, 0, body, 0, CoCKeyPair.NonceLength);
-                Buffer.BlockCopy(Processor.ServerCrypto.SharedKey, 0, body, CoCKeyPair.NonceLength, CoCKeyPair.KeyLength);
-                Buffer.BlockCopy(e.Plaintext, 0, body, CoCKeyPair.NonceLength + CoCKeyPair.KeyLength, e.Plaintext.Length);
+                var body = new byte[e.Plaintext.Length + KeyPair.NonceLength + KeyPair.KeyLength];
+                Buffer.BlockCopy(Processor.ServerNonce, 0, body, 0, KeyPair.NonceLength);
+                Buffer.BlockCopy(Processor.ServerCrypto.SharedKey, 0, body, KeyPair.NonceLength, KeyPair.KeyLength);
+                Buffer.BlockCopy(e.Plaintext, 0, body, KeyPair.NonceLength + KeyPair.KeyLength, e.Plaintext.Length);
                 Processor.ClientCrypto.Encrypt(ref body);
 
                 sendingBytes = new byte[body.Length + MessageHeader.Size];

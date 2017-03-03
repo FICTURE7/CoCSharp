@@ -38,11 +38,11 @@ namespace CoCSharp.Logic
                 !assets.IsLoaded<CsvDataTable<ResourceData>>())
                 throw new ArgumentException("Specified AssetManager has not loaded all the required assets.");
 
+            _assets = assets;
+
             _logs = new LevelLog(this);
             _dateInit = DateTime.UtcNow;
             _lastTick = DateTime.UtcNow;
-
-            _assets = assets;
             Avatar = new Avatar(this);
         }
         #endregion

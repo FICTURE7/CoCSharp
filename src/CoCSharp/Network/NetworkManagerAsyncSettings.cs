@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -16,7 +17,7 @@ namespace CoCSharp.Network
         /// with default settings.
         /// </summary>
         public NetworkManagerAsyncSettings()
-            : this(25, 25, 65535)
+            : this(25, 25, 4096)
         {
             // Space
         }
@@ -29,7 +30,7 @@ namespace CoCSharp.Network
         /// <param name="receiveCount">Number of receive operation <see cref="SocketAsyncEventArgs"/> objects.</param>
         /// <param name="sendCount">Number of send operation <see cref="SocketAsyncEventArgs"/> objects.</param>
         public NetworkManagerAsyncSettings(int receiveCount, int sendCount)
-            : this(receiveCount, sendCount, 65535)
+            : this(receiveCount, sendCount, 4096)
         {
             // Space
         }
@@ -47,12 +48,13 @@ namespace CoCSharp.Network
         public NetworkManagerAsyncSettings(int receiveCount, int sendCount, int bufferSize)
         {
             if (bufferSize < 1)
-                throw new ArgumentOutOfRangeException("bufferSize", "Argument bufferSize cannot be less than 1.");
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), "Buffer size cannot be less than 1.");
 
             _bufferSize = bufferSize;
             _statistics = new NetworkManagerAsyncStatistics();
 
-            var concurrentOpsCount = Environment.ProcessorCount * 4;
+            // Don't waste IO threads.
+            var concurrentOpsCount = Environment.ProcessorCount * 2;
             _concurrentOps = new Semaphore(concurrentOpsCount, concurrentOpsCount);
             _receivePool = new SocketAsyncEventArgsPool(receiveCount);
             _sendPool = new SocketAsyncEventArgsPool(sendCount);
@@ -73,6 +75,9 @@ namespace CoCSharp.Network
                 MessageSendToken.Create(args);
                 _sendPool.Push(args);
             }
+
+            _buffers = new Pool<byte[]>(64);
+            _args = new Pool<SocketAsyncEventArgs>(receiveCount + sendCount);
         }
         #endregion
 
@@ -80,11 +85,20 @@ namespace CoCSharp.Network
         private bool _disposed;
         private readonly int _bufferSize;
         private readonly NetworkManagerAsyncStatistics _statistics;
-        private readonly MessageBufferManager _bufferManager;
 
         internal readonly Semaphore _concurrentOps;
+
+        [Obsolete]
+        internal readonly MessageBufferManager _bufferManager;
+        [Obsolete]
         internal readonly SocketAsyncEventArgsPool _receivePool;
+        [Obsolete]
         internal readonly SocketAsyncEventArgsPool _sendPool;
+
+        // Pool of byte array buffers.
+        internal readonly Pool<byte[]> _buffers;
+        // Pool of SocketAsyncEventArgs.
+        internal readonly Pool<SocketAsyncEventArgs> _args;
 
         /// <summary>
         /// Gets a new instance of the default state of the <see cref="NetworkManagerAsyncSettings"/> class.
@@ -117,6 +131,49 @@ namespace CoCSharp.Network
         #endregion
 
         #region Methods
+        internal byte[] GetBuffer()
+        {
+            return _buffers.Pop() ?? new byte[BufferSize];
+        }
+
+        internal SocketAsyncEventArgs GetArgs()
+        {
+            return _args.Pop() ?? new SocketAsyncEventArgs();
+        }
+
+        internal void Recyle(byte[] buffer)
+        {
+            // Push back the buffer to the pool.
+            if (buffer != null)
+                _buffers.Push(buffer);
+        }
+
+        internal void Recyle(SocketAsyncEventArgs args)
+        {
+            if (args != null)
+            {
+                // Set AcceptSocket to null.
+                args.AcceptSocket = null;
+
+                // If the SocketAsyncEventArgs has a buffer associated with it
+                // we recycle it as well.
+                if (args.Buffer != null)
+                {
+                    Debug.Assert(args.Buffer.Length == BufferSize);
+
+                    // Push buffer back and set to null.
+                    _buffers.Push(args.Buffer);
+                    args.SetBuffer(null, 0, 0);
+                }
+
+                _args.Push(args);
+            }
+            else
+            {
+                Debug.Write("Tried to recycle a null SocketAsyncEventArgs.");
+            }
+        }
+
         /// <summary>
         /// Releases all resources used by the current instance of the <see cref="NetworkManagerAsyncSettings"/> class.
         /// </summary>
@@ -137,7 +194,8 @@ namespace CoCSharp.Network
                 {
                     _receivePool.Dispose();
                     _sendPool.Dispose();
-                    //TODO: Dispose all NetworkManagerAsync instances using this also
+
+                    _concurrentOps.Dispose();
                 }
                 _disposed = true;
             }

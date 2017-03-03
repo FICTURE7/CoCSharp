@@ -3,16 +3,17 @@ using System.Net.Sockets;
 
 namespace CoCSharp.Network
 {
+    [Obsolete]
     internal class MessageBufferManager
     {
         public MessageBufferManager(int receiveCount, int sendCount, int bufferSize)
         {
             if (receiveCount < 1)
-                throw new ArgumentOutOfRangeException("receiveCount", "bufferSize cannot be less than 1.");
+                throw new ArgumentOutOfRangeException(nameof(receiveCount), "Receive count cannot be less than 1.");
             if (sendCount < 1)
-                throw new ArgumentOutOfRangeException("sendCount", "bufferSize cannot be less than 1.");
+                throw new ArgumentOutOfRangeException(nameof(sendCount), "Send count cannot be less than 1.");
             if (bufferSize < 1)
-                throw new ArgumentOutOfRangeException("bufferSize", "bufferSize cannot be less than 1.");
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), "Buffer size cannot be less than 1.");
 
             _receiveCount = receiveCount;
             _sendCount = sendCount;
@@ -39,6 +40,11 @@ namespace CoCSharp.Network
 
             args.SetBuffer(_buffer, BufferIndex, _bufferSize);
             BufferIndex += _bufferSize;
+        }
+
+        public void GetBuffer()
+        {
+
         }
     }
 }

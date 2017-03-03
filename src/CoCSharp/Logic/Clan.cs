@@ -252,8 +252,6 @@ namespace CoCSharp.Logic
             {
                 var caStreamEntry = new ChatAllianceStreamEntry
                 {
-                    Unknown1 = 0,
-
                     EntryId = Entries.Count,
 
                     Unknown2 = 3,
@@ -316,8 +314,6 @@ namespace CoCSharp.Logic
             {
                 var jolStreamEntry = new JoinedOrLeftAllianceStream
                 {
-                    Unknown1 = 0,
-
                     EntryId = Entries.Count,
 
                     Unknown2 = 3,
@@ -372,8 +368,6 @@ namespace CoCSharp.Logic
                     {
                         var jolStreamEntry = new JoinedOrLeftAllianceStream
                         {
-                            Unknown1 = 0,
-
                             EntryId = Entries.Count,
 
                             Unknown2 = 3,

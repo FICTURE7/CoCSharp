@@ -1,12 +1,14 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 
 namespace CoCSharp.Network
 {
+    [Obsolete]
     internal class MessageSendToken
     {
         public MessageSendToken()
         {
-            TokenId = NetworkManagerAsyncStatistics.NextTokenID;
+            TokenId = NetworkManagerAsyncStatistics.NextTokenId;
         }
 
         public int TokenId { get; set; }
@@ -42,12 +44,13 @@ namespace CoCSharp.Network
         }
     }
 
+    [Obsolete]
     internal class MessageReceiveToken
     {
         public MessageReceiveToken()
         {
             Header = new byte[Message.HeaderSize];
-            TokenID = NetworkManagerAsyncStatistics.NextTokenID;
+            TokenID = NetworkManagerAsyncStatistics.NextTokenId;
         }
 
         public int TokenID { get; set; }

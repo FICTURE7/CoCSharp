@@ -1,11 +1,10 @@
-﻿using CoCSharp.Network;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace CoCSharp.Network.Messages
 {
     /// <summary>
-    /// Description of AllianceStreamMessage.
+    /// Message that is sent by the server to the client to provide the list of
+    /// <see cref="AllianceStreamEntry"/>.
     /// </summary>
     public class AllianceStreamMessage : Message
     {

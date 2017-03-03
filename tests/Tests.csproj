@@ -60,6 +60,7 @@
     <Compile Include="Logic\TickTimerTests.cs" />
     <Compile Include="Logic\VillageTests.cs" />
     <Compile Include="Logic\VillageObjectCollectionTests.cs" />
+    <Compile Include="Network\BufferStreamTests.cs" />
     <Compile Include="Network\CommandFactoryTests.cs" />
     <Compile Include="Network\MessageBufferManagerTests.cs" />
     <Compile Include="Network\MessageFactoryTests.cs" />
@@ -73,7 +74,7 @@
     <Compile Include="TokenUtilsTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoCSharp\CoCSharp.csproj">
+    <ProjectReference Include="..\src\CoCSharp\CoCSharp.csproj">
       <Project>{7481e33e-b214-421b-8f9b-a812958395dd}</Project>
       <Name>CoCSharp</Name>
     </ProjectReference>

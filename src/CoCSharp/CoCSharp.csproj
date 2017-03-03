@@ -49,10 +49,6 @@
       <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Sodium, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)\packages\libsodium-net.0.9.0\lib\Net40\Sodium.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
@@ -127,7 +123,24 @@
     <Compile Include="Logic\VillageObjectPool.cs" />
     <Compile Include="Logic\VillageObject{T}.cs" />
     <Compile Include="Logic\WorkerManager.cs" />
+    <Compile Include="Network\BufferStream.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\Blake2\Blake2B.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\Blake2\Blake2B.FullyUnrolled.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\curve25519.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\curve25519xsalsa20poly1305.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\hsalsa20.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\poly1305.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\salsa20.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\verify_16.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\xsalsa20.cs" />
+    <Compile Include="Network\Cryptography\NaCl\Internal\xsalsa20poly1305.cs" />
+    <Compile Include="Network\Cryptography\NaCl\PublicKeyBox.cs" />
+    <Compile Include="Network\Cryptography\NaCl\SecretBox.cs" />
     <Compile Include="Network\DisconnectedEventArgs.cs" />
+    <Compile Include="Network\Memory\MemoryBlock.cs" />
+    <Compile Include="Network\Memory\MemoryBlockPool.cs" />
+    <Compile Include="Network\Memory\MemorySlab.cs" />
+    <Compile Include="Network\Memory\MemorySlabsStream.cs" />
     <Compile Include="Network\MessageHeader.cs" />
     <Compile Include="Network\MessageProcessor.cs" />
     <Compile Include="Network\MessageProcessorNaCl.cs" />
@@ -221,6 +234,7 @@
     <Compile Include="Network\Messages\VisitHomeMessage.cs" />
     <Compile Include="Network\StreamEntryFactory.cs" />
     <Compile Include="Network\Messages\VillageMessageComponent.cs" />
+    <Compile Include="Pool.cs" />
     <Compile Include="TimeUtils.cs" />
     <Compile Include="Logic\Avatar.cs" />
     <Compile Include="Logic\Buildable{T}.cs" />
@@ -235,7 +249,7 @@
     <Compile Include="Logic\CommandException.cs" />
     <Compile Include="Logic\CommandFactory.cs" />
     <Compile Include="Logic\CommandFactorySuppressAttribute.cs" />
-    <Compile Include="Network\Cryptography\CoCKeyPair.cs" />
+    <Compile Include="Network\Cryptography\NaCl\KeyPair.cs" />
     <Compile Include="Network\Cryptography\Crypto7.cs" />
     <Compile Include="Network\Cryptography\Crypto8.cs" />
     <Compile Include="Network\Cryptography\UpdateNonceType.cs" />
@@ -288,7 +302,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mono ../../../PostBuild/bin/Debug/PostBuild.exe $(OutDir)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

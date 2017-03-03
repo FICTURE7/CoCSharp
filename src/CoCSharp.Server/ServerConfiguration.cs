@@ -16,24 +16,32 @@ namespace CoCSharp.Server
             StartingGold = _defaultGold;
             StartingElixir = _defaultElixir;
             StartingVillage = _defaultVillage;
+
+            SynchronizeAssets = _defaultSynchronizeAssets;
             ContentUrl = _defaultContentUrl;
             MasterHash = _defaultMasterHash;
-            MysqlHost = _defaultMysqlHost;
-            MysqlUser = _defaultMysqlUser;
-            MysqlPass = _defaultMysqlPass;
-            MysqlPort = _defaultMysqlPort;
+
+            MySqlHost = _defaultMySqlHost;
+            MySqlUser = _defaultMySqlUser;
+            MySqlPassword = _defaultMySqlPass;
+            MySqlPort = _defaultMySqlPort;
         }
 
-        private static readonly string _defaultVillage = File.ReadAllText("contents/starting_village.json");
-        private static readonly string _defaultMysqlHost = "127.0.0.1";
-        private static readonly string _defaultMysqlUser = "root";
-        private static readonly string _defaultMysqlPass = " ";
-        private static readonly int _defaultMysqlPort = 3306;
-        private static readonly string _defaultMasterHash = "2f2c3464104feb771097b42ebf4dfe871bd56062";
-        private static readonly string _defaultContentUrl = "http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/";
         private static readonly int _defaultGems = (int)1e7;
         private static readonly int _defaultGold = (int)1e8;
         private static readonly int _defaultElixir = (int)1e8;
+
+        private static readonly string _defaultVillage = File.ReadAllText("contents/starting_village.json");
+
+        private static readonly bool _defaultSynchronizeAssets = true;
+        private static readonly string _defaultContentUrl = "http://b46f744d64acd2191eda-3720c0374d47e9a0dd52be4d281c260f.r11.cf2.rackcdn.com/";
+        private static readonly string _defaultMasterHash = "2f2c3464104feb771097b42ebf4dfe871bd56062";
+
+        private static readonly string _defaultMySqlHost = "127.0.0.1";
+        private static readonly string _defaultMySqlUser = "root";
+        private static readonly string _defaultMySqlPass = " ";
+        private static readonly int _defaultMySqlPort = 3306;
+
 
         private readonly Dictionary<string, string> _configs;
 
@@ -53,13 +61,16 @@ namespace CoCSharp.Server
         public int StartingGems { get; set; }
         public int StartingGold { get; set; }
         public int StartingElixir { get; set; }
+
+        public bool SynchronizeAssets { get; set; }
         public string ContentUrl { get; set; }
         public string MasterHash { get; set; }
-        public string MysqlHost { get; set; }
-        public string MysqlUser { get; set; }
-        public string MysqlPass { get; set; }
-        public int MysqlPort { get; set; }
         public string StartingVillage { get; set; }
+
+        public string MySqlHost { get; set; }
+        public int MySqlPort { get; set; }
+        public string MySqlUser { get; set; }
+        public string MySqlPassword { get; set; }
 
         public bool Load(string path)
         {
@@ -72,8 +83,11 @@ namespace CoCSharp.Server
             var startingGemsSet = false;
             var startingGoldSet = false;
             var startingElixirSet = false;
-            var masterHashSet = false;
+
+            var synchronizeAssetsSet = false;
             var contentUrlSet = false;
+            var masterHashSet = false;
+
             var mysqlHostSet = false;
             var mysqlUserSet = false;
             var mysqlPassSet = false;
@@ -119,6 +133,14 @@ namespace CoCSharp.Server
                                         }
                                         break;
 
+                                    case "synchronize_assets":
+                                        if (reader.Read())
+                                        {
+                                            SynchronizeAssets = reader.ReadContentAsBoolean();
+                                            synchronizeAssetsSet = true;
+                                        }
+                                        break;
+
                                     case "content_url":
                                         if (reader.Read())
                                         {
@@ -134,31 +156,35 @@ namespace CoCSharp.Server
                                             masterHashSet = true;
                                         }
                                         break;
+
                                     case "mysql_host":
                                         if (reader.Read())
                                         {
-                                            MysqlHost = reader.ReadContentAsString();
+                                            MySqlHost = reader.ReadContentAsString();
                                             mysqlHostSet = true;
                                         }
                                         break;
+
                                     case "mysql_user":
                                         if (reader.Read())
                                         {
-                                            MysqlUser = reader.ReadContentAsString();
+                                            MySqlUser = reader.ReadContentAsString();
                                             mysqlUserSet = true;
                                         }
                                         break;
+
                                     case "mysql_pwd":
                                         if (reader.Read())
                                         {
-                                            MysqlPass = reader.ReadContentAsString();
+                                            MySqlPassword = reader.ReadContentAsString();
                                             mysqlPassSet = true;
                                         }
                                         break;
+
                                     case "mysql_port":
                                         if (reader.Read())
                                         {
-                                            MysqlPort = reader.ReadContentAsInt();
+                                            MySqlPort = reader.ReadContentAsInt();
                                             mysqlPortSet = true;
                                         }
                                         break;
@@ -185,7 +211,9 @@ namespace CoCSharp.Server
             // If some configs are missing we
             // rewrite a new .xml config file with the missing configs
             // as the default value.
-            if (!startingGemsSet || !startingGoldSet || !startingElixirSet || !contentUrlSet || !masterHashSet || !mysqlHostSet || !mysqlUserSet || !mysqlPassSet || !mysqlPortSet)
+            if (!startingGemsSet || !startingGoldSet || !startingElixirSet
+               || !contentUrlSet || !masterHashSet || !mysqlHostSet
+               || !mysqlUserSet || !mysqlPassSet || !mysqlPortSet || !synchronizeAssetsSet)
                 return false;
 
             return true;
@@ -207,12 +235,15 @@ namespace CoCSharp.Server
                 writer.WriteElementString("starting_gems", StartingGems.ToString());
                 writer.WriteElementString("starting_gold", StartingGold.ToString());
                 writer.WriteElementString("starting_elixir", StartingElixir.ToString());
+
+                writer.WriteElementString("synchronize_assets", SynchronizeAssets.ToString().ToLower());
                 writer.WriteElementString("content_url", ContentUrl);
                 writer.WriteElementString("master_hash", MasterHash);
-                writer.WriteElementString("mysql_host", MysqlHost);
-                writer.WriteElementString("mysql_user", MysqlUser);
-                writer.WriteElementString("mysql_pwd", MysqlPass);
-                writer.WriteElementString("mysql_port", MysqlPort.ToString());
+
+                writer.WriteElementString("mysql_host", MySqlHost);
+                writer.WriteElementString("mysql_user", MySqlUser);
+                writer.WriteElementString("mysql_pwd", MySqlPassword);
+                writer.WriteElementString("mysql_port", MySqlPort.ToString());
 
                 writer.WriteEndElement();
                 writer.WriteEndDocument();

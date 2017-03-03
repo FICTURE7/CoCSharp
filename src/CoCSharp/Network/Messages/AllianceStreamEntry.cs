@@ -16,16 +16,10 @@ namespace CoCSharp.Network.Messages
         /// </summary>
         public DateTime DateSent => _dateSent;
 
-        // Unknown 1 and EntryId could an Int64 instead.
-        /// <summary>
-        /// Unknown integer 1.
-        /// </summary>
-        public int Unknown1; // = 1
-
         /// <summary>
         /// Entry ID.
         /// </summary>
-        public int EntryId;
+        public long EntryId;
 
         /// <summary>
         /// Unknown byte 2.
@@ -84,8 +78,6 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfWriterNull(writer);
 
-            writer.Write(Unknown1);
-
             writer.Write(EntryId);
 
             writer.Write(Unknown2);
@@ -110,9 +102,7 @@ namespace CoCSharp.Network.Messages
         {
             ThrowIfReaderNull(reader);
 
-            Unknown1 = reader.ReadInt32();
-
-            EntryId = reader.ReadInt32(); // Timestamp?
+            EntryId = reader.ReadInt64();
 
             Unknown2 = reader.ReadByte();
 

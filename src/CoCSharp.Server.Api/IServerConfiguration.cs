@@ -28,6 +28,12 @@
         int StartingElixir { get; }
 
         /// <summary>
+        /// Gets a value indicating whether or not to synchronize the assets
+        /// on start up.
+        /// </summary>
+        bool SynchronizeAssets { get; }
+
+        /// <summary>
         /// Gets the content url.
         /// </summary>
         string ContentUrl { get; }
@@ -36,22 +42,26 @@
         /// Gets the master hash.
         /// </summary>
         string MasterHash { get; }
+
         /// <summary>
-        /// Gets the mysql host.
+        /// Gets the MySQL host.
         /// </summary>
-        string MysqlHost { get; }
+        string MySqlHost { get; }
+
         /// <summary>
-        /// Gets the mysql user.
+        /// Gets the MySQL port.
         /// </summary>
-        string MysqlUser { get; }
+        int MySqlPort { get; }
+
         /// <summary>
-        /// Gets the mysql pass.
+        /// Gets the MySQL user.
         /// </summary>
-        string MysqlPass { get; }
+        string MySqlUser { get; }
+
         /// <summary>
-        /// Gets the mysql port.
+        /// Gets the MySQL password.
         /// </summary>
-        int MysqlPort { get; }
+        string MySqlPassword { get; }
 
         /// <summary>
         /// Gets the starting village JSON.

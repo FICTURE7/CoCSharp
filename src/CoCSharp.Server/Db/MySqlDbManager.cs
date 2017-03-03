@@ -46,19 +46,19 @@ namespace CoCSharp.Server.Db
 
             var builder = new MySqlConnectionStringBuilder();
 
-            var host = Server.Configuration.MysqlHost;
+            var host = Server.Configuration.MySqlHost;
             if (host == null)
                 Server.Logs.Error("Configuration did not contain 'mysql_host' entry.");
 
-            var user = Server.Configuration.MysqlUser;
+            var user = Server.Configuration.MySqlUser;
             if (user == null)
                 Server.Logs.Error("Configuration did not contain 'mysql_user' entry.");
 
-            var pwd = Server.Configuration.MysqlPass;
+            var pwd = Server.Configuration.MySqlPassword;
             if (pwd == null)
                 Server.Logs.Error("Configuration did not contain 'mysql_pwd' entry.");
 
-            var port = Server.Configuration.MysqlPort;
+            var port = Server.Configuration.MySqlPort;
             if (pwd == null)
                 Server.Logs.Error("Configuration did not contain 'mysql_port' entry.");
 

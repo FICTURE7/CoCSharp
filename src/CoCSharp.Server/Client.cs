@@ -25,6 +25,7 @@ namespace CoCSharp.Server
                 throw new ArgumentNullException(nameof(socket));
 
             // Give client a 30 second window to send its first keep alive.
+            // TODO: Use value from Assets to figure out how much seconds before timeout.
             LastKeepAliveTime = DateTime.UtcNow;
             KeepAliveExpireTime = DateTime.UtcNow.AddSeconds(30);
 
