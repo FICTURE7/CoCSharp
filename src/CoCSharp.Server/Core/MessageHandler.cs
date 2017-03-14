@@ -59,11 +59,11 @@ namespace CoCSharp.Server.Core
             _handlers.Add(new AllianceChatMessage().Id, HandleAllianceChat);
 
             // Determine if we're on the maintenance mode from the server configuration.
-            var maintenaceString = Server.Configuration["maintenance"];
-            if (maintenaceString == null)
+            var maintenanceString = Server.Configuration["maintenance"];
+            if (string.isNullOrEmpty(maintenanceString))
                 _maintenance = false;
             else
-                _maintenance = Convert.ToBoolean(maintenaceString);
+                _maintenance = Convert.ToBoolean(maintenanceString);
         }
 
         // TODO: Remove this, instead use Sessions to keep track of what the client is up to.
