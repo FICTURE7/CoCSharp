@@ -1,14 +1,14 @@
 <h1>
 CoC# <a href="https://travis-ci.org/FICTURE7/CoCSharp"><img src="https://travis-ci.org/FICTURE7/CoCSharp.svg?branch=server-dev" alt="Build Status"></a>
 </h1>
-This is the `server-dev` branch where I am actively developping the server and breaking everything.
-
-Clash of Clans library written in C# to handle networking, csv files and more to come.
-It was written based off of [Clash of Clans Documentation Project](https://github.com/clanner/cocdp/)
+Clash of Clans library written in C# to handle networking, csv files and other stuffs.
+It was written based off of [Clash of Clans Documentation Project](https://github.com/clanner/cocdp)
 and decompiled source code of [Ultrapowa Clash Server](https://github.com/Ultrapowa/UCS)
 which is now open source however no decompiled code was used in this project.
 
 ### Notes
+This project is unmaintained
+
 Due to the encryption update in 8.x.x, a patched version of `libg.so` with the standard public key is needed for
 `CoCSharp.Proxy` and `CoCSharp.Server` to work properly. [Here](https://github.com/clugh/coc-proxy#installation) are the steps needed to patch `libg.so` or you can use [`coc-patcher`](https://github.com/clugh/coc-patcher) a small but great utility made in python by clugh to patch `libg.so` and sign the APK itself.
 
