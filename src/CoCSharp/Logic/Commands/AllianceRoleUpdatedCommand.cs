@@ -51,9 +51,10 @@ namespace CoCSharp.Logic.Commands
 
             ClanId = reader.ReadInt64();
 
+            Role = (ClanMemberRole)reader.ReadInt32();
+
             Unknown1 = reader.ReadInt32();
 
-            Role = (ClanMemberRole)reader.ReadInt32();
             Tick = reader.ReadInt32();
         }
 
@@ -70,9 +71,9 @@ namespace CoCSharp.Logic.Commands
 
             writer.Write(ClanId);
 
-            writer.Write(Unknown1);
-
             writer.Write((int)Role);
+
+            writer.Write(Unknown1);
             writer.Write(Tick);
         }
     }

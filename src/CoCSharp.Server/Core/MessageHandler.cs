@@ -673,8 +673,20 @@ namespace CoCSharp.Server.Core
             var clan = clanSave.ToClan();
 
             // Set the values as specified in the message.
-            clan.Name = caMessage.Name;
-            clan.Description = caMessage.Description;
+            if (String.IsNullOrEmpty(caMessage.Name))
+                clan.Name = "CoCSharp";
+            else if (caMessage.Name.Length > 15)
+                clan.Name = caMessage.Name.Substring(0, 15);
+            else
+                clan.Name = caMessage.Name;
+
+            if (caMessage.Description == null)
+                clan.Description = string.Empty;
+            else if (caMessage.Description.Length > 255)
+                clan.Description = caMessage.Description.Substring(0, 255);
+            else
+                clan.Description = caMessage.Description;
+
             clan.Badge = caMessage.Badge;
             clan.InviteType = caMessage.InviteType;
             clan.RequiredTrophies = caMessage.RequiredTrophy;
@@ -867,9 +879,12 @@ namespace CoCSharp.Server.Core
             }
             else
             {
+                int lenght = Server.Assets.DataTables.GetTable<GlobalData>().Rows["MAX_MESSAGE_LENGTH"][0].NumberValue;
                 if (cmcMessage.TextMessage.ToLower().Contains("savegame"))
                     ChatManager.SendChatMessage(client, "Did you know? 'savegame' isn't a command and does nothing? ^^");
 
+                if (cmcMessage.TextMessage.Length > lenght)
+                    cmcMessage.TextMessage = cmcMessage.TextMessage.Substring(0, lenght);
                 var cmsMessage = new ChatMessageServerMessage
                 {
                     UserId = senderLevel.Avatar.Id,
